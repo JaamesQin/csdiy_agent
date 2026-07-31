@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="CoursePilot 本地 OpenAI 兼容协议对话测试界面"
+    />
+    <title>CoursePilot · 本地对话</title>
+    <link rel="icon" href="/static/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="CoursePilot 首页">
+          <span class="brand-mark" aria-hidden="true">C</span>
+          <span>
+            <strong>CoursePilot</strong>
+            <small>本地协议实验室</small>
+          </span>
+        </a>
+
+        <div class="topbar-actions">
+          <span class="connection" id="connectionStatus">
+            <i aria-hidden="true"></i>
+            等待验证
+          </span>
+          <button class="button ghost" id="settingsButton" type="button">
+            接入设置
+          </button>
+          <button class="button ghost" id="clearButton" type="button">
+            清空对话
+          </button>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section class="intro" id="intro">
+          <p class="eyebrow">OPENAI-COMPATIBLE CHAT</p>
+          <h1>从一次真实对话开始验证。</h1>
+          <p>
+            页面直接调用本机的 <code>/v1/chat/completions</code>，用于检查鉴权、
+            多轮消息和 SSE 流式输出。
+          </p>
+          <div class="starter-grid">
+            <button class="starter" type="button" data-prompt="你好，请介绍一下你自己。">
+              <span>基础对话</span>
+              <small>验证非空回复与中文输出</small>
+            </button>
+            <button
+              class="starter"
+              type="button"
+              data-prompt="请记住数字 149，并在回复中复述它。"
+            >
+              <span>上下文检查</span>
+              <small>开始一轮多轮消息测试</small>
+            </button>
+            <button
+              class="starter"
+              type="button"
+              data-prompt="用三点说明这次接入测试应该检查什么。"
+            >
+              <span>结构化回复</span>
+              <small>观察长内容的流式渲染</small>
+            </button>
+          </div>
+        </section>
+
+        <section
+          class="conversation"
+          id="conversation"
+          aria-live="polite"
+          aria-label="对话记录"
+        ></section>
+      </main>
+
+      <footer class="composer-wrap">
+        <form class="composer" id="chatForm">
+          <label class="sr-only" for="messageInput">输入消息</label>
+          <textarea
+            id="messageInput"
+            rows="1"
+            maxlength="10000"
+            placeholder="输入消息，Enter 发送，Shift + Enter 换行"
+          ></textarea>
+          <div class="composer-footer">
+            <label class="stream-toggle">
+              <input id="streamToggle" type="checkbox" checked />
+              <span aria-hidden="true"></span>
+              流式输出
+            </label>
+            <span class="hint" id="inputHint">尚未配置接入密钥</span>
+            <button class="send-button" id="sendButton" type="submit">
+              <span>发送</span>
+              <svg viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M3 10h13M11 5l5 5-5 5" />
+              </svg>
+            </button>
+            <button class="stop-button" id="stopButton" type="button" hidden>
+              停止
+            </button>
+          </div>
+        </form>
+        <p class="privacy-note">
+          密钥仅保存在当前浏览器会话中，不会写入页面或对话记录。
+        </p>
+      </footer>
+    </div>
+
+    <dialog class="settings-dialog" id="settingsDialog">
+      <form method="dialog" id="settingsForm">
+        <div class="dialog-heading">
+          <div>
+            <p class="eyebrow">LOCAL CONNECTION</p>
+            <h2>接入设置</h2>
+          </div>
+          <button class="icon-button" value="cancel" aria-label="关闭" type="submit">
+            ×
+          </button>
+        </div>
+
+        <label class="field">
+          <span>API 地址</span>
+          <input id="apiBaseInput" type="url" value="" placeholder="默认使用当前地址" />
+          <small>本地使用时留空即可，页面将访问当前 FastAPI 服务。</small>
+        </label>
+
+        <label class="field">
+          <span>Bearer 密钥</span>
+          <input
+            id="apiKeyInput"
+            type="password"
+            autocomplete="off"
+            placeholder="输入 COURSEPILOT_API_KEY"
+            required
+          />
+        </label>
+
+        <p class="dialog-error" id="settingsError" role="alert"></p>
+        <div class="dialog-actions">
+          <button class="button ghost" value="cancel" type="submit">取消</button>
+          <button class="button primary" id="saveSettingsButton" value="default" type="submit">
+            验证并保存
+          </button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+.env
+*:Zone.Identifier
+
+# Local reference materials supplied outside the source repository.
+/0720线上说明会.pptx
+/openai-compatible-agent-integration-guide.md
+/多模态附件对端接口文档.md
