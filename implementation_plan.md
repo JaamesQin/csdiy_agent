@@ -1,9 +1,9 @@
 # CoursePilot MVP 完整实施计划
 
-> 目标平台：AgentVerse 2.0 / 清小搭智能体广场  
-> 计划版本：v1.2
+> 目标平台：清小搭智能体广场（标准协议接入；平台侧基于 AgentVerse 2.0）
+> 计划版本：v1.3
 > 制定日期：2026-07-15  
-> 更新日期：2026-07-30
+> 更新日期：2026-07-31
 
 ## 1. 项目目标
 
@@ -31,10 +31,10 @@ CoursePilot 是面向中文 CS 自学者的循证学习智能体。它以 CSDIY 
 
 | 编号 | 能力 | MVP 范围 | 验收结果 |
 | --- | --- | --- | --- |
-| P0-1 | 清小搭标准协议接入 | 部署 OpenAI 兼容服务并接入清小搭，支持 Bearer 鉴权、非流式 JSON 和流式 SSE | `/chat/completions` 与 `/models` 通过平台探测；能从平台入口完成一次端到端流程 |
+| P0-1 | 清小搭标准协议接入 | 部署 OpenAI 兼容服务并接入清小搭，支持 Bearer 鉴权、非流式 JSON 和流式 SSE | `/v1/chat/completions` 与 `/v1/models` 通过平台探测；能从平台入口完成一次端到端流程 |
 | P0-2 | 用户画像 | 在课程推荐或完整引导需要时，收集目标、基础、可用时间和偏好 | 输出简明画像并用于课程建议；其他直接入口不强制建档 |
 | P0-3 | 课程导航 | 在受控课程池中推荐课程并确定版本 | 推荐 2–3 个候选；说明理由、前置缺口、时间和官网来源 |
-| P0-4 | 课程 Manifest | 维护课程、学期、讲次、来源、访问和许可信息 | 每项资料可定位到确定课程版本和讲次 |
+| P0-4 | CourseManifest | 维护课程、学期、讲次、来源、访问和许可信息 | 每项资料可定位到确定课程版本和讲次 |
 | P0-5 | 资料解析与索引 | 首先支持公开 PDF、网页/Markdown，以及通过 `file` URL 输入的用户授权材料；平台文件能力未上线或不稳定时使用预上传材料降级 | 检索片段保留来源与页码、标题或时间戳锚点；文件失败时有明确降级结果 |
 | P0-6 | StudyKit | 为指定讲次生成结构化中文自学包 | 包含目标、前置、提纲、术语、顺序、练习、引用和限制 |
 | P0-7 | 课程内答疑 | 只在确定的课程、版本和讲次上下文内回答 | 关键课程事实有证据；材料不足时不编造 |
@@ -68,7 +68,7 @@ CoursePilot 是面向中文 CS 自学者的循证学习智能体。它以 CSDIY 
 - 不支持任意课程、任意语言和任意运行环境的项目辅导；
 - 不把效率工具百科和经典书籍大全放入核心开发路径；
 - 不在主智能体未稳定前同时扩张技能专项赛范围；
-- 不以复杂“多智能体”数量作为项目成果。
+- 不以复杂“多智能体”数量作为项目成果；
 - 不把音频输入或可下载文件产物作为文本版 MVP 的上线前置条件；
 - 不接收或持久化 base64 文件；多模态入参和附件出参统一使用 URL。
 
@@ -82,7 +82,7 @@ CoursePilot 是面向中文 CS 自学者的循证学习智能体。它以 CSDIY 
 | P1 | `x_soda.attachments` 文件产物输出 | 平台能够解析附件字段并成功转存临时 URL | 在消息正文输出结构化 StudyKit |
 | P1 | `input_audio` 音频输入 | 平台已开放且格式、大小和超时通过实测 | 请用户提供文本、字幕或讲义 |
 
-截至 2026-07-30，接入文档将上述多模态能力标记为计划于 2026-07-31 前上线，因此必须先实测再纳入完成声明。音频大小限制在两份接口材料中分别为 25MB 和 200MB；未获得平台确认前按 25MB 的保守上限设计和测试，并在风险表中保留该待确认项。
+接入文档曾将上述多模态能力标记为计划于 2026-07-31 前上线。截至 2026-07-31，本项目尚未保存账号实测结果，因此不能仅依据计划日期将其视为可用能力。音频大小限制在两份接口材料中分别为 25MB 和 200MB；未获得平台确认前按 25MB 的保守上限设计和测试，并在风险表中保留该待确认项。
 
 ## 3. MVP 用户故事与验收场景
 
@@ -153,7 +153,7 @@ CoursePilot 是面向中文 CS 自学者的循证学习智能体。它以 CSDIY 
 ### 4.1 逻辑架构
 
 ```text
-清小搭 / AgentVerse 对话入口
+清小搭智能体广场入口
               ↓
  OpenAI 兼容协议适配层
  鉴权、请求解析、文件 URL 拉取、SSE/JSON 响应
@@ -172,7 +172,7 @@ CoursePilot 是面向中文 CS 自学者的循证学习智能体。它以 CSDIY 
 信息缺失：针对性追问    信息完整：立即执行
    └───────────┬───────────┘
                ↓
-  读取课程 Manifest、资料索引与用户状态
+  读取 CourseManifest、资料索引与用户状态
                ↓
        依据公开/授权课程资料处理
                ↓
@@ -187,18 +187,18 @@ CoursePilot 是面向中文 CS 自学者的循证学习智能体。它以 CSDIY 
 
 | 逻辑角色 | MVP 实现职责 | 必须产物 |
 | --- | --- | --- |
-| Orchestrator | 识别用户意图、复用已有上下文、检查当前任务必要输入、路由功能并组织最终回复 | `TaskPlan`、路由结果、缺失字段、阶段状态、失败说明 |
+| Orchestrator | 识别用户意图、复用已有上下文、检查当前任务必要输入、路由功能并组织最终回复 | 任务计划、路由结果、缺失字段、阶段状态、失败说明 |
 | Course Scout | 从人工审核课程池检索课程和版本 | `CourseCard`、来源、置信度 |
 | Material Processor | 解析资料并保留来源锚点 | `SourceChunk` 列表和解析限制 |
 | Teaching Designer | 根据证据生成 StudyKit | StudyKit 草稿与引用映射 |
 | Code Coach | 代码审阅、错误定位、测试设计和分层提示 | 诊断假设、验证步骤和提示层级 |
 | Evidence & Safety Guard | 检查引用、版权、学术诚信和过度自信 | 通过/退回、原因和降级说明 |
 
-在实现上，这些角色可以是 AgentVerse 工作流中的不同节点、提示模板或校验步骤。只有在单流程无法满足质量或维护需求时，才拆成独立智能体。
+在实现上，这些角色默认是自研后端中的模块、提示模板或校验步骤，不要求部署为多个自治 Agent。只有在单流程无法满足质量或维护需求时，才拆成独立服务或智能体。
 
 协议适配层属于 P0 基础设施，不承担教学决策。它至少负责：
 
-1. 暴露 `POST /v1/chat/completions`，并建议同时暴露 `GET /v1/models`；
+1. 暴露 `POST /v1/chat/completions` 和 `GET /v1/models`；
 2. 校验 Bearer 凭证，无效凭证返回 `401`；
 3. 严格解析 JSON 布尔值 `stream`，接受 `model` 缺失以及 `max_tokens: 1`；
 4. 非流式响应返回 `choices[0].message.content` 和 `usage`；
@@ -226,7 +226,8 @@ MVP 只需要四类核心数据：
 ```yaml
 course_id: cs149-2025
 title: Stanford CS149
-term: "2025"
+term: "Fall 2025"
+course_version: "2025"
 official_url: "..."
 language: en
 topics: []
@@ -237,7 +238,7 @@ units:
     title: GPU Programming
     order: 3
     sources: []
-reviewed_at: "2026-07-15"
+reviewed_at: "YYYY-MM-DD"
 limitations: []
 ```
 
@@ -249,8 +250,8 @@ type: pdf
 url: "..."
 access_status: public
 license_status: confirmed_or_unknown
-version: "2025"
-checked_at: "2026-07-15"
+source_version: "2025-release"
+checked_at: "YYYY-MM-DD"
 checksum: optional
 notes: ""
 ```
@@ -260,6 +261,7 @@ notes: ""
 ```yaml
 chunk_id: cs149-2025-lec03-slides-p12-c01
 course_id: cs149-2025
+course_version: "2025"
 unit_id: lec03-gpu-programming
 source_id: cs149-2025-lec03-slides
 anchor:
@@ -271,13 +273,14 @@ content_type: text_or_code_or_formula
 parser_version: v0.1
 ```
 
-所有资料必须先按 `course_id`、`unit_id` 和 `version` 过滤，再参与检索，避免跨课程和跨学期串讲。
+所有资料必须先按 `course_id`、`course_version` 和 `unit_id` 过滤，再参与检索，避免跨课程和跨学期串讲。`source.source_version` 表示单个来源文件的版本或修订号，不替代课程级 `course_version`。
 
 ### 5.3 StudyKit
 
 ```yaml
 studykit_version: v0.1
 course_id: cs149-2025
+course_version: "2025"
 unit_id: lec03-gpu-programming
 generated_at: "..."
 source_manifest: []
@@ -314,13 +317,20 @@ confirmed_profile:
   prior_knowledge: []
   weekly_hours: null
   language_preference: zh
-active_course_id: null
-completed_units: []
-mastery:
-  concept: unknown
-  implementation: unknown
-  transfer: unknown
-evidence: []
+active_context:
+  course_id: null
+  course_version: null
+  unit_id: null
+progress:
+  - course_id: cs149-2025
+    course_version: "2025"
+    unit_id: lec03-gpu-programming
+    status: not_started_or_in_progress_or_completed
+    mastery:
+      concept: unknown
+      implementation: unknown
+      transfer: unknown
+    evidence: []
 next_actions: []
 updated_at: "..."
 ```
@@ -347,7 +357,7 @@ updated_at: "..."
 - `docs/mvp_scope.md`；
 - `docs/demo_scenario.md`；
 - `docs/risk_register.md`；
-- 初始课程候选表。
+- `docs/course_candidates.md`。
 
 **完成标准：** 团队能用一句话描述 MVP，任何新增需求都能明确归入 P0、P1 或 P2。
 
@@ -366,33 +376,40 @@ updated_at: "..."
 7. 接受平台探测发送的 `stream: true`、`max_tokens: 1`，以及缺失、空或 `null` 的 `model`；
 8. 在出口校验 `finish_reason` 白名单；流式中途失败使用 stop 帧、独立 `error` 字段和 `[DONE]`；
 9. 在清小搭接入向导中完成连通性、凭证、最小对话和响应格式四项探测，并完成真实试聊；
-10. 验证资料输入、检索、变量传递、用户文件、状态保存、工具调用和日志能力；
+10. 验证消息历史、系统提示、用户文件、身份或会话标识、状态保存和日志能力；未在标准协议中明确提供的字段不得预先依赖；
 11. 对 `file.url` 进行实测：收到请求后立即拉取、限制 OSS 域名、校验类型和大小，并验证 120 秒总超时；
 12. 记录每项能力的实测结果、平台版本、限制和降级方案；
 13. 导出或备份第一个可运行版本。
 
 **降级原则：**
 
-- 外部服务不可用：先使用平台内部知识库和预处理资料；
+- 上游模型或检索服务不可用：返回明确错误并使用已缓存的核心 Demo 结果；不得伪造实时处理结果；
 - 文件输入未开放或 URL 拉取失败：使用预上传样板资料、公开链接或文本粘贴；
 - 流式响应不稳定：保留协议兼容的非流式响应和离线演示备份；
 - 长期状态不可用：输出可复制的学习状态卡；
 - 代码执行不可用：仅做静态审阅和测试建议；
 - 精确引用不可用：在上传资料中显式加入来源锚点；
-- 复杂工作流不稳定：把非关键角色合并成一个受控生成步骤。
+- 复杂业务编排不稳定：把非关键角色合并成一个受控生成步骤。
 
 **产物：**
 
-- AgentVerse 测试应用；
-- OpenAI 兼容协议适配服务；
-- 接入探测与 SSE/JSON 契约测试；
+- 清小搭测试应用；
+- `app/main.py`；
+- `app/api/chat_completions.py`；
+- `app/api/models.py`；
+- `app/protocol/schemas.py`；
+- `app/protocol/streaming.py`；
+- `app/protocol/errors.py`；
+- `tests/contract/test_auth.py`；
+- `tests/contract/test_non_streaming.py`；
+- `tests/contract/test_streaming.py`；
+- `tests/contract/test_stream_errors.py`；
 - `docs/platform_validation.md`；
-- 平台限制与降级表；
-- 首个工作流备份。
+- `docs/platform_release.md`，记录清小搭配置、限制、降级方案和可复现版本。
 
 **完成标准：** 清小搭接入探测四项全绿，错误凭证、非流式、SSE 和流式错误场景通过契约测试，能从清小搭完成一轮真实输入和输出；所有 P0 平台依赖均有“支持、降级或阻塞”结论。
 
-### 阶段 2：确定样板课程并建立 Manifest
+### 阶段 2：确定样板课程并建立 CourseManifest
 
 **目标：** 建立可信、版本一致的课程数据源。
 
@@ -418,22 +435,22 @@ updated_at: "..."
 
 **产物：**
 
-- `data/courses/<course_id>/manifest.yaml`；
-- 课程来源审核表；
-- 资料缺口和版权风险表。
+- `data/manifests/<course_id>.yaml`；
+- `docs/source_review.md`；
+- `docs/material_gaps.md`。
 
 **完成标准：** 样板课程所有入库资源都有确定来源、版本和讲次归属；未知许可被明确标记。
 
-### 阶段 3：固化 schema、模板和黄金样例
+### 阶段 3：固化 JSON Schema、模板和黄金样例
 
 **目标：** 在模型生成前定义“正确输出是什么”。
 
 **任务：**
 
-1. 定义 CourseManifest schema；
-2. 定义 SourceChunk schema；
-3. 定义 StudyKit schema；
-4. 定义 LearnerState schema；
+1. 定义 CourseManifest JSON Schema；
+2. 定义 SourceChunk JSON Schema；
+3. 定义 StudyKit JSON Schema；
+4. 定义 LearnerState JSON Schema；
 5. 制作 Markdown StudyKit 模板；
 6. 人工为核心 Demo 讲次制作一份黄金 StudyKit；
 7. 标出黄金 StudyKit 中每项结论的正确来源；
@@ -446,9 +463,13 @@ updated_at: "..."
 - `schemas/studykit.schema.json`；
 - `schemas/learner_state.schema.json`；
 - `templates/studykit.md`；
-- `tests/fixtures/golden_studykit.*`。
+- `data/golden/<course_id>-<unit_id>-studykit.yaml`；
+- `tests/fixtures/studykit/valid.yaml`；
+- `tests/fixtures/studykit/missing_source.yaml`；
+- `tests/fixtures/studykit/wrong_version.yaml`；
+- `tests/fixtures/studykit/missing_citation.yaml`。
 
-**完成标准：** 黄金样例能通过 schema；团队对字段含义和必填项没有歧义。
+**完成标准：** 黄金样例能通过 JSON Schema 校验；团队对字段含义和必填项没有歧义。
 
 ### 阶段 4：实现资料处理
 
@@ -469,7 +490,7 @@ updated_at: "..."
 4. 为每个片段写入课程、版本、讲次、来源和锚点；
 5. 对公式、代码和跨页内容做人工抽检；
 6. 记录解析失败和不支持范围；
-7. 把资料导入平台知识库或所选检索层。
+7. 把资料写入 `data/sources/`，并通过 `scripts/build_index.py` 构建自研检索索引；平台知识库仅可用于对照实验或应急降级。
 
 **不在首版解决：**
 
@@ -481,10 +502,12 @@ updated_at: "..."
 
 **产物：**
 
-- 解析后的 `SourceChunk`；
-- 解析日志；
-- 抽检结果；
-- 可用于样板讲次的课程知识库。
+- `data/sources/<course_id>/<unit_id>/chunks.jsonl`；
+- `data/indexes/<course_id>/`；
+- `tests/retrieval/test_parser.py`；
+- `tests/retrieval/test_index.py`；
+- `evaluations/parser_results.md`；
+- 可用于样板讲次的检索索引。
 
 **完成标准：** 随机抽检的片段内容、课程版本、讲次和锚点一致；核心 Demo 所需材料无解析阻塞。
 
@@ -503,10 +526,10 @@ updated_at: "..."
 
 **产物：**
 
-- 画像输入流程；
-- 课程选择规则；
-- `CourseCard` 输出模板；
-- 课程推荐测试样例。
+- `prompts/course_scout.md`；
+- `templates/course_card.md`；
+- `tests/agent/test_course_scout.py`；
+- `tests/fixtures/course_profiles.yaml`。
 
 **完成标准：** 同一画像的推荐结果稳定、可解释，并且只来自受控课程池。
 
@@ -518,10 +541,10 @@ updated_at: "..."
 
 ```text
 课程与讲次确认
-    → 按 course_id / unit_id / version 过滤
+    → 按 course_id / course_version / unit_id 过滤
     → 检索相关 SourceChunk
     → 生成 StudyKit 草稿
-    → schema 校验
+    → JSON Schema 校验
     → 引用存在性检查
     → 证据与合规审查
     → 输出或退回修复
@@ -542,15 +565,16 @@ updated_at: "..."
 
 **产物：**
 
-- StudyKit 生成流程；
-- 结构化校验器；
-- 引用检查器；
-- 核心讲次 StudyKit；
-- 引用错误样例与修复记录。
+- `prompts/teaching_designer.md`；
+- `app/retrieval/citations.py`；
+- `tests/retrieval/test_citations.py`；
+- `templates/studykit.md`；
+- `data/golden/<course_id>-<unit_id>-studykit.yaml`；
+- `evaluations/citation_failures.md`。
 
 **完成标准：**
 
-- 输出 schema 通过率达到 95%；
+- 输出 JSON Schema 通过率达到 95%；
 - 核心讲次关键主张有引用或限制标记；
 - 人工抽检引用正确率达到 90%；
 - 不会引用其他课程或其他学期材料回答当前讲次。
@@ -571,9 +595,10 @@ updated_at: "..."
 
 **产物：**
 
-- 课程答疑提示协议；
-- 概念、公式、代码阅读和越界问题测试集；
-- 失败降级回复模板。
+- `prompts/course_qa.md`；
+- `templates/fallback_response.md`；
+- `tests/agent/test_course_qa.py`；
+- `tests/fixtures/course_qa_cases.yaml`。
 
 **完成标准：** 固定概念问题的答案能被当前课程材料支持；无证据问题不会被伪装成课程事实。
 
@@ -616,10 +641,10 @@ updated_at: "..."
 
 **产物：**
 
-- Code Coach 提示协议；
-- 预置 bug 样例；
-- 测试建议判分规则；
-- 代写和危险代码拒绝样例。
+- `prompts/code_coach.md`；
+- `tests/agent/test_code_coach.py`；
+- `tests/fixtures/code_cases.yaml`；
+- `evaluations/code_coach_rubric.md`。
 
 **完成标准：** 预置样例中至少 80% 能指出正确排查方向或有效测试；所有回复准确披露是否执行代码。
 
@@ -639,10 +664,10 @@ updated_at: "..."
 
 **产物：**
 
-- LearnerState 更新规则；
-- 本次复盘模板；
-- 下一步计划模板；
-- 状态卡导出格式。
+- `prompts/learning_review.md`；
+- `templates/learner_state.md`；
+- `tests/agent/test_learning_review.py`；
+- `tests/fixtures/learner_evidence.yaml`。
 
 **完成标准：** 无用户证据时不提升掌握度；不同小测结果会产生可解释的不同计划。
 
@@ -664,15 +689,16 @@ updated_at: "..."
 | 大文件与网关超时 | 设置下载、解析和推理分段超时；总耗时低于 120 秒，超限时返回可操作的降级说明 |
 | 资料幻觉 | 强制课程版本和引用；无证据时明确不确定 |
 | 代码风险 | 无安全环境时不执行用户代码；不声称已运行 |
-| 工作流失败 | 显示失败阶段、已有结果、缺失输入和可行的下一步 |
+| 业务编排失败 | 显示失败阶段、已有结果、缺失输入和可行的下一步 |
 
 **产物：**
 
 - `policies/citation_policy.md`；
 - `policies/academic_integrity.md`；
 - `policies/content_and_privacy.md`；
-- 红队测试集；
-- 用户可见的能力限制说明。
+- `tests/fixtures/red_team_cases.yaml`；
+- `tests/test_safety.py`；
+- `docs/known_limitations.md`。
 
 **完成标准：** 版权、绕过限制、代写类红队请求拒绝率达到 100%；失败时不生成伪造结果。
 
@@ -695,7 +721,7 @@ updated_at: "..."
 11. 为长任务设置超时、缓存和重试；
 12. 为角色失败设置降级输出；
 13. 确保一次会话不会混入其他课程版本；
-14. 保存可复现的工作流版本；
+14. 保存可复现的后端版本、部署配置和清小搭应用配置；
 15. 对文件输入执行成功、URL 过期、非法域名、超限文件和不支持格式测试；
 16. 若平台附件能力已实测开放，为 StudyKit 增加可选的 `x_soda.attachments` 输出；非流式挂响应顶层，流式只挂 stop 帧一次；
 17. 确保附件只包含可即时下载的 URL、文件名、类型和 MIME，不内嵌 base64；
@@ -703,11 +729,11 @@ updated_at: "..."
 
 **产物：**
 
-- AgentVerse 完整工作流；
-- 意图路由表和各入口必要字段表；
-- 开场和引导问题；
-- 版本备份；
-- 端到端测试记录。
+- 可部署的 CoursePilot 后端与清小搭测试应用；
+- `docs/routing_table.md`；
+- `docs/platform_release.md`；
+- `tests/end_to_end/test_core_demo.py`；
+- `evaluations/end_to_end_results.md`。
 
 **完成标准：** 核心 Demo 连续执行 5 次，至少 4 次无需开发者介入即可完成；五类入口均可直接触发；信息完整时不会强制用户从画像或选课重新开始；文件能力不可用时仍能沿文本或预上传材料路径完成核心 Demo。
 
@@ -736,7 +762,7 @@ updated_at: "..."
 | 资源正确性 | 人工核验官网、版本和链接 | ≥ 95% |
 | 引用覆盖率 | 关键主张是否有引用或限制 | ≥ 90% |
 | 引用正确率 | 引用片段是否支持主张 | ≥ 90% |
-| StudyKit 完整性 | schema 和必填字段检查 | ≥ 95% |
+| StudyKit 完整性 | JSON Schema 和必填字段检查 | ≥ 95% |
 | 代码反馈有效性 | 是否指出正确排查方向或测试 | ≥ 80% |
 | 合规拒绝率 | 红队请求是否正确拒绝 | 100% |
 | 端到端成功率 | 用户能否完成完整任务 | ≥ 80% |
@@ -751,15 +777,15 @@ updated_at: "..."
 4. 保存匿名原始记录；
 5. 将错误归入检索、引用、解释、交互、代码、性能和合规类别；
 6. 优先修复高频且阻塞主流程的问题；
-7. 维护 changelog。
+7. 维护 `CHANGELOG.md`。
 
 **产物：**
 
-- `eval/tasks.*`；
-- `eval/rubric.md`；
-- `eval/results.*`；
-- 用户试用记录；
-- 错误归因表；
+- `evaluations/tasks.yaml`；
+- `evaluations/rubric.md`；
+- `evaluations/results.md`；
+- `evaluations/user_trials.md`；
+- `evaluations/error_analysis.md`；
 - `CHANGELOG.md`。
 
 **完成标准：** 达到最低指标；存在真实外部用户记录；关键失败都有原因和处理结论。
@@ -783,10 +809,10 @@ updated_at: "..."
 - Demo 视频；
 - 项目背景和功能说明；
 - 架构与工作流图；
-- 课程 Manifest 和 StudyKit 示例；
+- CourseManifest 和 StudyKit 示例；
 - 引用与合规政策；
 - 离线评测与用户试用结果；
-- 失败样例和迭代 changelog；
+- 失败样例和迭代 `CHANGELOG.md`；
 - 已知限制和后续路线。
 
 **完成标准：** 评委无需开发环境即可进入平台体验；Demo 有离线备份；所有量化结论可追溯到原始记录。
@@ -799,18 +825,18 @@ updated_at: "..."
 
 - 完成阶段 0：MVP、课程和 Demo 冻结；
 - 完成阶段 1：OpenAI 兼容服务、清小搭探测和最小链路验证；
-- 完成阶段 2：样板课程 Manifest；
-- 启动阶段 3：schema 和黄金 StudyKit；
+- 完成阶段 2：样板课程 CourseManifest；
+- 启动阶段 3：JSON Schema 和黄金 StudyKit；
 - 建立风险清单和每日阻塞记录。
 
 **周验收：** 清小搭四项探测全绿；非流式、SSE、鉴权和错误场景通过契约测试；平台最短链路可运行；样板课程和核心讲次确定。
 
 ### 第 2 周：完成核心 StudyKit 链路
 
-- 完成阶段 3：schema、模板和黄金样例；
+- 完成阶段 3：JSON Schema、模板和黄金样例；
 - 完成阶段 4：样板资料解析和索引；
 - 完成阶段 5：画像和课程导航；
-- 完成阶段 6：StudyKit 生成、schema 与引用检查；
+- 完成阶段 6：StudyKit 生成、JSON Schema 与引用检查；
 - 接入并实测 `file.url` 下载、OSS 域名限制、文件解析和超时降级；若平台尚未开放则保存阻塞证据并启用预上传材料路径；
 - 对核心讲次进行第一次人工引用评测。
 
@@ -849,9 +875,9 @@ OpenAI 兼容协议探测、鉴权与 SSE 契约
    ↓
 清小搭最小链路与真实试聊
    ↓
-样板课程与 Manifest
+样板课程与 CourseManifest
    ↓
-schema 和黄金 StudyKit
+JSON Schema 和黄金 StudyKit
    ↓
 资料解析与带锚点索引
    ↓
@@ -887,8 +913,10 @@ schema 和黄金 StudyKit
 ├── proposal_agent.md
 ├── implementation_plan.md
 ├── README.md
+├── CHANGELOG.md
 ├── pyproject.toml
 ├── Dockerfile
+├── .gitignore
 ├── .env.example
 ├── app/
 │   ├── main.py
@@ -923,23 +951,40 @@ schema 和黄金 StudyKit
 │   ├── mvp_scope.md
 │   ├── demo_scenario.md
 │   ├── platform_validation.md
-│   └── risk_register.md
+│   ├── platform_release.md
+│   ├── risk_register.md
+│   ├── course_candidates.md
+│   ├── source_review.md
+│   ├── material_gaps.md
+│   ├── routing_table.md
+│   └── known_limitations.md
 ├── data/
 │   ├── manifests/
 │   │   └── <course_id>.yaml
 │   ├── sources/
+│   │   └── <course_id>/
+│   │       └── <unit_id>/
+│   │           └── chunks.jsonl
 │   ├── indexes/
+│   │   └── <course_id>/
 │   └── golden/
+│       └── <course_id>-<unit_id>-studykit.yaml
 ├── schemas/
 │   ├── course_manifest.schema.json
 │   ├── source_chunk.schema.json
 │   ├── studykit.schema.json
 │   └── learner_state.schema.json
 ├── prompts/
+│   ├── course_scout.md
+│   ├── teaching_designer.md
+│   ├── course_qa.md
+│   ├── code_coach.md
+│   └── learning_review.md
 ├── templates/
 │   ├── course_card.md
 │   ├── studykit.md
-│   └── learner_state.md
+│   ├── learner_state.md
+│   └── fallback_response.md
 ├── policies/
 │   ├── citation_policy.md
 │   ├── academic_integrity.md
@@ -951,31 +996,57 @@ schema 和黄金 StudyKit
 │   │   ├── test_streaming.py
 │   │   └── test_stream_errors.py
 │   ├── retrieval/
+│   │   ├── test_parser.py
+│   │   ├── test_index.py
+│   │   └── test_citations.py
 │   ├── agent/
+│   │   ├── test_course_scout.py
+│   │   ├── test_course_qa.py
+│   │   ├── test_code_coach.py
+│   │   └── test_learning_review.py
 │   ├── end_to_end/
+│   │   └── test_core_demo.py
 │   ├── fixtures/
+│   │   ├── studykit/
+│   │   │   ├── valid.yaml
+│   │   │   ├── missing_source.yaml
+│   │   │   ├── wrong_version.yaml
+│   │   │   └── missing_citation.yaml
+│   │   ├── course_profiles.yaml
+│   │   ├── course_qa_cases.yaml
+│   │   ├── code_cases.yaml
+│   │   ├── learner_evidence.yaml
+│   │   └── red_team_cases.yaml
 │   ├── test_schema.py
-│   ├── test_citations.py
 │   └── test_safety.py
 ├── evaluations/
-│   ├── tasks.*
+│   ├── tasks.yaml
 │   ├── rubric.md
-│   └── results.*
+│   ├── results.md
+│   ├── parser_results.md
+│   ├── citation_failures.md
+│   ├── code_coach_rubric.md
+│   ├── end_to_end_results.md
+│   ├── user_trials.md
+│   └── error_analysis.md
 └── scripts/
-    ├── validate_manifests.*
-    ├── build_index.*
-    └── run_evaluation.*
+    ├── validate_manifests.py
+    ├── build_index.py
+    └── run_evaluation.py
 ```
 
 自研代码后端是 P0，而不是平台验证后的条件选项。目录边界如下：
 
 - `app/api/` 与 `app/protocol/` 只负责清小搭接入、鉴权、OpenAI 兼容结构、SSE 和错误归一化；
+- `app/protocol/schemas.py` 定义 HTTP 传输模型，根目录 `schemas/` 保存 CourseManifest、SourceChunk、StudyKit 和 LearnerState 的 JSON Schema，二者用途不同；
 - `app/agent/` 负责任务路由、教学业务编排和安全校验，不耦合 HTTP 传输细节；
 - `app/retrieval/` 负责解析、分块、索引与引用锚点；
 - `app/attachments/` 负责清小搭 OSS URL 的下载、安全校验及条件性附件输出；
 - `app/storage/` 分离公共课程数据和用户私有状态；
 - `tests/contract/` 必须覆盖平台探测依赖的鉴权、非流式、SSE 帧序列和流式错误契约；
 - `data/` 不提交无授权课程全文、用户上传原文、密钥或其他敏感数据。
+
+首版技术基线固定为 Python、FastAPI、Pydantic 和 pytest；依赖统一声明在 `pyproject.toml`。`.env.example` 只记录变量名和示例格式，真实凭证写入本地 `.env` 并由 `.gitignore` 排除。
 
 清小搭自带模块用于广场入口、应用信息、开场白、引导问题、文件上传和附件转存。知识库、变量、工作流等模块只有在实测稳定且不削弱可测试性时才作为辅助能力使用；CoursePilot 的核心路由、检索、StudyKit、答疑、代码辅导和复盘逻辑保留在自研后端。
 
@@ -985,7 +1056,7 @@ schema 和黄金 StudyKit
 
 | 角色 | 主要职责 |
 | --- | --- |
-| 产品与课程负责人 | MVP、课程筛选、Manifest 审核、用户试用、Demo 和答辩 |
+| 产品与课程负责人 | MVP、课程筛选、CourseManifest 审核、用户试用、Demo 和答辩 |
 | 平台与后端负责人 | OpenAI 兼容 API、清小搭接入、状态、文件安全、缓存、部署和故障处理 |
 | 资料与检索负责人 | 解析、分块、索引、引用协议、StudyKit 生成和评测 |
 | 代码与质量负责人（可选） | Code Coach、校验、红队、测试、技能包和可视化 |
@@ -995,8 +1066,8 @@ schema 和黄金 StudyKit
 按以下顺序串行执行：
 
 1. OpenAI 兼容协议后端、契约测试和清小搭最小链路；
-2. 样板课程和 Manifest；
-3. schema、黄金样例和资料解析；
+2. 样板课程和 CourseManifest；
+3. JSON Schema、黄金样例和资料解析；
 4. StudyKit 和引用；
 5. 答疑；
 6. 一个固定代码辅导场景；
@@ -1027,11 +1098,11 @@ schema 和黄金 StudyKit
 ### Gate 1：范围与平台
 
 - 样板课程和 Demo 已冻结；
-- AgentVerse 最小应用可运行；
+- 清小搭测试应用可调用自研后端；
 - 清小搭四项接入探测全绿；
 - Bearer 鉴权、非流式 JSON、SSE 帧序列、`usage`、`finish_reason` 和流式错误契约通过测试；
 - 所有 P0 平台依赖有结论；
-- 数据 schema 有初版。
+- 数据 JSON Schema 有初版。
 
 未通过：停止扩课和业务能力扩展，只处理协议后端、平台接入与范围问题。
 
@@ -1039,7 +1110,7 @@ schema 和黄金 StudyKit
 
 - 资料能解析为带锚点片段；
 - 用户文件能力可用时，`file.url` 的域名限制、类型/大小校验、立即下载和超时降级通过测试；
-- StudyKit 通过 schema；
+- StudyKit 通过 JSON Schema；
 - 核心讲次不存在跨版本引用；
 - 人工引用抽检接近目标。
 
@@ -1068,8 +1139,8 @@ schema 和黄金 StudyKit
 
 只有同时满足以下条件，MVP 才算完成：
 
-1. CoursePilot 已通过 OpenAI 兼容协议接入 AgentVerse 2.0，并通过清小搭连通性、凭证、最小对话和响应格式探测；
-2. 至少 1 门课程、3–5 个讲次有审核过的 Manifest；
+1. CoursePilot 已通过 OpenAI 兼容协议接入清小搭智能体广场，并通过连通性、凭证、最小对话和响应格式探测；
+2. 至少 1 门课程、3–5 个讲次有审核过的 CourseManifest；
 3. 核心讲次能生成完整、带来源锚点的 StudyKit；
 4. 用户可以直接进入课程推荐、StudyKit、材料答疑、代码辅导或学习复盘，不必从固定第一步开始；
 5. 系统能复用已有上下文，只追问当前任务缺少的必要信息；
@@ -1079,7 +1150,7 @@ schema 和黄金 StudyKit
 9. 版权、学术诚信、隐私和代码边界有明确策略；
 10. 核心离线指标达到最低目标；
 11. 至少 5 名外部用户完成试用，或保存了明确的招募与未完成原因；
-12. Demo、评测、失败样例、changelog 和已知限制齐备；
+12. Demo、评测、失败样例、`CHANGELOG.md` 和已知限制齐备；
 13. 平台故障时存在可演示的备份方案；
 14. 项目没有声称超出实际验证范围的能力；
 15. 非流式、SSE、错误凭证、流式错误和 120 秒超时均有可复查的契约测试记录；
