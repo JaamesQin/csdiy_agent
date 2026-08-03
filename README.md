@@ -66,7 +66,7 @@ P0 接入契约包括：
 
 ## 当前阶段
 
-截至 2026-07-31，项目处于“阶段 1 本地协议实现完成、等待清小搭生产接入验证”阶段：
+截至 2026-08-03，项目处于“阶段 1 本地协议实现完成、StudyKit 验证切片完成、等待清小搭生产接入验证”阶段：
 
 | 项目 | 状态 |
 | --- | --- |
@@ -75,14 +75,14 @@ P0 接入契约包括：
 | 清小搭接入协议调研 | 已完成 |
 | 自研后端架构与仓库结构 | 已完成最小实现 |
 | OpenAI 兼容 API 实现 | 已完成 |
-| Bearer、JSON、SSE 和错误契约测试 | 已完成，36 项测试通过 |
+| Bearer、JSON、SSE 和错误契约测试 | 已完成；全量 45 项测试通过 |
 | 本地聊天测试界面 | 已完成 |
 | 云端部署方式 | 已确认，等待生产版本部署 |
 | 首个模板课程与核心讲次冻结 | 已完成：MIT 6.7960，Lecture 2 和 8 为核心 Demo |
 | CourseManifest 与来源审核 | 已完成初稿 |
 | Lecture 2 黄金 StudyKit | v0.1 已通过 Schema、引用、术语、公式方向复核和人工批准 |
 | Lecture 8 StudyKit | v0.1 已完成 Schema、引用、术语、公式方向、练习事实性复核和人工批准 |
-| SourceChunk Schema 与 PDF 页级解析 | 已完成；Lecture 2、8 已生成分页 chunks |
+| SourceChunk Schema 与 PDF 页级解析 | 已完成；Lecture 2、8 的 chunks 已在本地生成并通过校验，未随公开仓库上传 |
 | 线上检索与 RAG 接入 | 尚未开始 |
 | 清小搭接入探测与试聊 | 尚未开始 |
 | 端到端 Demo、评测和用户试用 | 尚未开始 |
@@ -123,7 +123,7 @@ uvicorn app.main:app --host 127.0.0.1 --port 8000
 pytest -q
 ```
 
-当前测试基线为 `36 passed`，覆盖鉴权、非流式 JSON、SSE 帧顺序、流式错误、严格参数校验、启动安全、静态界面和真实本地 HTTP 并发请求。
+当前测试基线为 `45 passed`，覆盖鉴权、非流式 JSON、SSE 帧顺序、流式错误、严格参数校验、启动安全、静态界面、真实本地 HTTP 并发请求，以及 SourceChunk/StudyKit 解析、Schema、引用和渲染。
 
 ## MVP 范围
 
@@ -164,4 +164,4 @@ pytest -q
 
 ## 开发状态说明
 
-仓库已经包含阶段 1 的最小 OpenAI 兼容服务、课程 Manifest 初稿、StudyKit/SourceChunk Schema、PDF 页级解析器、Lecture 2/8 分页数据、Lecture 2 StudyKit 学习者视图与无状态单题点评组件。线上 RAG、对话路由、未收录资料入口、答疑、代码辅导和学习复盘仍属于后续阶段。
+仓库已经包含阶段 1 的最小 OpenAI 兼容服务、课程 Manifest 初稿、StudyKit/SourceChunk Schema、PDF 页级解析器、Lecture 2/8 的黄金 StudyKit 与无状态单题点评组件。Lecture 2/8 的原始 PDF 和抽取 chunks 仅保留在本地，用于重新生成和验证；线上 RAG、对话路由、未收录资料入口、答疑、代码辅导和学习复盘仍属于后续阶段。
