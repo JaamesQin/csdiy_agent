@@ -1,0 +1,183 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://coursepilot.local/schemas/studykit.schema.json",
+  "title": "CoursePilot StudyKit",
+  "type": "object",
+  "required": [
+    "studykit_version",
+    "status",
+    "course_id",
+    "course_version",
+    "unit_id",
+    "title",
+    "scope",
+    "learning_objectives",
+    "prerequisites",
+    "outline",
+    "core_concepts",
+    "glossary",
+    "learning_sequence",
+    "practice",
+    "practice_feedback_policy",
+    "citations",
+    "review",
+    "limitations"
+  ],
+  "properties": {
+    "studykit_version": {"type": "string", "minLength": 1},
+    "status": {"enum": ["draft", "reviewed", "published"]},
+    "course_id": {"type": ["string", "null"]},
+    "course_version": {"type": ["string", "null"]},
+    "unit_id": {"type": "string", "minLength": 1},
+    "title": {"type": "string", "minLength": 1},
+    "scope": {
+      "type": "object",
+      "required": ["included_sources", "citation_anchor_types"],
+      "properties": {
+        "included_sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["source_id", "title", "type", "sha256"],
+            "properties": {
+              "source_id": {"type": "string", "minLength": 1},
+              "title": {"type": "string", "minLength": 1},
+              "type": {"type": "string", "minLength": 1},
+              "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+            },
+            "additionalProperties": true
+          }
+        },
+        "citation_anchor_types": {
+          "type": "array",
+          "items": {"enum": ["page", "heading"]}
+        }
+      },
+      "additionalProperties": true
+    },
+    "learning_objectives": {"type": "array", "minItems": 1},
+    "prerequisites": {"type": "object"},
+    "prerequisite_check": {"type": "array"},
+    "outline": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["order", "topic", "pages", "purpose"],
+        "properties": {
+          "order": {"type": "integer", "minimum": 1},
+          "topic": {"type": "string", "minLength": 1},
+          "pages": {"type": "string", "pattern": "^\\d+(?:[–-]\\d+)?$"},
+          "purpose": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": false
+      }
+    },
+    "core_concepts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "term_en", "term_zh", "claim_type", "explanation", "citations"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "term_en": {"type": "string", "minLength": 1},
+          "term_zh": {"type": "string", "minLength": 1},
+          "claim_type": {"enum": ["source_summary", "source", "explanation", "inference"]},
+          "explanation": {"type": "string", "minLength": 1},
+          "citations": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"$ref": "#/$defs/pageCitation"}
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "glossary": {"type": "array"},
+    "common_misconceptions": {"type": "array"},
+    "learning_sequence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["step", "activity", "duration_minutes"],
+        "properties": {
+          "step": {"type": "integer", "minimum": 1},
+          "activity": {"type": "string", "minLength": 1},
+          "duration_minutes": {"type": "integer", "minimum": 1},
+          "concept_explanation": {"type": "string"},
+          "source_pages": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "practice": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "level",
+          "question",
+          "hint",
+          "deliverable",
+          "expected_evidence",
+          "evaluation",
+          "source_pages"
+        ],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "level": {"type": "string", "minLength": 1},
+          "question": {"type": "string", "minLength": 1},
+          "hint": {"type": "string", "minLength": 1},
+          "deliverable": {"type": "string", "minLength": 1},
+          "expected_evidence": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+          "evaluation": {
+            "type": "object",
+            "required": ["full_credit", "partial_credit"],
+            "properties": {
+              "full_credit": {"type": "string", "minLength": 1},
+              "partial_credit": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": false
+          },
+          "source_pages": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "integer", "minimum": 1}
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "practice_feedback_policy": {
+      "type": "object",
+      "required": ["scope", "persistence", "aggregate_accuracy", "aggregate_mastery"],
+      "properties": {
+        "scope": {"const": "current_answer_only"},
+        "persistence": {"const": "none"},
+        "aggregate_accuracy": {"const": "disabled"},
+        "aggregate_mastery": {"const": "disabled"}
+      },
+      "additionalProperties": true
+    },
+    "citations": {"type": "array", "minItems": 1},
+    "review": {"type": "object"},
+    "limitations": {"type": "array", "items": {"type": "string"}}
+  },
+  "$defs": {
+    "pageCitation": {
+      "type": "object",
+      "required": ["source_id", "page"],
+      "properties": {
+        "source_id": {"type": "string", "minLength": 1},
+        "page": {"type": "integer", "minimum": 1}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": true
+}
