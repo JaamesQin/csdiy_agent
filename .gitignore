@@ -11,3 +11,14 @@ htmlcov/
 /0720线上说明会.pptx
 /openai-compatible-agent-integration-guide.md
 /多模态附件对端接口文档.md
+
+# Downloaded course packages and generated source chunks are reproducible
+# local artifacts.  Do not publish them by accident.
+/data/raw/
+/data/sources/
+
+# Future private material and runtime-generated storage.
+/data/private/
+/data/uploads/
+/storage/
+/artifacts/

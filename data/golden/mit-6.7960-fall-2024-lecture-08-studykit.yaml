@@ -1,0 +1,627 @@
+studykit_version: "0.1"
+status: reviewed
+course_id: mit-6.7960-fall-2024
+course_version: fall-2024
+unit_id: lecture-08
+title: "Lecture 8: Transformers"
+language: zh-CN
+generated_at: "2026-08-03"
+core_demo: true
+estimated_study_time_minutes: 220
+estimated_study_time_status: manually_estimated
+
+scope:
+  summary: "本学习包围绕 token、attention、self-attention、位置编码和 Transformer 架构组织第八讲内容。"
+  included_sources:
+    - source_id: mit-6.7960-f24-lecture-08-slides
+      title: "Lecture 8: Transformers"
+      type: pdf
+      local_path: data/raw/mit-6.7960/fall-2024/site/static_resources/mit6_7960_f24_lec8.pdf
+      official_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/resources/mit6_7960_f24_lec8_pdf/
+      sha256: e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca
+  excluded_sources:
+    - captions
+    - VTT and SRT files
+    - video transcripts
+    - video metadata
+    - third-party reading bodies
+    - homework and solutions
+  citation_anchor_types:
+    - page
+
+learning_objectives:
+  - id: obj-01
+    objective: "解释 token 如何把输入数据组织为可操作的向量表示。"
+    evidence_required: "能够说明 token 的 code vector、token 矩阵 T 的形状，以及 tokenization 如何把输入映射为 token。"
+  - id: obj-02
+    objective: "区分固定参数的 token mixing 与数据依赖的 attention mixing。"
+    evidence_required: "能够解释 W 与 attention matrix A 的区别，并写出加权组合的基本形式。"
+  - id: obj-03
+    objective: "用 query、key、value 解释 self-attention 的计算路径。"
+    evidence_required: "能够写出 Q、K、V、A 和 Z_out 的形状关系，并说明 softmax 权重如何产生。"
+  - id: obj-04
+    objective: "描述 multihead self-attention 和 Transformer block 的组成。"
+    evidence_required: "能够说明多个 attention head 如何并行、合并，以及 token-wise MLP、normalization 和 residual connection 的位置。"
+  - id: obj-05
+    objective: "解释 permutation equivariance、位置编码和 autoregressive mask 的关系。"
+    evidence_required: "能够区分置换等变与置换不变，并说明位置编码或 causal mask 解决什么问题。"
+  - id: obj-06
+    objective: "识别 self-attention、causal self-attention 和 cross-attention 的应用差异。"
+    evidence_required: "能够指出 query、key、value 分别来自哪些 token 集合，以及图像到文本架构中 cross-attention 的作用。"
+
+prerequisites:
+  status: manually_curated_from_slides
+  inherits_coursepilot_prerequisites: true
+  prerequisite_alignment_status: checked_against_practice
+  items:
+    - topic: "MLP 与 token-wise 线性层"
+      required_level: "能读懂线性层、非线性层以及对一组向量逐项应用同一函数。"
+    - topic: "向量、矩阵与点积"
+      required_level: "能判断矩阵乘法、转置和 dot product 的基本形状。"
+    - topic: "卷积网络与局部感受野"
+      required_level: "理解小卷积核带来的局部连接，以及堆叠层扩大感受野的方式。"
+    - topic: "基础张量形状操作"
+      required_level: "能读懂 token 维度、序列长度和批量维度的区别。"
+    - topic: "张量计算与 PyTorch 入门"
+      required_level: "能阅读 token 张量、形状操作和基本 attention 代码。"
+
+prerequisite_check:
+  - id: pre-01
+    question: "若有 N 个 token、每个 token 的 code vector 维度为 d，按本讲约定把它们堆成矩阵 T，T 的形状是什么？"
+    checks: "token_matrix_shape"
+    pass_evidence: "回答 T∈R^(N×d)，并说明每一行是一个 token 的转置向量。"
+    remediation: "复习讲义第 11–16 页的 token 表示和记号。"
+  - id: pre-02
+    question: "为什么 QK^T 可以表示 query 与 key 的两两相似度？"
+    checks: "dot_product_shapes"
+    pass_evidence: "说明 query 和 key 的最后维度相同，矩阵乘法结果包含每个 query 对每个 key 的点积。"
+    remediation: "复习向量点积、矩阵乘法和讲义第 29、32–34 页。"
+  - id: pre-03
+    question: "softmax 的输出为什么可以用作加权求和的权重？"
+    checks: "softmax_weights"
+    pass_evidence: "指出输出非负且归一化，因而可解释为对 value vectors 的加权系数。"
+    remediation: "复习 softmax 的定义以及讲义第 29、32–34 页。"
+
+outline:
+  - order: 1
+    topic: "Transformer 动机与三项创新"
+    pages: "2–9"
+    purpose: "理解 CNN 局部感受野难以高效建模远距离关系，以及 token、attention、位置编码的总体角色。"
+  - order: 2
+    topic: "Token 与 tokenization"
+    pages: "10–16"
+    purpose: "建立 token 作为向量化信息单元的表示和矩阵记号。"
+  - order: 3
+    topic: "Token mixing 与 token-wise nonlinearity"
+    pages: "17–24"
+    purpose: "把 Transformer 的两类基本操作与普通神经网络的线性层、逐元素非线性对应起来。"
+  - order: 4
+    topic: "Attention 与 query-key-value"
+    pages: "25–34"
+    purpose: "理解数据依赖的 attention matrix、QKV 投影、softmax 权重和 self-attention。"
+  - order: 5
+    topic: "Multihead self-attention 与 ViT block"
+    pages: "35–39"
+    purpose: "理解多头并行、输出合并、token norm、token-wise MLP 和 residual connection。"
+  - order: 6
+    topic: "Permutation equivariance 与 positional encoding"
+    pages: "40–47"
+    purpose: "解释 token 操作为什么保留置换等变，以及如何加入位置或坐标信息。"
+  - order: 7
+    topic: "Autoregressive modeling 与 causal attention"
+    pages: "48–53"
+    purpose: "理解训练时的并行预测、因果 mask 和 GPT 类模型的时间依赖。"
+  - order: 8
+    topic: "Cross-attention 与图像到文本"
+    pages: "54–55"
+    purpose: "理解不同 token 集合之间的 attention，以及图像编码器与文本解码器的连接。"
+
+core_concepts:
+  - id: concept-token
+    term_en: token
+    term_zh: token（令牌/向量化信息单元）
+    claim_type: source_summary
+    explanation: "本讲把 token 定义为封装了一组信息的向量化神经元集合；在后续 Transformer 层中，token 是主要操作对象，而不是单个标量神经元。"
+    teaching_note: "本 StudyKit 保留 token 这一工程中最常用的英文，首次出现补充“向量化信息单元”；它不等同于自然语言中的单个字符或词。"
+    citations:
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 11
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 15
+
+  - id: concept-token-matrix
+    term_en: token matrix
+    term_zh: token 矩阵
+    claim_type: source_summary
+    explanation: "若有 N 个 token、每个 token 的 code vector 维度为 d，本讲将每个 token 转置后作为一行，组成 T∈R^(N×d)。"
+    citations:
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 11
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 16
+
+  - id: concept-tokenization
+    term_en: tokenization
+    term_zh: tokenization（切分/标记化）
+    claim_type: source_summary
+    explanation: "Tokenization 把原始输入切分或投影为一组 token；例如将图像分成 patch，并用可学习的线性投影把每个 patch 映射到 token code vector。"
+    teaching_note: "这里的 tokenization 是模型输入表示步骤；在语言模型中，token 也可能来自字符、子词或词的编码。"
+    citations:
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 14
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 15
+
+  - id: concept-token-mixing
+    term_en: token mixing
+    term_zh: token mixing（token 混合）
+    claim_type: source_summary
+    explanation: "Token mixing 用权重对多个向量化 token 做线性组合；若输入为 T_in∈R^(N_in×d)，固定混合矩阵 W 可产生 T_out=W T_in。"
+    citations:
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 17
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 20
+
+  - id: concept-token-wise-nonlinearity
+    term_en: token-wise nonlinearity
+    term_zh: token-wise 非线性（逐 token 非线性）
+    claim_type: source_summary
+    explanation: "Token-wise nonlinearity 对每个 token 独立应用同一个非线性函数 Fθ；Fθ 常可取一个 MLP，因此它不会直接混合不同 token。"
+    citations:
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 18
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 19
+
+  - id: concept-attention
+    term_en: attention
+    term_zh: attention（注意力）
+    claim_type: source_summary
+    explanation: "Attention 是一种数据依赖的 token 线性组合：attention matrix A 不是固定自由参数，而是由输入数据经过函数计算得到，因此不同输入或问题可以选择不同的 token 权重。"
+    citations:
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 20
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 27
+
+  - id: concept-qkv
+    term_en: query-key-value attention
+    term_zh: query-key-value（QKV）注意力
+    claim_type: source_summary
+    explanation: "QKV attention 将 token code vector z 分别投影为 query q、key k 和 value v；query 与 key 的相似度决定 attention 权重，value 则被按这些权重混合。"
+    formula: "q=zW_q, k=zW_k, v=zW_v; A=softmax(QK^T/√d_q); Z_out=AV"
+    teaching_note: "d_q 是 query/key 的共同维度；具体实现可能使用缩放、mask 或其他数值处理。"
+    citations:
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 29
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 32
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 34
+
+  - id: concept-self-attention
+    term_en: self-attention
+    term_zh: self-attention（自注意力）
+    claim_type: source_summary
+    explanation: "Self-attention 让同一组输入 token 同时产生 query、key 和 value；每个 token 都可以根据对其他 token 的匹配结果，聚合整组 token 的信息。"
+    intuition: "一个 token 不必只依赖局部邻域，而可以动态选择当前输入中与它相关的其他 token。"
+    citations:
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 30
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 32
+
+  - id: concept-multihead
+    term_en: multihead self-attention
+    term_zh: multihead self-attention（多头自注意力，MSA）
+    claim_type: source_summary
+    explanation: "MSA 并行运行多个带独立 QKV 投影的 attention head，拼接各 head 的输出，再用可学习矩阵投影回目标 token 维度。"
+    citations:
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 36
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 37
+
+  - id: concept-transformer-block
+    term_en: Transformer block
+    term_zh: Transformer block（Transformer 模块）
+    claim_type: source_summary
+    explanation: "本讲展示的 Transformer block 以 self-attention 和 token-wise MLP 为核心，并可加入 token normalization 与 residual connection；多个 block 可以堆叠形成 ViT 等架构。"
+    citations:
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 36
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 38
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 39
+
+  - id: concept-permutation-equivariance
+    term_en: permutation equivariance
+    term_zh: 置换等变性
+    claim_type: source_summary
+    explanation: "对 token 顺序做置换后，Transformer 的输出会按同样置换重新排列；这称为 permutation equivariance，而不是输出完全不变的 permutation invariance。"
+    citations:
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 35
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 41
+
+  - id: concept-positional-encoding
+    term_en: positional encoding
+    term_zh: positional encoding（位置编码）
+    claim_type: source_summary
+    explanation: "由于 token mixing 和 token-wise 操作本身不携带 token 的绝对位置，位置编码把位置或坐标信息加入 token code vector，使模型能够利用空间或序列位置。"
+    citations:
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 42
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 43
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 44
+
+  - id: concept-causal-attention
+    term_en: causal attention
+    term_zh: causal attention（因果注意力）
+    claim_type: source_summary
+    explanation: "Causal attention 用 mask 阻止当前位置访问未来 token，使第 n 个输出只能依赖允许的当前或过去 token，从而支持 autoregressive prediction。"
+    citations:
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 48
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 50
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 52
+
+  - id: concept-cross-attention
+    term_en: cross-attention
+    term_zh: cross-attention（交叉注意力）
+    claim_type: source_summary
+    explanation: "Cross-attention 让一组 token 产生 query，另一组 token 产生 key 和 value；在图像到文本架构中，文本 decoder 可以通过它读取 image encoder 输出的 token。"
+    citations:
+      - source_id: mit-6.7960-f24-lecture-08-slides
+        page: 54
+
+glossary:
+  - term_en: token
+    term_zh: token
+    definition: "封装一组信息的向量化单元；本讲的 token 内部表示是 code vector。"
+  - term_en: code vector
+    term_zh: code vector（编码向量）
+    definition: "token 内部承载信息的向量表示。"
+  - term_en: tokenization
+    term_zh: tokenization（标记化）
+    definition: "把原始输入切分或投影为 token 集合的输入处理步骤。"
+  - term_en: attention matrix
+    term_zh: attention matrix（注意力矩阵）
+    definition: "描述 query 对各 key 权重的矩阵；在标准 attention 中通常按 query 行归一化。"
+  - term_en: query / key / value
+    term_zh: query / key / value（查询/键/值）
+    definition: "分别用于提出匹配需求、提供匹配特征和提供被加权聚合内容的三类投影向量。"
+  - term_en: softmax
+    term_zh: softmax
+    definition: "把一组分数转换为非负且和为 1 的权重，常用于归一化 attention scores。"
+  - term_en: receptive field
+    term_zh: 感受野
+    definition: "某个输出单元能够直接或间接影响到的输入区域。"
+  - term_en: permutation equivariance
+    term_zh: 置换等变性
+    definition: "输入 token 顺序被置换时，输出按同样规则置换，而不是保持同一个排列不变。"
+  - term_en: positional encoding
+    term_zh: 位置编码
+    definition: "注入 token 在空间或序列中位置的信息的表示。"
+  - term_en: autoregressive model
+    term_zh: autoregressive model（自回归模型）
+    definition: "按已生成或已观测的前序 token 预测后续 token 的模型。"
+  - term_en: causal mask
+    term_zh: causal mask（因果掩码）
+    definition: "禁止当前位置访问未来 token 的 attention 掩码。"
+  - term_en: residual connection
+    term_zh: residual connection（残差连接）
+    definition: "把模块输入绕过一段变换后与其输出相加的连接。"
+
+common_misconceptions:
+  - misconception: "Transformer 中的 token 就一定是一个词。"
+    correction: "Token 是模型内部的向量化信息单元；它可以来自词、子词、图像 patch、音频片段或其他输入切分。"
+    support:
+      - page: 11
+      - page: 14
+  - misconception: "Attention 只是固定的全连接权重矩阵。"
+    correction: "普通 token mixing 可以使用固定可学习矩阵 W；attention matrix A 由输入数据计算得到，会随输入变化。"
+    support:
+      - page: 20
+      - page: 27
+  - misconception: "Self-attention 只能关注附近 token。"
+    correction: "Self-attention 的每个 query 原则上可以与整组 token 的 key 匹配；是否限制范围取决于 mask 或具体架构。"
+    support:
+      - page: 30
+      - page: 32
+  - misconception: "Permutation equivariance 意味着输出完全不变。"
+    correction: "置换等变要求输出以同样方式重新排列；输出完全不变对应 permutation invariance。"
+    support:
+      - page: 41
+  - misconception: "只要使用 self-attention，模型就自动知道 token 的绝对位置。"
+    correction: "基础 token 操作不天然携带位置，需要位置编码、架构结构或因果 mask 等机制提供位置相关信息。"
+    support:
+      - page: 41
+      - page: 43
+      - page: 44
+  - misconception: "训练 autoregressive Transformer 时必须逐 token 串行计算。"
+    correction: "训练时可以对已知序列并行计算多个位置，再用 causal mask 防止每个位置读取未来 token；生成阶段通常才逐步采样。"
+    support:
+      - page: 48
+      - page: 50
+      - page: 52
+
+learning_sequence:
+  - step: 1
+    activity: "完成三个前置检查题。"
+    duration_minutes: 15
+  - step: 2
+    activity: "阅读第 2–16 页，理解 CNN 的局部性限制、tokenization 和 token 矩阵。"
+    duration_minutes: 35
+    concept_explanation: "Transformer 首先改变处理对象：把输入组织成 token 集合，并用 T∈R^(N×d) 表示 N 个向量化 token。"
+    source_pages: "2–16"
+  - step: 3
+    activity: "阅读第 17–24 页，比较 token mixing、token-wise nonlinearity 和普通神经网络层。"
+    duration_minutes: 25
+    concept_explanation: "token mixing 在 token 之间交换信息，token-wise 非线性独立变换每个 token；二者分别对应普通网络中的线性混合和逐神经元非线性。"
+    source_pages: "17–24"
+  - step: 4
+    activity: "阅读第 25–34 页，按形状推导 QKV attention 和 self-attention。"
+    duration_minutes: 40
+    concept_explanation: "Attention 用输入依赖的权重替代固定混合矩阵；QK^T 产生 query-key 匹配分数，softmax 后对 V 做加权求和。"
+    source_pages: "25–34"
+  - step: 5
+    activity: "阅读第 35–39 页，理解 MSA 和 ViT Transformer block 的数据流。"
+    duration_minutes: 25
+    concept_explanation: "多个 attention head 并行提取不同关系，再拼接并投影；token norm、token-wise MLP 和 residual connection 组成可堆叠的 Transformer block。"
+    source_pages: "35–39"
+  - step: 6
+    activity: "阅读第 40–47 页，区分 permutation equivariance、permutation invariance 和 positional encoding。"
+    duration_minutes: 25
+    concept_explanation: "没有额外位置信息时，token 操作对顺序置换保持等变；位置编码把空间或序列位置重新注入 token 表示。"
+    source_pages: "40–47"
+  - step: 7
+    activity: "阅读第 48–54 页，理解 causal attention、GPT 训练和 cross-attention。"
+    duration_minutes: 25
+    concept_explanation: "因果 mask 让训练时不同位置可以并行计算但不能读取未来；cross-attention 则把一组 token 的信息提供给另一组 token。"
+    source_pages: "48–54"
+  - step: 8
+    activity: "按需完成后面的 practice；每次作答后只获取针对本题的即时点评。"
+    duration_minutes: 30
+    concept_explanation: "练习覆盖 token 形状、attention 计算、QKV 来源、MSA、位置编码、因果 mask 和 cross-attention；系统不累计正确率或生成整套题的掌握度结论。"
+
+practice:
+  - id: practice-concept-01
+    level: concept
+    question: "CNN 的局部感受野为什么会使远距离 patch 之间的关系难以建模？Transformer 的 attention 针对这个限制提供了什么思路？"
+    hint: "比较浅层 CNN 的连接范围和 attention 的加权 token 汇聚。"
+    deliverable: "用两三句话说明限制和 attention 的基本解决思路。"
+    expected_evidence:
+      - "指出小卷积核或浅层堆叠主要连接局部区域。"
+      - "说明远距离信息需要扩大感受野或增加层数。"
+      - "指出 attention 可以根据输入对更广范围的 token 做加权汇聚。"
+    evaluation:
+      full_credit: "准确区分局部固定连接与输入依赖的跨 token 汇聚。"
+      partial_credit: "知道 attention 能看更远，但没有解释 CNN 的局部性原因。"
+    source_pages:
+      - 4
+      - 5
+      - 27
+
+  - id: practice-shape-01
+    level: implementation
+    setup:
+      - "N=5 个 token"
+      - "每个 token 的 code vector 维度 d=8"
+      - "query/key 维度 d_q=4"
+      - "value 维度 d_v=6"
+    question: "按本讲 T∈R^(N×d) 的行 token 约定，写出 T、Q、K、V、QK^T、A 和 Z_out 的形状，并说明 attention matrix A 中一行对应什么。"
+    hint: "先写 Q=T W_q、K=T W_k、V=T W_v，再进行矩阵乘法；A 的行对应 query，列对应 key。"
+    deliverable: "列出所有形状，并用一句话解释 A 的行列含义。"
+    expected_evidence:
+      - "T∈R^(5×8)，Q、K∈R^(5×4)，V∈R^(5×6)。"
+      - "QK^T 和 A∈R^(5×5)，Z_out=AV∈R^(5×6)。"
+      - "A 的第 i 行表示第 i 个 query 对 5 个 key 的权重。"
+    evaluation:
+      full_credit: "全部形状正确，并准确说明 query 行与 key 列的含义。"
+      partial_credit: "前向投影形状基本正确，但 QK^T、A 或 Z_out 的一个方向判断错误。"
+    source_pages:
+      - 11
+      - 16
+      - 32
+      - 34
+
+  - id: practice-attention-01
+    level: derivation
+    setup: |
+      有两个 key，某个 query 与它们的 scaled dot-product scores 为 [0, 0]。
+      对应 value vectors 为 v₁ 和 v₂。
+    question: "不需要计算小数，写出 softmax 后的 attention 权重，以及该 query 的输出向量。解释为什么两个 score 相同时输出是两个 value 的平均。"
+    hint: "softmax([0,0]) 会给两个位置相同的权重。"
+    deliverable: "写出权重和输出向量表达式，并说明对称性来源。"
+    expected_evidence:
+      - "权重为 [1/2, 1/2]。"
+      - "输出为 (v₁+v₂)/2。"
+      - "说明相同 score 经 softmax 后得到相同权重。"
+    evaluation:
+      full_credit: "权重、加权输出和原因均正确。"
+      partial_credit: "知道输出是加权和，但权重或平均关系说明不完整。"
+    source_pages:
+      - 29
+      - 32
+
+  - id: practice-qkv-01
+    level: concept
+    question: "在 self-attention、cross-attention 和普通固定 token mixing 中，分别说明 query、key、value 的来源或权重来源有什么不同。"
+    hint: "self-attention 的三者来自同一组 token；cross-attention 只要求 query 与 key/value 来自不同集合。"
+    deliverable: "分别写出三种机制的来源关系，并指出哪一种使用数据依赖的 attention matrix。"
+    expected_evidence:
+      - "self-attention 中 Q、K、V 都由同一组输入 token 投影得到。"
+      - "cross-attention 中 Q 来自一组 token，K 和 V 来自另一组 token。"
+      - "固定 token mixing 使用自由参数 W，而 attention 使用由输入计算出的 A。"
+    evaluation:
+      full_credit: "三种机制的来源和固定/数据依赖区别均清楚。"
+      partial_credit: "能区分 self-attention 与 cross-attention，但没有说清固定矩阵 W 与 A 的差别。"
+    source_pages:
+      - 20
+      - 27
+      - 32
+      - 54
+
+  - id: practice-architecture-01
+    level: implementation
+    question: "一个 ViT block 按以下结构组织：token normalization → MSA → residual connection → token normalization → token-wise MLP → residual connection。说明 MSA 与 token-wise MLP 各自改变什么，以及为什么两者都需要。"
+    hint: "一个操作混合 token，另一个操作逐 token 变换 code vector；先确认两个 residual connection 各自绕过哪一段变换。"
+    deliverable: "分别说明两类操作的信息流范围，并解释它们在 block 中的互补性。"
+    expected_evidence:
+      - "MSA 在不同 token 之间交换或汇聚信息。"
+      - "token-wise MLP 对每个 token 独立施加非线性变换。"
+      - "二者结合了跨 token 关系建模和单 token 表示变换。"
+    evaluation:
+      full_credit: "准确描述两类操作的范围和互补作用，并能对应到 ViT block。"
+      partial_credit: "知道 MSA 和 MLP 都是 Transformer 组件，但混淆了它们是否混合 token。"
+    source_pages:
+      - 36
+      - 38
+      - 39
+
+  - id: practice-permutation-01
+    level: transfer
+    question: "如果把输入 token 的行顺序打乱，基础 Transformer 的 token-level 输出会发生什么？为什么图像或序列任务通常还需要 positional encoding？"
+    hint: "区分“输出也按同样方式打乱”和“输出数值完全不变”；再联系图像坐标或序列顺序。"
+    deliverable: "解释 permutation equivariance，并说明位置编码注入了什么信息。"
+    expected_evidence:
+      - "输入行置换后，输出 token 也按相同置换排列。"
+      - "这不是 permutation invariance，输出顺序没有保持不变。"
+      - "位置编码向 token code vector 加入空间或序列位置，使模型利用位置信息。"
+    evaluation:
+      full_credit: "等变/不变区分准确，并说明位置编码的作用。"
+      partial_credit: "知道需要位置编码，但把 equivariance 说成输出完全不变。"
+    source_pages:
+      - 35
+      - 41
+      - 43
+      - 44
+
+  - id: practice-causal-01
+    level: code_reading
+    setup_code: |
+      import torch
+
+      n = 4
+      scores = torch.zeros(n, n)
+      future = torch.triu(torch.ones(n, n), diagonal=1).bool()
+      masked_scores = scores.masked_fill(future, float("-inf"))
+      allowed = masked_scores.isfinite()
+    question: "写出允许访问的位置模式：第 1、2、3、4 个 query 分别可以读取哪些 key。然后解释为什么训练时仍可并行计算，而生成时通常逐 token 进行。"
+    hint: "先看 torch.triu(..., diagonal=1) 标记了哪些未来位置，再看 masked_fill 如何把这些位置变成不可用。"
+    deliverable: "列出四行允许访问的 key 索引，并说明训练/生成的计算差异。"
+    expected_evidence:
+      - "第 1 个 query 只能读 key 1；第 2 个可读 1–2；第 3 个可读 1–3；第 4 个可读 1–4。"
+      - "causal mask 阻止未来位置的信息泄漏。"
+      - "训练时完整目标序列已知，mask 后可并行计算多个位置；生成时未来 token 需要逐步产生。"
+    evaluation:
+      full_credit: "访问模式、mask 目的和训练/生成区别均正确。"
+      partial_credit: "知道不能看未来，但访问行列方向或并行训练原因说明不完整。"
+    source_pages:
+      - 48
+      - 50
+      - 52
+
+  - id: practice-cross-attention-01
+    level: transfer
+    question: "图像到文本系统中，图像 encoder 输出 image tokens，文本 decoder 当前层输出 text tokens。若使用 cross-attention，哪一组 token 产生 Q，哪一组产生 K/V？这使 decoder 获得了什么信息？"
+    hint: "让文本 token 去读取图像 token；query 表示当前文本状态想找什么。"
+    deliverable: "写出 Q、K、V 的来源，并说明 cross-attention 在架构中的作用。"
+    expected_evidence:
+      - "Q 来自 text tokens。"
+      - "K 和 V 来自 image tokens。"
+      - "文本 decoder 可按当前文本状态选择并聚合图像信息，以生成后续文本 token。"
+    evaluation:
+      full_credit: "来源和信息流方向都正确，并能联系图像到文本任务。"
+      partial_credit: "知道两组 token 发生交互，但 Q 与 K/V 的来源方向写反或未解释作用。"
+    source_pages:
+      - 54
+
+practice_feedback_policy:
+  scope: current_answer_only
+  persistence: none
+  aggregate_accuracy: disabled
+  aggregate_mastery: disabled
+  feedback_should:
+    - "指出本次回答中已经正确的知识点。"
+    - "指出本次回答中最重要的错误或遗漏。"
+    - "给出能够帮助用户自行修正的简短说明。"
+    - "引用与本题相关的讲义页码。"
+  feedback_should_not:
+    - "保存或展示累计答题记录。"
+    - "统计总正确率、得分或通过题数。"
+    - "根据多题表现推断整体掌握度。"
+    - "因为表达格式、步骤数量或非关键代数失误判定知识未掌握。"
+
+citations:
+  - citation_id: cite-motivation
+    source_id: mit-6.7960-f24-lecture-08-slides
+    pages: "2–9"
+    supports: "CNN 局部性限制以及 token、attention、位置编码三项创新"
+  - citation_id: cite-tokens
+    source_id: mit-6.7960-f24-lecture-08-slides
+    pages: "11–16"
+    supports: "token、code vector、tokenization 和 token 矩阵记号"
+  - citation_id: cite-token-operations
+    source_id: mit-6.7960-f24-lecture-08-slides
+    pages: "17–24"
+    supports: "token mixing、token-wise nonlinearity、token nets 和 GNN 视角"
+  - citation_id: cite-attention-qkv
+    source_id: mit-6.7960-f24-lecture-08-slides
+    pages: "25–34"
+    supports: "attention、QKV、self-attention 和 attention matrix"
+  - citation_id: cite-msa-vit
+    source_id: mit-6.7960-f24-lecture-08-slides
+    pages: "35–39"
+    supports: "MSA、Transformer block、ViT、normalization 和 residual connection"
+  - citation_id: cite-positional
+    source_id: mit-6.7960-f24-lecture-08-slides
+    pages: "40–47"
+    supports: "permutation equivariance、位置编码和 Fourier positional codes"
+  - citation_id: cite-autoregressive
+    source_id: mit-6.7960-f24-lecture-08-slides
+    pages: "48–53"
+    supports: "autoregressive models、causal attention、GPT 训练和 mask"
+  - citation_id: cite-cross-attention
+    source_id: mit-6.7960-f24-lecture-08-slides
+    pages: "54–55"
+    supports: "图像到文本架构和 cross-attention"
+
+review:
+  human_review_status: approved
+  human_reviewed_at: "2026-08-03"
+  citation_review:
+    method: "Page mapping checked against Lecture 8 extracted chunks and rendered PDF contact sheets; formulas were checked against slides 11–18, 29, 32, 34, 36–44 and 52–54."
+    status: agent_visual_review_complete
+  terminology_review:
+    method: "Token、attention、QKV、self-attention、MSA、permutation equivariance、position encoding、causal mask and cross-attention retain common English names with Chinese explanations."
+    status: agent_consistency_check_complete
+  checks_completed:
+    - "Course, version, unit, source path, and source checksum match CourseManifest."
+    - "All citations use PDF page anchors; no timestamp anchors are present."
+    - "All cited page ranges were checked against Lecture 8 rendered PDF pages."
+    - "The token matrix convention T∈R^(N×d) and QKV matrix shapes were checked against slides 11, 16, 29, 32 and 34."
+    - "Self-attention, MSA, permutation equivariance, positional encoding, causal attention and cross-attention claims were checked against the corresponding slide figures."
+    - "Practice questions are knowledge-focused and do not expose expected evidence or evaluation criteria in the learner view."
+    - "Feedback policy is stateless and does not define aggregate accuracy or mastery."
+    - "Practice prerequisites were checked against the course-level recommended prerequisites and the Lecture 8 token/QKV and boolean-mask requirements."
+    - "All Lecture 8 practice statements were fact-checked against the cited slides; the ViT block order and token-level scope of permutation equivariance are explicit."
+  checks_remaining:
+    []
+
+limitations:
+  - "这是初稿，不替代原讲义。"
+  - "复杂公式、图形、attention heatmap 和矩阵方向应回看原 PDF；文本提取可能丢失视觉结构。"
+  - "‘token nets’ 是本讲材料中的工作术语，不是所有 Transformer 文献中的标准术语。"
+  - "教学补充不是 MIT 官方表述，已通过 teaching_note、claim_type 或 limitations 标记。"
+  - "不使用字幕、视频文字稿或时间戳引用。"
+  - "PDF 中部分图像和外部论文图表带有版权限制；StudyKit 仅做概念说明，不复制这些图像。"
+  - "不包含课程作业答案，也不应被用于生成可直接提交的答案。"

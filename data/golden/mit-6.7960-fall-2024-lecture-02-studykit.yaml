@@ -1,0 +1,533 @@
+studykit_version: "0.1"
+status: reviewed
+course_id: mit-6.7960-fall-2024
+course_version: fall-2024
+unit_id: lecture-02
+title: "Lecture 2: How to Train a Neural Net"
+language: zh-CN
+generated_at: "2026-08-01"
+core_demo: true
+estimated_study_time_minutes: 180
+estimated_study_time_status: manually_estimated
+
+scope:
+  summary: "本学习包围绕梯度下降、计算图、反向传播和可微编程组织第二讲内容。"
+  included_sources:
+    - source_id: mit-6.7960-f24-lecture-02-slides
+      title: "Lecture 2: How to Train a Neural Net"
+      type: pdf
+      local_path: data/raw/mit-6.7960/fall-2024/site/static_resources/mit6_7960_f24_lec2.pdf
+      official_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/resources/mit6_7960_f24_lec2_pdf/
+      sha256: a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006
+  excluded_sources:
+    - captions
+    - VTT and SRT files
+    - video transcripts
+    - video metadata
+    - third-party reading bodies
+    - homework and solutions
+  citation_anchor_types:
+    - page
+
+learning_objectives:
+  - id: obj-01
+    objective: "区分梯度下降、随机梯度下降和反向传播各自解决的问题。"
+    evidence_required: "能够分别说明梯度的计算、参数的更新以及批次（batch）对梯度估计的影响。"
+  - id: obj-02
+    objective: "把多层神经网络表示为由可微节点组成的计算图。"
+    evidence_required: "能够标出输入、参数、中间激活、输出和标量损失。"
+  - id: obj-03
+    objective: "使用链式法则解释梯度如何从损失沿计算图反向传播。"
+    evidence_required: "能够为链式计算和带分支的 DAG 写出局部梯度组合关系。"
+  - id: obj-04
+    objective: "描述一次完整训练迭代中的前向传播、反向传播和参数更新。"
+    evidence_required: "能够按正确顺序给出三个阶段，并说明每一阶段产生的数据。"
+  - id: obj-05
+    objective: "解释可微编程如何把模块化程序与基于梯度的优化连接起来。"
+    evidence_required: "能够指出可微节点、标量目标和可优化变量三项条件。"
+
+prerequisites:
+  status: manually_curated_from_slides
+  inherits_coursepilot_prerequisites: true
+  prerequisite_alignment_status: checked_against_practice
+  items:
+    - topic: "基础微积分与链式法则"
+      required_level: "能对复合标量函数求导，并理解偏导数。"
+    - topic: "梯度与梯度下降"
+      required_level: "知道梯度的方向含义和学习率的作用。"
+    - topic: "MLP 与常见非线性"
+      required_level: "能读懂 linear → ReLU → linear 的前向结构。"
+    - topic: "基础张量运算"
+      required_level: "能判断向量和矩阵乘法的基本形状。"
+    - topic: "张量计算与 PyTorch 入门"
+      required_level: "能阅读基本张量形状、自动微分和训练代码。"
+
+prerequisite_check:
+  - id: pre-01
+    question: "若 z=f(u)、u=g(x)，请写出 dz/dx 的链式法则。"
+    checks: "chain_rule"
+    pass_evidence: "写出 dz/dx=(dz/du)(du/dx)，并能说明求值点。"
+    remediation: "复习讲义第 32–34 页的矩阵微积分和链式法则。"
+  - id: pre-02
+    question: "给定标量损失 J(θ)，梯度下降的一步更新由哪两个量控制？"
+    checks: "gradient_descent"
+    pass_evidence: "指出梯度和学习率，并写出 θ←θ−η∇θJ。"
+    remediation: "复习讲义第 5–9 页。"
+  - id: pre-03
+    question: "对于 y=Wx，若 W∈R^(m×n)、x∈R^n，y 的形状是什么？"
+    checks: "tensor_shapes"
+    pass_evidence: "回答 y∈R^m。"
+    remediation: "复习向量、矩阵乘法和形状规则。"
+
+outline:
+  - order: 1
+    topic: "梯度下降与随机梯度下降（SGD）"
+    pages: "5–11"
+    purpose: "建立“如何用梯度更新参数”的优化背景。"
+  - order: 2
+    topic: "可微性、梯度行为与损失函数"
+    pages: "12–25"
+    purpose: "理解为什么深度学习依赖可微、连续且较平滑的计算。"
+  - order: 3
+    topic: "计算图与前向传播"
+    pages: "26–30"
+    purpose: "把复杂模型拆成可组合的局部函数。"
+  - order: 4
+    topic: "矩阵链式法则与通用反向传播"
+    pages: "32–44"
+    purpose: "从局部导数推导前向—反向算法。"
+  - order: 5
+    topic: "批次（batch）、线性层、ReLU 与 MLP 的反向传播"
+    pages: "45–51"
+    purpose: "把通用规则应用到常见神经网络层。"
+  - order: 6
+    topic: "DAG、分支、合并与参数共享"
+    pages: "52–55"
+    purpose: "理解非链式计算图中来自多条路径的梯度求和。"
+  - order: 7
+    topic: "可微编程"
+    pages: "56–63"
+    purpose: "把反向传播推广到模块化可微程序。"
+  - order: 8
+    topic: "反向传播练习"
+    pages: "71–80"
+    purpose: "通过具体计算图检验推导和更新能力。"
+
+core_concepts:
+  - id: concept-gradient-descent
+    term_en: gradient descent
+    term_zh: 梯度下降
+    claim_type: source_summary
+    explanation: "梯度下降使用目标函数关于参数的梯度决定局部下降方向，并由学习率控制每一步的尺度。"
+    intuition: "梯度回答“往哪个方向上升最快”，因此取负梯度进行局部下降。"
+    formula: "θ^(k+1) = θ^k - η ∇_θ J(θ^k)"
+    teaching_note: "这里采用常见的同形梯度记号 ∇_θJ，其形状与 θ 相同；θ 为向量时把梯度视为列向量。讲义将 ∂J/∂θ 写成行向量，因此第 39、42 页的更新式显式使用 (∂J/∂θ)^T；两种写法等价。"
+    citations:
+      - source_id: mit-6.7960-f24-lecture-02-slides
+        page: 8
+
+  - id: concept-sgd
+    term_en: stochastic gradient descent
+    term_zh: 随机梯度下降（SGD）
+    claim_type: source_summary
+    explanation: "严格意义的 SGD 每次用一个随机样本估计全数据梯度；实践中常把使用小批次的 mini-batch SGD 也简称为 SGD。批大小等于完整训练集规模时，则是全批量梯度下降（full-batch gradient descent）。"
+    intuition: "用计算成本更低但带有采样噪声的梯度估计，换取更频繁的参数更新。"
+    citations:
+      - source_id: mit-6.7960-f24-lecture-02-slides
+        page: 9
+
+  - id: concept-computation-graph
+    term_en: computation graph
+    term_zh: 计算图
+    claim_type: source_summary
+    explanation: "计算图把程序表示为函数变换构成的图；本讲主要处理节点可微的有向无环图。"
+    intuition: "把一个难以整体求导的模型拆成许多容易求局部导数的模块。"
+    citations:
+      - source_id: mit-6.7960-f24-lecture-02-slides
+        page: 26
+      - source_id: mit-6.7960-f24-lecture-02-slides
+        page: 27
+
+  - id: concept-forward-pass
+    term_en: forward pass
+    term_zh: 前向传播（forward pass）
+    claim_type: source_summary
+    explanation: "前向传播从输入开始逐层计算并保存中间激活，最终得到预测和损失。"
+    teaching_note: "保存中间激活是后续按链式法则计算局部导数的重要条件。"
+    citations:
+      - source_id: mit-6.7960-f24-lecture-02-slides
+        page: 28
+      - source_id: mit-6.7960-f24-lecture-02-slides
+        page: 42
+
+  - id: concept-backpropagation
+    term_en: backpropagation
+    term_zh: 反向传播
+    claim_type: source_summary
+    explanation: "反向传播从标量损失开始，按计算图的反向拓扑顺序复用链式法则，计算各层输入梯度和参数梯度。"
+    intuition: "每个模块只需知道上游梯度和自己的局部导数，就能把梯度继续传给前一模块。"
+    citations:
+      - source_id: mit-6.7960-f24-lecture-02-slides
+        page: 36
+      - source_id: mit-6.7960-f24-lecture-02-slides
+        page: 41
+      - source_id: mit-6.7960-f24-lecture-02-slides
+        page: 44
+
+  - id: concept-parameter-gradient
+    term_en: parameter gradient
+    term_zh: 参数梯度
+    claim_type: source_summary
+    explanation: "对一个通用层，反向计算既要得到传给输入的导数，也要得到目标函数关于该层参数的导数。讲义采用“输出对输入”的 Jacobian 布局，所以标量对向量的导数是行向量；工程框架通常把参数的 `.grad` 存成与参数同形的数组。"
+    citations:
+      - source_id: mit-6.7960-f24-lecture-02-slides
+        page: 38
+      - source_id: mit-6.7960-f24-lecture-02-slides
+        page: 41
+
+  - id: concept-gradient-summation-at-branches
+    term_en: gradient summation at branches
+    term_zh: 分支处的梯度求和
+    claim_type: source_summary
+    explanation: "当同一变量或共享参数沿多条路径影响损失时，总梯度是各路径贡献的和。"
+    intuition: "同一个量对结果产生了多次影响，每次影响都必须计入总导数。"
+    citations:
+      - source_id: mit-6.7960-f24-lecture-02-slides
+        page: 53
+      - source_id: mit-6.7960-f24-lecture-02-slides
+        page: 55
+
+  - id: concept-differentiable-programming
+    term_en: differentiable programming
+    term_zh: 可微编程
+    claim_type: source_summary
+    explanation: "可微编程把可微模块组合成程序，并通过反向传播相对于标量目标优化图中的变量或参数。"
+    citations:
+      - source_id: mit-6.7960-f24-lecture-02-slides
+        page: 56
+      - source_id: mit-6.7960-f24-lecture-02-slides
+        page: 57
+      - source_id: mit-6.7960-f24-lecture-02-slides
+        page: 61
+
+glossary:
+  - term_en: loss function
+    term_zh: 损失函数
+    definition: "度量模型输出与期望结果之间差异的函数；训练时通常将一个样本或一个批次上的损失汇总为标量。"
+  - term_en: objective function
+    term_zh: 目标函数
+    definition: "优化过程希望最小化或最大化的标量函数；它可以包含数据损失和正则化项等成分。"
+  - term_en: learning rate
+    term_zh: 学习率
+    definition: "控制一次梯度更新尺度的超参数。"
+  - term_en: batch
+    term_zh: 批次
+    definition: "一次训练迭代中共同进行前向与反向计算的一组样本，通常也直接写作 batch。"
+  - term_en: batch size
+    term_zh: 批大小
+    definition: "一个批次包含的样本数量，通常也直接写作 batch size。"
+  - term_en: mini-batch
+    term_zh: 小批次
+    definition: "训练集的一个非空真子集；使用小批次进行更新通常称为 mini-batch SGD。"
+  - term_en: Jacobian
+    term_zh: 雅可比矩阵
+    definition: "向量值函数的输出分量对输入分量偏导数组成的矩阵；本讲按“输出分量为行、输入分量为列”排列。"
+  - term_en: gradient
+    term_zh: 梯度
+    definition: "标量函数对各变量的偏导集合。本文用 ∇ 表示与变量同形的梯度；变量是向量时将其视为列向量。讲义的 ∂J/∂x 则按 Jacobian 约定写成行向量。"
+  - term_en: activation
+    term_zh: 激活值
+    definition: "计算图或神经网络层在前向传播中产生的中间输出。"
+  - term_en: directed acyclic graph
+    term_zh: 有向无环图
+    definition: "边有方向且不存在有向环的图，简称 DAG。"
+  - term_en: parameter sharing
+    term_zh: 参数共享
+    definition: "同一参数在计算图的多个位置被重复使用。"
+  - term_en: automatic differentiation
+    term_zh: 自动微分
+    definition: "由系统根据基本运算的局部导数和链式法则自动计算导数。"
+
+common_misconceptions:
+  - misconception: "反向传播就是梯度下降。"
+    correction: "反向传播负责计算梯度；梯度下降使用这些梯度更新参数。"
+    support:
+      - page: 44
+  - misconception: "调用 backward 后参数会自动更新。"
+    correction: "教学补充：backward 产生参数梯度，参数更新是独立步骤；具体框架还需要显式执行优化器更新。"
+    claim_type: teaching_explanation
+    support:
+      - page: 44
+  - misconception: "带分支的图只需选择一条路径传播梯度。"
+    correction: "所有影响损失的路径都贡献梯度；分支或参数共享处需要将各路径贡献求和。"
+    support:
+      - page: 53
+      - page: 55
+  - misconception: "自动微分等同于符号化简或有限差分。"
+    correction: "教学补充：自动微分沿实际基本运算组合链式法则；它不同于符号表达式化简和数值扰动估计。"
+    claim_type: teaching_explanation
+  - misconception: "只要函数几乎处处可微，梯度行为就一定适合训练。"
+    correction: "可微性之外，还需关注梯度消失、梯度爆炸和目标函数的平滑性。"
+    support:
+      - page: 22
+      - page: 23
+      - page: 24
+
+learning_sequence:
+  - step: 1
+    activity: "完成三个前置检查题。"
+    duration_minutes: 15
+  - step: 2
+    activity: "阅读第 5–30 页，理解梯度下降、SGD 和计算图的分工。"
+    duration_minutes: 35
+    concept_explanation: "梯度下降及其随机/小批量形式根据梯度更新参数；计算图则把模型拆成一组局部函数，为后续系统地计算这些梯度提供结构。"
+    source_pages: "5–30"
+  - step: 3
+    activity: "阅读第 32–44 页，理解链式法则如何形成通用反向传播算法。"
+    duration_minutes: 45
+    concept_explanation: "前向传播计算并保存中间值；反向传播从标量损失开始，把上游梯度与每个节点的局部导数组合，逐层得到输入梯度和参数梯度；参数更新是之后的独立步骤。"
+    source_pages: "32–44"
+  - step: 4
+    activity: "阅读第 45–55 页，理解反向传播在 MLP、分支 DAG 和共享参数中的形式。"
+    duration_minutes: 35
+    concept_explanation: "在线性层和 MLP 中，反向传播既产生传给前一层的梯度，也产生与参数形状一致的参数梯度；同一变量或共享参数通过多条路径影响损失时，各路径的梯度贡献必须相加。"
+    source_pages: "45–55"
+  - step: 5
+    activity: "阅读第 56–63 页，理解可微编程如何扩展神经网络训练思想。"
+    duration_minutes: 20
+    concept_explanation: "可微编程把可微模块组合成更一般的程序，再用一个标量目标和反向传播优化其中的变量或参数；关键不在模块是否名为“神经网络层”，而在计算路径是否能传递有用梯度。"
+    source_pages: "56–63"
+  - step: 6
+    activity: "按需完成后面的 practice；每次作答后只获取针对本题的即时点评。"
+    duration_minutes: 30
+    concept_explanation: "练习覆盖概念辨析、链式推导、DAG 迁移、代码阅读和调试设计；系统不累计正确率或生成整套题的掌握度结论。"
+
+practice:
+  - id: practice-concept-01
+    level: concept
+    question: "为什么说反向传播和梯度下降是训练流程中的两个不同阶段？"
+    hint: "分别写出两个阶段的输入和输出。"
+    deliverable: "说明两个阶段各自做什么，以及它们在训练流程中的关系。"
+    expected_evidence:
+      - "反向传播输入损失及计算图信息，输出参数梯度。"
+      - "梯度下降输入参数梯度和学习率，输出更新后的参数。"
+      - "按“前向传播→反向传播→参数更新”的顺序定位二者。"
+    evaluation:
+      full_credit: "准确说明反向传播计算梯度、梯度下降更新参数，并说明二者的先后关系。"
+      partial_credit: "知道二者不同，但没有准确说明输入、输出或顺序。"
+    source_pages:
+      - 8
+      - 44
+
+  - id: practice-derivation-01
+    level: derivation
+    question: "给定 u=ax、v=u²、J=v+b，写出 dJ/da，并明确每个局部导数。"
+    hint: "从 J 开始逆序写 dJ/dv、dv/du、du/da。"
+    deliverable: "给出 dJ/da 的推导，使链式法则的使用过程可检查。"
+    expected_evidence:
+      - "正确应用链式法则。"
+      - "列出 dJ/dv、dv/du 和 du/da。"
+      - "最终表达式与直接求导一致。"
+    evaluation:
+      full_credit: "局部导数、链式组合和最终表达式正确。"
+      partial_credit: "最终结果正确但跳过局部导数，或思路正确但存在一处代数错误。"
+    source_pages:
+      - 34
+      - 36
+
+  - id: practice-graph-01
+    level: transfer
+    question: "变量 x 同时进入 f(x) 和 g(x)，损失为 J=h(f(x),g(x))。说明 dJ/dx 如何组合。"
+    hint: "分别计算经过 f 和 g 两条路径的贡献。"
+    deliverable: "写出 dJ/dx，并解释两条路径的贡献如何组合。"
+    expected_evidence:
+      - "写出两条路径贡献之和。"
+      - "解释为什么不能只保留其中一条路径。"
+      - "能把同一规则迁移到共享参数 θ。"
+    evaluation:
+      full_credit: "表达式保留两条路径，并说明共享变量或参数处需要梯度累加。"
+      partial_credit: "知道需要求和，但表达式缺少一个局部导数。"
+    source_pages:
+      - 53
+      - 55
+
+  - id: practice-shape-01
+    level: implementation
+    setup:
+      - "x∈R⁴"
+      - "W₁∈R^(3×4)"
+      - "z=W₁x"
+      - "h=ReLU(z)"
+      - "W₂∈R^(2×3)"
+      - "ŷ=W₂h"
+      - "J=||ŷ-y||²，且 y∈R²"
+    question: "先写出 z、h 和 ŷ 的形状。再按讲义第 32–33、47–51 页的 Jacobian 约定，写出 ∂J/∂ŷ、∂J/∂h、∂J/∂W₂ 和 ∂J/∂W₁ 的形状；最后说明为什么讲义在参数更新时对 ∂J/∂Wᵢ 取转置，而 PyTorch 的 Wᵢ.grad 通常直接与 Wᵢ 同形。"
+    hint: "讲义把标量对向量的导数写成行向量，并在第 48–51 页用输入列向量乘以上游导数行向量。参数更新使用该结果的转置。"
+    deliverable: "分别给出前向变量、讲义记号下的反向导数形状，并解释讲义记号与框架同形梯度之间的转置关系。"
+    expected_evidence:
+      - "z、h∈R³，ŷ∈R²。"
+      - "按讲义约定，∂J/∂ŷ 为 1×2，∂J/∂h 为 1×3。"
+      - "按讲义第 48–51 页的外积顺序，∂J/∂W₂ 为 3×2，∂J/∂W₁ 为 4×3，分别与 W₂、W₁ 的转置同形。"
+      - "参数更新对上述导数取转置；PyTorch 的 Wᵢ.grad 采用与参数 Wᵢ 同形的布局，相当于直接存储讲义导数的转置。"
+    evaluation:
+      full_credit: "所问形状全部正确，并准确解释讲义 Jacobian 布局、更新式转置和框架同形梯度三者的关系。"
+      partial_credit: "前向形状正确，且知道存在转置约定，但一个反向形状或约定解释不完整。"
+    source_pages:
+      - 32
+      - 33
+      - 47
+      - 48
+      - 50
+      - 51
+
+  - id: practice-code-reading-01
+    level: code_reading
+    setup_code: |
+      import torch
+
+      w = torch.tensor(2.0, requires_grad=True)
+      x = torch.tensor(3.0)
+
+      loss1 = (w * x) ** 2
+      loss1.backward()
+      grad_after_first = w.grad.item()
+
+      loss2 = (w * x) ** 2
+      loss2.backward()
+      grad_after_second = w.grad.item()
+    question: "不运行代码，判断 grad_after_second 与 grad_after_first 的关系，并解释原因；然后写出使第二次反向传播只保留 loss2 梯度所需增加的一行代码及其位置。"
+    hint: "PyTorch 默认把新梯度累加到已有的 w.grad；联系共享参数多路径贡献相加的规则。"
+    deliverable: "说明两次记录的梯度关系、产生该现象的原因和必要的代码修改。"
+    expected_evidence:
+      - "先独立求出一次 loss 对 w 的梯度。"
+      - "指出第二次 backward 后梯度累加，而非覆盖。"
+      - "在构造或反向传播 loss2 前清空 w.grad。"
+    evaluation:
+      full_credit: "关系、原因和清零位置全部正确。"
+      partial_credit: "知道会累加，但没有正确计算关系或没有给出可执行的清零位置。"
+    claim_type: teaching_transfer
+    source_pages:
+      - 55
+
+  - id: practice-debugging-01
+    level: transfer
+    setup: |
+      一个 6 层 MLP 在第一个 batch 上得到以下日志：
+
+      loss = 2.31
+      activation_max_by_layer = [1.8, 3.6, 7.1, 14.4, 29.0, 58.2]
+      grad_norm_by_layer_from_output_to_input =
+        [3.1, 12.7, 51.4, 206.8, 829.5, 3317.2]
+
+      加入 gradient clipping(max_norm=1.0) 后训练不再出现 NaN，
+      但去掉 clipping 后问题立即重现。
+    question: "这些日志更支持什么初步假设？你会检查哪些关键信息，以判断问题来自实现错误、输入尺度还是计算图本身的梯度爆炸？"
+    hint: "分别检查数据范围、逐层前向激活、局部导数/梯度、张量形状，并把 gradient clipping 视为缓解手段而不是正确性证明。"
+    deliverable: "给出初步判断，并说明能够区分上述原因的关键检查及其判断依据。"
+    expected_evidence:
+      - "识别激活和梯度随深度系统性增长的迹象。"
+      - "选择与三类可能原因相关的检查，并说明观察结果如何支持或排除某个原因。"
+      - "不把 clipping 后无 NaN 当作实现正确的充分证据。"
+    evaluation:
+      full_credit: "判断与日志一致，并能说明所选检查如何区分数据、计算图和实现问题；不把 clipping 当作正确性证明。"
+      partial_credit: "提出合理检查，但没有说明检查结果如何支持或排除某类原因。"
+    source_pages:
+      - 22
+      - 38
+      - 44
+
+  - id: practice-differentiable-programming-01
+    level: transfer
+    setup: |
+      程序接收向量 scores，先计算 index=argmax(scores)，
+      再只选择 values[index] 作为输出，最后与目标值计算平方损失。
+      希望通过梯度下降学习产生 scores 的上游参数。
+    question: "指出这条训练路径中的主要梯度障碍，并提出一种可微重写方案；说明重写后标量损失如何把梯度传回 scores 的上游参数。"
+    hint: "考虑用 softmax 权重对所有 values 做加权求和，而不是进行硬 argmax 选择。"
+    deliverable: "指出梯度障碍，给出一种明确的可微重写，并解释新的梯度路径。"
+    expected_evidence:
+      - "指出硬 argmax/离散索引阻断或无法提供有用梯度。"
+      - "提出明确的可微替代，而不是只写“换成可微函数”。"
+      - "重写后仍有标量损失，并说明链式法则经过哪些节点回到上游参数。"
+    evaluation:
+      full_credit: "正确定位障碍，给出可执行的可微重写，并完整解释梯度路径。"
+      partial_credit: "知道 argmax 有问题，但替代方案或梯度路径解释不完整。"
+    claim_type: teaching_transfer
+    source_pages:
+      - 12
+      - 13
+      - 56
+      - 57
+      - 61
+
+practice_feedback_policy:
+  scope: current_answer_only
+  persistence: none
+  aggregate_accuracy: disabled
+  aggregate_mastery: disabled
+  feedback_should:
+    - "指出本次回答中已经正确的知识点。"
+    - "指出本次回答中最重要的错误或遗漏。"
+    - "给出能够帮助用户自行修正的简短说明。"
+    - "引用与本题相关的讲义页码。"
+  feedback_should_not:
+    - "保存或展示累计答题记录。"
+    - "统计总正确率、得分或通过题数。"
+    - "根据多题表现推断整体掌握度。"
+    - "因为表达格式、步骤数量或非关键代数失误判定知识未掌握。"
+
+citations:
+  - citation_id: cite-gradient-descent
+    source_id: mit-6.7960-f24-lecture-02-slides
+    pages: "8–9"
+    supports: "梯度下降、SGD 和 batch size 的关系"
+  - citation_id: cite-loss-properties
+    source_id: mit-6.7960-f24-lecture-02-slides
+    pages: "22–25"
+    supports: "梯度裁剪以及可微、连续和平滑性的讨论"
+  - citation_id: cite-computation-graphs
+    source_id: mit-6.7960-f24-lecture-02-slides
+    pages: "26–30"
+    supports: "计算图和前向传播"
+  - citation_id: cite-chain-rule
+    source_id: mit-6.7960-f24-lecture-02-slides
+    pages: "32–44"
+    supports: "矩阵链式法则和通用反向传播算法"
+  - citation_id: cite-mlp-backprop
+    source_id: mit-6.7960-f24-lecture-02-slides
+    pages: "45–51"
+    supports: "batch、线性层、ReLU 和 MLP 反向传播"
+  - citation_id: cite-dag
+    source_id: mit-6.7960-f24-lecture-02-slides
+    pages: "52–55"
+    supports: "DAG、分支、合并和参数共享"
+  - citation_id: cite-differentiable-programming
+    source_id: mit-6.7960-f24-lecture-02-slides
+    pages: "56–63"
+    supports: "可微编程及其与反向传播的关系"
+
+review:
+  human_review_status: approved
+  human_reviewed_at: "2026-08-03"
+  citation_review:
+    method: "Page mapping checked against extracted chunks and visually reviewed against rendered PDF pages."
+    status: agent_visual_review_complete
+  checks_completed:
+    - "Course, version, unit, source path, and source checksum match CourseManifest."
+    - "All citations use PDF page anchors; no timestamp anchors are present."
+    - "Source summaries and teaching explanations are labeled separately where needed."
+    - "StudyKit v0.1 and every referenced SourceChunk pass their JSON Schema."
+    - "All StudyKit citations resolve to pages present in the Lecture 2 chunk set."
+    - "Cited page ranges were visually checked against rendered PDF pages."
+    - "Chinese terminology was normalized against common deep-learning usage; ambiguous terms retain English or abbreviations."
+    - "Matrix-calculus notation and tensor orientations were visually checked against slides 32–55 and worked example slides 71–80."
+    - "Practice prerequisites were checked against the course-level recommended prerequisites and the Lecture 2 code-reading/autograd and softmax/argmax requirements."
+  
+  checks_remaining: []
+
+limitations:
+  - "这是初稿，不替代原讲义。"
+  - "复杂公式、图形和矩阵方向应回看原 PDF；文本提取可能丢失视觉结构。"
+  - "教学补充不是 MIT 官方表述，已通过 claim_type 或 teaching_note 标记。"
+  - "不使用字幕、视频文字稿或时间戳引用。"
+  - "不包含课程作业答案，也不应被用于生成可直接提交的答案。"

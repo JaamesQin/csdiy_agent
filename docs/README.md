@@ -2,6 +2,8 @@
 
 ## 项目规划
 
+- [全局进度](project_status.md)
+- [GitHub 上传选择与发布前检查](../GITHUB_UPLOAD.md)
 - [项目 Proposal](../proposal_agent.md)
 - [完整实施计划](../implementation_plan.md)
 - [原始需求](../plan_agent.md)
@@ -10,6 +12,14 @@
 
 - [本地与平台验证记录](platform_validation.md)
 - [发布配置与检查清单](platform_release.md)
+
+## 阶段 2：模板课程
+
+- [MIT 6.7960 Fall 2024 模板课程范围](template_course_scope.md)
+- [MIT 6.7960 Fall 2024 来源审核](source_review.md)
+- [MIT 6.7960 Fall 2024 材料缺口](material_gaps.md)
+- [模板课程与用户资料双入口方案](material_source_strategy.md)
+- [StudyKit v0.1 冻结标准](studykit_standard.md)
 
 ## 参考材料
 

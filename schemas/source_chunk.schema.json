@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://coursepilot.local/schemas/source_chunk.schema.json",
+  "title": "CoursePilot SourceChunk",
+  "type": "object",
+  "required": [
+    "chunk_id",
+    "material_set_id",
+    "scope",
+    "course_id",
+    "course_version",
+    "unit_id",
+    "source_id",
+    "anchor",
+    "content",
+    "content_type",
+    "parser_version"
+  ],
+  "properties": {
+    "chunk_id": {"type": "string", "minLength": 1},
+    "material_set_id": {"type": "string", "minLength": 1},
+    "scope": {"enum": ["public", "private"]},
+    "owner_id": {"type": ["string", "null"]},
+    "course_id": {"type": ["string", "null"]},
+    "course_version": {"type": ["string", "null"]},
+    "unit_id": {"type": "string", "minLength": 1},
+    "source_id": {"type": "string", "minLength": 1},
+    "anchor": {
+      "type": "object",
+      "required": ["type", "value"],
+      "properties": {
+        "type": {"enum": ["page", "heading"]},
+        "value": {"oneOf": [{"type": "integer", "minimum": 1}, {"type": "string", "minLength": 1}]}
+      },
+      "additionalProperties": false
+    },
+    "heading": {"type": ["string", "null"]},
+    "content": {"type": "string"},
+    "content_type": {"enum": ["text", "code", "formula", "mixed"]},
+    "parser_version": {"type": "string", "minLength": 1},
+    "parse_warnings": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"scope": {"const": "public"}}},
+      "then": {"properties": {"owner_id": {"type": "null"}}}
+    },
+    {
+      "if": {"properties": {"scope": {"const": "private"}}},
+      "then": {"properties": {"owner_id": {"type": "string", "minLength": 1}}}
+    }
+  ],
+  "additionalProperties": false
+}
