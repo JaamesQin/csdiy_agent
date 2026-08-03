@@ -125,6 +125,33 @@ pytest -q
 
 当前测试基线为 `45 passed`，覆盖鉴权、非流式 JSON、SSE 帧顺序、流式错误、严格参数校验、启动安全、静态界面、真实本地 HTTP 并发请求，以及 SourceChunk/StudyKit 解析、Schema、引用和渲染。
 
+## 本地运行
+
+创建并启用虚拟环境：
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+设置本地接入密钥并启动服务：
+
+```bash
+export COURSEPILOT_API_KEY="$(openssl rand -hex 32)"
+uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+
+浏览器打开 `http://127.0.0.1:8000/`，在接入设置中填写同一个密钥，即可使用本地聊天测试界面。
+
+运行全部测试：
+
+```bash
+pytest -q
+```
+
+当前测试基线为 `36 passed`，覆盖鉴权、非流式 JSON、SSE 帧顺序、流式错误、严格参数校验、启动安全、静态界面和真实本地 HTTP 并发请求。
+
 ## MVP 范围
 
 最低可交付版本覆盖：
