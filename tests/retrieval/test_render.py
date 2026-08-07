@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from copy import deepcopy
 from pathlib import Path
 
 from app.retrieval.practice import (
@@ -45,3 +46,22 @@ def test_feedback_is_current_answer_only() -> None:
     assert "需要修正" in feedback
     assert "第 8、44 页" in feedback
     assert "正确率" not in feedback
+
+
+def test_user_render_preserves_markdown_latex() -> None:
+    studykit = deepcopy(load_yaml(STUDYKIT))
+    studykit["core_concepts"][0]["explanation"] = (
+        r"行内公式 $\theta_{k+1}=\theta_k-\eta\nabla J(\theta_k)$。"
+    )
+    studykit["practice"][0]["question"] = (
+        r"计算 $\frac{\partial J}{\partial \theta}$。"
+    )
+    studykit["practice"][0]["deliverable"] = (
+        "$$\\nabla_\\theta J=0$$"
+    )
+
+    rendered = render_studykit_markdown(studykit)
+
+    assert r"$\theta_{k+1}=\theta_k-\eta\nabla J(\theta_k)$" in rendered
+    assert r"$\frac{\partial J}{\partial \theta}$" in rendered
+    assert "$$\\nabla_\\theta J=0$$" in rendered

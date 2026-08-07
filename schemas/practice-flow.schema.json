@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://coursepilot.local/schemas/practice-flow.schema.json",
+  "title": "CoursePilot Practice and Flow",
+  "type": "object",
+  "required": ["practice", "learning_sequence", "limitations"],
+  "properties": {
+    "practice": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "required": ["id", "opportunity_id", "practice_type", "numeric_complexity", "objective_ids", "concept_ids", "requirement_ids", "control_ids", "level", "question", "hint", "deliverable", "expected_evidence", "evaluation", "source_pages"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "opportunity_id": {"type": "string", "minLength": 1},
+          "practice_type": {
+            "enum": [
+              "concept", "symbolic_derivation", "shape_reasoning", "transfer",
+              "implementation", "code_reading", "debugging", "interpretation",
+              "comparison", "application"
+            ]
+          },
+          "numeric_complexity": {"enum": ["none", "simple"]},
+          "objective_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true
+          },
+          "concept_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true
+          },
+          "requirement_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true
+          },
+          "control_ids": {
+            "type": "array",
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true
+          },
+          "level": {"type": "string", "minLength": 1},
+          "question": {"type": "string", "minLength": 1},
+          "hint": {"type": "string", "minLength": 1},
+          "deliverable": {"type": "string", "minLength": 1},
+          "expected_evidence": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "string", "minLength": 1}
+          },
+          "evaluation": {
+            "type": "object",
+            "required": ["full_credit", "partial_credit"],
+            "properties": {
+              "full_credit": {"type": "string", "minLength": 1},
+              "partial_credit": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": false
+          },
+          "source_pages": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "integer", "minimum": 1},
+            "uniqueItems": true
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "learning_sequence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["step", "activity_type", "objective_ids", "activity", "duration_minutes"],
+        "properties": {
+          "step": {"type": "integer", "minimum": 1},
+          "activity_type": {"enum": ["prerequisite", "content", "practice", "review"]},
+          "objective_ids": {
+            "type": "array",
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true
+          },
+          "activity": {"type": "string", "minLength": 1},
+          "duration_minutes": {"type": "integer", "minimum": 1},
+          "concept_explanation": {"type": "string"},
+          "source_pages": {"type": "string", "pattern": "^\\d+(?:[–-]\\d+)?$"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/limitation"}
+    }
+  },
+  "$defs": {
+    "limitation": {
+      "type": "object",
+      "required": ["code", "description", "scope", "chunk_ids"],
+      "properties": {
+        "code": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1},
+        "scope": {"enum": ["global", "stage_internal"]},
+        "chunk_ids": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

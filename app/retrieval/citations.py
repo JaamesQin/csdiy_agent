@@ -38,6 +38,15 @@ def iter_studykit_citations(studykit: dict[str, Any]) -> Iterable[tuple[str, str
     for index, practice in enumerate(studykit.get("practice", [])):
         for page in practice.get("source_pages", []):
             yield f"practice[{index}]", default_source, int(page)
+    for index, misconception in enumerate(
+        studykit.get("common_misconceptions", [])
+    ):
+        for support in misconception.get("support", []):
+            yield (
+                f"common_misconceptions[{index}]",
+                default_source,
+                int(support["page"]),
+            )
     for index, citation in enumerate(studykit.get("citations", [])):
         for page in _expand_pages(citation["pages"]):
             yield f"citations[{index}]", citation["source_id"], page

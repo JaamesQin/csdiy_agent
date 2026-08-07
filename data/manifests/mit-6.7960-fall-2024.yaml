@@ -139,6 +139,30 @@ units:
         index_allowed: true
         anchor_type: page
 
+  - unit_id: lecture-03
+    order: 3
+    title: "Approximation Theory"
+    official_resource_title: "Lecture 3: Approximation Theory"
+    description: "官方讲义：神经网络的函数逼近能力、宽度与深度。"
+    description_status: derived_from_official_resource_title
+    inherits_coursepilot_prerequisites: true
+    core_demo: false
+    sources:
+      - source_id: mit-6.7960-f24-lecture-03-slides
+        type: pdf
+        official_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/resources/mit6_7960_f24_lec3_pdf/
+        download_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/mit6_7960_f24_lec3.pdf
+        local_path: data/raw/mit-6.7960/fall-2024/site/static_resources/mit6_7960_f24_lec3.pdf
+        file_size: 5508739
+        page_count: 43
+        sha256: d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e
+        access_status: public
+        license_status: confirmed
+        license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+        processing_status: approved_with_manual_qa
+        index_allowed: true
+        anchor_type: page
+
   - unit_id: lecture-04
     order: 4
     title: "Architectures: Grids"
@@ -162,6 +186,78 @@ units:
         file_size: 5964064
         page_count: 84
         sha256: 8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463
+        access_status: public
+        license_status: confirmed
+        license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+        processing_status: approved_with_manual_qa
+        index_allowed: true
+        anchor_type: page
+
+  - unit_id: lecture-05
+    order: 5
+    title: "Graph Neural Networks"
+    official_resource_title: "Lecture 5: Graph Neural Networks"
+    description: "官方讲义：图神经网络、消息传递与表达能力。"
+    description_status: derived_from_official_resource_title
+    inherits_coursepilot_prerequisites: true
+    core_demo: false
+    sources:
+      - source_id: mit-6.7960-f24-lecture-05-slides
+        type: pdf
+        official_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/resources/mit6_7960_f24_lec5_pdf/
+        download_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/mit6_7960_f24_lec5.pdf
+        local_path: data/raw/mit-6.7960/fall-2024/site/static_resources/mit6_7960_f24_lec5.pdf
+        file_size: 3291729
+        page_count: 47
+        sha256: 3b5ab40fdbd43e7167bf5cf22797fb4aee944082ef6a3be8bf69865e8b45e1d1
+        access_status: public
+        license_status: confirmed
+        license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+        processing_status: approved_with_manual_qa
+        index_allowed: true
+        anchor_type: page
+
+  - unit_id: lecture-06
+    order: 6
+    title: "Neural Network Generalization"
+    official_resource_title: "Lecture 6: Neural Network Generalization"
+    description: "官方讲义：神经网络的泛化、归纳偏置与过参数化。"
+    description_status: derived_from_official_resource_title
+    inherits_coursepilot_prerequisites: true
+    core_demo: false
+    sources:
+      - source_id: mit-6.7960-f24-lecture-06-slides
+        type: pdf
+        official_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/resources/mit6_7960_f24_lec6_pdf/
+        download_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/mit6_7960_f24_lec6.pdf
+        local_path: data/raw/mit-6.7960/fall-2024/site/static_resources/mit6_7960_f24_lec6.pdf
+        file_size: 7436309
+        page_count: 66
+        sha256: 4d0ff8f34ed93ae58cb4eb9ddfa8f9eb08fa64f4cddae338f933da73356bb476
+        access_status: public
+        license_status: confirmed
+        license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+        processing_status: approved_with_manual_qa
+        index_allowed: true
+        anchor_type: page
+
+  - unit_id: lecture-07
+    order: 7
+    title: "Scaling Rules for Optimization"
+    official_resource_title: "Lecture 7: Scaling Rules for Optimization"
+    description: "官方讲义：优化方法以及宽度、深度缩放规则。"
+    description_status: derived_from_official_resource_title
+    inherits_coursepilot_prerequisites: true
+    core_demo: false
+    sources:
+      - source_id: mit-6.7960-f24-lecture-07-slides
+        type: pdf
+        official_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/resources/mit6_7960_f24_lec7_pdf/
+        download_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/mit6_7960_f24_lec7.pdf
+        local_path: data/raw/mit-6.7960/fall-2024/site/static_resources/mit6_7960_f24_lec7.pdf
+        file_size: 4285533
+        page_count: 32
+        sha256: d9137f6191087f9e089f8b145367872dc5616f2587829cc2880e769de961f850
         access_status: public
         license_status: confirmed
         license: https://creativecommons.org/licenses/by-nc-sa/4.0/

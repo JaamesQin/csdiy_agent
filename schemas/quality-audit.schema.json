@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://coursepilot.local/schemas/quality-audit.schema.json",
+  "title": "CoursePilot StudyKit Quality Audit",
+  "type": "object",
+  "required": ["verdict", "summary", "issues"],
+  "properties": {
+    "verdict": {"enum": ["pass", "fail"]},
+    "summary": {"type": "string", "minLength": 1},
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id", "severity", "category", "target_stage", "location",
+          "description", "evidence_chunk_ids", "observed", "expected",
+          "repair_instruction"
+        ],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "severity": {"enum": ["blocker", "warning"]},
+          "category": {
+            "enum": [
+              "unsupported_claim", "formula_orientation", "dimension_error",
+              "answer_inconsistency", "complex_numeric_practice",
+              "coverage_gap", "terminology_conflict", "stage_contradiction",
+              "pedagogy", "source_control_violation", "source_risk_ignored",
+              "excessive_workload", "formatting", "logical_error",
+              "missing_qualification", "unanswerable_practice",
+              "internal_field_leak"
+            ]
+          },
+          "target_stage": {"enum": ["evidence", "content", "practice", "assembly"]},
+          "location": {"type": "string", "minLength": 1},
+          "description": {"type": "string", "minLength": 1},
+          "evidence_chunk_ids": {
+            "type": "array",
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true
+          },
+          "observed": {"type": "string", "minLength": 1},
+          "expected": {"type": "string", "minLength": 1},
+          "repair_instruction": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

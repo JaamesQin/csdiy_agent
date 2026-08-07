@@ -184,6 +184,7 @@ pytest -q
 - [项目状态（开发者入口）](PROJECT_STATUS.md)
 - [全局进度](docs/project_status.md)
 - [StudyKit v0.1 冻结标准](docs/studykit_standard.md)
+- [StudyKit 分阶段生成与恢复](docs/studykit_generation.md)
 - [项目 Proposal](proposal_agent.md)
 - [完整实施计划](implementation_plan.md)
 - [平台验证记录](docs/platform_validation.md)

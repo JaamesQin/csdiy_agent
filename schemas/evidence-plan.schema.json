@@ -1,0 +1,211 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://coursepilot.local/schemas/evidence-plan.schema.json",
+  "title": "CoursePilot Evidence Plan",
+  "type": "object",
+  "required": [
+    "title",
+    "lecture_summary",
+    "page_segments",
+    "core_concept_candidates",
+    "evidence_controls",
+    "assessment_requirements",
+    "practice_opportunities",
+    "content_chunk_ids",
+    "practice_chunk_ids",
+    "limitations"
+  ],
+  "properties": {
+    "title": {"type": "string", "minLength": 1},
+    "lecture_summary": {"type": "string", "minLength": 1},
+    "page_segments": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "required": ["id", "topic", "pages", "summary", "chunk_ids"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "topic": {"type": "string", "minLength": 1},
+          "pages": {"type": "string", "pattern": "^\\d+(?:[–-]\\d+)?$"},
+          "summary": {"type": "string", "minLength": 1},
+          "chunk_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "core_concept_candidates": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "required": ["id", "term_en", "term_zh", "priority", "summary", "chunk_ids", "control_ids"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "term_en": {"type": "string", "minLength": 1},
+          "term_zh": {"type": "string", "minLength": 1},
+          "priority": {"enum": ["core", "supporting"]},
+          "summary": {"type": "string", "minLength": 1},
+          "chunk_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true
+          },
+          "control_ids": {
+            "type": "array",
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "evidence_controls": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "control_type", "statement", "required_action", "chunk_ids"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "control_type": {
+            "enum": [
+              "convention", "assumption", "ordering", "terminology",
+              "representation", "unit", "source_quality", "scope_boundary",
+              "other"
+            ]
+          },
+          "statement": {"type": "string", "minLength": 1},
+          "required_action": {
+            "enum": [
+              "follow", "state_explicitly", "qualify",
+              "verify_original", "omit_if_unresolved"
+            ]
+          },
+          "chunk_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "assessment_requirements": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "description", "concept_ids", "chunk_ids", "control_ids"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "description": {"type": "string", "minLength": 1},
+          "concept_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true
+          },
+          "chunk_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true
+          },
+          "control_ids": {
+            "type": "array",
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "practice_opportunities": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "required": ["id", "practice_type", "concept_ids", "requirement_ids", "description", "chunk_ids", "control_ids"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "practice_type": {
+            "enum": [
+              "concept", "symbolic_derivation", "shape_reasoning", "transfer",
+              "implementation", "code_reading", "debugging", "interpretation",
+              "comparison", "application"
+            ]
+          },
+          "concept_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true
+          },
+          "requirement_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true
+          },
+          "description": {"type": "string", "minLength": 1},
+          "chunk_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true
+          },
+          "control_ids": {
+            "type": "array",
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "content_chunk_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "practice_chunk_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "limitations": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/limitation"}
+    }
+  },
+  "$defs": {
+    "limitation": {
+      "type": "object",
+      "required": ["code", "description", "scope", "chunk_ids"],
+      "properties": {
+        "code": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1},
+        "scope": {"enum": ["global", "stage_internal"]},
+        "chunk_ids": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
