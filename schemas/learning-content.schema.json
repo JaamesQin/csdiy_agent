@@ -1,0 +1,181 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://coursepilot.local/schemas/learning-content.schema.json",
+  "title": "CoursePilot Learning Content",
+  "type": "object",
+  "required": [
+    "learning_objectives",
+    "prerequisites",
+    "prerequisite_check",
+    "outline",
+    "core_concepts",
+    "glossary",
+    "common_misconceptions",
+    "limitations"
+  ],
+  "properties": {
+    "learning_objectives": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "required": ["id", "objective", "evidence_required", "requirement_ids"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "objective": {"type": "string", "minLength": 1},
+          "evidence_required": {"type": "string", "minLength": 1},
+          "requirement_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "prerequisites": {
+      "type": "object",
+      "required": ["items"],
+      "properties": {
+        "status": {"type": "string"},
+        "inherits_coursepilot_prerequisites": {"type": "boolean"},
+        "prerequisite_alignment_status": {"type": "string"},
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["topic", "required_level"],
+            "properties": {
+              "topic": {"type": "string", "minLength": 1},
+              "required_level": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "prerequisite_check": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "question", "checks", "pass_evidence", "remediation"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "question": {"type": "string", "minLength": 1},
+          "checks": {"type": "string", "minLength": 1},
+          "pass_evidence": {"type": "string", "minLength": 1},
+          "remediation": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": false
+      }
+    },
+    "outline": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "required": ["order", "topic", "pages", "purpose"],
+        "properties": {
+          "order": {"type": "integer", "minimum": 1},
+          "topic": {"type": "string", "minLength": 1},
+          "pages": {"type": "string", "pattern": "^\\d+(?:[–-]\\d+)?$"},
+          "purpose": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": false
+      }
+    },
+    "core_concepts": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "required": ["id", "evidence_concept_id", "term_en", "term_zh", "claim_type", "explanation", "citations"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "evidence_concept_id": {"type": "string", "minLength": 1},
+          "term_en": {"type": "string", "minLength": 1},
+          "term_zh": {"type": "string", "minLength": 1},
+          "claim_type": {"enum": ["source_summary", "source", "explanation", "inference"]},
+          "explanation": {"type": "string", "minLength": 1},
+          "citations": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["source_id", "page"],
+              "properties": {
+                "source_id": {"type": "string", "minLength": 1},
+                "page": {"type": "integer", "minimum": 1}
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "glossary": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["term_en", "term_zh", "definition"],
+        "properties": {
+          "term_en": {"type": "string", "minLength": 1},
+          "term_zh": {"type": "string", "minLength": 1},
+          "definition": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": false
+      }
+    },
+    "common_misconceptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["misconception", "correction"],
+        "properties": {
+          "misconception": {"type": "string", "minLength": 1},
+          "correction": {"type": "string", "minLength": 1},
+          "claim_type": {"type": "string"},
+          "support": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["page"],
+              "properties": {"page": {"type": "integer", "minimum": 1}},
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/limitation"}
+    }
+  },
+  "$defs": {
+    "limitation": {
+      "type": "object",
+      "required": ["code", "description", "scope", "chunk_ids"],
+      "properties": {
+        "code": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1},
+        "scope": {"enum": ["global", "stage_internal"]},
+        "chunk_ids": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

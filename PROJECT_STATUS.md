@@ -1,238 +1,154 @@
 # CoursePilot 项目状态
 
-更新时间：2026-08-03
+更新时间：2026-08-08
 
-这份文档是给新加入项目的开发者看的。它回答三个问题：现在已经有什么、为什么还没有完成、下一步应该先做什么。
+这份文档是新开发者的快速入口。更完整的状态矩阵见
+[docs/project_status.md](docs/project_status.md)，生成管线说明见
+[docs/studykit_generation.md](docs/studykit_generation.md)。
 
 ## 一句话概括
 
-CoursePilot 已经完成了一个可复查的课程资料和 StudyKit 验证切片，但还没有把这条链路接成“用户对话 → 自动解析/检索 → 自动生成 StudyKit → 继续答疑”的运行时 Agent。
+CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生成内核，
+但尚未把资料权限、检索、生成、答疑、练习反馈和学习复盘接成面向用户的
+端到端课程 Agent。
 
-当前最成熟的流程是：
+当前最成熟的链路是：
 
 ```text
-MIT 6.7960 PDF
+课程 PDF
   → 页级 SourceChunk
-  → 带页码引用的 StudyKit
-  → Schema/引用/公式/术语/练习审核
-  → 学习者版 Markdown
-  → 单题即时点评
+  → EvidencePlan 与课程特定 evidence controls
+  → LearningContent
+  → PracticeFlow
+  → 单次 QualityAudit 与依赖顺序回修
+  → 确定性 StudyKit JSON/YAML/Markdown
+  → Schema、引用、渲染和内部字段检查
 ```
 
 ## 当前已经完成
 
-### 产品和课程范围
+### StudyKit 标准与黄金样例
 
-- 已确定项目面向中文 CS 自学者，接入清小搭的 OpenAI 兼容后端。
-- 支持两种入口：
-  - 从审核过的模板课程中推荐课程、提供官方下载链接、选择讲次；
-  - 处理用户自己上传但项目尚未预收录的资料。
-- 已确定公共模板资料、用户私有资料和学习状态必须隔离。
-- 首个模板课程已冻结为 MIT 6.7960 Deep Learning Fall 2024。
-- 选定 Lecture 1、2、4、8、9；Lecture 2 和 Lecture 8 是核心 Demo。
+- 已冻结学科无关的 StudyKit v0.1 标准、SourceChunk Schema 和学习者渲染规则。
+- Lecture 2 和 Lecture 8 的人工审核 StudyKit 继续作为质量评测样例；
+  黄金样例不得反向写入通用 Prompt。
+- 学习者版本隐藏 `expected_evidence`、评价规则和内部控制字段。
+- 单题反馈只评价当前回答，不保存累计正确率或推断长期掌握度。
 
-### StudyKit 标准
+### 分阶段自动生成器
 
-[StudyKit v0.1 冻结标准](docs/studykit_standard.md) 已确定：
+- 已实现 `StudyKitGenerator.generate(request, chunks)`。
+- Evidence 阶段从本讲 SourceChunks 发现概念、评估要求、练习机会、
+  `evidence_controls` 和来源风险。
+- Content 和 Practice 只能继承 EvidencePlan 中存在的课程约束；
+  术语翻译由 Content 统一负责。
+- Audit 只运行一次；blocker 按 Evidence → Content → Practice 的依赖顺序
+  各回修至多一次，不进行第二次语义 Audit。
+- Audit blocker 在修复前会做字段所有权归一化和去重；Evidence、Content、Practice
+  修复按依赖顺序传播。Audit 修复不会擅自改变原有 concept、requirement、control
+  和 opportunity ID；新增或删除身份字段会被确定性拒绝或恢复。
+- Audit 发现下游需要边界外的有效来源块时，会先修 EvidencePlan，
+  再修对应 Content 或 Practice。
+- 最终 StudyKit 由代码确定性组装，并校验 Schema、引用、顺序、唯一 ID、
+  Markdown 可渲染性和内部字段泄漏。
 
-- StudyKit 的必备字段和 Schema；
-- PDF 页码引用和 SourceChunk 结构；
-- 课程级前置知识与讲次前置知识的粒度；
-- practice 的题型、作答要求和隐藏评分依据；
-- `code_reading` 必须包含代码或明确伪代码；
-- 学习者版隐藏 `expected_evidence`、评分规则和默认提示；
-- 反馈只点评当前答案，不统计累计正确率或掌握度；
-- `draft`、`reviewed`、`published` 生命周期；
-- 公共/私有资料的权限和保留边界。
+### 模型调用可靠性
 
-### 资料解析和验证
+- 使用官方 DeepSeek OpenAI 兼容接口，阶段输出上限为 65,536 tokens。
+- 空正文最多重试三次，非法 JSON 最多重试两次，长度截断最多重试一次。
+- 重试保持同一 thinking 配置和完整上下文，不通过切换为 non-thinking
+  规避空正文，也不复用截断正文。
+- 每次调用保存 finish reason、token usage、request ID 和重试诊断。
+- Pipeline 当前版本为 `studykit-pipeline-v0.11-019`，运行版本为 `21`；
+  Prompt 当前版本为 `studykit-staged-v0.8-010`。
 
-- 已实现 PDF 页级解析器，每页生成一个 SourceChunk。
-- 每个 chunk 保留课程、版本、讲次、来源和一基页码锚点。
-- 已处理 PDF 隐藏公式文本和重复辅助文本问题。
-- Lecture 2 已生成 81 个 chunks。
-- Lecture 8 已生成 55 个 chunks，并验证了同一解析器可以复用。
-- 已实现 SourceChunk Schema、StudyKit Schema 和引用存在性校验。
+### Schema、工具与课程资料
 
-### 两个核心 StudyKit
+- 已新增 EvidencePlan、LearningContent、PracticeFlow、QualityAudit 四个 Schema。
+- 已提供生成 CLI、质量 profile 评估脚本和 Lecture 并发回归调度器。
+- MIT 6.7960 Fall 2024 manifest 已覆盖 Lecture 1–8 所需讲次元数据。
+- Outline 页码只要求存在于本讲输入 SourceChunks，不要求每页都进入
+  Content 的最小证据并集。
+- Practice 的 Prompt 仍要求 5–8 题；验证器允许合理超出，以避免模型偶发
+  数量偏差导致整讲失败。`simple` 题数量不设上限，但禁止复杂数值链。
 
-- Lecture 2 StudyKit 已人工审核并标记 `reviewed`。
-- Lecture 8 StudyKit 已人工审核并标记 `reviewed`。
-- 两份 StudyKit 都已经完成：
-  - Schema 校验；
-  - 页码引用校验；
-  - 术语一致性检查；
-  - 公式和矩阵方向检查；
-  - 练习题事实性检查；
-  - 学习者版渲染。
-- Lecture 2 和 Lecture 8 的练习均包含具体题目；代码阅读题包含真实代码或伪代码。
+### 测试状态
 
-### 当前代码组件
+- 当前自动化测试：`148 passed`。
+- 测试覆盖阶段 Schema、Evidence controls、确定性 chunk 并集、引用、
+  Markdown LaTeX、模型响应重试、恢复、单次 Audit 回修、非 CS 合成单元、
+  CLI 和质量 profile。
+- 最新一次全新 Lecture 1–8 外部并发回归（concurrency=8）结果为 `8/8`：
+  8 讲均生成 JSON/YAML/Markdown，均通过确定性验证，未解决 blocker 为 0。
+  详细结果见 `data/regression/studykit-v21-lectures-01-08/regression-summary.json`。
+- 回归耗时约 26 分 42 秒；每讲学习时间均为 180 分钟，练习数为 8–9 道。
+  共有 8 个 warning，全部由对应阶段模型修复；空响应重试 24 次后全部成功。
+- 8 讲最终质量人工评分平均 `91/100`：Lecture 1 93、Lecture 2 85、
+  Lecture 3 90、Lecture 4 91、Lecture 5 94、Lecture 6 91、Lecture 7 93、
+  Lecture 8 91。所有结果仍标记为 `repairs_applied_unverified`，因为设计上不做
+  二次语义 Audit。
+- 当前残留重点是 Lecture 2 离线 profile 缺少规范 `forward pass` 概念和
+  `transfer` 题型，以及 Lecture 8 对 LayerNorm 可学习参数的表述需要核对原始材料。
+
+## 当前代码入口
 
 | 功能 | 位置 |
 | --- | --- |
+| 分阶段生成器 | `app/generation/generator.py` |
+| DeepSeek 模型适配与重试 | `app/generation/model.py` |
+| 通用阶段 Prompt | `app/generation/prompts.py` |
+| EvidenceBundle | `app/generation/evidence.py` |
+| 阶段 Schema | `schemas/evidence-plan.schema.json` 等 |
+| StudyKit 生成 CLI | `scripts/generate_studykit.py` |
+| 八讲并发回归 | `scripts/run_lecture_regression.py` |
 | PDF 解析 | `app/retrieval/parser.py` |
-| SourceChunk 校验 | `app/retrieval/schema_validation.py`、`schemas/source_chunk.schema.json` |
-| StudyKit 引用校验 | `app/retrieval/citations.py` |
-| practice 展示和当前答案点评 | `app/retrieval/practice.py` |
-| 学习者版 Markdown 渲染 | `app/retrieval/render.py` |
-| 构建分页 chunks | `scripts/build_course_chunks.py` |
-| 校验 StudyKit | `scripts/validate_studykit.py` |
-| 渲染 StudyKit | `scripts/render_studykit.py` |
-| 课程身份和官方来源 | `data/manifests/mit-6.7960-fall-2024.yaml` |
-| Lecture 2 StudyKit | `data/golden/mit-6.7960-fall-2024-lecture-02-studykit.yaml` |
-| Lecture 8 StudyKit | `data/golden/mit-6.7960-fall-2024-lecture-08-studykit.yaml` |
+| 引用校验与渲染 | `app/retrieval/citations.py`、`app/retrieval/render.py` |
+| 生成器测试 | `tests/generation/` |
 
-## 还没有完成
-
-### 最大缺口：StudyKit 还不是自动生成的
-
-目前的 Lecture 2 和 Lecture 8 是人工制作的黄金样例。它们证明了“正确的 StudyKit 应该是什么样”，但还不能证明运行时 Agent 能够根据检索材料自动生成同等质量的 StudyKit。
-
-尚缺少：
-
-- `StudyKitGenerator`；
-- Teaching Designer 生成提示；
-- 根据 SourceChunk 组织证据并生成结构化 YAML 的接口；
-- 自动失败修正和资料不足降级；
-- 与两个黄金样例的自动评测。
-
-### 数据和检索层
-
-- CourseManifest 尚无正式 JSON Schema。
-- MaterialManifest、MaterialSet 尚无完整运行时实现。
-- LearnerState Schema 尚未实现。
-- 尚无线上关键词/向量检索索引。
-- Lecture 1、4、9 尚未生成 chunks。
-- HTML、Markdown、纯文本和用户文件输入尚未接入统一运行时管线。
-
-### 用户上传和权限
-
-设计已经确定，但运行时还没有完全实现：
-
-- 用户文件 URL 下载和安全检查；
-- `owner_id`、`session_id`、`material_set_id` 授权过滤；
-- 私有原文、派生 chunks 和索引的保留/删除；
-- 课程身份未知时继续处理；
-- 用户确认后才允许公共/私有混合检索。
-
-### Agent 对话能力
-
-尚未完成真正的课程 Agent 编排：
-
-- 课程推荐和讲次路由；
-- 根据当前任务只追问必要信息；
-- 材料范围内答疑；
-- 代码辅导；
-- 学习复盘；
-- StudyKit 生成与现有 OpenAI 兼容 API 的连接。
-
-### 平台和测试
-
-- 本地 OpenAI 兼容 API 已有基础实现和契约测试。
-- 清小搭生产连通性、文件输入、会话标识和状态能力尚未完成账号级实测。
-- retrieval 相关测试目前通过；仓库原有 Web UI 测试曾出现长时间不返回，需要单独定位。
-
-## 目前最难的地方
-
-### 1. PDF 不是可靠的纯文本来源
-
-公式、矩阵方向、图示关系和隐藏辅助文本可能在 PDF 文本层损坏。解析器只能提供候选文本，核心 StudyKit 仍然必须做视觉审核。
-
-### 2. 引用正确不等于解释正确
-
-页码存在性检查只能确认页面存在，不能证明主张真的被页面支持。因此核心概念、练习事实、术语和公式方向必须分别审核。
-
-### 3. 公共资料和用户资料不能混用
-
-用户上传文件可能没有课程名、版本或讲次。系统必须允许身份未知，同时确保不同用户和会话不能互相检索资料。
-
-### 4. 黄金样例和自动生成之间有鸿沟
-
-人工写好的 YAML 很容易看起来正确，但自动生成器还必须处理证据不足、错版本、引用缺失、公式歧义和过度抽象的练习题。
-
-### 5. 平台能力仍需实测
-
-OpenAI 兼容协议通过本地测试不代表清小搭已经开放文件上传、稳定会话 ID 或完整状态能力。
-
-## 下一步建议
-
-建议按以下顺序推进。
-
-### P0：完成可运行的 StudyKit 生成闭环
-
-1. 定义 CourseManifest、MaterialManifest、LearnerState 的最小 Schema。
-2. 实现 `MaterialSet` 授权过滤和页级检索接口。
-3. 实现 `StudyKitGenerator`，输入课程上下文和 SourceChunk，输出结构化 StudyKit 草稿。
-4. 串联 Schema、引用、权限、限制说明和学习者渲染检查。
-5. 用 Lecture 2 黄金样例回归，再用 Lecture 8 作为独立验证。
-
-### P1：做核心 Demo 端到端验收
-
-完成以下可演示流程：
-
-```text
-选择 MIT 6.7960
-  → 选择 Lecture 2 或 Lecture 8
-  → 读取/解析讲义
-  → 自动生成 StudyKit
-  → 追问一个概念
-  → 完成一道 practice
-  → 获得当前答案点评
-```
-
-同时修复或隔离 Web UI 长时间不返回的测试问题。
-
-### P2：接入未收录用户资料
-
-1. 实现安全文件输入和临时私有存储。
-2. 建立 MaterialManifest 和私有 MaterialSet。
-3. 完成 owner/session 授权过滤。
-4. 用一份未收录 PDF 验收“课程身份未知但可以继续生成 StudyKit”。
-
-### P3：扩展课程覆盖
-
-在 P0/P1 通过评测后，再生成 Lecture 1、4、9 chunks，并制作或自动生成相应 StudyKit。不要在自动生成和权限链路稳定前单纯增加讲次数量。
-
-## 下一阶段完成定义
-
-只有满足以下条件，才可以说“核心 StudyKit Agent 完成”：
-
-- 模板资料和用户资料都能统一映射为 MaterialSet；
-- 检索按课程、版本、讲次和权限过滤；
-- StudyKit 由生成器生成，而不是复制人工 YAML；
-- 每个输出通过 Schema 和引用校验；
-- 学习者版不泄漏内部评分信息；
-- Lecture 2 和 Lecture 8 各完成一次端到端自动生成；
-- practice 可以获得当前答案点评，且无累计正确率统计；
-- 身份未知、资料不足和解析失败时有明确降级说明。
-
-## 开发者快速入口
-
-安装依赖并运行 retrieval 测试：
+运行全部测试：
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-.venv/bin/pytest -q tests/retrieval
+.venv/bin/pytest -q
 ```
 
-校验现有两个 StudyKit：
+## 尚未完成
 
-```bash
-.venv/bin/python scripts/validate_studykit.py \
-  data/golden/mit-6.7960-fall-2024-lecture-02-studykit.yaml \
-  --chunks data/sources/mit-6.7960-fall-2024/lecture-02/chunks.jsonl
+1. 冻结并实现 CourseManifest、MaterialManifest、MaterialSet、LearnerState
+   和 TaskPlan 的运行时接口。
+2. 完成公共课程与用户私有资料的统一解析、存储、授权过滤、过期和删除。
+3. 建立按用户、会话、课程、版本和讲次过滤的检索层；先关键词检索，
+   再按需要增加向量检索和重排。
+4. 将 StudyKitGenerator、材料答疑、练习反馈和代码辅导接入现有
+   OpenAI 兼容对话 API，完成意图识别和任务路由。
+5. 修复 Lecture 2 的离线 profile 对齐问题，核对 Lecture 8 的 LayerNorm 表述，
+   并为 `repairs_applied_unverified` 结果安排人工语义复核。
+6. 实现最小学习闭环，记录用户确认的学习证据，并输出概念、实现、
+   迁移三个维度的复盘和下一步计划。
+7. 完成清小搭账号级能力实测、生产部署、日志脱敏、失败诊断和安全测试。
+8. 验收模板课程与未知私有资料两条端到端流程，再进行用户试用和 Demo 打磨。
 
-.venv/bin/python scripts/validate_studykit.py \
-  data/golden/mit-6.7960-fall-2024-lecture-08-studykit.yaml \
-  --chunks data/sources/mit-6.7960-fall-2024/lecture-08/chunks.jsonl
-```
+这些工作可以在核心数据接口冻结后并行开发；真正的串行依赖是：
+MaterialSet/权限与检索必须先提供稳定接口，Agent 编排随后接入，最后进行
+平台端到端和用户验收。
 
-完整规范和历史决策入口：
+## 主要风险
 
-- [StudyKit v0.1 冻结标准](docs/studykit_standard.md)
-- [全局进度](docs/project_status.md)
-- [完整实施计划](implementation_plan.md)
-- [文档索引](docs/README.md)
+- 引用页码存在不代表主张必然被来源支持，语义忠实性仍需模型审核和人工抽检。
+- PDF 文本层会损坏公式、图形和阅读顺序，必要视觉结构不能完全自动恢复。
+- 公共资料、用户私有资料和学习状态尚未形成完整运行时隔离。
+- 清小搭文件输入、稳定会话标识和文件保留能力仍需账号级实测。
+- v21 已完成新鲜模型全量回归并达到 8/8，但修复后未进行二次语义 Audit；
+  外部模型结果仍需人工复核后才适合作为最终教材。
+
+## 核心 Agent 完成定义
+
+只有同时满足以下条件，才可以称核心 CoursePilot Agent 完成：
+
+- 模板资料和私有资料统一映射为带权限的 MaterialSet；
+- 检索按 owner/session/material_set、课程、版本和讲次过滤；
+- 对话 API 可以路由生成、答疑、练习反馈、代码辅导和复盘；
+- StudyKit 自动生成并通过 Schema、引用、渲染和安全检查；
+- 模板课程和未知私有资料各完成一条端到端流程；
+- 资料不足、身份未知、解析失败和模型失败都有透明降级；
+- 清小搭生产入口、日志、安全和删除策略完成实测；
+- 有固定离线评测、失败记录和真实用户试用结果。

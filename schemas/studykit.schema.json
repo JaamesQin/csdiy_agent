@@ -56,8 +56,45 @@
       },
       "additionalProperties": true
     },
-    "learning_objectives": {"type": "array", "minItems": 1},
-    "prerequisites": {"type": "object"},
+    "learning_objectives": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "objective", "evidence_required"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "objective": {"type": "string", "minLength": 1},
+          "evidence_required": {"type": "string", "minLength": 1},
+          "requirement_ids": {
+            "type": "array",
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "prerequisites": {
+      "type": "object",
+      "required": ["items"],
+      "properties": {
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["topic", "required_level"],
+            "properties": {
+              "topic": {"type": "string", "minLength": 1},
+              "required_level": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    },
     "prerequisite_check": {"type": "array"},
     "outline": {
       "type": "array",
@@ -102,9 +139,20 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["step", "activity", "duration_minutes"],
+        "required": ["step", "activity_type", "objective_ids", "practice_ids", "activity", "duration_minutes"],
         "properties": {
           "step": {"type": "integer", "minimum": 1},
+          "activity_type": {"enum": ["prerequisite", "content", "practice", "review"]},
+          "objective_ids": {
+            "type": "array",
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true
+          },
+          "practice_ids": {
+            "type": "array",
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true
+          },
           "activity": {"type": "string", "minLength": 1},
           "duration_minutes": {"type": "integer", "minimum": 1},
           "concept_explanation": {"type": "string"},
@@ -148,6 +196,11 @@
             "type": "array",
             "minItems": 1,
             "items": {"type": "integer", "minimum": 1}
+          },
+          "requirement_ids": {
+            "type": "array",
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true
           }
         },
         "additionalProperties": true
@@ -164,8 +217,30 @@
       },
       "additionalProperties": true
     },
-    "citations": {"type": "array", "minItems": 1},
-    "review": {"type": "object"},
+    "citations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["citation_id", "source_id", "pages", "supports"],
+        "properties": {
+          "citation_id": {"type": "string", "minLength": 1},
+          "source_id": {"type": "string", "minLength": 1},
+          "pages": {"type": "string", "pattern": "^\\d+(?:[–-]\\d+)?$"},
+          "supports": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": true
+      }
+    },
+    "review": {
+      "type": "object",
+      "required": ["human_review_status"],
+      "properties": {
+        "human_review_status": {"type": "string", "minLength": 1},
+        "human_reviewed_at": {"type": ["string", "null"]}
+      },
+      "additionalProperties": true
+    },
     "limitations": {"type": "array", "items": {"type": "string"}}
   },
   "$defs": {

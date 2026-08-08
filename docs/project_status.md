@@ -1,203 +1,153 @@
 # CoursePilot 全局进度
 
-更新时间：2026-08-03
+更新时间：2026-08-08
 
 状态口径：
 
-- 已完成：已有可复查产物和验证记录。
-- 进行中：已有部分实现，但尚未达到发布门槛。
-- 待完成：设计或计划已确定，尚无完整可运行实现。
-- 阻塞：存在外部能力或未解决问题，当前路径不能直接关闭。
+- 已完成：已有实现、测试和可复查产物。
+- 进行中：核心实现存在，但尚未达到生产或端到端验收门槛。
+- 待完成：已有设计，尚无完整运行时实现。
+- 外部待确认：依赖清小搭账号或生产环境实测。
 
 ## 一、总体判断
 
-项目已经完成了“课程资料治理 + StudyKit 标准验证”的纵向切片，但还没有完成“最终 Agent 自动生成和对话服务”的端到端闭环。
+项目已经从“人工 StudyKit 样例和验证工具”推进到“自动分阶段生成内核”。
+当前生成器能够从 SourceChunks 建立 EvidencePlan，动态发现本讲课程约束，
+生成 Content 和 Practice，执行一次独立 Audit，并确定性输出
+StudyKit JSON/YAML/Markdown。
 
-当前最成熟的链路是：
+尚未完成的是产品运行时闭环：用户资料接入、MaterialSet 权限、在线检索、
+Agent 意图路由、材料答疑、学习状态、清小搭生产部署和真实用户验收。
+
+## 二、能力状态矩阵
+
+| 能力 | 当前状态 | 发布前缺口 |
+| --- | --- | --- |
+| StudyKit 标准 | 已完成 | 根据端到端使用情况做兼容性演进 |
+| SourceChunk/PDF 解析 | 已完成基础能力 | HTML、Markdown、纯文本和用户文件统一入口 |
+| 分阶段 StudyKitGenerator | 已完成 | v0.11-019 已完成 v21 新鲜全量模型回归；仍需人工语义复核 |
+| Evidence controls | 已完成 | 扩大非 CS 和来源冲突评测 |
+| DeepSeek 调用可靠性 | 已完成基础机制 | 生产速率、超时和成本监控 |
+| 单次 Audit 回修 | 已完成 | 已加入字段所有权归一化、去重、ID 身份保护和依赖传播 |
+| Schema/引用/渲染 | 已完成 | 加入在线权限与检索边界检查 |
+| CourseManifest | 有 YAML manifest | 正式 Schema、Catalog 和运行时 API |
+| MaterialManifest/MaterialSet | 待完成 | 存储、权限、过期、删除和混合授权 |
+| 检索 | 待完成 | 元数据过滤、关键词检索、可选向量检索 |
+| OpenAI 兼容 API | 有协议服务 | 接入真实课程 Agent 路由 |
+| 材料答疑/代码辅导 | 有设计和局部组件 | 运行时编排与端到端测试 |
+| LearnerState/复盘 | 待完成 | 最小 Schema、证据更新和删除能力 |
+| 清小搭接入 | 本地协议已验证 | 账号级文件、会话、超时和生产实测 |
+| 自动化测试 | 148 项通过 | 端到端、权限、安全和生产测试 |
+
+## 三、已经完成的生成闭环
 
 ```text
-MIT 6.7960 Fall 2024 PDF
-  → 页级 SourceChunk
-  → StudyKit YAML
-  → Schema/引用/术语/公式/练习检查
-  → 学习者 Markdown
-  → 无状态单题点评组件
+GenerationRequest + SourceChunks
+  → EvidenceBundle
+  → EvidencePlan
+  → LearningContent
+  → PracticeFlow
+  → QualityAudit
+  → 最多一次依赖顺序回修
+  → 确定性 StudyKit
+  → JSON Schema / citation / render validation
 ```
 
-其中 Lecture 2 和 Lecture 8 均已人工批准为 `reviewed`。目前的 StudyKit 是人工制作的黄金样例，不是由运行时 Teaching Designer 自动生成的结果。
+关键约束：
 
-## 二、已完成部分
+- 通用 Prompt 不包含特定讲次的 Jacobian、QKV 或矩阵布局事实。
+- 符号、术语、顺序、单位、表示和来源风险由 Evidence 阶段从资料发现。
+- 下游不能创造 EvidencePlan 中不存在的课程控制。
+- Practice 题型由资料和学习目标决定，CS 资料可以使用代码、调试和形式推理；
+  非 CS 资料不会被强制生成数学题或代码题。
+- `numeric_complexity` 只允许 `none/simple`；simple 数量不限，但每题必须轻量。
+- Audit 只运行一次；回修后明确标记为 `repairs_applied_unverified`，
+  仍需人工复核。
+- Audit blocker 在修复前按字段所有权归一化和规范位置去重；真实 assembly
+  问题不会提前阻断 Evidence、Content、Practice 模型修复。
+- Audit 修复保护原有 concept、requirement、control、opportunity ID；模型
+  擅自新增或删除身份字段时由代码恢复或拒绝，保留有效字段修改。
+- PracticeFlow/StudyKit 的学习顺序强制使用 `practice_ids`，所有练习至少出现
+  一次；非 practice 步骤使用空数组，review 可以重复引用。
 
-### 1. 产品和范围
+## 四、生成质量与回归状态
 
-- 已确定 CoursePilot 的目标、MVP 边界和清小搭 OpenAI 兼容接入方向。
-- 已确定模板课程和用户上传资料是两个平级入口。
-- 已确定支持“模板推荐 → 官方下载链接 → 选择讲次 → 解析/学习”，同时支持未收录资料直接进入。
-- 已确定公共模板资料、用户私有资料和用户学习状态必须隔离。
+Prompt 固定为 `studykit-staged-v0.8-010`，当前 Pipeline 为
+`studykit-pipeline-v0.11-019`，运行版本为 `21`。
 
-### 2. 首个模板课程
+最近一次使用冻结 Prompt 的 Lecture 1–8 八路并发回归（v21，concurrency=8）：
 
-- 已冻结 MIT 6.7960 Deep Learning Fall 2024。
-- 已选定 Lecture 1、2、4、8、9。
-- 已确定 Lecture 2 和 Lecture 8 为核心 Demo。
-- 已保存 CourseManifest 初稿、官方来源、下载页、版本和 checksum。
-- 已完成来源审核、版权边界和字幕/VTT/SRT 不支持范围记录。
+| 讲次 | 结果 | 初次 Audit | 最终状态 | 质量分 |
+| --- | --- | --- | --- | ---: |
+| Lecture 1 | 成功，8 题 | pass | repairs_applied_unverified | 93 |
+| Lecture 2 | 成功，8 题 | fail | repairs_applied_unverified | 85 |
+| Lecture 3 | 成功，9 题 | fail | repairs_applied_unverified | 90 |
+| Lecture 4 | 成功，8 题 | fail | repairs_applied_unverified | 91 |
+| Lecture 5 | 成功，8 题 | fail | repairs_applied_unverified | 94 |
+| Lecture 6 | 成功，8 题 | fail | repairs_applied_unverified | 91 |
+| Lecture 7 | 成功，8 题 | fail | repairs_applied_unverified | 93 |
+| Lecture 8 | 成功，8 题 | pass | repairs_applied_unverified | 91 |
 
-### 3. StudyKit 和资料标准
+总结果为 `8/8`，平均人工质量分为 `91/100`。回归耗时约 26 分 42 秒，
+每讲学习时间均为 180 分钟，未解决 blocker 为 0；8 个 warning 全部由对应阶段
+模型修复，空响应重试 24 次后全部成功。详细机器摘要见
+`data/regression/studykit-v21-lectures-01-08/regression-summary.json`。
 
-- 已冻结 [StudyKit v0.1 标准](studykit_standard.md)。
-- 已实现 StudyKit JSON Schema。
-- 已实现 SourceChunk JSON Schema。
-- 已确定页码引用、claim_type、教学解释、练习内部评分字段和学习者可见性规则。
-- 已确定前置知识采用课程级三类能力要求，避免按单题 API 过拟合。
-- 已确定 practice 采用具体问题、作答要求、隐藏证据和隐藏评价规则。
-- 已确定 `code_reading` 必须包含代码或明确伪代码。
-- 已确定单题反馈只针对当前答案，不保存累计正确率或掌握度。
+本轮完成的流程改进包括：
 
-### 4. 已实现的资料处理组件
+- 所有 blocker 先按字段所有权归一化和规范位置去重，再路由到 Evidence、
+  Content、Practice 或 Assembly；真实 assembly 问题不会提前阻断模型阶段。
+- Evidence → Content → Practice 依赖修复会自动传播；每阶段最多回修一次，
+  Audit 仍只执行一次。
+- Audit 修复保护原有 concept、requirement、control、opportunity ID；模型
+  擅自新增或删除身份字段时由代码恢复或拒绝，保留有效字段修改。
+- PracticeFlow/StudyKit 的学习顺序强制使用 `practice_ids`，所有练习必须至少
+  在学习路径出现一次；非 practice 步骤使用空数组，review 可以重复引用。
+- 标题优先使用 manifest/unit 的可信标题，内部 `EvidencePlan` 等标签不进入
+  学习者文本；外部回归 8 讲均未发现内部标签泄漏。
 
-- PDF 页级解析器已实现。
-- 页内重复隐藏文本清理已实现。
-- 一页一个 SourceChunk，使用一基页码锚点。
-- Lecture 2 已生成 81 个 chunks。
-- Lecture 8 已生成 55 个 chunks。
-- Lecture 8 已用于验证解析器复用，并修复了隐藏文本重复导致的单页文本膨胀问题。
-- StudyKit 引用存在性检查已实现。
-- 学习者 Markdown 渲染已实现。
-- practice prompt 和无状态当前答案点评组件已实现。
+这些修复已有 148 项自动化测试覆盖，并已通过 v21 新鲜外部全量回归；由于设计
+上不进行二次语义 Audit，`repairs_applied_unverified` 结果仍必须人工复核。
 
-### 5. 两个核心 Demo
+仍需关注的语义问题：
 
-- Lecture 2 StudyKit 已完成：
-  - Schema 校验；
-  - 页码引用校验；
-  - 术语一致性审核；
-  - Jacobian/梯度方向审核；
-  - 练习事实性审核；
-  - 学习者版渲染；
-  - 人工批准并标记 `reviewed`。
-- Lecture 8 StudyKit v0.1 已完成并批准：
-  - token、attention、QKV、MSA、位置编码、causal attention、cross-attention；
-  - Schema 校验；
-  - 页码引用校验；
-  - PDF 视觉页码核对；
-  - 练习事实性核对；
-  - code-reading causal mask 题；
-  - 学习者版渲染；
-  - 已人工批准并标记 `reviewed`。
+- Lecture 2 当前离线质量 profile 仍报告缺少规范 `forward pass` 概念和
+  `transfer` 题型；正文已有前向传播内容，但元数据/题型未完全对齐。
+- Lecture 3 的精确宽度公式和 Lecture 7 的 RMS/谱范数细节受 OCR 限制，
+  需要对照原始幻灯片。
+- Lecture 8 对 LayerNorm 是否包含可学习仿射参数的表述需要核对来源。
+- 所有修复后的产物必须进入人工语义复核队列；结构验证通过不等于语义二次审核通过。
 
-### 6. 当前质量记录
+## 五、下一阶段工作
 
-- [Lecture 2 数学复核](../evaluations/lecture_02_math_review.md)
-- [Lecture 2 术语复核](../evaluations/lecture_02_terminology_review.md)
-- [Lecture 2/8 练习事实核对](../evaluations/lecture_02_08_practice_fact_check.md)
-- [Lecture 2/8 前置知识对齐](../evaluations/lecture_02_08_prerequisite_alignment.md)
-- [Lecture 8 StudyKit 自查](../evaluations/lecture_08_studykit_self_check.md)
-- [PDF 解析复用报告](../evaluations/parser_results.md)
+1. 冻结 Manifest、MaterialSet、LearnerState 和 TaskPlan 的最小接口。
+2. 完成公共课程和私有用户资料的统一解析、存储、授权与删除。
+3. 建立带 owner/session/course/version/unit 过滤的检索层。
+4. 将生成、答疑、练习反馈和代码辅导接入 OpenAI 兼容对话 API。
+5. 修复 Lecture 2 离线 profile 对齐问题，核对 Lecture 8 LayerNorm 表述，
+   并完成 v21 产物的人工语义复核。
+6. 实现基于用户确认证据的最小学习状态与复盘。
+7. 完成清小搭实测、生产部署、日志脱敏和安全测试。
+8. 验收模板课程与未知私有资料两条端到端流程，开展用户试用。
 
-## 三、进行中或部分完成
+## 六、并行开发建议
 
-| 能力 | 当前状态 | 缺口 |
-| --- | --- | --- |
-| CourseManifest | 有 YAML 初稿 | 尚无正式 CourseManifest Schema 和自动校验 |
-| StudyKit | 两个黄金样例可校验、可渲染 | 尚无运行时自动生成器 |
-| PDF 解析 | Lecture 2/8 已完成 | Lecture 1/4/9 尚未生成 chunks；HTML/Markdown 尚未支持 |
-| 引用 | 页码引用与存在性检查已完成 | 尚未接入线上检索和问答路由 |
-| 前置知识 | 课程级和讲次级规则已冻结 | 尚未在课程推荐界面展示前置差距 |
-| API 服务 | OpenAI 兼容协议本地实现已有 | 尚未接入真实课程 Agent 路由 |
-| 测试 | retrieval 相关测试通过 | Web UI 测试曾出现长时间不返回，需单独修复/定位 |
+在核心 Schema 和接口冻结后，可分为四条并行工作流：
 
-## 四、尚未完成部分
+- Agent/API：意图路由、上下文管理和对话编排；
+- Material/Retrieval：资料输入、MaterialSet、权限和检索；
+- Quality/Evaluation：生成回归、语义审核、离线评测和红队；
+- Platform/Product：清小搭实测、部署、前端、Demo 和用户试用。
 
-### 1. 数据协议
-
-- CourseManifest JSON Schema；
-- MaterialManifest JSON Schema；
-- LearnerState JSON Schema；
-- 负例 fixtures：缺来源、错版本、缺引用、越权资料；
-- Manifest 自动校验和 Catalog 目录。
-
-### 2. 运行时资料管线
-
-- 用户文件 URL 下载和安全校验；
-- session/owner/material_set 的存储和授权过滤；
-- 私有原文、chunks、索引的保留和删除策略；
-- HTML、Markdown、纯文本和扫描 PDF 的处理边界；
-- 向量或关键词检索索引；
-- 公共/私有/混合 MaterialSet 的检索器。
-
-### 3. StudyKit 自动生成
-
-- Teaching Designer 生成提示和结构化输出接口；
-- 根据 SourceChunk 生成 StudyKit 草稿；
-- 自动补充或修正引用；
-- 失败时返回资料不足和限制，而不是编造；
-- 生成后自动 Schema/引用/安全检查；
-- 与 Lecture 2 黄金样例和 Lecture 8 人工样例的自动评测。
-
-### 4. Agent 对话闭环
-
-- 意图路由：推荐、解析、StudyKit、答疑、代码辅导、复盘；
-- 课程/版本/讲次上下文管理；
-- 当前任务所需字段检查和最小追问；
-- 模板资料和用户资料入口的统一编排；
-- 材料范围内答疑；
-- 代码辅导和不伪称运行的诊断流程；
-- 学习复盘和后续任务生成。
-
-### 5. 课程覆盖和发布
-
-- Lecture 8 StudyKit 已完成；
-- Lecture 1、4、9 chunks；
-- Lecture 1、4、9 StudyKit 或至少可复用生成验证；
-- 端到端核心 Demo；
-- 清小搭真实连通性、文件输入、会话和状态能力实测；
-- 生产部署、试用和错误分析。
-
-## 五、主要风险
-
-1. 当前黄金 StudyKit 是人工样例，不能证明运行时模型已经能够稳定生成同等质量的 StudyKit。
-2. CourseManifest 和私有 MaterialManifest 尚无统一 Schema，上传资料链路容易出现身份或权限边界不一致。
-3. PDF 文本层可能丢失公式、图表和阅读顺序；视觉审核不能完全自动化。
-4. 清小搭文件输入、会话标识和文件保留能力仍需要账号级实测。
-5. 现有 OpenAI 兼容 API 测试通过不代表课程 Agent 已接入真实对话链路。
-6. 如果过早扩展 Lecture 1/4/9，而不先完成生成器和权限检索，课程数量会增加但产品闭环不会增加。
-
-## 六、下一步优先级
-
-### P0：把已验证样例变成可运行生成链路
-
-1. 定义 CourseManifest、MaterialManifest、LearnerState Schema 的最小版本。
-2. 实现 `MaterialSet` 过滤和页级检索接口。
-3. 实现 `StudyKitGenerator`：输入课程上下文和检索 chunks，输出结构化 StudyKit 草稿。
-4. 接入 Schema、引用、权限和学习者渲染检查。
-5. 用 Lecture 2 黄金样例做回归，用 Lecture 8 做第二个生成验证。
-
-### P1：关闭核心 Demo
-
-1. 建立核心 Demo 端到端脚本：选择讲次 → 解析/读取 chunks → 生成 StudyKit → 提问 → 单题点评。
-2. 修复或隔离现有 Web UI 长时间不返回的测试问题。
-
-### P2：支持未收录用户资料
-
-1. 实现安全的文件输入和临时私有存储。
-2. 生成 MaterialManifest，课程身份允许 unknown。
-3. 建立 owner/session/material_set 授权过滤。
-4. 用一份未收录 PDF 完成私有资料 StudyKit 验收。
-
-### P3：扩展课程覆盖
-
-在 P0/P1 通过评测后，再生成 Lecture 1、4、9 chunks，并用同一 StudyKit 标准扩展模板课程。
+MaterialSet 与检索接口是 Agent 编排的主要前置依赖；端到端和平台验收必须在
+各工作流集成后串行关闭。
 
 ## 七、下一阶段完成定义
 
-“核心生成链路完成”必须同时满足：
-
-- 模板和私有资料都能映射到 MaterialSet；
-- 检索结果带来源锚点且按权限过滤；
-- StudyKit 由生成器产生，不依赖手工复制黄金 YAML；
-- 每个输出通过 StudyKit Schema 和引用检查；
-- 学习者版不泄漏评分内部字段；
-- 至少 Lecture 2 和 Lecture 8 各完成一次端到端生成；
-- 用户可以对任意一道 practice 获得当前答案点评，且没有累计正确率统计；
-- 资料不足、身份未知和解析失败时有明确降级结果。
+- 模板和私有资料都能映射到授权 MaterialSet；
+- 检索结果按权限和课程范围过滤，并保留来源锚点；
+- 对话入口能执行 StudyKit、材料答疑、练习反馈、代码辅导和复盘；
+- 每个 StudyKit 通过 Schema、引用、渲染和内部字段检查；
+- v0.11-019/v21 完成新鲜 Lecture 1–8 回归并达到 8/8，记录每讲修复轨迹和质量评分；
+- 模板课程与未知私有资料各完成一次端到端验收；
+- 清小搭生产能力、安全边界和资料删除策略有实测记录。

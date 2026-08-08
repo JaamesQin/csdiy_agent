@@ -275,29 +275,54 @@ common_misconceptions:
 
 learning_sequence:
   - step: 1
+    activity_type: prerequisite
+    objective_ids: []
+    practice_ids: []
     activity: "完成三个前置检查题。"
     duration_minutes: 15
   - step: 2
+    activity_type: content
+    objective_ids: []
+    practice_ids: []
     activity: "阅读第 5–30 页，理解梯度下降、SGD 和计算图的分工。"
     duration_minutes: 35
     concept_explanation: "梯度下降及其随机/小批量形式根据梯度更新参数；计算图则把模型拆成一组局部函数，为后续系统地计算这些梯度提供结构。"
     source_pages: "5–30"
   - step: 3
+    activity_type: content
+    objective_ids: []
+    practice_ids: []
     activity: "阅读第 32–44 页，理解链式法则如何形成通用反向传播算法。"
     duration_minutes: 45
     concept_explanation: "前向传播计算并保存中间值；反向传播从标量损失开始，把上游梯度与每个节点的局部导数组合，逐层得到输入梯度和参数梯度；参数更新是之后的独立步骤。"
     source_pages: "32–44"
   - step: 4
+    activity_type: content
+    objective_ids: []
+    practice_ids: []
     activity: "阅读第 45–55 页，理解反向传播在 MLP、分支 DAG 和共享参数中的形式。"
     duration_minutes: 35
     concept_explanation: "在线性层和 MLP 中，反向传播既产生传给前一层的梯度，也产生与参数形状一致的参数梯度；同一变量或共享参数通过多条路径影响损失时，各路径的梯度贡献必须相加。"
     source_pages: "45–55"
   - step: 5
+    activity_type: review
+    objective_ids: []
+    practice_ids: []
     activity: "阅读第 56–63 页，理解可微编程如何扩展神经网络训练思想。"
     duration_minutes: 20
     concept_explanation: "可微编程把可微模块组合成更一般的程序，再用一个标量目标和反向传播优化其中的变量或参数；关键不在模块是否名为“神经网络层”，而在计算路径是否能传递有用梯度。"
     source_pages: "56–63"
   - step: 6
+    activity_type: practice
+    objective_ids: []
+    practice_ids:
+      - practice-concept-01
+      - practice-derivation-01
+      - practice-graph-01
+      - practice-shape-01
+      - practice-code-reading-01
+      - practice-debugging-01
+      - practice-differentiable-programming-01
     activity: "按需完成后面的 practice；每次作答后只获取针对本题的即时点评。"
     duration_minutes: 30
     concept_explanation: "练习覆盖概念辨析、链式推导、DAG 迁移、代码阅读和调试设计；系统不累计正确率或生成整套题的掌握度结论。"
