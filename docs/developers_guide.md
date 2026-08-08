@@ -155,7 +155,7 @@ last_error
 
 ### P5：generator skill
 
-最后把稳定的离线生成流程包装成开发者/运维可调用的 skill。Skill 用于课程 authoring、批量预生成、版本升级和诊断，不应成为普通用户在线问答时的隐式同步工具。
+最后把稳定的离线生成流程包装成模型可读的 `studykit-generator` skill。Skill 是 authoring 规范和操作流程，由被调用的 Agent/模型直接阅读并撰写阶段产物；它不调用外部模型，也不应成为普通用户在线问答时的隐式同步工具。需要批量、无人值守生成时，另行使用 provider-specific CLI 或后台 Job。
 
 ## 5. 第一批能力：用户画像分析
 
@@ -414,7 +414,11 @@ fallback_clarification
 
 ## 10. 将 generator 包装成 skill
 
-Skill 的目标是给开发者或后台 Agent 一个稳定的“课程单位离线生成”动作，而不是让普通用户直接调用内部脚本。
+Skill 的目标是让被调用的 Agent 直接完成一个可追溯的“课程单位离线 authoring”动作，而不是隐藏一个外部 LLM client。未来的 `skills/studykit-generator/SKILL.md` 应让模型使用当前上下文和本地文件完成证据规划、内容撰写、练习设计、一次 Audit、修复、组装和验证；本节是该 Skill 的设计规范，不表示它已经完成实现。
+
+Skill 与现有 `scripts/generate_studykit.py` 的边界必须保持清楚：后者是显式配置 DeepSeek 的批处理 CLI，可以由后台任务调用；前者不读取 API key、不创建 provider client、不发起网络请求，也不把失败转交给另一个模型。当前 Agent 就是实际的撰写者。
+
+当前仓库只冻结这份设计规范，尚未提供可直接调用的 `studykit-generator` Skill；在完成真实 Agent 试用、输入/输出契约和回归验收前，不应把它安装到生产 Agent。
 
 ### 10.1 Skill 输入
 
@@ -428,7 +432,7 @@ target_minutes（默认 180）
 generation policy（draft/strict）
 ```
 
-Skill 必须先验证：manifest 与 chunks 的 course/version/unit/source/material_set 身份一致，文件可读，API 密钥已通过环境变量提供，输出目录不是已有不同版本的目录。
+Skill 必须先验证：manifest 与 chunks 的 course/version/unit/source/material_set 身份一致，文件可读，输出目录不是已有不同版本的目录。Skill 不要求、不读取也不转发任何外部模型 API key；模型调用由宿主 Agent 自身完成，因此 skill 的输入不包含 provider、endpoint、model 或 retry 配置。
 
 ### 10.2 Skill 输出
 
@@ -454,13 +458,13 @@ Skill 必须先验证：manifest 与 chunks 的 course/version/unit/source/mater
 
 ### 10.3 Skill 实现建议
 
-- 用一个薄 wrapper 调用现有 `scripts/generate_studykit.py` 或 `StudyKitGenerator.generate()`，不要复制生成逻辑。
-- 固定 Pipeline/Prompt/Schema 版本并写入 build metadata。
-- 保留 `run.json`、`validation.json` 和 audit resolution，便于诊断和人工复核。
-- `--resume` 只对完全相同的输入和版本指纹开放；版本变化必须新建 build。
-- 提供单元生成和批量生成两种模式，批量模式限制并发和总预算。
+- 让当前模型按 `SKILL.md` 直接写阶段 JSON；不要在 skill 中 import `DeepSeekModel`、读取 `DEEPSEEK_API_KEY` 或调用任何远程 endpoint。
+- 只复用仓库中的 Schema、SourceChunk、manifest 和确定性工具；`scripts/validate_studykit.py` 与 `scripts/render_studykit.py` 可用于本地检查和渲染。
+- 固定 Pipeline/Prompt/Schema 版本并写入 `run.json`；保留 `validation.json` 和 audit resolution，便于诊断和人工复核。
+- `resume` 只对完全相同的输入和版本指纹开放；版本变化必须新建 build。若上下文中没有旧阶段产物，不要伪造 resume。
+- Skill 允许模型一次完成单元 authoring；批量并发和 provider 重试属于外部后台 Job，不属于 skill。
 - Skill 不读取或输出 `reasoning_content`，不把内部评估字段暴露给学习者。
-- 提交前使用 mock model、最小 SourceChunk fixture 和一个真实已生成 Lecture 做 smoke test。
+- 交付前运行本地 Schema、引用、学习顺序和 Markdown 检查；出现未解决 blocker 时不输出成功 Markdown。
 
 ## 11. 建议的代码目录
 
