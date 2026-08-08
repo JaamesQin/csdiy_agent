@@ -45,7 +45,10 @@ def test_streaming_contract(
     assert content_frames
     assert "".join(
         frame["choices"][0]["delta"]["content"] for frame in content_frames
-    ) == "接入测试成功。收到用户消息：你好"
+    ) == (
+        "你好，我是 CoursePilot。我可以先建立学习画像，或对你粘贴的代码做静态辅导。"
+        "你想学习哪个 CS 方向？每周大约能投入多少时间？"
+    )
     assert len(stop_frames) == 1
     assert frames[-1] == stop_frames[0]
     assert stop_frames[0]["choices"][0]["delta"] == {}

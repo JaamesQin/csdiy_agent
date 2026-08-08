@@ -21,5 +21,8 @@ def test_chat_assets_are_available(client: ASGITestClient) -> None:
     assert stylesheet.headers["content-type"].startswith("text/css")
     assert script.status_code == 200
     assert "readStream" in script.text
+    assert "coursepilot_anonymous_user" in script.text
+    assert "user: state.userId" in script.text
+    assert "静态代码辅导" in client.get("/").text
     assert favicon.status_code == 200
     assert favicon.headers["content-type"].startswith("image/svg+xml")

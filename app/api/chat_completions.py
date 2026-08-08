@@ -8,6 +8,8 @@ import uuid
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse, StreamingResponse
 
+from app.agent.orchestrator import CoursePilotAgent
+from app.agent.runtime import get_coursepilot_agent
 from app.protocol.schemas import ChatCompletionRequest
 from app.protocol.streaming import completion_stream, should_inject_stream_error
 from app.security import require_bearer_token
@@ -22,6 +24,7 @@ router = APIRouter()
 )
 async def create_chat_completion(
     request: ChatCompletionRequest,
+    agent: CoursePilotAgent = Depends(get_coursepilot_agent),
 ) -> JSONResponse | StreamingResponse:
     user_messages = [
         message.content for message in request.messages if message.role == "user"
@@ -30,7 +33,8 @@ async def create_chat_completion(
         raise HTTPException(status_code=422, detail="At least one user message is required")
 
     user_message = user_messages[-1]
-    answer = f"接入测试成功。收到用户消息：{user_message}"
+    reply = await agent.handle(messages=request.messages, user_id=request.user)
+    answer = reply.answer
     completion_id = f"chatcmpl-{uuid.uuid4().hex}"
     created = int(time.time())
 
@@ -48,11 +52,7 @@ async def create_chat_completion(
                         "finish_reason": "stop",
                     }
                 ],
-                "usage": {
-                    "prompt_tokens": 0,
-                    "completion_tokens": 0,
-                    "total_tokens": 0,
-                },
+                "usage": reply.usage,
             }
         )
 
@@ -61,6 +61,7 @@ async def create_chat_completion(
             completion_id,
             created,
             answer,
+            usage=reply.usage,
             inject_error=should_inject_stream_error(user_message),
         ),
         media_type="text/event-stream",

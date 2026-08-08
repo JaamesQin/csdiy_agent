@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 from fastapi import HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+
+logger = logging.getLogger(__name__)
 
 
 def error_body(message: str, error_type: str, code: str | None = None) -> dict[str, Any]:
@@ -38,4 +41,15 @@ async def validation_exception_handler(
     return JSONResponse(
         status_code=422,
         content=error_body(str(message), "invalid_request_error"),
+    )
+
+
+async def server_exception_handler(_: Request, exc: Exception) -> JSONResponse:
+    logger.exception("Unhandled CoursePilot request error", exc_info=exc)
+    return JSONResponse(
+        status_code=500,
+        content=error_body(
+            "The request failed because an internal error occurred.",
+            "server_error",
+        ),
     )

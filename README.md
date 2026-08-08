@@ -30,13 +30,12 @@ CoursePilot 不以收集最多课程为目标，而是优先完成一个小规�
 
 ## 核心能力
 
-- 课程导航：从受控模板目录中推荐课程，展示课程版本、前置要求、官方课程页、整课下载页和已支持讲次。
-- Manifest 体系：CourseManifest 管理公共模板课程；MaterialManifest 管理未收录的用户私有资料，课程身份无法确认时允许保持未知。
-- 资料解析与检索：处理公开或用户有权使用的 PDF、网页和 Markdown，保留页码或标题锚点。
-- StudyKit：生成包含目标、前置知识、提纲、术语、练习、引用和限制说明的中文学习包。
-- 课程内答疑：在确定的课程版本和讲次范围内回答，材料不足时明确说明。
-- 代码辅导：提供问题拆解、诊断假设、验证步骤、测试建议和代码审阅，不直接代写可提交作业。
-- 学习复盘：依据小测、自评、笔记或代码结果更新学习状态，并生成下一步任务。
+- 主动学习画像：从用户明确陈述中识别学习方向、目标、基础、每周时间和讲解偏好；使用匿名 `user` 标识时可保存到本地 SQLite，并支持查看、纠正和删除。
+- 意图路由：规则优先、结构化模型兜底；当前执行画像分析、Python 优先的静态代码辅导和澄清，未接入能力会透明说明。
+- 代码辅导：提供静态诊断、假设、验证步骤和下一次尝试；不运行用户代码，也不代写可提交作业。
+- 已审核 StudyKit 读取：在线辅导可以读取 Lecture 2/8 黄金 StudyKit 的目标、概念和页码引用，不暴露内部评分字段。
+- 离线 StudyKit 生成：生成包含目标、前置知识、提纲、术语、练习、引用和限制说明的中文学习包。
+- 规划中：完整课程导航、MaterialSet 权限、在线检索、材料答疑、练习反馈和学习复盘。
 
 ## 技术路线
 
@@ -47,26 +46,26 @@ CoursePilot 不以收集最多课程为目标，而是优先完成一个小规�
         ↓ OpenAI 兼容协议
 协议适配层：鉴权、JSON、SSE、错误处理、文件 URL
         ↓
-Agent 编排：意图路由、上下文检查、安全校验
+Agent 编排：意图路由、主动画像、静态代码辅导、安全校验
         ↓
-课程 Manifest、资料解析、RAG、StudyKit、答疑与复盘
+已审核 StudyKit 读取；后续接入 Manifest、RAG、答疑与复盘
 ```
 
-P0 接入契约包括：
+当前已实现的接入契约包括：
 
 - `POST /v1/chat/completions`；
 - `GET /v1/models`；
 - Bearer Token 鉴权；
 - 非流式 OpenAI 兼容 JSON；
 - 流式 SSE：role、content、stop、`data: [DONE]`；
-- `usage`、`finish_reason` 和流式错误处理；
-- 清小搭文件 URL 的域名、类型、大小和超时校验。
+- `usage`、`finish_reason`、脱敏服务错误和流式错误处理；
+- 可选 OpenAI `user` 字段，用于本地/受信网关下的画像逻辑隔离。
 
-音频输入和 PDF/PPT/Word 等附件产物属于条件性增强，不阻塞文本版 MVP。
+清小搭文件 URL、音频输入和 PDF/PPT/Word 等附件尚未接入，不阻塞文本版 MVP。
 
 ## 当前阶段
 
-截至 2026-08-03，项目处于“阶段 1 本地协议实现完成、StudyKit 验证切片完成、等待清小搭生产接入验证”阶段：
+截至 2026-08-08，项目处于“离线 StudyKit 生成内核完成、首批在线 Agent 能力已接入、等待检索和清小搭生产验证”阶段：
 
 | 项目 | 状态 |
 | --- | --- |
@@ -75,28 +74,27 @@ P0 接入契约包括：
 | 清小搭接入协议调研 | 已完成 |
 | 自研后端架构与仓库结构 | 已完成最小实现 |
 | OpenAI 兼容 API 实现 | 已完成 |
-| Bearer、JSON、SSE 和错误契约测试 | 已完成；全量 45 项测试通过 |
-| 本地聊天测试界面 | 已完成 |
+| Bearer、JSON、SSE 和错误契约测试 | 已完成；全量 187 项测试通过 |
+| 意图路由、主动画像和静态代码辅导 | 已完成首版 |
+| 本地聊天测试界面 | 已接入匿名用户 ID、画像和代码辅导入口 |
 | 云端部署方式 | 已确认，等待生产版本部署 |
 | 首个模板课程与核心讲次冻结 | 已完成：MIT 6.7960，Lecture 2 和 8 为核心 Demo |
 | CourseManifest 与来源审核 | 已完成初稿 |
 | Lecture 2 黄金 StudyKit | v0.1 已通过 Schema、引用、术语、公式方向复核和人工批准 |
 | Lecture 8 StudyKit | v0.1 已完成 Schema、引用、术语、公式方向、练习事实性复核和人工批准 |
 | SourceChunk Schema 与 PDF 页级解析 | 已完成；Lecture 2、8 的 chunks 已在本地生成并通过校验，未随公开仓库上传 |
-| 线上检索与 RAG 接入 | 尚未开始 |
+| 黄金 StudyKit 在线读取 | 已完成：Lecture 2、8，只读人工批准版本 |
+| 线上 SourceChunk 检索与 RAG | 尚未开始 |
 | 清小搭接入探测与试聊 | 尚未开始 |
 | 端到端 Demo、评测和用户试用 | 尚未开始 |
 
 当前关键路径是：
 
-1. 建立多模板课程目录和 Catalog/Supported/Demo 准入级别；
-2. 将已通过本地测试的 OpenAI 兼容后端部署到生产环境；
-3. 通过清小搭的连通性、凭证、最小对话和响应格式探测；
-4. 实测消息历史、系统提示、文件输入、会话标识、状态和日志能力；
-5. 补齐 CourseManifest、MaterialManifest 和 MaterialSet Schema；
-6. 将已验证的按讲解析接入未收录资料处理和公共/私有索引；
-7. 实现 StudyKit、答疑、代码辅导和复盘；
-8. 完成端到端评测、试用和上线。
+1. 冻结 MaterialSet、权限和正式 Catalog 接口；
+2. 建立带 owner/session/course/version/unit 过滤的关键词检索；
+3. 接入材料答疑、练习反馈和学习复盘能力；
+4. 验证清小搭稳定用户身份、消息历史、文件输入、状态和日志能力；
+5. 将通过测试的后端部署到生产环境并完成端到端评测。
 
 ## 本地运行
 
@@ -108,49 +106,33 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-设置本地接入密钥并启动服务：
+设置本地接入密钥。配置 `DEEPSEEK_API_KEY` 后会启用低置信路由、画像候选和语义代码辅导；不配置时仍可使用规则路由、显式画像识别和 Python AST 静态诊断：
 
 ```bash
 export COURSEPILOT_API_KEY="$(openssl rand -hex 32)"
+# 可选：export DEEPSEEK_API_KEY="..."
+# 可选：export COURSEPILOT_DB_PATH="/absolute/path/coursepilot.sqlite3"
 uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
 浏览器打开 `http://127.0.0.1:8000/`，在接入设置中填写同一个密钥，即可使用本地聊天测试界面。
 
-运行全部测试：
+OpenAI 请求可带匿名逻辑用户标识：
 
 ```bash
-pytest -q
+curl http://127.0.0.1:8000/v1/chat/completions \
+  -H "Authorization: Bearer $COURSEPILOT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"coursepilot-probe","user":"local-demo-user","messages":[{"role":"user","content":"我想学系统方向，每周 6 小时，而且有 Python 基础。"}]}'
 ```
-
-当前测试基线为 `45 passed`，覆盖鉴权、非流式 JSON、SSE 帧顺序、流式错误、严格参数校验、启动安全、静态界面、真实本地 HTTP 并发请求，以及 SourceChunk/StudyKit 解析、Schema、引用和渲染。
-
-## 本地运行
-
-创建并启用虚拟环境：
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
-
-设置本地接入密钥并启动服务：
-
-```bash
-export COURSEPILOT_API_KEY="$(openssl rand -hex 32)"
-uvicorn app.main:app --host 127.0.0.1 --port 8000
-```
-
-浏览器打开 `http://127.0.0.1:8000/`，在接入设置中填写同一个密钥，即可使用本地聊天测试界面。
 
 运行全部测试：
 
 ```bash
-pytest -q
+.venv/bin/pytest -q
 ```
 
-当前测试基线为 `36 passed`，覆盖鉴权、非流式 JSON、SSE 帧顺序、流式错误、严格参数校验、启动安全、静态界面和真实本地 HTTP 并发请求。
+当前测试基线为 `187 passed`，覆盖协议、路由、画像 SQLite 生命周期、并发隔离、静态代码诊断、学术诚信、StudyKit 引用白名单、生成管线和真实本地 HTTP/SSE。
 
 ## MVP 范围
 
@@ -176,6 +158,8 @@ pytest -q
 - 未收录资料无需匹配模板课程；不能确认的课程身份保持未知；
 - 用户文件 URL 仅允许受信任的清小搭 OSS 域名，防止 SSRF；
 - 没有可靠沙箱时只进行静态代码分析，不声称已经运行代码。
+- `user` 是客户端提供的匿名逻辑标识，不是授权凭据；在清小搭稳定身份完成验证前，持久画像只适用于本地或受信网关。
+- 画像不保存完整对话或代码；模型推断只作为 7 天待确认候选，确认前不参与正式建议。
 
 ## 文档
 
@@ -193,4 +177,4 @@ pytest -q
 
 ## 开发状态说明
 
-仓库已经包含阶段 1 的最小 OpenAI 兼容服务、课程 Manifest 初稿、StudyKit/SourceChunk Schema、PDF 页级解析器、Lecture 2/8 的黄金 StudyKit 与无状态单题点评组件。Lecture 2/8 的原始 PDF 和抽取 chunks 仅保留在本地，用于重新生成和验证；线上 RAG、对话路由、未收录资料入口、答疑、代码辅导和学习复盘仍属于后续阶段。
+仓库已经包含 OpenAI 兼容服务、规则优先的意图路由、可撤回 SQLite 学习画像、Python AST 静态代码辅导、只读黄金 StudyKit 上下文，以及完整的分阶段 StudyKit 生成内核。Lecture 2/8 的原始 PDF 和抽取 chunks 仅保留在本地；线上 SourceChunk 检索、未收录资料入口、材料答疑、练习反馈和学习复盘仍属于后续阶段。

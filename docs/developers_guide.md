@@ -20,7 +20,14 @@
 
 最新外部回归为 Lecture 1–8、concurrency=8、8/8 成功，平均人工质量分 91/100。所有结果通过确定性验证，但修复后的语义没有二次 Audit；因此数据库必须保存 `review_status`，不能把“生成成功”直接当成“已发布”。
 
-当前在线 API 仍是清小搭协议探针：`app/api/chat_completions.py` 返回固定回显，并未接入真实课程、检索或 StudyKit。接下来的工作应在协议适配层之后增加 Agent 编排，不应把慢速 generator 直接塞进 `/v1/chat/completions` 请求处理函数。
+当前在线 API 已从固定回显升级为首批 Agent 运行时：`app/api/chat_completions.py`
+仍只负责 OpenAI 协议，实际编排位于 `app/agent/`。运行时已经执行主动学习画像、
+规则优先的意图路由和 Python 静态代码辅导，并可只读 Lecture 2/8 人工批准的
+黄金 StudyKit。完整 Catalog、SourceChunk 检索、材料答疑、练习反馈和复盘仍未接入。
+慢速 generator 继续与 `/v1/chat/completions` 严格隔离。
+
+当前自动化测试基线为 `187 passed`。在线模型通过现有 `DeepSeekModel` 惰性加载；
+未配置 `DEEPSEEK_API_KEY` 时规则路由、显式画像抽取和 Python AST 诊断仍可用。
 
 当前本地生成器仍有明确边界：一个生成请求使用一个 `material_set_id`、一个课程单位、一个 source，并要求整数页码 anchor。多来源课程、网页标题 anchor、混合公共/私有资料需要先在 ingestion 层拆成可生成的 unit 或扩展生成器，不能由在线 Agent 临时拼接后绕过 Evidence 校验。
 
@@ -200,7 +207,9 @@ last_error
 
 ### P1：用户画像分析与代码辅导
 
-这是第一批用户能力。画像分析应使用 StudyKit 的目标、前置知识、练习和用户确认证据；代码辅导应使用 StudyKit 的相关概念/练习和资料检索结果。两者共享会话、检索和权限层，但不要互相污染状态。
+首版已经实现。画像事实保存在 SQLite，代码辅导只读取确认后的必要画像字段；
+两者共享编排和 StudyKitStore，但不保存用户代码，也不把代码表现自动当作长期掌握度。
+由于 SourceChunk 检索尚未完成，课程上下文当前只来自黄金 StudyKit。
 
 ### P2：资料检索系统
 
@@ -208,11 +217,15 @@ last_error
 
 ### P3：意图识别与路由
 
-路由应在检索前确定任务类型、课程范围和所需上下文。能用确定性规则判断的场景不要每次调用模型；低置信度时再使用分类模型或小型 LLM，并要求结构化输出。
+首版已经实现。路由在任何课程读取前确定任务类型，规则高置信命中时不调用模型；
+其余请求通过结构化 DeepSeek 输出分类。置信度低于 `0.70` 或课程身份不能由
+StudyKitStore 验证时只返回一个澄清问题。
 
 ### P4：清小搭主题 Agent 和多层对话
 
-保留现有 OpenAI 兼容协议，替换固定回显的内部实现。协议层只负责鉴权、请求解析、SSE/JSON 响应和错误契约；会话、路由、检索和能力执行放在应用层。
+现已在保留 OpenAI 兼容协议的前提下替换固定回显。协议层只负责鉴权、请求解析、
+SSE/JSON 响应和错误契约；画像、路由和代码辅导位于应用层。后续检索、答疑和复盘
+也必须沿用这一边界。
 
 ### P5：generator skill
 
@@ -262,6 +275,15 @@ last_error
 5. 模型推断，仅作为低置信度候选。
 
 输出应包含“依据、置信度、建议下一步”，而不是只输出人格化标签。用户可以查看、修正和删除画像字段。
+
+当前实现位于 `app/profile/`，采用追加事实表而不是覆盖整份 JSON。请求可提供可选
+OpenAI `user` 字段；有 `user` 时默认保存到 `storage/coursepilot.sqlite3`，也可通过
+`COURSEPILOT_DB_PATH` 指定路径。没有 `user` 时只从本轮 `messages` 建立临时画像。
+明确陈述直接为 `confirmed`；模型推断为 7 天过期的 `inferred` 候选，确认前不参与
+正式建议。画像不保存完整对话、代码或 traceback。
+
+这里的 `user` 只是客户端提供的匿名逻辑标识，不是授权凭据。清小搭稳定用户身份
+尚未完成账号级验证，因此持久画像当前只适用于本地或受信网关。
 
 ### 5.3 画像与 StudyKit 的连接
 
@@ -322,6 +344,12 @@ async def tutor_code(
 ```
 
 `TutorResult` 至少包含 `answer`、`citations`、`diagnostics`、`next_checks`、`ran_code` 和 `safety_notes`。`ran_code` 为 false 时不得用“运行结果表明”之类措辞。
+
+该接口已经在 `app/code_tutor/` 实现。Python 使用 `ast.parse` 和少量保守规则；
+其他语言只提供标记为静态的模型建议。`ran_code` 在当前版本恒为 `false`。模型只
+能返回上下文允许列表中的 citation token，再由代码映射到人工审核 StudyKit 的
+真实 source/page。`expected_evidence`、evaluation rubric 和 authoring 字段在
+构造 Prompt 前被移除。作业完整解答请求在调用模型前由确定性规则拒绝。
 
 ## 7. 资料检索系统
 
@@ -398,6 +426,11 @@ fallback_clarification
 
 普通用户请求不得直接触发 `admin_generate_studykit`；该意图只对后台任务、课程 authoring 或有权限的开发者开放。
 
+当前 `/v1/chat/completions` 没有后台 authoring 权限入口，因此即使规则或模型识别为
+`admin_generate_studykit` 也只返回拒绝说明。首版实际 handler 为
+`profile_analysis`、`code_tutoring` 和 `fallback_clarification`；其他意图会被正确
+识别，但透明说明尚未接入，不生成课程事实。
+
 ### 8.2 路由顺序
 
 ```text
@@ -439,6 +472,10 @@ fallback_clarification
 - 正确的 `finish_reason`、`usage` 和 HTTP 错误。
 
 协议适配层不能依赖清小搭一定提供持久会话。每轮请求应能从 `messages` 恢复最小上下文；如果平台提供稳定会话 ID，再把它作为数据库索引，而不是唯一事实来源。
+
+当前实现保持 `coursepilot-probe` 模型 ID 兼容，并将可选 `user` 透传到画像层。
+本地网页会在浏览器 `localStorage` 生成匿名 UUID；清空聊天不会删除画像，用户需要
+发送“删除我的画像”执行服务器侧删除。
 
 ### 9.2 多层上下文
 
@@ -556,6 +593,10 @@ skills/
 
 能力模块应返回结构化结果，再由 Agent renderer 统一生成 OpenAI JSON/SSE。不要让 profile、retrieval 或 code tutor 直接拼接 SSE 帧。
 
+其中 `app/agent/`、`app/catalog/studykits.py`、`app/profile/` 和 `app/code_tutor/`
+已经落地。Catalog 当前是只读文件适配器，storage 当前只覆盖画像 SQLite；jobs、
+MaterialSet 数据库和在线 retrieval 仍是后续工作。
+
 ## 12. 验收标准
 
 ### P0 离线生成与数据库
@@ -574,6 +615,9 @@ skills/
 - 代码辅导回答包含相关 StudyKit/source citations；
 - 未运行代码时明确说明，不能伪造测试结果；
 - 对可提交作业只给诊断、提示和验证步骤，不直接代写完整答案。
+
+以上 P1 条件已由自动化测试覆盖；“代码辅导包含课程引用”仅在课程/讲次能匹配
+Lecture 2/8 黄金 StudyKit 时成立。通用代码问题会明确没有课程来源上下文。
 
 ### P2 检索与路由
 
@@ -595,12 +639,14 @@ skills/
 
 建议按以下顺序开工：
 
-1. 先建立 `StudyKitBuild`、`GenerationJob`、`StudyKitDocument` 和 `SourceChunk` 的数据库表及读取接口。
-2. 使用当前 Lecture 1–8 产物填充离线 catalog，并把 `review_status` 保留为独立字段。
-3. 实现 `profile_analysis` 和 `code_tutoring` 两个内部能力，均通过 StudyKit 读取层和检索接口获取上下文。
-4. 为代码辅导准备静态分析器和“未运行代码”响应模板。
-5. 再实现最小关键词检索和结构化意图路由。
-6. 将路由接到 `/v1/chat/completions`，先保留非流式正确性，再接入 SSE 和长会话摘要。
-7. 最后把稳定的离线入口包装成 `studykit-generator` skill，并加入批量任务与人工复核队列。
+1. 将当前只读黄金 StudyKitStore 演进为 `StudyKitBuild`、`StudyKitDocument` 和
+   `SourceChunk` 的正式数据库读取接口，并保留独立 `review_status`。
+2. 实现 MaterialSet、owner/session 权限和最小关键词检索；事实引用优先回到
+   原始 SourceChunk。
+3. 在现有意图路由中接入 StudyKit 查询、材料答疑、练习反馈、学习复盘和生成状态。
+4. 将当前画像事实表连接到 StudyKit objective/prerequisite 和用户确认的练习证据，
+   但继续禁止由阅读行为自动推断掌握度。
+5. 完成清小搭稳定用户身份、文件输入、长会话、生产日志和删除策略实测。
+6. 最后把稳定的离线入口包装成 `studykit-generator` skill，并加入批量任务与人工复核队列。
 
 生成器是课程 authoring 基础设施，不是在线聊天中的即时工具；只要坚持离线优先、StudyKit 优先、原始 SourceChunk 可追溯、公共/私有资料隔离，后续五项工作可以逐步接入而不会被单次长模型调用绑死。

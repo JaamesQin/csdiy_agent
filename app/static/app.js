@@ -1,6 +1,16 @@
+function getOrCreateAnonymousUserId() {
+  const stored = localStorage.getItem("coursepilot_anonymous_user");
+  if (stored) return stored;
+  const suffix = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`;
+  const userId = `local-${suffix}`;
+  localStorage.setItem("coursepilot_anonymous_user", userId);
+  return userId;
+}
+
 const state = {
   apiBase: sessionStorage.getItem("coursepilot_api_base") || "",
   apiKey: sessionStorage.getItem("coursepilot_api_key") || "",
+  userId: getOrCreateAnonymousUserId(),
   messages: [],
   controller: null,
   busy: false,
@@ -201,6 +211,7 @@ async function sendMessage(rawMessage) {
         model: "coursepilot-probe",
         messages: state.messages,
         stream,
+        user: state.userId,
       }),
       signal: state.controller.signal,
     });
