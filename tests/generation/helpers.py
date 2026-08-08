@@ -143,7 +143,7 @@ def evidence_plan() -> dict[str, Any]:
         {chunk_id for values in opportunity_chunks for chunk_id in values}
     )
     return {
-        "title": "Lecture 2: How to Train a Neural Net",
+        "unit_title_candidate": "Lecture 2: How to Train a Neural Net",
         "lecture_summary": "本讲介绍梯度下降、计算图、反向传播和可微编程。",
         "page_segments": segments,
         "core_concept_candidates": concept_candidates,
@@ -254,6 +254,11 @@ def practice_flow() -> dict[str, Any]:
     for index, item in enumerate(sequence):
         item["activity_type"] = activity_types[index]
         item["objective_ids"] = [objective_ids[index % len(objective_ids)]]
+        item["practice_ids"] = (
+            [practice["id"] for practice in practices]
+            if activity_types[index] == "practice"
+            else []
+        )
     return {
         "practice": practices,
         "learning_sequence": sequence,

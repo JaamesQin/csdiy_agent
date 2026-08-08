@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from dataclasses import replace
 import json
 from pathlib import Path
 from typing import Any
 
-from app.generation.generator import StudyKitGenerator
+from app.generation.generator import StudyKitGenerator, _studykit_title
 from app.generation.model import (
     ModelAPIError,
     ModelResponse,
@@ -68,12 +69,18 @@ def audit_issue(
     category: str = "answer_inconsistency",
     description: str = "候选答案与独立核算不一致。",
 ) -> dict[str, Any]:
+    locations = {
+        "evidence": "EvidencePlan.evidence_controls[0].statement",
+        "content": "LearningContent.core_concepts[0].explanation",
+        "practice": "PracticeFlow.practice[0].expected_evidence",
+        "assembly": "StudyKit.title",
+    }
     return {
         "id": "audit-issue-01",
         "severity": "blocker",
         "category": category,
         "target_stage": target_stage,
-        "location": "practice[0].expected_evidence",
+        "location": locations[target_stage],
         "description": description,
         "evidence_chunk_ids": [
             "mit-6.7960-f24-lecture-02-slides-p034"
@@ -196,7 +203,13 @@ async def test_schema_only_repair_disables_thinking() -> None:
 async def test_generator_stops_downstream_after_stage_failure() -> None:
     invalid = evidence_plan()
     invalid["content_chunk_ids"] = ["missing"]
-    model = FakeModel([model_response(invalid), model_response(invalid)])
+    model = FakeModel(
+        [
+            model_response(invalid),
+            model_response(invalid),
+            model_response(invalid),
+        ]
+    )
 
     result = await StudyKitGenerator(model).generate(
         generation_request(), source_chunks()
@@ -204,12 +217,61 @@ async def test_generator_stops_downstream_after_stage_failure() -> None:
 
     assert result.status is GenerationStatus.FAILED_VALIDATION
     assert result.failed_stage is GenerationStage.EVIDENCE
-    assert result.attempts == 2
+    assert result.attempts == 3
     assert {issue.code for issue in result.issues} == {
         "unknown_chunk_id",
         "content_chunk_selection",
     }
-    assert len(model.prompts) == 2
+    assert len(model.prompts) == 3
+
+
+async def test_evidence_expands_unambiguous_page_chunk_aliases() -> None:
+    plan = evidence_plan()
+    full_id = plan["content_chunk_ids"][0]
+    page = int(full_id.rsplit("-p", 1)[1])
+
+    def replace_alias(value: Any) -> Any:
+        if isinstance(value, dict):
+            return {key: replace_alias(item) for key, item in value.items()}
+        if isinstance(value, list):
+            return [replace_alias(item) for item in value]
+        return f"p{page:03d}" if value == full_id else value
+
+    model = FakeModel(
+        [
+            model_response(replace_alias(plan)),
+            model_response(learning_content()),
+            model_response(practice_flow()),
+            model_response(quality_audit()),
+        ]
+    )
+
+    result = await StudyKitGenerator(model).generate(
+        generation_request(), source_chunks()
+    )
+
+    assert result.succeeded
+    assert len(model.prompts) == 4
+
+
+async def test_evidence_retries_after_model_error() -> None:
+    model = FakeModel(
+        [
+            ModelAPIError("temporary evidence failure", status_code=503),
+            model_response(evidence_plan()),
+            model_response(learning_content()),
+            model_response(practice_flow()),
+            model_response(quality_audit()),
+        ]
+    )
+
+    result = await StudyKitGenerator(model).generate(
+        generation_request(), source_chunks()
+    )
+
+    assert result.succeeded
+    assert len(model.prompts) == 5
+    assert model.prompts[0] == model.prompts[1]
 
 
 async def test_generator_reports_model_error_at_failed_stage() -> None:
@@ -306,7 +368,7 @@ async def test_learner_render_hides_internal_evaluation_fields() -> None:
 
 async def test_assembly_relabels_evidence_plan_title_for_learners() -> None:
     plan = evidence_plan()
-    plan["title"] = "Evidence Plan: Lecture 2"
+    plan["unit_title_candidate"] = "Evidence Plan: Lecture 2"
     responses = successful_responses()
     responses[0] = model_response(plan)
 
@@ -320,7 +382,7 @@ async def test_assembly_relabels_evidence_plan_title_for_learners() -> None:
 
 async def test_assembly_removes_evidence_plan_title_suffix() -> None:
     plan = evidence_plan()
-    plan["title"] = "Lecture 3: Approximation Theory — Evidence Plan"
+    plan["unit_title_candidate"] = "Lecture 3: Approximation Theory — Evidence Plan"
     responses = successful_responses()
     responses[0] = model_response(plan)
 
@@ -330,6 +392,39 @@ async def test_assembly_removes_evidence_plan_title_suffix() -> None:
 
     assert result.studykit is not None
     assert result.studykit["title"] == "StudyKit: Lecture 3: Approximation Theory"
+
+
+async def test_trusted_unit_title_overrides_model_title_candidate() -> None:
+    plan = evidence_plan()
+    plan["unit_title_candidate"] = "EvidencePlan：错误候选"
+    model = FakeModel(
+        [
+            model_response(plan),
+            model_response(learning_content()),
+            model_response(practice_flow()),
+            model_response(quality_audit()),
+        ]
+    )
+
+    result = await StudyKitGenerator(model).generate(
+        replace(generation_request(), unit_title="可信课程标题"), source_chunks()
+    )
+
+    assert result.succeeded
+    assert result.studykit is not None
+    assert result.studykit["title"] == "StudyKit: 可信课程标题"
+
+
+def test_title_fallback_removes_all_evidence_plan_label_variants() -> None:
+    for candidate in (
+        "Evidence Plan: Lecture 1",
+        "Lecture 1 — Evidence Plan",
+        "Lecture 1（EvidencePlan）",
+        "Lecture EvidencePlan 1",
+    ):
+        title = _studykit_title(candidate)
+        assert "evidenceplan" not in title.lower().replace(" ", "")
+        assert title.startswith("StudyKit:")
 
 
 async def test_practice_rejects_internal_field_reference() -> None:
@@ -642,6 +737,7 @@ async def test_audit_resolves_validated_internal_assembly_fields_and_repairs_con
                 quality_audit(issues=[assembly_issue, content_issue])
             ),
             model_response(repaired_content),
+            model_response(practice_flow()),
         ]
     )
 
@@ -650,7 +746,7 @@ async def test_audit_resolves_validated_internal_assembly_fields_and_repairs_con
     )
 
     assert result.succeeded
-    assert len(model.prompts) == 5
+    assert len(model.prompts) == 6
     stages = {item.stage: item for item in result.stages}
     assert stages[GenerationStage.CONTENT].status == "repaired"
     resolution = json.loads(
@@ -658,7 +754,7 @@ async def test_audit_resolves_validated_internal_assembly_fields_and_repairs_con
             encoding="utf-8"
         )
     )
-    assert resolution["repaired_stages"] == ["content"]
+    assert resolution["repaired_stages"] == ["content", "practice"]
     assert resolution["deterministically_resolved_issue_ids"] == [
         "audit-issue-assembly-title"
     ]
@@ -679,6 +775,8 @@ async def test_quality_audit_repairs_evidence_without_reaudit() -> None:
             model_response(practice_flow()),
             model_response(quality_audit(issues=[issue])),
             model_response(repaired_plan),
+            model_response(learning_content()),
+            model_response(practice_flow()),
         ]
     )
 
@@ -687,7 +785,7 @@ async def test_quality_audit_repairs_evidence_without_reaudit() -> None:
     )
 
     assert result.succeeded
-    assert len(model.prompts) == 5
+    assert len(model.prompts) == 7
     stages = {item.stage: item for item in result.stages}
     assert stages[GenerationStage.EVIDENCE].status == "repaired"
     assert stages[GenerationStage.AUDIT].attempts == 1
@@ -753,13 +851,203 @@ async def test_audit_repair_model_error_is_reported_without_crashing() -> None:
         ]
     )
 
-    result = await StudyKitGenerator(model).generate(
+    result = await StudyKitGenerator(
+        model, assemble_on_audit_failure=False
+    ).generate(
         generation_request(), source_chunks()
     )
 
     assert result.status is GenerationStatus.MODEL_ERROR
     assert result.failed_stage is GenerationStage.AUDIT
     assert result.issues[0].code == "ModelAPIError"
+
+
+async def test_content_first_assembles_when_audit_repair_model_errors() -> None:
+    issue = audit_issue(target_stage="content")
+    model = FakeModel(
+        [
+            model_response(evidence_plan()),
+            model_response(learning_content()),
+            model_response(practice_flow()),
+            model_response(quality_audit(issues=[issue])),
+            ModelAPIError("insufficient balance", status_code=402),
+        ]
+    )
+
+    result = await StudyKitGenerator(model).generate(
+        generation_request(), source_chunks()
+    )
+
+    assert result.succeeded
+    assert result.studykit is not None
+    assert result.issues[0].code == "ModelAPIError"
+    assert (
+        result.studykit["review"]["generator_review_status"]
+        == "audit_unavailable"
+    )
+    audit_stage = next(
+        stage for stage in result.stages
+        if stage.stage is GenerationStage.AUDIT
+    )
+    assert audit_stage.status == GenerationStatus.MODEL_ERROR.value
+
+
+async def test_global_limitation_audit_finding_is_assembly_resolved(
+    tmp_path: Path,
+) -> None:
+    issue = audit_issue(
+        target_stage="content",
+        category="source_risk_ignored",
+        description="EvidencePlan scope=global limitation 未传播。",
+    )
+    issue["location"] = "LearningContent.limitations[0]"
+    model = FakeModel(
+        [
+            model_response(evidence_plan()),
+            model_response(learning_content()),
+            model_response(practice_flow()),
+            model_response(quality_audit(issues=[issue])),
+        ]
+    )
+
+    result = await StudyKitGenerator(model).generate(
+        generation_request(), source_chunks(), output_dir=tmp_path
+    )
+
+    assert result.succeeded
+    assert len(model.prompts) == 4
+    resolution = json.loads(
+        (tmp_path / "04-quality-audit.resolution.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert resolution["resolutions"][0]["target_stage"] == "assembly"
+    assert resolution["resolutions"][0]["resolution"] == "code_resolved"
+
+
+async def test_audit_repair_cannot_create_planning_ids(tmp_path: Path) -> None:
+    issue = audit_issue(
+        target_stage="evidence",
+        category="coverage_gap",
+        description="证据摘要需要补充限定。",
+    )
+    repaired = evidence_plan()
+    added = deepcopy(repaired["assessment_requirements"][0])
+    added["id"] = "req-unplanned"
+    repaired["assessment_requirements"].append(added)
+    model = FakeModel(
+        [
+            model_response(evidence_plan()),
+            model_response(learning_content()),
+            model_response(practice_flow()),
+            model_response(quality_audit(issues=[issue])),
+            model_response(repaired),
+        ]
+    )
+
+    result = await StudyKitGenerator(model).generate(
+        generation_request(), source_chunks(), output_dir=tmp_path
+    )
+
+    assert result.succeeded
+    assert result.studykit is not None
+    assert (
+        result.studykit["review"]["generator_review_status"]
+        == "audit_blockers_unresolved"
+    )
+    validation = json.loads(
+        (tmp_path / "01-evidence-plan.audit-repair.validation.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert validation["identity_adjustments"] == ["assessment_requirements"]
+    assert [item["code"] for item in validation["issues"]] == [
+        "audit_repair_unchanged"
+    ]
+
+
+async def test_audit_repair_lands_valid_edit_and_discards_identity_drift(
+    tmp_path: Path,
+) -> None:
+    issue = audit_issue(
+        target_stage="content",
+        category="logical_error",
+        description="误区中的反例计算错误。",
+    )
+    issue["location"] = "LearningContent.common_misconceptions[0].correction"
+    original = learning_content()
+    repaired = deepcopy(original)
+    repaired["common_misconceptions"][0]["correction"] = "反例已正确重算。"
+    removed = repaired["core_concepts"].pop()
+    added = deepcopy(repaired["core_concepts"][0])
+    added["id"] = "unplanned-concept"
+    added["evidence_concept_id"] = "unplanned-concept"
+    repaired["core_concepts"].append(added)
+    model = FakeModel(
+        [
+            model_response(evidence_plan()),
+            model_response(original),
+            model_response(practice_flow()),
+            model_response(quality_audit(issues=[issue])),
+            model_response(repaired),
+            model_response(practice_flow()),
+        ]
+    )
+
+    result = await StudyKitGenerator(model).generate(
+        generation_request(), source_chunks(), output_dir=tmp_path
+    )
+
+    assert result.succeeded
+    landed = json.loads(
+        (tmp_path / "02-learning-content.json").read_text(encoding="utf-8")
+    )
+    assert landed["common_misconceptions"][0]["correction"] == (
+        "反例已正确重算。"
+    )
+    assert [item["id"] for item in landed["core_concepts"]] == [
+        item["id"] for item in original["core_concepts"]
+    ]
+    assert removed["id"] in {item["id"] for item in landed["core_concepts"]}
+    run = json.loads((tmp_path / "run.json").read_text(encoding="utf-8"))
+    assert run["stages"]["content"]["audit_repair"][
+        "identity_adjustments"
+    ] == ["core_concepts"]
+    resolution = json.loads(
+        (tmp_path / "04-quality-audit.resolution.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert resolution["resolutions"][0]["resolution"] == "model_repaired"
+
+
+async def test_assembly_sanitizes_internal_stage_labels() -> None:
+    plan = evidence_plan()
+    plan["limitations"][0]["description"] += " EvidencePlan 已选择证据。"
+    issue = audit_issue(
+        target_stage="assembly",
+        category="internal_field_leak",
+        description="最终正文泄露内部阶段标签。",
+    )
+    issue["location"] = "StudyKit.limitations[0]"
+    model = FakeModel(
+        [
+            model_response(plan),
+            model_response(learning_content()),
+            model_response(practice_flow()),
+            model_response(quality_audit(issues=[issue])),
+        ]
+    )
+
+    result = await StudyKitGenerator(model).generate(
+        generation_request(), source_chunks()
+    )
+
+    assert result.succeeded
+    assert result.studykit is not None
+    limitations = " ".join(result.studykit["limitations"])
+    assert "EvidencePlan" not in limitations
+    assert "证据规划" in limitations
 
 
 async def test_quality_audit_keeps_semantic_assembly_blocker() -> None:
@@ -777,7 +1065,9 @@ async def test_quality_audit_keeps_semantic_assembly_blocker() -> None:
         ]
     )
 
-    result = await StudyKitGenerator(model).generate(
+    result = await StudyKitGenerator(
+        model, assemble_on_audit_failure=False
+    ).generate(
         generation_request(), source_chunks()
     )
 
@@ -785,6 +1075,231 @@ async def test_quality_audit_keeps_semantic_assembly_blocker() -> None:
     assert result.failed_stage is GenerationStage.AUDIT
     assert result.issues[0].code == "stage_contradiction"
     assert len(model.prompts) == 4
+
+
+async def test_mixed_assembly_blocker_does_not_prevent_deduplicated_repairs(
+    tmp_path: Path,
+) -> None:
+    content_issue = audit_issue(target_stage="content")
+    content_issue["id"] = "content-one"
+    duplicate_one = audit_issue(target_stage="practice")
+    duplicate_one["id"] = "practice-flow-copy"
+    duplicate_two = deepcopy(duplicate_one)
+    duplicate_two["id"] = "studykit-copy"
+    duplicate_two["location"] = "StudyKit.practice[0].expected_evidence"
+    assembly_issue = audit_issue(
+        target_stage="assembly", category="stage_contradiction"
+    )
+    assembly_issue["id"] = "assembly-unresolved"
+    repaired_content = learning_content()
+    repaired_content["core_concepts"][0]["explanation"] += " 已修复。"
+    repaired_practice = practice_flow()
+    repaired_practice["practice"][0]["expected_evidence"][0] += " 已修复。"
+    model = FakeModel(
+        [
+            model_response(evidence_plan()),
+            model_response(learning_content()),
+            model_response(practice_flow()),
+            model_response(
+                quality_audit(
+                    issues=[
+                        assembly_issue,
+                        duplicate_one,
+                        duplicate_two,
+                        content_issue,
+                    ]
+                )
+            ),
+            model_response(repaired_content),
+            model_response(repaired_practice),
+        ]
+    )
+
+    result = await StudyKitGenerator(
+        model, assemble_on_audit_failure=False
+    ).generate(
+        generation_request(), source_chunks(), output_dir=tmp_path
+    )
+
+    assert result.status is GenerationStatus.FAILED_VALIDATION
+    assert len(model.prompts) == 6
+    assert "practice-flow-copy" in model.prompts[5][1]
+    assert "studykit-copy" in model.prompts[5][1]
+    stages = {item.stage: item for item in result.stages}
+    assert stages[GenerationStage.CONTENT].status == "repaired"
+    assert stages[GenerationStage.PRACTICE].status == "repaired"
+    resolution = json.loads(
+        (tmp_path / "04-quality-audit.resolution.json").read_text(encoding="utf-8")
+    )
+    by_id = {item["issue_id"]: item["resolution"] for item in resolution["resolutions"]}
+    assert by_id == {
+        "assembly-unresolved": "unresolved_failure",
+        "practice-flow-copy": "model_repaired",
+        "studykit-copy": "model_repaired",
+        "content-one": "model_repaired",
+    }
+
+
+async def test_preassembled_space_prefix_and_mixed_paths_route_to_field_owners(
+    tmp_path: Path,
+) -> None:
+    issue = audit_issue(
+        target_stage="assembly", category="dimension_error"
+    )
+    issue.update(
+        {
+            "id": "lecture-02-assembly-duplicate",
+            "location": (
+                "preassembled StudyKit learning_objectives[lo5]; "
+                "core_concepts[cc6]; practice[prac-06]"
+            ),
+        }
+    )
+    repaired_content = learning_content()
+    repaired_content["core_concepts"][0]["explanation"] += " 公式已修复。"
+    repaired_practice = practice_flow()
+    repaired_practice["practice"][0]["expected_evidence"][0] += " 已同步。"
+    model = FakeModel(
+        [
+            model_response(evidence_plan()),
+            model_response(learning_content()),
+            model_response(practice_flow()),
+            model_response(quality_audit(issues=[issue])),
+            model_response(repaired_content),
+            model_response(repaired_practice),
+        ]
+    )
+
+    result = await StudyKitGenerator(model).generate(
+        generation_request(), source_chunks(), output_dir=tmp_path
+    )
+
+    assert result.succeeded
+    assert len(model.prompts) == 6
+    assert "learning_objectives[lo5]; core_concepts[cc6]" in model.prompts[4][1]
+    assert "practice[prac-06]" in model.prompts[5][1]
+    resolution = json.loads(
+        (tmp_path / "04-quality-audit.resolution.json").read_text(encoding="utf-8")
+    )
+    assert resolution["unresolved_issue_ids"] == []
+    assert resolution["resolutions"] == [
+            {
+                "issue_id": "lecture-02-assembly-duplicate",
+                "severity": "blocker",
+                "target_stage": "content+practice",
+            "target_stages": ["content", "practice"],
+            "location": (
+                "learning_objectives[lo5]; core_concepts[cc6]; "
+                "practice[prac-06]"
+            ),
+            "locations": [
+                "learning_objectives[lo5]; core_concepts[cc6]",
+                "practice[prac-06]",
+            ],
+            "resolution": "model_repaired",
+        }
+    ]
+
+
+async def test_arbitrary_audit_prose_before_path_is_normalized_and_deduplicated(
+    tmp_path: Path,
+) -> None:
+    content_finding = audit_issue(
+        target_stage="content", category="missing_qualification"
+    )
+    content_finding.update(
+        {
+            "id": "content-lo5",
+            "location": "LearningContent.learning_objectives[lo5]",
+        }
+    )
+    assembled_copy = dict(content_finding)
+    assembled_copy.update(
+        {
+            "id": "assembled-lo5-copy",
+            "target_stage": "assembly",
+            "location": (
+                "模型在 Practice review 的当前候选中发现："
+                "StudyKit.learning_objectives[lo5]"
+            ),
+        }
+    )
+    repaired = learning_content()
+    repaired["learning_objectives"][0]["objective"] += "（带适用范围）"
+    model = FakeModel(
+        [
+            model_response(evidence_plan()),
+            model_response(learning_content()),
+            model_response(practice_flow()),
+            model_response(
+                quality_audit(issues=[content_finding, assembled_copy])
+            ),
+            model_response(repaired),
+            model_response(practice_flow()),
+        ]
+    )
+
+    result = await StudyKitGenerator(model).generate(
+        generation_request(), source_chunks(), output_dir=tmp_path
+    )
+
+    assert result.succeeded
+    assert len(model.prompts) == 6
+    resolution = json.loads(
+        (tmp_path / "04-quality-audit.resolution.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert resolution["unresolved_issue_ids"] == []
+    assert {
+        item["issue_id"]: (item["target_stages"], item["resolution"])
+        for item in resolution["resolutions"]
+    } == {
+        "content-lo5": (["content"], "model_repaired"),
+        "assembled-lo5-copy": (["content"], "model_repaired"),
+    }
+
+
+async def test_original_audit_issue_fails_when_any_owner_shard_fails(
+    tmp_path: Path,
+) -> None:
+    issue = audit_issue(target_stage="assembly", category="dimension_error")
+    issue.update(
+        {
+            "id": "mixed-shard-failure",
+            "location": (
+                "preassembled StudyKit learning_objectives[lo5]; "
+                "practice[prac-06]"
+            ),
+        }
+    )
+    repaired_content = learning_content()
+    repaired_content["core_concepts"][0]["explanation"] += " 已修复。"
+    invalid_practice = practice_flow()
+    invalid_practice["learning_sequence"][0].pop("practice_ids")
+    model = FakeModel(
+        [
+            model_response(evidence_plan()),
+            model_response(learning_content()),
+            model_response(practice_flow()),
+            model_response(quality_audit(issues=[issue])),
+            model_response(repaired_content),
+            model_response(invalid_practice),
+        ]
+    )
+
+    result = await StudyKitGenerator(
+        model, assemble_on_audit_failure=False
+    ).generate(
+        generation_request(), source_chunks(), output_dir=tmp_path
+    )
+
+    assert result.status is GenerationStatus.FAILED_VALIDATION
+    resolution = json.loads(
+        (tmp_path / "04-quality-audit.resolution.json").read_text(encoding="utf-8")
+    )
+    assert resolution["unresolved_issue_ids"] == ["mixed-shard-failure"]
+    assert resolution["resolutions"][0]["resolution"] == "unresolved_failure"
 
 
 async def test_max_repairs_zero_disables_audit_artifact_repairs() -> None:
@@ -798,7 +1313,9 @@ async def test_max_repairs_zero_disables_audit_artifact_repairs() -> None:
         ]
     )
 
-    result = await StudyKitGenerator(model, max_repairs=0).generate(
+    result = await StudyKitGenerator(
+        model, max_repairs=0, assemble_on_audit_failure=False
+    ).generate(
         generation_request(), source_chunks()
     )
 
@@ -831,6 +1348,7 @@ async def test_audit_repairs_out_of_boundary_issue_in_dependency_order(
             model_response(practice_flow()),
             model_response(quality_audit(issues=[issue])),
             model_response(repaired_plan),
+            model_response(learning_content()),
             model_response(repaired_practice),
         ]
     )
@@ -840,7 +1358,7 @@ async def test_audit_repairs_out_of_boundary_issue_in_dependency_order(
     )
 
     assert result.succeeded
-    assert len(model.prompts) == 6
+    assert len(model.prompts) == 7
     assert result.stages[0].status == "repaired"
     assert result.stages[2].status == "repaired"
     assert "audit-issue-01-evidence-boundary" in model.prompts[4][1]
@@ -864,7 +1382,9 @@ async def test_audit_saves_invalid_target_repair_candidate(
         ]
     )
 
-    result = await StudyKitGenerator(model).generate(
+    result = await StudyKitGenerator(
+        model, assemble_on_audit_failure=False
+    ).generate(
         generation_request(), source_chunks(), output_dir=tmp_path
     )
 
@@ -877,15 +1397,18 @@ async def test_audit_saves_invalid_target_repair_candidate(
     ).is_file()
 
 
-async def test_quality_audit_warning_does_not_trigger_repair() -> None:
+async def test_quality_audit_warning_returns_to_owning_stage() -> None:
     issue = audit_issue(target_stage="practice")
     issue["severity"] = "warning"
+    repaired = practice_flow()
+    repaired["practice"][0]["expected_evidence"][0] += " 已按建议澄清。"
     model = FakeModel(
         [
             model_response(evidence_plan()),
             model_response(learning_content()),
             model_response(practice_flow()),
             model_response(quality_audit(issues=[issue])),
+            model_response(repaired),
         ]
     )
 
@@ -897,9 +1420,97 @@ async def test_quality_audit_warning_does_not_trigger_repair() -> None:
     assert result.studykit is not None
     assert (
         result.studykit["review"]["generator_review_status"]
-        == "validation_complete"
+        == "audit_repairs_applied_unverified"
     )
-    assert len(model.prompts) == 4
+    assert len(model.prompts) == 5
+    assert '"mandatory_blockers":[]' in model.prompts[4][1]
+    assert '"requested_warning_improvements"' in model.prompts[4][1]
+
+
+async def test_warning_repair_failure_rolls_back_without_blocking(
+    tmp_path: Path,
+) -> None:
+    issue = audit_issue(target_stage="practice")
+    issue["severity"] = "warning"
+    invalid = practice_flow()
+    invalid["practice"][0]["source_pages"] = [999]
+    model = FakeModel(
+        [
+            model_response(evidence_plan()),
+            model_response(learning_content()),
+            model_response(practice_flow()),
+            model_response(quality_audit(issues=[issue])),
+            model_response(invalid),
+        ]
+    )
+
+    result = await StudyKitGenerator(model).generate(
+        generation_request(), source_chunks(), output_dir=tmp_path
+    )
+
+    assert result.succeeded
+    assert result.studykit is not None
+    assert result.studykit["practice"] == practice_flow()["practice"]
+    assert (
+        result.studykit["review"]["generator_review_status"]
+        == "audit_warnings_unresolved"
+    )
+    resolution = json.loads(
+        (tmp_path / "04-quality-audit.resolution.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert resolution["outcome"] == "warnings_unresolved"
+    assert resolution["unresolved_warning_ids"] == ["audit-issue-01"]
+    assert resolution["resolutions"][0]["resolution"] == "warning_repair_failed"
+    assert (tmp_path / "05-studykit.json").is_file()
+
+
+async def test_blocker_and_warning_share_one_stage_repair_call(
+    tmp_path: Path,
+) -> None:
+    blocker = audit_issue(target_stage="practice")
+    warning = audit_issue(
+        target_stage="practice",
+        category="pedagogy",
+        description="反馈措辞可以更明确。",
+    )
+    warning.update(
+        {
+            "id": "audit-warning-02",
+            "severity": "warning",
+            "location": "PracticeFlow.practice[1].feedback",
+        }
+    )
+    repaired = practice_flow()
+    repaired["practice"][0]["expected_evidence"][0] += " 已核算。"
+    model = FakeModel(
+        [
+            model_response(evidence_plan()),
+            model_response(learning_content()),
+            model_response(practice_flow()),
+            model_response(quality_audit(issues=[blocker, warning])),
+            model_response(repaired),
+        ]
+    )
+
+    result = await StudyKitGenerator(model).generate(
+        generation_request(), source_chunks(), output_dir=tmp_path
+    )
+
+    assert result.succeeded
+    assert len(model.prompts) == 5
+    assert '"mandatory_blockers"' in model.prompts[4][1]
+    assert '"requested_warning_improvements"' in model.prompts[4][1]
+    resolution = json.loads(
+        (tmp_path / "04-quality-audit.resolution.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert [item["resolution"] for item in resolution["resolutions"]] == [
+        "model_repaired",
+        "warning_model_repaired",
+    ]
 
 
 async def test_practice_accepts_multiple_simple_numeric_exercises() -> None:
@@ -983,6 +1594,9 @@ async def test_pipeline_accepts_nine_practice_opportunities() -> None:
         practices.append(practice)
     flow = practice_flow()
     flow["practice"] = practices
+    for step in flow["learning_sequence"]:
+        if step["activity_type"] == "practice":
+            step["practice_ids"] = [item["id"] for item in practices]
     model = FakeModel(
         [
             model_response(plan),
@@ -1000,6 +1614,73 @@ async def test_pipeline_accepts_nine_practice_opportunities() -> None:
     assert result.studykit is not None
     assert len(result.studykit["practice"]) == 9
     assert len(model.prompts) == 4
+
+
+async def test_practice_sequence_rejects_unknown_and_omitted_practice_ids() -> None:
+    flow = practice_flow()
+    practice_step = next(
+        item for item in flow["learning_sequence"]
+        if item["activity_type"] == "practice"
+    )
+    practice_step["practice_ids"] = ["unknown-practice", flow["practice"][0]["id"]]
+    model = FakeModel(
+        [
+            model_response(evidence_plan()),
+            model_response(learning_content()),
+            model_response(flow),
+        ]
+    )
+
+    result = await StudyKitGenerator(model, max_repairs=0).generate(
+        generation_request(), source_chunks()
+    )
+
+    assert result.failed_stage is GenerationStage.PRACTICE
+    codes = {item.code for item in result.issues}
+    assert "unknown_sequence_practice_id" in codes
+    assert "sequence_practice_coverage" in codes
+
+
+async def test_practice_sequence_requires_practice_ids_on_every_step() -> None:
+    flow = practice_flow()
+    flow["learning_sequence"][0].pop("practice_ids")
+    model = FakeModel(
+        [
+            model_response(evidence_plan()),
+            model_response(learning_content()),
+            model_response(flow),
+        ]
+    )
+
+    result = await StudyKitGenerator(model, max_repairs=0).generate(
+        generation_request(), source_chunks()
+    )
+
+    assert result.failed_stage is GenerationStage.PRACTICE
+    assert any("practice_ids" in item.message for item in result.issues)
+
+
+async def test_practice_sequence_allows_review_to_repeat_practice_ids() -> None:
+    flow = practice_flow()
+    review_step = next(
+        item for item in flow["learning_sequence"]
+        if item["activity_type"] == "review"
+    )
+    review_step["practice_ids"] = [flow["practice"][0]["id"]]
+    model = FakeModel(
+        [
+            model_response(evidence_plan()),
+            model_response(learning_content()),
+            model_response(flow),
+            model_response(quality_audit()),
+        ]
+    )
+
+    result = await StudyKitGenerator(model, max_repairs=0).generate(
+        generation_request(), source_chunks()
+    )
+
+    assert result.succeeded
 
 
 async def test_evidence_rejects_more_than_twelve_practice_opportunities() -> None:
@@ -1064,24 +1745,100 @@ async def test_evidence_rejects_unknown_control_reference() -> None:
     assert "unknown_control_id" in {issue.code for issue in result.issues}
 
 
-async def test_control_chunks_are_required_in_stage_chunk_unions() -> None:
+async def test_stage_chunk_union_gaps_are_delivered_as_unverified_quality() -> None:
     invalid = evidence_plan()
-    control_chunk = invalid["evidence_controls"][0]["chunk_ids"][0]
-    for concept in invalid["core_concept_candidates"]:
-        concept["chunk_ids"] = [
-            item for item in concept["chunk_ids"] if item != control_chunk
-        ]
-    invalid["content_chunk_ids"].remove(control_chunk)
-    invalid["practice_chunk_ids"].remove(control_chunk)
+    unused_content_page = next(
+        item for item in invalid["content_chunk_ids"] if item.endswith("p001")
+    )
+    invalid["content_chunk_ids"].remove(unused_content_page)
+    extra_practice_chunk = next(
+        item for item in invalid["content_chunk_ids"]
+        if item not in invalid["practice_chunk_ids"]
+    )
+    invalid["practice_chunk_ids"].append(extra_practice_chunk)
     result = await StudyKitGenerator(
-        FakeModel([model_response(invalid)]),
+        FakeModel(
+            [
+                model_response(invalid),
+                model_response(learning_content()),
+                model_response(practice_flow()),
+                model_response(quality_audit()),
+            ]
+        ),
         max_repairs=0,
     ).generate(generation_request(), source_chunks())
 
-    assert result.failed_stage is GenerationStage.EVIDENCE
+    assert result.succeeded
+    evidence_stage = result.stages[0]
+    assert evidence_stage.status == "succeeded_unverified"
     codes = {issue.code for issue in result.issues}
     assert "content_chunk_selection" in codes
     assert "practice_chunk_selection" in codes
+    assert result.studykit is not None
+    assert result.studykit["review"]["generator_review_status"] == (
+        "stage_quality_unverified"
+    )
+
+
+async def test_missing_practice_opportunity_does_not_block_assembly() -> None:
+    plan = evidence_plan()
+    extra = deepcopy(plan["practice_opportunities"][0])
+    extra["id"] = "additional-combinable-opportunity"
+    plan["practice_opportunities"].append(extra)
+    model = FakeModel(
+        [
+            model_response(plan),
+            model_response(learning_content()),
+            model_response(practice_flow()),
+            model_response(quality_audit()),
+        ]
+    )
+
+    result = await StudyKitGenerator(model, max_repairs=0).generate(
+        generation_request(), source_chunks()
+    )
+
+    assert result.succeeded
+    practice_stage = next(
+        item for item in result.stages
+        if item.stage is GenerationStage.PRACTICE
+    )
+    assert practice_stage.status == "succeeded_unverified"
+    assert [item.code for item in practice_stage.issues] == [
+        "opportunity_coverage"
+    ]
+    assert result.studykit is not None
+    assert result.studykit["review"]["generator_review_status"] == (
+        "stage_quality_unverified"
+    )
+
+
+async def test_content_terminology_conflict_does_not_block_assembly() -> None:
+    content = learning_content()
+    content["glossary"][0]["term_en"] = "gradient descent"
+    content["glossary"][0]["term_zh"] = "另一种译名"
+    model = FakeModel(
+        [
+            model_response(evidence_plan()),
+            model_response(content),
+            model_response(practice_flow()),
+            model_response(quality_audit()),
+        ]
+    )
+
+    result = await StudyKitGenerator(model, max_repairs=0).generate(
+        generation_request(), source_chunks()
+    )
+
+    assert result.succeeded
+    content_stage = next(
+        item for item in result.stages
+        if item.stage is GenerationStage.CONTENT
+    )
+    assert content_stage.status == "succeeded_unverified"
+    assert [item.code for item in content_stage.issues] == [
+        "terminology_conflict"
+    ]
 
 
 async def test_practice_must_copy_opportunity_controls_and_type() -> None:
@@ -1193,7 +1950,7 @@ async def test_practice_rejects_malformed_limitations_without_normalizing() -> N
 
 async def test_non_cs_unit_runs_without_math_or_code_practice_types() -> None:
     plan = evidence_plan()
-    plan["title"] = "近代城市史"
+    plan["unit_title_candidate"] = "近代城市史"
     plan["lecture_summary"] = "本单元比较城市化阶段、术语和计量单位。"
     plan["evidence_controls"] = [
         {
@@ -1334,7 +2091,7 @@ async def test_final_limitations_are_grouped_and_bounded() -> None:
 
 async def test_final_title_and_limitations_hide_internal_pipeline_names() -> None:
     plan = evidence_plan()
-    plan["title"] = "Lecture 4: Architectures for Grids — EvidencePlan"
+    plan["unit_title_candidate"] = "Lecture 4: Architectures for Grids — EvidencePlan"
     plan["limitations"][0]["description"] = (
         "parse warnings include low_extracted_text, "
         "removed duplicate lines, removed hidden formula noise, and "

@@ -3,6 +3,7 @@
 ## 项目规划
 
 - [全局进度](project_status.md)
+- [Developers Guide：StudyKit 离线生成与 Agent 接入](developers_guide.md)
 - [GitHub 上传选择与发布前检查](../GITHUB_UPLOAD.md)
 - [项目 Proposal](../proposal_agent.md)
 - [完整实施计划](../implementation_plan.md)

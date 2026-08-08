@@ -4,7 +4,7 @@
   "title": "CoursePilot Evidence Plan",
   "type": "object",
   "required": [
-    "title",
+    "unit_title_candidate",
     "lecture_summary",
     "page_segments",
     "core_concept_candidates",
@@ -16,7 +16,7 @@
     "limitations"
   ],
   "properties": {
-    "title": {"type": "string", "minLength": 1},
+    "unit_title_candidate": {"type": "string", "minLength": 1},
     "lecture_summary": {"type": "string", "minLength": 1},
     "page_segments": {
       "type": "array",

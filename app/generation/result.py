@@ -35,6 +35,7 @@ class GenerationRequest:
     course_version: str | None
     unit_id: str
     included_sources: tuple[dict[str, Any], ...]
+    unit_title: str | None = None
     material_set_id: str | None = None
     language: str = "zh-CN"
     target_minutes: int = 180
@@ -44,6 +45,8 @@ class GenerationRequest:
             raise ValueError("unit_id must not be empty")
         if not self.included_sources:
             raise ValueError("included_sources must not be empty")
+        if self.unit_title is not None and not self.unit_title.strip():
+            raise ValueError("unit_title must not be empty when provided")
         if self.target_minutes <= 0:
             raise ValueError("target_minutes must be positive")
 
@@ -52,6 +55,7 @@ class GenerationRequest:
             "course_id": self.course_id,
             "course_version": self.course_version,
             "unit_id": self.unit_id,
+            "unit_title": self.unit_title,
             "material_set_id": self.material_set_id,
             "language": self.language,
             "target_minutes": self.target_minutes,

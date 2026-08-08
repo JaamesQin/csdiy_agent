@@ -16,6 +16,8 @@ htmlcov/
 # local artifacts.  Do not publish them by accident.
 /data/raw/
 /data/sources/
+# External-model regression outputs are reproducible local artifacts.
+/data/regression/
 
 # Future private material and runtime-generated storage.
 /data/private/

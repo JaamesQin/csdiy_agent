@@ -1,6 +1,6 @@
 # CoursePilot 项目状态
 
-更新时间：2026-08-07
+更新时间：2026-08-08
 
 这份文档是新开发者的快速入口。更完整的状态矩阵见
 [docs/project_status.md](docs/project_status.md)，生成管线说明见
@@ -44,6 +44,9 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
   术语翻译由 Content 统一负责。
 - Audit 只运行一次；blocker 按 Evidence → Content → Practice 的依赖顺序
   各回修至多一次，不进行第二次语义 Audit。
+- Audit blocker 在修复前会做字段所有权归一化和去重；Evidence、Content、Practice
+  修复按依赖顺序传播。Audit 修复不会擅自改变原有 concept、requirement、control
+  和 opportunity ID；新增或删除身份字段会被确定性拒绝或恢复。
 - Audit 发现下游需要边界外的有效来源块时，会先修 EvidencePlan，
   再修对应 Content 或 Practice。
 - 最终 StudyKit 由代码确定性组装，并校验 Schema、引用、顺序、唯一 ID、
@@ -56,8 +59,8 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
 - 重试保持同一 thinking 配置和完整上下文，不通过切换为 non-thinking
   规避空正文，也不复用截断正文。
 - 每次调用保存 finish reason、token usage、request ID 和重试诊断。
-- Pipeline 当前版本为 `studykit-pipeline-v0.6-012`，
-  Prompt 当前版本为 `studykit-staged-v0.5-007`。
+- Pipeline 当前版本为 `studykit-pipeline-v0.11-019`，运行版本为 `21`；
+  Prompt 当前版本为 `studykit-staged-v0.8-010`。
 
 ### Schema、工具与课程资料
 
@@ -71,17 +74,21 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
 
 ### 测试状态
 
-- 当前自动化测试：`127 passed`。
+- 当前自动化测试：`148 passed`。
 - 测试覆盖阶段 Schema、Evidence controls、确定性 chunk 并集、引用、
   Markdown LaTeX、模型响应重试、恢复、单次 Audit 回修、非 CS 合成单元、
   CLI 和质量 profile。
-- 最新一次新鲜 Lecture 1–8 并发回归结果为 `6/8`：
-  Lecture 1、2、5、6、7、8 完整生成；Lecture 3 和 4 失败。
-- Lecture 3 的失败来自 Practice 改写全局 limitation；Lecture 4 的失败来自
-  assembly 内部字段泄漏阻断 Content 术语回修。这两类通用流程问题已在
-  v0.6.012 修复并通过本地测试，但按要求尚未再次调用模型做全量复验。
-- 人工检查仍发现 Lecture 2 有一题复杂数值链被误标为 `simple`，
-  Lecture 5 的练习工作量和矩阵数量措辞需要改进；语义 Audit 仍不能替代人工复核。
+- 最新一次全新 Lecture 1–8 外部并发回归（concurrency=8）结果为 `8/8`：
+  8 讲均生成 JSON/YAML/Markdown，均通过确定性验证，未解决 blocker 为 0。
+  详细结果见 `data/regression/studykit-v21-lectures-01-08/regression-summary.json`。
+- 回归耗时约 26 分 42 秒；每讲学习时间均为 180 分钟，练习数为 8–9 道。
+  共有 8 个 warning，全部由对应阶段模型修复；空响应重试 24 次后全部成功。
+- 8 讲最终质量人工评分平均 `91/100`：Lecture 1 93、Lecture 2 85、
+  Lecture 3 90、Lecture 4 91、Lecture 5 94、Lecture 6 91、Lecture 7 93、
+  Lecture 8 91。所有结果仍标记为 `repairs_applied_unverified`，因为设计上不做
+  二次语义 Audit。
+- 当前残留重点是 Lecture 2 离线 profile 缺少规范 `forward pass` 概念和
+  `transfer` 题型，以及 Lecture 8 对 LayerNorm 可学习参数的表述需要核对原始材料。
 
 ## 当前代码入口
 
@@ -113,8 +120,8 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
    再按需要增加向量检索和重排。
 4. 将 StudyKitGenerator、材料答疑、练习反馈和代码辅导接入现有
    OpenAI 兼容对话 API，完成意图识别和任务路由。
-5. 新鲜复验 v0.6.012，争取 Lecture 1–8 稳定 8/8，并加强复杂数值题、
-   工作量和答案一致性检查。
+5. 修复 Lecture 2 的离线 profile 对齐问题，核对 Lecture 8 的 LayerNorm 表述，
+   并为 `repairs_applied_unverified` 结果安排人工语义复核。
 6. 实现最小学习闭环，记录用户确认的学习证据，并输出概念、实现、
    迁移三个维度的复盘和下一步计划。
 7. 完成清小搭账号级能力实测、生产部署、日志脱敏、失败诊断和安全测试。
@@ -130,7 +137,8 @@ MaterialSet/权限与检索必须先提供稳定接口，Agent 编排随后接�
 - PDF 文本层会损坏公式、图形和阅读顺序，必要视觉结构不能完全自动恢复。
 - 公共资料、用户私有资料和学习状态尚未形成完整运行时隔离。
 - 清小搭文件输入、稳定会话标识和文件保留能力仍需账号级实测。
-- 当前 6/8 回归之后的流程修复只通过自动化测试，尚无新鲜模型全量结果。
+- v21 已完成新鲜模型全量回归并达到 8/8，但修复后未进行二次语义 Audit；
+  外部模型结果仍需人工复核后才适合作为最终教材。
 
 ## 核心 Agent 完成定义
 

@@ -10,7 +10,7 @@ from typing import Any, Iterable
 
 from pypdf import PdfReader
 
-PARSER_VERSION = "pdf-page-v0.1"
+PARSER_VERSION = "pdf-page-v0.2"
 _NOISE_LINE = re.compile(
     r"(?:sha1_base64=|</?latexit|^[A-Za-z0-9+/=]{160,}$)",
     re.IGNORECASE,
@@ -26,6 +26,9 @@ def sha256_file(path: Path) -> str:
 
 
 def normalize_pdf_text(text: str) -> tuple[str, list[str]]:
+    invalid_surrogates = len(re.findall(r"[\ud800-\udfff]", text))
+    if invalid_surrogates:
+        text = re.sub(r"[\ud800-\udfff]", "\ufffd", text)
     kept: list[str] = []
     removed = 0
     duplicate_lines = 0
@@ -50,6 +53,10 @@ def normalize_pdf_text(text: str) -> tuple[str, list[str]]:
     normalized = "\n".join(kept).strip()
     normalized = re.sub(r"\n{3,}", "\n\n", normalized)
     warnings: list[str] = []
+    if invalid_surrogates:
+        warnings.append(
+            f"replaced_invalid_unicode_surrogates:{invalid_surrogates}"
+        )
     if removed:
         warnings.append(f"removed_hidden_formula_noise_lines:{removed}")
     if duplicate_lines:

@@ -103,6 +103,7 @@ def build_request(
         course_version=manifest.get("course_version"),
         unit_id=unit_id,
         included_sources=_source_metadata(unit, chunk_source_ids),
+        unit_title=unit.get("official_resource_title") or unit.get("title"),
         material_set_id=material_set_id,
         language=language,
         target_minutes=target_minutes,
@@ -123,6 +124,8 @@ async def generate_outputs(
     from_stage: GenerationStage | str | None = None,
     request_timeout: float = 600.0,
     stage_max_tokens: int = 65_536,
+    assemble_on_audit_failure: bool = True,
+    evidence_max_repairs: int | None = None,
 ) -> GenerationResult:
     """Run generation and write artifacts without exposing provider secrets."""
 
@@ -140,6 +143,8 @@ async def generate_outputs(
         max_repairs=max_repairs,
         stage_timeout_seconds=request_timeout,
         stage_max_tokens=stage_max_tokens,
+        assemble_on_audit_failure=assemble_on_audit_failure,
+        evidence_max_repairs=evidence_max_repairs,
     )
     manifest_hash = hashlib.sha256(manifest_path.read_bytes()).hexdigest()
     result = await generator.generate(
@@ -229,6 +234,24 @@ def _parser() -> argparse.ArgumentParser:
         help="Maximum output tokens for each semantic stage.",
     )
     parser.add_argument(
+        "--strict-audit",
+        action="store_true",
+        help=(
+            "Do not assemble a draft when Audit is unavailable or has "
+            "unresolved blockers. The default is content-first delivery."
+        ),
+    )
+    parser.add_argument(
+        "--evidence-repairs",
+        type=int,
+        choices=(0, 1, 2, 3),
+        default=None,
+        help=(
+            "Validation-driven Evidence repair calls after the initial response; "
+            "defaults to 2, or 0 when --max-repairs=0."
+        ),
+    )
+    parser.add_argument(
         "--network-retries",
         type=int,
         default=0,
@@ -277,6 +300,8 @@ def main() -> None:
                 from_stage=args.from_stage,
                 request_timeout=args.request_timeout,
                 stage_max_tokens=args.stage_max_tokens,
+                assemble_on_audit_failure=not args.strict_audit,
+                evidence_max_repairs=args.evidence_repairs,
             )
         )
     except (ModelError, OSError, ValueError, yaml.YAMLError) as exc:

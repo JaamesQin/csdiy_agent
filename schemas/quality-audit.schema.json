@@ -41,6 +41,18 @@
           "observed": {"type": "string", "minLength": 1},
           "expected": {"type": "string", "minLength": 1},
           "repair_instruction": {"type": "string", "minLength": 1}
+          ,"impact": {
+            "enum": [
+              "learner_correctness", "answerability", "coverage",
+              "pedagogy", "presentation", "pipeline_integrity"
+            ]
+          },
+          "severity_rationale": {"type": "string", "minLength": 1},
+          "affected_learner_outcome_ids": {
+            "type": "array",
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true
+          }
         },
         "additionalProperties": false
       }

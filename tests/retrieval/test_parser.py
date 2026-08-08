@@ -26,5 +26,13 @@ def test_normalize_pdf_text_deduplicates_page_local_accessibility_text() -> None
     assert "removed_duplicate_lines:1" in warnings
 
 
+def test_normalize_pdf_text_replaces_unpaired_unicode_surrogates() -> None:
+    normalized, warnings = normalize_pdf_text("Title\ninvalid: \ud83d")
+
+    assert normalized == "Title\ninvalid: \ufffd"
+    assert "replaced_invalid_unicode_surrogates:1" in warnings
+    normalized.encode("utf-8")
+
+
 def test_infer_heading_uses_first_plausible_line() -> None:
     assert infer_heading("26\nComputation Graphs\nMore") == "Computation Graphs"

@@ -355,39 +355,71 @@ common_misconceptions:
 
 learning_sequence:
   - step: 1
+    activity_type: prerequisite
+    objective_ids: []
+    practice_ids: []
     activity: "完成三个前置检查题。"
     duration_minutes: 15
   - step: 2
+    activity_type: content
+    objective_ids: []
+    practice_ids: []
     activity: "阅读第 2–16 页，理解 CNN 的局部性限制、tokenization 和 token 矩阵。"
     duration_minutes: 35
     concept_explanation: "Transformer 首先改变处理对象：把输入组织成 token 集合，并用 T∈R^(N×d) 表示 N 个向量化 token。"
     source_pages: "2–16"
   - step: 3
+    activity_type: content
+    objective_ids: []
+    practice_ids: []
     activity: "阅读第 17–24 页，比较 token mixing、token-wise nonlinearity 和普通神经网络层。"
     duration_minutes: 25
     concept_explanation: "token mixing 在 token 之间交换信息，token-wise 非线性独立变换每个 token；二者分别对应普通网络中的线性混合和逐神经元非线性。"
     source_pages: "17–24"
   - step: 4
+    activity_type: content
+    objective_ids: []
+    practice_ids: []
     activity: "阅读第 25–34 页，按形状推导 QKV attention 和 self-attention。"
     duration_minutes: 40
     concept_explanation: "Attention 用输入依赖的权重替代固定混合矩阵；QK^T 产生 query-key 匹配分数，softmax 后对 V 做加权求和。"
     source_pages: "25–34"
   - step: 5
+    activity_type: content
+    objective_ids: []
+    practice_ids: []
     activity: "阅读第 35–39 页，理解 MSA 和 ViT Transformer block 的数据流。"
     duration_minutes: 25
     concept_explanation: "多个 attention head 并行提取不同关系，再拼接并投影；token norm、token-wise MLP 和 residual connection 组成可堆叠的 Transformer block。"
     source_pages: "35–39"
   - step: 6
+    activity_type: content
+    objective_ids: []
+    practice_ids: []
     activity: "阅读第 40–47 页，区分 permutation equivariance、permutation invariance 和 positional encoding。"
     duration_minutes: 25
     concept_explanation: "没有额外位置信息时，token 操作对顺序置换保持等变；位置编码把空间或序列位置重新注入 token 表示。"
     source_pages: "40–47"
   - step: 7
+    activity_type: review
+    objective_ids: []
+    practice_ids: []
     activity: "阅读第 48–54 页，理解 causal attention、GPT 训练和 cross-attention。"
     duration_minutes: 25
     concept_explanation: "因果 mask 让训练时不同位置可以并行计算但不能读取未来；cross-attention 则把一组 token 的信息提供给另一组 token。"
     source_pages: "48–54"
   - step: 8
+    activity_type: practice
+    objective_ids: []
+    practice_ids:
+      - practice-concept-01
+      - practice-shape-01
+      - practice-attention-01
+      - practice-qkv-01
+      - practice-architecture-01
+      - practice-permutation-01
+      - practice-causal-01
+      - practice-cross-attention-01
     activity: "按需完成后面的 practice；每次作答后只获取针对本题的即时点评。"
     duration_minutes: 30
     concept_explanation: "练习覆盖 token 形状、attention 计算、QKV 来源、MSA、位置编码、因果 mask 和 cross-attention；系统不累计正确率或生成整套题的掌握度结论。"

@@ -33,7 +33,7 @@ def test_prompts_are_subject_agnostic_and_use_dynamic_controls() -> None:
     audit = STAGE_TASKS[GenerationStage.AUDIT]
     combined = SYSTEM_PROMPT + "\n".join(STAGE_TASKS.values())
 
-    assert PROMPT_VERSION == "studykit-staged-v0.5-007"
+    assert PROMPT_VERSION == "studykit-staged-v0.8-010"
     assert "行内公式写成 $...$" in content
     assert "行内 $...$、独立公式 $$...$$" in practice
     assert "evidence control" in evidence

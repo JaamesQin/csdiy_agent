@@ -79,11 +79,16 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["step", "activity_type", "objective_ids", "activity", "duration_minutes"],
+        "required": ["step", "activity_type", "objective_ids", "practice_ids", "activity", "duration_minutes"],
         "properties": {
           "step": {"type": "integer", "minimum": 1},
           "activity_type": {"enum": ["prerequisite", "content", "practice", "review"]},
           "objective_ids": {
+            "type": "array",
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true
+          },
+          "practice_ids": {
             "type": "array",
             "items": {"type": "string", "minLength": 1},
             "uniqueItems": true

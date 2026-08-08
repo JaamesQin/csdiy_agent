@@ -67,8 +67,8 @@ SEMANTIC_STAGES = (
     GenerationStage.AUDIT,
 )
 ALL_STAGES = (*SEMANTIC_STAGES, GenerationStage.ASSEMBLE)
-PIPELINE_VERSION = "studykit-pipeline-v0.6-012"
-RUN_VERSION = 14
+PIPELINE_VERSION = "studykit-pipeline-v0.11-019"
+RUN_VERSION = 21
 
 
 @dataclass
@@ -78,6 +78,8 @@ class _StageCall:
     responses: list[ModelResponse]
     model_error: ModelError | None = None
     duration_seconds: float = 0.0
+    quality_issues: tuple[GenerationIssue, ...] = ()
+    identity_adjustments: tuple[str, ...] = ()
 
 
 class StudyKitGenerator:
@@ -94,11 +96,20 @@ class StudyKitGenerator:
         max_repairs: int = 1,
         stage_timeout_seconds: float = 600.0,
         stage_max_tokens: int = 65_536,
+        assemble_on_audit_failure: bool = True,
+        evidence_max_repairs: int | None = None,
     ) -> None:
         if not 0 <= max_repairs <= 1:
             raise ValueError("max_repairs must be zero or one")
         if stage_timeout_seconds <= 0 or stage_max_tokens <= 0:
             raise ValueError("stage timeout and max_tokens must be positive")
+        resolved_evidence_repairs = (
+            0
+            if max_repairs == 0 and evidence_max_repairs is None
+            else (2 if evidence_max_repairs is None else evidence_max_repairs)
+        )
+        if not 0 <= resolved_evidence_repairs <= 3:
+            raise ValueError("evidence_max_repairs must be between zero and three")
         self._model = model
         self._audit_model = audit_model or model
         self._studykit_schema_path = studykit_schema_path
@@ -109,6 +120,8 @@ class StudyKitGenerator:
         self._max_repairs = max_repairs
         self._stage_timeout_seconds = stage_timeout_seconds
         self._stage_max_tokens = stage_max_tokens
+        self._assemble_on_audit_failure = assemble_on_audit_failure
+        self._evidence_max_repairs = resolved_evidence_repairs
 
     async def generate(
         self,
@@ -196,6 +209,10 @@ class StudyKitGenerator:
             .get("outcome")
             == "repairs_applied_unverified"
         )
+        audit_warnings_unresolved = False
+        audit_delivery_issues: tuple[GenerationIssue, ...] = ()
+        audit_delivery_status: str | None = None
+        stage_delivery_issues: list[GenerationIssue] = []
         for stage in ALL_STAGES:
             if _stage_index(stage) < _stage_index(start_stage):
                 stages.append(
@@ -228,146 +245,250 @@ class StudyKitGenerator:
                 audit_output = audit_call.output
                 repaired_stages: list[GenerationStage] = []
                 deterministically_resolved: list[dict[str, Any]] = []
+                shard_resolutions: dict[tuple[str, str, str], str] = {}
                 audit_outcome: str | None = None
 
                 if (
                     audit_error is None
                     and audit_output is not None
                     and not audit_issues
-                    and _audit_blockers(audit_output)
+                    and _audit_findings(audit_output)
                 ):
                     if output_dir is not None:
                         _write_json(
                             output_dir / STAGE_FILENAMES[stage],
                             audit_output,
                         )
-                    blockers = _audit_blockers(audit_output)
-                    assembly_validation_issues = self._validate_final(
-                        evidence, preassembled
+                    findings = _normalize_audit_findings(
+                        _audit_findings(audit_output)
                     )
-                    deterministically_resolved = [
-                        item
-                        for item in blockers
-                        if _assembly_blocker_is_resolved(
-                            item, assembly_validation_issues
-                        )
-                    ]
-                    resolved_ids = {
-                        item["id"] for item in deterministically_resolved
-                    }
-                    actionable_blockers = [
-                        item for item in blockers if item["id"] not in resolved_ids
-                    ]
-                    promoted_boundary_blockers = (
-                        _promote_audit_boundary_blockers(
-                            actionable_blockers,
-                            artifacts[GenerationStage.EVIDENCE],
-                        )
+                    actionable_findings = _normalize_audit_findings(
+                        [
+                            *_promote_audit_boundary_blockers(
+                                findings,
+                                artifacts[GenerationStage.EVIDENCE],
+                            ),
+                            *findings,
+                        ]
                     )
-                    actionable_blockers = [
-                        *promoted_boundary_blockers,
-                        *actionable_blockers,
-                    ]
-                    blocker_targets = {
-                        issue["target_stage"]
-                        for issue in actionable_blockers
-                    }
-                    if self._max_repairs == 0 and actionable_blockers:
-                        audit_issues = _audit_generation_issues(
-                            actionable_blockers
-                        )
-                    elif "assembly" in blocker_targets:
-                        audit_issues = _audit_generation_issues(
-                            actionable_blockers
-                        )
-                    else:
-                        for target in (
-                            GenerationStage.EVIDENCE,
-                            GenerationStage.CONTENT,
-                            GenerationStage.PRACTICE,
+                    unresolved: list[dict[str, Any]] = []
+                    first_repair_error: ModelError | None = None
+                    repaired_upstream: set[GenerationStage] = set()
+                    for target in (
+                        GenerationStage.EVIDENCE,
+                        GenerationStage.CONTENT,
+                        GenerationStage.PRACTICE,
+                    ):
+                        target_issues = [
+                            item for item in actionable_findings
+                            if item["target_stage"] == target.value
+                        ]
+                        if target is GenerationStage.CONTENT and (
+                            GenerationStage.EVIDENCE in repaired_upstream
                         ):
-                            target_issues = [
-                                item
-                                for item in actionable_blockers
-                                if item["target_stage"] == target.value
-                            ]
-                            if not target_issues:
-                                continue
-                            repair = await self._repair_artifact_from_audit(
-                                target,
-                                request,
-                                evidence,
-                                (
-                                    None
-                                    if target is GenerationStage.EVIDENCE
-                                    else artifacts[GenerationStage.EVIDENCE]
-                                ),
-                                artifacts.get(GenerationStage.CONTENT),
-                                artifacts[target],
-                                target_issues,
-                            )
-                            if (
-                                output_dir is not None
-                                and (repair.output is None or repair.issues)
-                            ):
-                                self._record_audit_repair_failure(
-                                    output_dir,
-                                    target,
-                                    repair.output,
-                                    repair.issues,
+                            target_issues.append(
+                                _dependency_sync_issue(
+                                    target, GenerationStage.EVIDENCE
                                 )
-                            if repair.model_error is not None:
-                                audit_error = repair.model_error
-                                break
-                            if repair.output is None or repair.issues:
-                                audit_issues = repair.issues
-                                break
-                            artifacts[target] = repair.output
-                            repaired_stages.append(target)
-                            repair_infos = tuple(
-                                _model_info(item) for item in repair.responses
                             )
-                            self._record_audit_repair_success(
+                        if target is GenerationStage.PRACTICE:
+                            if GenerationStage.EVIDENCE in repaired_upstream:
+                                target_issues.append(
+                                    _dependency_sync_issue(
+                                        target, GenerationStage.EVIDENCE
+                                    )
+                                )
+                            if GenerationStage.CONTENT in repaired_upstream:
+                                target_issues.append(
+                                    _dependency_sync_issue(
+                                        target, GenerationStage.CONTENT
+                                    )
+                                )
+                        if not target_issues:
+                            continue
+                        target_has_blocker = any(
+                            item.get("severity") == "blocker"
+                            for item in target_issues
+                        )
+                        if self._max_repairs == 0:
+                            unresolved.extend(
+                                item for item in target_issues
+                                if item.get("severity") == "blocker"
+                            )
+                            for item in target_issues:
+                                status = (
+                                    "unresolved_failure"
+                                    if item.get("severity") == "blocker"
+                                    else "warning_unresolved"
+                                )
+                                for source_id in item.get("source_issue_ids", []):
+                                    shard_resolutions[
+                                        (source_id, target.value, item["location"])
+                                    ] = status
+                            continue
+                        repair = await self._repair_artifact_from_audit(
+                            target,
+                            request,
+                            evidence,
+                            (
+                                None if target is GenerationStage.EVIDENCE
+                                else artifacts[GenerationStage.EVIDENCE]
+                            ),
+                            artifacts.get(GenerationStage.CONTENT),
+                            artifacts[target],
+                            target_issues,
+                        )
+                        if output_dir is not None and (
+                            repair.output is None or repair.issues
+                        ):
+                            self._record_audit_repair_failure(
                                 output_dir,
-                                run,
                                 target,
                                 repair.output,
-                                repair_infos,
-                                duration_seconds=repair.duration_seconds,
+                                repair.issues,
+                                identity_adjustments=repair.identity_adjustments,
                             )
-                            for index, prior in enumerate(stages):
-                                if prior.stage is target:
-                                    stages[index] = replace(
-                                        prior,
-                                        status="repaired",
-                                        attempts=prior.attempts
-                                        + len(repair.responses),
-                                        model_info=(
-                                            *prior.model_info,
-                                            *repair_infos,
-                                        ),
-                                        duration_seconds=(
-                                            prior.duration_seconds
-                                            + repair.duration_seconds
-                                        ),
-                                    )
-                                    break
+                        if repair.model_error is not None and target_has_blocker:
+                            first_repair_error = first_repair_error or repair.model_error
+                        if repair.output is None or repair.issues:
+                            unresolved.extend(
+                                item for item in target_issues
+                                if item.get("severity") == "blocker"
+                            )
+                            for item in target_issues:
+                                status = (
+                                    "unresolved_failure"
+                                    if item.get("severity") == "blocker"
+                                    else "warning_repair_failed"
+                                )
+                                for source_id in item.get("source_issue_ids", []):
+                                    shard_resolutions[
+                                        (source_id, target.value, item["location"])
+                                    ] = status
+                            continue
+                        artifacts[target] = repair.output
+                        stage_delivery_issues.extend(repair.quality_issues)
+                        repaired_stages.append(target)
+                        repaired_upstream.add(target)
+                        for item in target_issues:
+                            for source_id in item.get("source_issue_ids", []):
+                                shard_resolutions[
+                                    (source_id, target.value, item["location"])
+                                ] = (
+                                    "model_repaired"
+                                    if item.get("severity") == "blocker"
+                                    else "warning_model_repaired"
+                                )
+                        repair_infos = tuple(
+                            _model_info(item) for item in repair.responses
+                        )
+                        self._record_audit_repair_success(
+                            output_dir,
+                            run,
+                            target,
+                            repair.output,
+                            repair_infos,
+                            duration_seconds=repair.duration_seconds,
+                            quality_issues=repair.quality_issues,
+                            identity_adjustments=repair.identity_adjustments,
+                        )
+                        for index, prior in enumerate(stages):
+                            if prior.stage is target:
+                                stages[index] = replace(
+                                    prior,
+                                    status=(
+                                        "repaired_unverified"
+                                        if repair.quality_issues
+                                        else "repaired"
+                                    ),
+                                    attempts=prior.attempts + len(repair.responses),
+                                    issues=(*prior.issues, *repair.quality_issues),
+                                    model_info=(*prior.model_info, *repair_infos),
+                                    duration_seconds=(
+                                        prior.duration_seconds + repair.duration_seconds
+                                    ),
+                                )
+                                break
 
-                        if audit_error is None and not audit_issues and (
-                            repaired_stages or deterministically_resolved
+                    # Assembly findings are checked only after all semantic
+                    # repairs. They never prevent those repairs from running.
+                    post_repair_candidate = self._assemble(
+                        request,
+                        evidence,
+                        artifacts[GenerationStage.EVIDENCE],
+                        artifacts[GenerationStage.CONTENT],
+                        artifacts[GenerationStage.PRACTICE],
+                    )
+                    assembly_validation_issues = self._validate_final(
+                        evidence, post_repair_candidate
+                    )
+                    for item in (
+                        candidate for candidate in findings
+                        if candidate["target_stage"] == "assembly"
+                    ):
+                        if _assembly_blocker_is_resolved(
+                            item,
+                            assembly_validation_issues,
+                            post_repair_candidate,
+                            artifacts[GenerationStage.EVIDENCE],
                         ):
-                            audit_repairs_applied = bool(repaired_stages)
-                            audit_outcome = (
-                                "repairs_applied_unverified"
-                                if repaired_stages
-                                else "audit_findings_deterministically_resolved"
+                            deterministically_resolved.append(item)
+                            for source_id in item["source_issue_ids"]:
+                                shard_resolutions[
+                                    (source_id, "assembly", item["location"])
+                                ] = (
+                                    "code_resolved"
+                                    if item.get("severity") == "blocker"
+                                    else "warning_code_resolved"
+                                )
+                        elif item.get("severity") == "blocker":
+                            unresolved.append(item)
+                        else:
+                            for source_id in item["source_issue_ids"]:
+                                shard_resolutions[
+                                    (source_id, "assembly", item["location"])
+                                ] = "warning_unresolved"
+                    for item in findings:
+                        for source_id in item["source_issue_ids"]:
+                            shard_resolutions.setdefault(
+                                (
+                                    source_id,
+                                    item["target_stage"],
+                                    item["location"],
+                                ),
+                                (
+                                    "unresolved_failure"
+                                    if item.get("severity") == "blocker"
+                                    else "warning_unresolved"
+                                ),
                             )
-                            self._record_audit_resolution(
-                                output_dir,
-                                audit_output,
-                                repaired_stages,
-                                deterministically_resolved,
-                            )
+                    resolution_records = _aggregate_audit_resolutions(
+                        findings, shard_resolutions
+                    )
+                    # Synthetic dependency/boundary failures are retained in
+                    # the validation report even though they have no Audit ID.
+                    audit_issues = _audit_generation_issues(unresolved)
+                    audit_error = first_repair_error
+                    audit_repairs_applied = bool(repaired_stages)
+                    audit_warnings_unresolved = any(
+                        item["resolution"]
+                        in {"warning_unresolved", "warning_repair_failed"}
+                        for item in resolution_records
+                    )
+                    if not audit_issues and audit_error is None:
+                        if repaired_stages:
+                            audit_outcome = "repairs_applied_unverified"
+                        elif audit_warnings_unresolved:
+                            audit_outcome = "warnings_unresolved"
+                        else:
+                            audit_outcome = "audit_findings_deterministically_resolved"
+                    self._record_audit_resolution(
+                        output_dir,
+                        audit_output,
+                        repaired_stages,
+                        deterministically_resolved,
+                        resolution_records,
+                    )
 
                 model_infos = tuple(
                     _model_info(item) for item in audit_responses
@@ -380,6 +501,7 @@ class StudyKitGenerator:
                             code=type(audit_error).__name__,
                             message=str(audit_error),
                         ),
+                        *audit_issues,
                     )
                     audit_status = GenerationStatus.MODEL_ERROR
                 else:
@@ -404,14 +526,23 @@ class StudyKitGenerator:
                         model_infos,
                         duration_seconds=audit_duration,
                     )
-                    return self._result(
-                        audit_status,
-                        request,
-                        evidence.used_chunk_ids,
-                        audit_issues,
-                        tuple(stages),
-                        failed_stage=stage,
+                    if not self._assemble_on_audit_failure:
+                        return self._result(
+                            audit_status,
+                            request,
+                            evidence.used_chunk_ids,
+                            audit_issues,
+                            tuple(stages),
+                            failed_stage=stage,
+                        )
+                    audit_delivery_issues = audit_issues
+                    audit_delivery_status = (
+                        "audit_unavailable"
+                        if audit_output is None or audit_error is not None
+                        else "audit_blockers_unresolved"
                     )
+                    audit_warnings_unresolved = True
+                    continue
 
                 artifacts[stage] = audit_output
                 stages.append(
@@ -445,8 +576,20 @@ class StudyKitGenerator:
                     artifacts[GenerationStage.CONTENT],
                     artifacts[GenerationStage.PRACTICE],
                     audit_repairs_applied=audit_repairs_applied,
+                    audit_warnings_unresolved=audit_warnings_unresolved,
+                    audit_delivery_status=audit_delivery_status,
+                    stage_quality_unverified=bool(stage_delivery_issues),
                 )
-                issues = self._validate_final(evidence, candidate)
+                final_validation_issues = self._validate_final(evidence, candidate)
+                issues = tuple(
+                    item for item in final_validation_issues
+                    if not _is_non_blocking_final_issue(item)
+                )
+                stage_delivery_issues.extend(
+                    item for item in final_validation_issues
+                    if _is_non_blocking_final_issue(item)
+                    and item not in stage_delivery_issues
+                )
                 assembly_duration = time.perf_counter() - assembly_started
                 if issues:
                     stage_result = StageResult(
@@ -574,12 +717,18 @@ class StudyKitGenerator:
                     tuple(stages),
                     failed_stage=stage,
                 )
+            stage_delivery_issues.extend(call.quality_issues)
             artifacts[stage] = call.output
             stages.append(
                 StageResult(
                     stage=stage,
-                    status="succeeded",
+                    status=(
+                        "succeeded_unverified"
+                        if call.quality_issues
+                        else "succeeded"
+                    ),
                     attempts=len(call.responses),
+                    issues=call.quality_issues,
                     model_info=model_infos,
                     duration_seconds=call.duration_seconds,
                 )
@@ -591,6 +740,7 @@ class StudyKitGenerator:
                 call.output,
                 model_infos,
                 duration_seconds=call.duration_seconds,
+                quality_issues=call.quality_issues,
             )
 
         final = artifacts[GenerationStage.ASSEMBLE]
@@ -600,7 +750,7 @@ class StudyKitGenerator:
         return GenerationResult(
             status=GenerationStatus.SUCCEEDED,
             studykit=final,
-            issues=(),
+            issues=tuple([*stage_delivery_issues, *audit_delivery_issues]),
             used_chunk_ids=evidence.used_chunk_ids,
             attempts=sum(stage.attempts for stage in stages),
             prompt_version=PROMPT_VERSION,
@@ -637,7 +787,12 @@ class StudyKitGenerator:
         candidate: dict[str, Any] | None = None
         responses: list[ModelResponse] = []
         issues: tuple[GenerationIssue, ...] = ()
-        for attempt in range(self._max_repairs + 1):
+        repair_limit = (
+            self._evidence_max_repairs
+            if stage is GenerationStage.EVIDENCE
+            else self._max_repairs
+        )
+        for attempt in range(repair_limit + 1):
             try:
                 response = await self._call_model(
                     prompt,
@@ -660,6 +815,23 @@ class StudyKitGenerator:
                 error_response = _model_error_response(exc)
                 if error_response is not None:
                     responses.append(error_response)
+                if (
+                    stage is GenerationStage.EVIDENCE
+                    and attempt < repair_limit
+                ):
+                    # Evidence is required by every downstream stage. Retry
+                    # the complete call after exhausted provider-level
+                    # retries instead of terminating the pipeline at once.
+                    continue
+                blocking, quality = _partition_stage_issues(issues)
+                if candidate is not None and quality and not blocking:
+                    return _StageCall(
+                        candidate,
+                        (),
+                        responses,
+                        duration_seconds=time.perf_counter() - started,
+                        quality_issues=quality,
+                    )
                 return _StageCall(
                     candidate,
                     issues,
@@ -673,6 +845,8 @@ class StudyKitGenerator:
                 dict(response.output),
                 evidence_plan,
             )
+            if stage is GenerationStage.EVIDENCE:
+                candidate = _expand_evidence_chunk_aliases(candidate, evidence)
             issues = self._validate_stage(
                 stage,
                 schema,
@@ -689,7 +863,7 @@ class StudyKitGenerator:
                     responses,
                     duration_seconds=time.perf_counter() - started,
                 )
-            if attempt < self._max_repairs:
+            if attempt < repair_limit:
                 prompt = build_stage_repair_prompt(
                     stage,
                     request,
@@ -702,11 +876,20 @@ class StudyKitGenerator:
                     practice_flow=practice_flow,
                     assembled_candidate=assembled_candidate,
                 )
+        blocking, quality = _partition_stage_issues(issues)
+        if blocking:
+            return _StageCall(
+                candidate,
+                issues,
+                responses,
+                duration_seconds=time.perf_counter() - started,
+            )
         return _StageCall(
             candidate,
-            issues,
+            blocking,
             responses,
             duration_seconds=time.perf_counter() - started,
+            quality_issues=quality,
         )
 
     async def _repair_artifact_from_audit(
@@ -767,6 +950,11 @@ class StudyKitGenerator:
             dict(response.output),
             evidence_plan,
         )
+        if stage is GenerationStage.EVIDENCE:
+            repaired = _expand_evidence_chunk_aliases(repaired, evidence)
+        repaired, identity_adjustments = _reconcile_audit_repair_identities(
+            stage, candidate, repaired
+        )
         validation = self._validate_stage(
             stage,
             schema,
@@ -776,7 +964,23 @@ class StudyKitGenerator:
             request,
             learning_content,
         )
-        if repaired == candidate:
+        changed_ids = _changed_audit_repair_ids(stage, candidate, repaired)
+        if changed_ids:
+            validation = (
+                *validation,
+                GenerationIssue(
+                    stage=stage.value,
+                    code="audit_repair_planning_ids_changed",
+                    message=(
+                        "Audit repair must reuse the existing planning IDs; "
+                        f"changed collections: {changed_ids}"
+                    ),
+                    location=stage.value,
+                ),
+            )
+        if repaired == candidate and any(
+            item.get("source_issue_ids") for item in audit_issues
+        ):
             validation = (
                 *validation,
                 GenerationIssue(
@@ -786,11 +990,22 @@ class StudyKitGenerator:
                     location=stage.value,
                 ),
             )
+        blocking, quality = _partition_stage_issues(tuple(validation))
+        if blocking:
+            return _StageCall(
+                repaired,
+                tuple(validation),
+                [response],
+                duration_seconds=time.perf_counter() - started,
+                identity_adjustments=identity_adjustments,
+            )
         return _StageCall(
             repaired,
-            validation,
+            blocking,
             [response],
             duration_seconds=time.perf_counter() - started,
+            quality_issues=quality,
+            identity_adjustments=identity_adjustments,
         )
 
     async def _call_model(
@@ -1201,6 +1416,51 @@ class StudyKitGenerator:
                     stage.value, candidate, "learning_sequence", "step"
                 )
             )
+            practice_ids = {item["id"] for item in candidate["practice"]}
+            sequenced_practice_ids: set[str] = set()
+            for index, item in enumerate(candidate["learning_sequence"]):
+                referenced = set(item["practice_ids"])
+                unknown = referenced - practice_ids
+                if unknown:
+                    issues.append(
+                        GenerationIssue(
+                            stage=stage.value,
+                            code="unknown_sequence_practice_id",
+                            message=f"unknown practice ids: {sorted(unknown)}",
+                            location=f"learning_sequence[{index}].practice_ids",
+                        )
+                    )
+                if item["activity_type"] == "practice" and not referenced:
+                    issues.append(
+                        GenerationIssue(
+                            stage=stage.value,
+                            code="practice_step_without_practice",
+                            message="practice steps must reference at least one practice",
+                            location=f"learning_sequence[{index}].practice_ids",
+                        )
+                    )
+                if item["activity_type"] not in {"practice", "review"} and referenced:
+                    issues.append(
+                        GenerationIssue(
+                            stage=stage.value,
+                            code="practice_ids_on_non_practice_step",
+                            message=(
+                                "only practice and review steps may reference practice ids"
+                            ),
+                            location=f"learning_sequence[{index}].practice_ids",
+                        )
+                    )
+                sequenced_practice_ids.update(referenced & practice_ids)
+            omitted = practice_ids - sequenced_practice_ids
+            if omitted:
+                issues.append(
+                    GenerationIssue(
+                        stage=stage.value,
+                        code="sequence_practice_coverage",
+                        message=f"practice ids omitted from learning flow: {sorted(omitted)}",
+                        location="learning_sequence",
+                    )
+                )
             total_minutes = sum(
                 item["duration_minutes"]
                 for item in candidate["learning_sequence"]
@@ -1472,6 +1732,9 @@ class StudyKitGenerator:
         practice: dict[str, Any],
         *,
         audit_repairs_applied: bool = False,
+        audit_warnings_unresolved: bool = False,
+        audit_delivery_status: str | None = None,
+        stage_quality_unverified: bool = False,
     ) -> dict[str, Any]:
         model_limitations = [
             _learner_limitation_text(item["description"])
@@ -1486,13 +1749,15 @@ class StudyKitGenerator:
             ]
         )
         limitations = limitations[:10]
-        return {
+        candidate = {
             "studykit_version": "0.1",
             "status": "draft",
             "course_id": request.course_id,
             "course_version": request.course_version,
             "unit_id": request.unit_id,
-            "title": _studykit_title(plan["title"]),
+            "title": _studykit_title(
+                request.unit_title or plan["unit_title_candidate"]
+            ),
             "language": request.language,
             "estimated_study_time_minutes": sum(
                 item["duration_minutes"] for item in practice["learning_sequence"]
@@ -1523,9 +1788,20 @@ class StudyKitGenerator:
                 "human_review_status": "pending",
                 "human_reviewed_at": None,
                 "generator_review_status": (
-                    "audit_repairs_applied_unverified"
-                    if audit_repairs_applied
-                    else "validation_complete"
+                    audit_delivery_status
+                    or (
+                        "audit_repairs_applied_unverified"
+                        if audit_repairs_applied
+                        else (
+                            "audit_warnings_unresolved"
+                            if audit_warnings_unresolved
+                            else (
+                                "stage_quality_unverified"
+                                if stage_quality_unverified
+                                else "validation_complete"
+                            )
+                        )
+                    )
                 ),
                 "checks_remaining": [
                     "human content review",
@@ -1535,10 +1811,26 @@ class StudyKitGenerator:
                         if audit_repairs_applied
                         else []
                     ),
+                    *(
+                        ["unresolved audit warnings"]
+                        if audit_warnings_unresolved
+                        else []
+                    ),
+                    *(
+                        ["semantic audit unavailable or blockers unresolved"]
+                        if audit_delivery_status is not None
+                        else []
+                    ),
+                    *(
+                        ["unresolved upstream stage quality checks"]
+                        if stage_quality_unverified
+                        else []
+                    ),
                 ],
             },
             "limitations": limitations,
         }
+        return _sanitize_learner_artifact(candidate)
 
     def _validate_final(
         self, evidence: EvidenceBundle, candidate: dict[str, Any]
@@ -1554,6 +1846,7 @@ class StudyKitGenerator:
                 "assemble", candidate, "learning_sequence", "step"
             )
         )
+        issues.extend(_learning_sequence_practice_issues("assemble", candidate))
         issues.extend(_final_internal_field_issues(candidate))
         for collection, field in (
             ("learning_objectives", "id"),
@@ -1606,6 +1899,7 @@ class StudyKitGenerator:
                 "stage_timeout_seconds": self._stage_timeout_seconds,
                 "stage_max_tokens": self._stage_max_tokens,
                 "max_repairs": self._max_repairs,
+                "evidence_max_repairs": self._evidence_max_repairs,
                 "max_empty_content_retries": getattr(
                     self._model, "max_empty_content_retries", None
                 ),
@@ -1657,6 +1951,7 @@ class StudyKitGenerator:
                 "stage_timeout_seconds": self._stage_timeout_seconds,
                 "stage_max_tokens": self._stage_max_tokens,
                 "max_repairs": self._max_repairs,
+                "evidence_max_repairs": self._evidence_max_repairs,
                 "max_empty_content_retries": getattr(
                     self._model, "max_empty_content_retries", None
                 ),
@@ -1742,11 +2037,19 @@ class StudyKitGenerator:
                     reused.get(GenerationStage.CONTENT),
                 )
             )
-            if issues:
+            blocking_issues = (
+                issues
+                if stage is GenerationStage.ASSEMBLE
+                else _partition_stage_issues(issues)[0]
+            )
+            if blocking_issues:
                 return GenerationIssue(
                     stage="recovery",
                     code="invalid_upstream_artifact",
-                    message=f"{path.name} no longer passes validation: {issues[0].message}",
+                    message=(
+                        f"{path.name} no longer passes validation: "
+                        f"{blocking_issues[0].message}"
+                    ),
                 )
             reused[stage] = artifact
         return reused, start
@@ -1760,15 +2063,28 @@ class StudyKitGenerator:
         model_infos: tuple[dict[str, Any], ...] | None,
         *,
         duration_seconds: float,
+        quality_issues: tuple[GenerationIssue, ...] = (),
     ) -> None:
         if output_dir is None:
             return
         _write_json(output_dir / STAGE_FILENAMES[stage], artifact)
         entry: dict[str, Any] = {
-            "status": "succeeded",
+            "status": (
+                "succeeded_unverified" if quality_issues else "succeeded"
+            ),
             "reused": False,
             "duration_seconds": duration_seconds,
         }
+        if quality_issues:
+            entry["issues"] = [item.to_dict() for item in quality_issues]
+            stem = STAGE_FILENAMES[stage].removesuffix(".json")
+            _write_json(
+                output_dir / f"{stem}.validation.json",
+                {
+                    "non_blocking": True,
+                    "issues": [item.to_dict() for item in quality_issues],
+                },
+            )
         if model_infos is not None:
             previous = run["stages"].get(stage.value, {})
             previous_calls = previous.get("model_calls", [])
@@ -1825,6 +2141,8 @@ class StudyKitGenerator:
         stage: GenerationStage,
         candidate: dict[str, Any] | None,
         issues: tuple[GenerationIssue, ...],
+        *,
+        identity_adjustments: tuple[str, ...] = (),
     ) -> None:
         stem = STAGE_FILENAMES[stage].removesuffix(".json")
         if candidate is not None:
@@ -1834,7 +2152,14 @@ class StudyKitGenerator:
             )
         _write_json(
             output_dir / f"{stem}.audit-repair.validation.json",
-            {"issues": [issue.to_dict() for issue in issues]},
+            {
+                "issues": [issue.to_dict() for issue in issues],
+                **(
+                    {"identity_adjustments": list(identity_adjustments)}
+                    if identity_adjustments
+                    else {}
+                ),
+            },
         )
 
     def _record_audit_repair_success(
@@ -1846,6 +2171,8 @@ class StudyKitGenerator:
         model_infos: tuple[dict[str, Any], ...],
         *,
         duration_seconds: float,
+        quality_issues: tuple[GenerationIssue, ...] = (),
+        identity_adjustments: tuple[str, ...] = (),
     ) -> None:
         if output_dir is None:
             return
@@ -1854,7 +2181,9 @@ class StudyKitGenerator:
         calls = [*previous.get("model_calls", []), *model_infos]
         run["stages"][stage.value] = {
             **previous,
-            "status": "succeeded",
+            "status": (
+                "succeeded_unverified" if quality_issues else "succeeded"
+            ),
             "reused": False,
             "attempts": len(calls),
             "model_calls": calls,
@@ -1864,7 +2193,17 @@ class StudyKitGenerator:
             "audit_repair": {
                 "applied": True,
                 "semantic_reaudit_performed": False,
+                **(
+                    {"identity_adjustments": list(identity_adjustments)}
+                    if identity_adjustments
+                    else {}
+                ),
             },
+            **(
+                {"issues": [item.to_dict() for item in quality_issues]}
+                if quality_issues
+                else {}
+            ),
         }
         self._write_run(output_dir, run)
 
@@ -1874,26 +2213,80 @@ class StudyKitGenerator:
         audit_output: dict[str, Any],
         repaired_stages: list[GenerationStage],
         deterministically_resolved: list[dict[str, Any]],
+        resolutions: list[dict[str, Any]],
     ) -> None:
         if output_dir is None:
             return
-        blockers = _audit_blockers(audit_output)
+        findings = _audit_findings(audit_output)
+        unresolved_warning_statuses = {
+            "warning_unresolved", "warning_repair_failed"
+        }
         _write_json(
             output_dir / "04-quality-audit.resolution.json",
             {
-                "resolution_version": 1,
+                "resolution_version": 3,
                 "audit_verdict": audit_output["verdict"],
                 "outcome": (
-                    "repairs_applied_unverified"
-                    if repaired_stages
-                    else "audit_findings_deterministically_resolved"
+                    "unresolved_failure"
+                    if any(
+                        item["resolution"] == "unresolved_failure"
+                        for item in resolutions
+                    )
+                    else (
+                        "repairs_applied_unverified"
+                        if repaired_stages
+                        else (
+                            "warnings_unresolved"
+                            if any(
+                                item["resolution"] in unresolved_warning_statuses
+                                for item in resolutions
+                            )
+                            else "audit_findings_deterministically_resolved"
+                        )
+                    )
                 ),
                 "semantic_reaudit_performed": False,
-                "audit_issue_ids": [item["id"] for item in blockers],
+                "audit_issue_ids": [item["id"] for item in findings],
+                "audit_blocker_ids": [
+                    item["id"] for item in findings
+                    if item.get("severity") == "blocker"
+                ],
+                "audit_warning_ids": [
+                    item["id"] for item in findings
+                    if item.get("severity") == "warning"
+                ],
                 "repaired_stages": [stage.value for stage in repaired_stages],
                 "deterministically_resolved_issue_ids": [
-                    item["id"] for item in deterministically_resolved
+                    source_id
+                    for item in deterministically_resolved
+                    for source_id in item.get("source_issue_ids", [item["id"]])
                 ],
+                "warning_count": sum(
+                    item.get("severity") == "warning"
+                    for item in audit_output.get("issues", [])
+                ),
+                "resolutions": resolutions,
+                "unresolved_issue_ids": [
+                    item["issue_id"]
+                    for item in resolutions
+                    if item["resolution"] == "unresolved_failure"
+                ],
+                "unresolved_warning_ids": [
+                    item["issue_id"]
+                    for item in resolutions
+                    if item["resolution"] in unresolved_warning_statuses
+                ],
+                "warning_resolution_counts": {
+                    status: sum(
+                        item["resolution"] == status for item in resolutions
+                    )
+                    for status in (
+                        "warning_model_repaired",
+                        "warning_code_resolved",
+                        "warning_unresolved",
+                        "warning_repair_failed",
+                    )
+                },
                 "deterministic_validation": {
                     stage.value: "passed" for stage in repaired_stages
                 },
@@ -2172,6 +2565,344 @@ def _audit_blockers(audit: dict[str, Any]) -> list[dict[str, Any]]:
     ]
 
 
+def _audit_findings(audit: dict[str, Any]) -> list[dict[str, Any]]:
+    return [
+        item for item in audit.get("issues", [])
+        if isinstance(item, dict)
+        and item.get("severity") in {"blocker", "warning"}
+    ]
+
+
+def _learning_sequence_practice_issues(
+    stage: str, candidate: dict[str, Any]
+) -> list[GenerationIssue]:
+    issues: list[GenerationIssue] = []
+    practice_ids = {
+        item.get("id") for item in candidate.get("practice", [])
+        if isinstance(item, dict) and isinstance(item.get("id"), str)
+    }
+    covered: set[str] = set()
+    for index, item in enumerate(candidate.get("learning_sequence", [])):
+        if not isinstance(item, dict):
+            continue
+        references = set(item.get("practice_ids", []))
+        unknown = references - practice_ids
+        if unknown:
+            issues.append(
+                GenerationIssue(
+                    stage=stage,
+                    code="unknown_sequence_practice_id",
+                    message=f"unknown practice ids: {sorted(unknown)}",
+                    location=f"learning_sequence[{index}].practice_ids",
+                )
+            )
+        activity_type = item.get("activity_type")
+        if activity_type == "practice" and not references:
+            issues.append(
+                GenerationIssue(
+                    stage=stage,
+                    code="practice_step_without_practice",
+                    message="practice steps must reference at least one practice",
+                    location=f"learning_sequence[{index}].practice_ids",
+                )
+            )
+        if activity_type not in {"practice", "review"} and references:
+            issues.append(
+                GenerationIssue(
+                    stage=stage,
+                    code="practice_ids_on_non_practice_step",
+                    message="only practice and review steps may reference practice ids",
+                    location=f"learning_sequence[{index}].practice_ids",
+                )
+            )
+        covered.update(references & practice_ids)
+    missing = practice_ids - covered
+    if missing:
+        issues.append(
+            GenerationIssue(
+                stage=stage,
+                code="sequence_practice_coverage",
+                message=f"practice ids omitted from learning flow: {sorted(missing)}",
+                location="learning_sequence",
+            )
+        )
+    return issues
+
+
+_NON_BLOCKING_STAGE_ISSUE_CODES = {
+    # Coverage and selection completeness affect confidence, not readability.
+    "core_practice_coverage",
+    "core_requirement_coverage",
+    "requirement_opportunity_coverage",
+    "content_chunk_selection",
+    "practice_chunk_selection",
+    "practice_type_coverage",
+    "missing_core_concept",
+    "sequence_practice_coverage",
+    "study_time_mismatch",
+    "practice_step_without_practice",
+    "practice_ids_on_non_practice_step",
+    "practice_not_actionable",
+    "learning_flow_coverage",
+    # These are semantic alignment/review concerns. The referenced objects are
+    # checked separately and unknown IDs remain blocking.
+    "practice_type_mapping",
+    "terminology_conflict",
+    "downstream_global_limitation",
+    "internal_field_leak",
+}
+
+_COVERAGE_CODES_WITH_UNKNOWN_IDS = {
+    "objective_requirement_coverage",
+    "objective_coverage",
+    "requirement_coverage",
+    "opportunity_coverage",
+}
+
+
+def _is_non_blocking_stage_issue(issue: GenerationIssue) -> bool:
+    """Whether an E/C/P issue can be delivered for later human review."""
+
+    if issue.code in _NON_BLOCKING_STAGE_ISSUE_CODES:
+        return True
+    if issue.code in _COVERAGE_CODES_WITH_UNKNOWN_IDS:
+        return "unknown=[]" in issue.message
+    return False
+
+
+def _partition_stage_issues(
+    issues: tuple[GenerationIssue, ...],
+) -> tuple[tuple[GenerationIssue, ...], tuple[GenerationIssue, ...]]:
+    blocking: list[GenerationIssue] = []
+    quality: list[GenerationIssue] = []
+    for issue in issues:
+        (quality if _is_non_blocking_stage_issue(issue) else blocking).append(issue)
+    return tuple(blocking), tuple(quality)
+
+
+def _is_non_blocking_final_issue(issue: GenerationIssue) -> bool:
+    return issue.code in {
+        "missing_prerequisites",
+        "sequence_practice_coverage",
+        "practice_step_without_practice",
+        "practice_ids_on_non_practice_step",
+    }
+
+
+_CONTENT_ROOTS = {
+    "learning_objectives", "prerequisites", "prerequisite_check", "outline",
+    "core_concepts", "glossary", "common_misconceptions",
+}
+_PRACTICE_ROOTS = {
+    "practice", "learning_sequence", "expected_evidence", "evaluation",
+    "answer", "rubric",
+}
+_EVIDENCE_ROOTS = {
+    "evidence_controls", "assessment_requirements", "practice_opportunities",
+    "core_concept_candidates", "page_segments", "content_chunk_ids",
+    "practice_chunk_ids", "lecture_summary",
+}
+_ASSEMBLY_ROOTS = {
+    "studykit_version", "status", "course_id", "course_version", "unit_id",
+    "title", "language", "estimated_study_time_minutes",
+    "estimated_study_time_status", "scope", "citations", "review",
+    "practice_feedback_policy",
+}
+
+
+def _normalize_audit_location(location: str) -> tuple[str, str]:
+    """Return the code owner and a canonical field path from noisy model text."""
+
+    value = location.strip()
+    roots = (
+        _CONTENT_ROOTS
+        | _PRACTICE_ROOTS
+        | _EVIDENCE_ROOTS
+        | _ASSEMBLY_ROOTS
+        | {"limitations"}
+    )
+    root_pattern = "|".join(
+        re.escape(item) for item in sorted(roots, key=len, reverse=True)
+    )
+    # Audit locations are model-authored and may contain arbitrary prose before
+    # the actual artifact path. Locate a known field token anywhere instead of
+    # trying to enumerate natural-language prefixes such as "preassembled".
+    artifact_matches = list(
+        re.finditer(
+            r"(?i)(?<![A-Za-z0-9_])(?:studykit|practiceflow|learningcontent|evidenceplan)(?![A-Za-z0-9_])",
+            value,
+        )
+    )
+    search_offset = artifact_matches[-1].end() if artifact_matches else 0
+    root_match = re.search(
+        rf"(?i)(?<![A-Za-z0-9_])(?:{root_pattern})(?![A-Za-z0-9_])",
+        value[search_offset:],
+    )
+    if root_match is not None:
+        value = value[search_offset + root_match.start():].strip()
+        root_match = re.match(r"[A-Za-z_][A-Za-z0-9_]*", value)
+    root = root_match.group(0).lower() if root_match else ""
+    if root in _PRACTICE_ROOTS:
+        owner = "practice"
+    elif root in _CONTENT_ROOTS:
+        owner = "content"
+    elif root in _EVIDENCE_ROOTS:
+        owner = "evidence"
+    elif root == "limitations":
+        # Learner-facing limitations are assembled deterministically from
+        # EvidencePlan global limitations. Downstream models do not own them.
+        owner = "assembly"
+    elif root in _ASSEMBLY_ROOTS:
+        owner = "assembly"
+    else:
+        owner = ""
+    return owner, value
+
+
+def _normalize_audit_findings(
+    findings: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Normalize field ownership and merge duplicate audit findings."""
+
+    merged: dict[tuple[str, str, str, str], dict[str, Any]] = {}
+    for raw in findings:
+        fallback = str(raw.get("target_stage", "assembly"))
+        if fallback not in {"evidence", "content", "practice", "assembly"}:
+            fallback = "assembly"
+        grouped: dict[str, list[str]] = {}
+        raw_locations = re.split(r"\s*[;；]\s*", str(raw.get("location", "")))
+        for raw_location in raw_locations:
+            if not raw_location.strip():
+                continue
+            owner, location = _normalize_audit_location(raw_location)
+            grouped.setdefault(owner or fallback, []).append(location)
+        if not grouped:
+            grouped[fallback] = [str(raw.get("location", "")).strip()]
+
+        existing_source_ids = raw.get("source_issue_ids")
+        source_ids = (
+            [str(raw["id"])]
+            if existing_source_ids is None
+            else [str(item) for item in existing_source_ids]
+        )
+        for target, locations in grouped.items():
+            location = "; ".join(dict.fromkeys(locations))
+            item = dict(raw)
+            item["target_stage"] = target
+            item["location"] = location
+            item["source_issue_ids"] = list(dict.fromkeys(source_ids))
+            key = (
+                str(item.get("severity", "blocker")),
+                str(item.get("category", "")),
+                target,
+                location.lower(),
+            )
+            if key not in merged:
+                merged[key] = item
+                continue
+            prior = merged[key]
+            prior["source_issue_ids"] = list(
+                dict.fromkeys(
+                    [*prior["source_issue_ids"], *item["source_issue_ids"]]
+                )
+            )
+            prior["evidence_chunk_ids"] = list(
+                dict.fromkeys(
+                    [
+                        *prior.get("evidence_chunk_ids", []),
+                        *item.get("evidence_chunk_ids", []),
+                    ]
+                )
+            )
+    return list(merged.values())
+
+
+# Kept for internal callers and tests written against the v16 helper name.
+_normalize_audit_blockers = _normalize_audit_findings
+
+
+def _aggregate_audit_resolutions(
+    findings: list[dict[str, Any]],
+    shard_resolutions: dict[tuple[str, str, str], str],
+) -> list[dict[str, Any]]:
+    """Collapse repair shards into one terminal status per Audit issue ID."""
+
+    shards_by_issue: dict[str, list[tuple[str, str]]] = {}
+    severity_by_issue: dict[str, str] = {}
+    for item in findings:
+        for source_id in item.get("source_issue_ids", []):
+            severity_by_issue[source_id] = str(item.get("severity", "blocker"))
+            shard = (item["target_stage"], item["location"])
+            if shard not in shards_by_issue.setdefault(source_id, []):
+                shards_by_issue[source_id].append(shard)
+
+    results: list[dict[str, Any]] = []
+    for source_id, shards in shards_by_issue.items():
+        severity = severity_by_issue[source_id]
+        default_status = (
+            "unresolved_failure" if severity == "blocker" else "warning_unresolved"
+        )
+        statuses = [
+            shard_resolutions.get((source_id, target, location), default_status)
+            for target, location in shards
+        ]
+        if severity == "warning":
+            if "warning_repair_failed" in statuses:
+                resolution = "warning_repair_failed"
+            elif "warning_unresolved" in statuses:
+                resolution = "warning_unresolved"
+            elif "warning_model_repaired" in statuses:
+                resolution = "warning_model_repaired"
+            else:
+                resolution = "warning_code_resolved"
+        else:
+            if "unresolved_failure" in statuses:
+                resolution = "unresolved_failure"
+            elif "model_repaired" in statuses:
+                resolution = "model_repaired"
+            else:
+                resolution = "code_resolved"
+        targets = list(dict.fromkeys(target for target, _ in shards))
+        locations = list(dict.fromkeys(location for _, location in shards))
+        results.append(
+            {
+                "issue_id": source_id,
+                "severity": severity,
+                "target_stage": "+".join(targets),
+                "target_stages": targets,
+                "location": "; ".join(locations),
+                "locations": locations,
+                "resolution": resolution,
+            }
+        )
+    return results
+
+
+def _dependency_sync_issue(
+    target: GenerationStage, upstream: GenerationStage
+) -> dict[str, Any]:
+    return {
+        "id": f"dependency-sync-{upstream.value}-to-{target.value}",
+        "source_issue_ids": [],
+        "severity": "blocker",
+        "category": "stage_contradiction",
+        "target_stage": target.value,
+        "location": target.value,
+        "description": f"Synchronize {target.value} with repaired {upstream.value}.",
+        "evidence_chunk_ids": [],
+        "observed": f"The upstream {upstream.value} artifact changed after Audit.",
+        "expected": (
+            "Reuse all existing concept, requirement, control, and opportunity IDs "
+            "while synchronizing upstream dependencies."
+        ),
+        "repair_instruction": (
+            f"Synchronize this complete {target.value} artifact with repaired "
+            f"{upstream.value}; reuse existing IDs and do not create unplanned "
+            "course constraints. Preserve unrelated content."
+        ),
+    }
+
+
 def _audit_projection(candidate: dict[str, Any]) -> dict[str, Any]:
     """Expose only model-authored learner content to the semantic audit."""
 
@@ -2228,7 +2959,8 @@ def _promote_audit_boundary_blockers(
             promoted.append(
                 {
                     "id": f"{item['id']}-evidence-boundary",
-                    "severity": "blocker",
+                    "source_issue_ids": [],
+                    "severity": item.get("severity", "blocker"),
                     "category": "source_control_violation",
                     "target_stage": "evidence",
                     "location": selection_field,
@@ -2277,6 +3009,8 @@ def _audit_generation_issues(
 def _assembly_blocker_is_resolved(
     item: dict[str, Any],
     assembly_validation_issues: tuple[GenerationIssue, ...],
+    candidate: dict[str, Any],
+    plan: dict[str, Any],
 ) -> bool:
     """Accept only assembly findings covered by deterministic validation."""
 
@@ -2284,10 +3018,19 @@ def _assembly_blocker_is_resolved(
         return False
     if item["category"] == "formatting":
         return True
-    if item["category"] != "internal_field_leak":
-        return False
-    location = item["location"].lower()
-    return "title" in location or "limitations" in location
+    if item["category"] == "internal_field_leak":
+        return not _final_internal_field_issues(candidate)
+    if (
+        "limitations" in item["location"].lower()
+        and item["category"] in {"source_risk_ignored", "coverage_gap"}
+    ):
+        expected = {
+            _learner_limitation_text(limitation["description"])
+            for limitation in plan["limitations"]
+            if limitation["scope"] == "global"
+        }
+        return expected.issubset(set(candidate.get("limitations", [])))
+    return False
 
 
 def _normalize_stage_candidate(
@@ -2297,6 +3040,16 @@ def _normalize_stage_candidate(
 ) -> dict[str, Any]:
     """Normalize fields that are deterministic copies of upstream artifacts."""
 
+    # EvidencePlan is an internal interface.  Accept the immediately preceding
+    # field name only to keep recovery diagnostics and small local FakeModels
+    # readable; persisted artifacts always use the new unambiguous name.
+    if stage is GenerationStage.EVIDENCE:
+        if "unit_title_candidate" not in candidate and isinstance(
+            candidate.get("title"), str
+        ):
+            candidate = dict(candidate)
+            candidate["unit_title_candidate"] = candidate.pop("title")
+        return candidate
     if stage is not GenerationStage.PRACTICE or plan is None:
         return candidate
     limitations = candidate.get("limitations")
@@ -2313,6 +3066,43 @@ def _normalize_stage_candidate(
         if item.get("scope") == "global"
     ]
     return {**candidate, "limitations": [*inherited, *local]}
+
+
+def _expand_evidence_chunk_aliases(
+    candidate: dict[str, Any], evidence: EvidenceBundle
+) -> dict[str, Any]:
+    """Expand unambiguous page aliases such as p003 to full SourceChunk IDs."""
+
+    ids_by_page: dict[int, list[str]] = {}
+    valid_ids = set(evidence.used_chunk_ids)
+    for chunk in evidence.all_chunks:
+        page = chunk.get("anchor", {}).get("value")
+        if isinstance(page, int):
+            ids_by_page.setdefault(page, []).append(chunk["chunk_id"])
+
+    alias_pattern = re.compile(r"(?i)^(?:p|page[-_ ]?)(\d+)$")
+
+    def expand(value: Any, *, chunk_field: bool = False) -> Any:
+        if isinstance(value, dict):
+            return {
+                key: expand(item, chunk_field=(key == "chunk_ids"))
+                for key, item in value.items()
+            }
+        if isinstance(value, list):
+            return [expand(item, chunk_field=chunk_field) for item in value]
+        if chunk_field and isinstance(value, str) and value not in valid_ids:
+            match = alias_pattern.fullmatch(value.strip())
+            if match is not None:
+                matches = ids_by_page.get(int(match.group(1)), [])
+                if len(matches) == 1:
+                    return matches[0]
+        return value
+
+    expanded = expand(candidate)
+    for field in ("content_chunk_ids", "practice_chunk_ids"):
+        if field in expanded:
+            expanded[field] = expand(expanded[field], chunk_field=True)
+    return expanded
 
 
 def _group_parse_warnings(evidence: EvidenceBundle) -> list[str]:
@@ -2409,24 +3199,29 @@ def _feedback_policy() -> dict[str, Any]:
 def _studykit_title(plan_title: str) -> str:
     """Remove stage-specific labeling from the learner-facing title."""
 
-    title = re.sub(
-        r"(?i)(?:\s*[—–-]\s*|\s+)evidence\s*plan\s*$",
-        "",
-        plan_title.strip(),
-    ).strip()
-    if re.match(r"(?i)^evidence\s*plan\s*:", title):
-        return re.sub(
-            r"(?i)^evidence\s*plan\s*:",
-            "StudyKit:",
-            title,
-            count=1,
-        )
+    title = plan_title.strip()
+    # The fallback candidate is model-authored.  Remove stage labels wherever
+    # they occur, including compact and parenthesized variants.
+    title = re.sub(r"(?i)[（(]\s*evidence\s*plan\s*[）)]", " ", title)
+    title = re.sub(r"(?i)evidence\s*plan", " ", title)
+    title = re.sub(r"\s*(?:[:：]|[—–-])\s*(?=$)", "", title)
+    title = re.sub(r"(?:^|\s)[—–-](?:\s|$)", " ", title)
+    title = re.sub(r"\s*[:：]\s*", ": ", title)
+    title = re.sub(r"\s+", " ", title).strip(" :：—–-")
+    if not title:
+        title = "课程单元"
     if re.match(r"(?i)^studykit\s*:", title):
         return title
     return f"StudyKit: {title}"
 
 
 _INTERNAL_DIAGNOSTIC_REPLACEMENTS = {
+    "EvidencePlan": "证据规划",
+    "Evidence Plan": "证据规划",
+    "LearningContent": "学习内容",
+    "Learning Content": "学习内容",
+    "PracticeFlow": "练习流程",
+    "Practice Flow": "练习流程",
     "parse warnings": "解析质量提示",
     "low_extracted_text": "文本提取量较低",
     "low extracted text": "文本提取量较低",
@@ -2437,6 +3232,113 @@ _INTERNAL_DIAGNOSTIC_REPLACEMENTS = {
     "replaced_invalid_unicode_surrogates": "已修复无效 Unicode 字符",
     "replaced invalid unicode surrogates": "已修复无效 Unicode 字符",
 }
+
+
+def _sanitize_learner_artifact(candidate: dict[str, Any]) -> dict[str, Any]:
+    """Remove pipeline vocabulary from all learner-facing assembled strings."""
+
+    def sanitize(value: Any) -> Any:
+        if isinstance(value, str):
+            return _learner_limitation_text(value)
+        if isinstance(value, list):
+            return [sanitize(item) for item in value]
+        if isinstance(value, dict):
+            return {key: sanitize(item) for key, item in value.items()}
+        return value
+
+    return sanitize(candidate)
+
+
+_AUDIT_REPAIR_IDENTITY_FIELDS = {
+    GenerationStage.EVIDENCE: (
+        "core_concept_candidates",
+        "assessment_requirements",
+        "practice_opportunities",
+        "evidence_controls",
+    ),
+    GenerationStage.CONTENT: ("learning_objectives", "core_concepts"),
+    GenerationStage.PRACTICE: ("practice",),
+}
+
+
+def _reconcile_audit_repair_identities(
+    stage: GenerationStage,
+    before: dict[str, Any],
+    after: dict[str, Any],
+) -> tuple[dict[str, Any], tuple[str, ...]]:
+    """Land edits to existing objects while discarding identity drift.
+
+    Audit repair models return complete artifacts. They may correctly repair a
+    requested field while also adding, deleting, or reordering planned
+    objects. Rebuild identity-owned collections from the original ID sequence:
+    use the repaired version of each existing object when present, restore a
+    deleted object from the original, and omit newly invented IDs.
+
+    Duplicate existing IDs are not reconciled because doing so could hide an
+    ambiguous structural error; normal stage validation will reject them.
+    """
+
+    fields = _AUDIT_REPAIR_IDENTITY_FIELDS.get(stage, ())
+    reconciled = dict(after)
+    adjusted: list[str] = []
+    for field in fields:
+        before_items = before.get(field)
+        after_items = after.get(field)
+        if not isinstance(before_items, list) or not isinstance(after_items, list):
+            continue
+        original = [
+            item for item in before_items
+            if isinstance(item, dict) and isinstance(item.get("id"), str)
+        ]
+        original_ids = [item["id"] for item in original]
+        allowed = set(original_ids)
+        repaired_by_id: dict[str, dict[str, Any]] = {}
+        duplicate_existing = False
+        observed_ids: list[str] = []
+        for item in after_items:
+            if not isinstance(item, dict) or not isinstance(item.get("id"), str):
+                continue
+            item_id = item["id"]
+            observed_ids.append(item_id)
+            if item_id not in allowed:
+                continue
+            if item_id in repaired_by_id:
+                duplicate_existing = True
+                break
+            repaired_by_id[item_id] = item
+        if duplicate_existing:
+            continue
+        rebuilt = [
+            repaired_by_id.get(item["id"], item)
+            for item in original
+        ]
+        if observed_ids != original_ids:
+            adjusted.append(field)
+        reconciled[field] = rebuilt
+    return reconciled, tuple(adjusted)
+
+
+def _changed_audit_repair_ids(
+    stage: GenerationStage,
+    before: dict[str, Any],
+    after: dict[str, Any],
+) -> list[str]:
+    """Reject Audit repairs that create or delete planned identities."""
+
+    fields = _AUDIT_REPAIR_IDENTITY_FIELDS.get(stage, ())
+    changed: list[str] = []
+    for field in fields:
+        before_ids = {
+            item.get("id") for item in before.get(field, [])
+            if isinstance(item, dict)
+        }
+        after_ids = {
+            item.get("id") for item in after.get(field, [])
+            if isinstance(item, dict)
+        }
+        if before_ids != after_ids:
+            changed.append(field)
+    return changed
 
 
 def _learner_limitation_text(value: str) -> str:
