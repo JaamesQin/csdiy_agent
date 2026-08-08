@@ -99,6 +99,67 @@ queued → running → generated → validated → ready
 ready → stale（输入、Prompt、Schema 或 Pipeline 版本变化）
 ```
 
+### 3.4 manifest 与 SourceChunk 的获取和 bootstrap
+
+Skill 的输入不是“必须事先存在的两个路径”，而是一个可选的课程上下文加任意数量、任意格式的原始资料集合。已有 manifest/chunks 时复用；缺失时，Skill 必须先完成 ingestion/bootstrap，再进入 StudyKit authoring：
+
+```text
+原始资料（PDF / 网页 / Markdown / DOCX / PPTX / 图片 / 用户文件，数量不限）
+  → 资料清单、权限和哈希
+  → 选择确定性 parser；无 parser 时由当前模型做受约束的结构化归一化
+  → Source / MaterialSet / Unit 与 manifest 候选
+  → 带来源锚点的 SourceChunk 集合
+  → 身份、权限、Schema、覆盖和 provenance 门禁
+  → Evidence → Content → Practice → Audit → StudyKit
+```
+
+两条输入路径必须同时被 Skill 支持：
+
+1. **已有产物**：从 Catalog/Job 或本地 fixture 读取 CourseManifest/MaterialManifest 与 SourceChunk JSONL，重新校验后直接进入 authoring。
+2. **bootstrap**：调用者只提供原始资料时，Skill 先枚举每个资料、分配稳定 `source_id`/`material_set_id`、计算哈希并判断 scope；对每个来源选择 parser。PDF 等已有本地 parser 的格式优先使用确定性脚本；没有可用 parser 的格式由当前模型从原文/文件内容生成候选 manifest、单位划分和 SourceChunk，但必须保留原文片段、来源 ID、可复核锚点、`parser_version`、`parse_warnings` 和 `provenance= model_assisted`。
+
+当前仓库的确定性 PDF 路径是 `scripts/build_course_chunks.py`；它执行文本抽取、空白/噪声归一化、重复行去除、页码锚点和 `schemas/source_chunk.schema.json` 校验，不调用模型。当前仓库的本地 fixture 是：
+
+```text
+manifest:
+  data/manifests/mit-6.7960-fall-2024.yaml
+chunks:
+  data/sources/mit-6.7960-fall-2024/lecture-02/chunks.jsonl
+```
+
+模型生成的 manifest 只能是候选：课程身份、官方标题、来源许可、权限和 URL 等代码/人工审核字段没有证据时必须保持 `null`/`unknown`，不得臆造。模型生成的 chunks 只能做可追溯分段和格式归一化，不能把摘要冒充原文证据；每个 chunk 必须保留原始引用片段或可定位的原文范围，并标注模型辅助风险，进入人工或确定性门禁后才能用于 StudyKit。
+
+任意数量资料应先形成一个 `MaterialSet`，保留每个 `source_id` 和 source-specific anchor；若资料属于不同课程、版本、权限或无法确认的单位，Skill 必须拆成多个 material set/unit，而不是混合生成。当前 v0.1 生成器仍只接受单 source 和 page/整数 anchor，因此要实现本节的任意格式/数量能力，Skill 需要在进入生成器前完成分源、单位拆分或扩展 SourceChunk/引用适配层；不能静默绕过现有限制。
+
+当前仓库的本地 fixture 是：
+
+```text
+manifest:
+  data/manifests/mit-6.7960-fall-2024.yaml
+chunks:
+  data/sources/mit-6.7960-fall-2024/lecture-02/chunks.jsonl
+```
+
+公共模板课程的 manifest 由课程目录/人工审核流程维护，包含 `course_id`、`course_version`、`unit_id`、官方标题和已批准的 `source_id`、哈希、权限与许可信息。生产环境中它们应来自 Catalog/数据库或对象存储，而不是由在线 Agent 自由选择文件。
+
+PDF 资料先由 ingestion 解析为保留页码锚点的 SourceChunk。例如本地开发可以使用：
+
+```bash
+.venv/bin/python scripts/build_course_chunks.py \
+  --pdf <approved-pdf> \
+  --output data/sources/<course-version>/<unit-id>/chunks.jsonl \
+  --material-set-id <material-set-id> \
+  --course-id <course-id> \
+  --course-version <course-version> \
+  --unit-id <unit-id> \
+  --source-id <source-id> \
+  --scope public
+```
+
+该命令只负责解析和 `SourceChunk` Schema 校验，不负责生成学习内容。私有资料必须使用 `--scope private --owner-id <owner-id>`，并在数据库层绑定当前用户；不能把私有 chunks 放入公共 manifest 或公共索引。网页标题锚点、多来源资料和混合 material set 需要在 ingestion 层拆分或扩展 Schema，不能让 Skill 绕过身份校验。
+
+Skill 的调用者应从 Catalog/Job 传入已解析的 `manifest_ref` 和 `chunk_set_ref`（本地开发时可以是上述路径），并同时传递其 hash、`material_set_id`、`unit_id`、parser/schema 版本和权限上下文。Skill 必须重新核对 manifest 与所有 chunks 的课程、版本、讲次、来源和 material set；任一输入缺失或不一致时返回 `fix_inputs`/`awaiting_ingestion`，不得让模型猜测 manifest 或补写 chunks。
+
 建议字段：
 
 ```text
@@ -423,8 +484,9 @@ Skill 与现有 `scripts/generate_studykit.py` 的边界必须保持清楚：后
 ### 10.1 Skill 输入
 
 ```text
-chunks_path
-manifest_path
+materials[]（任意数量的已授权文件、文本或文件引用）
+manifest_ref（可选；已有 CourseManifest/MaterialManifest，本地可为路径）
+chunk_set_ref（可选；已有 SourceChunk 集合，本地可为 JSONL 路径）
 unit_id
 output_dir 或 artifact_store key
 language（默认 zh-CN）
@@ -432,7 +494,9 @@ target_minutes（默认 180）
 generation policy（draft/strict）
 ```
 
-Skill 必须先验证：manifest 与 chunks 的 course/version/unit/source/material_set 身份一致，文件可读，输出目录不是已有不同版本的目录。Skill 不要求、不读取也不转发任何外部模型 API key；模型调用由宿主 Agent 自身完成，因此 skill 的输入不包含 provider、endpoint、model 或 retry 配置。
+调用者还应提供已知的 `course_id`、`course_version`、`material_set_id`、输入 hash、parser/schema 版本和权限上下文；未知字段可以为空，便于 Skill 在 bootstrap 中生成候选。Skill 必须先检查：若 manifest/chunks 已提供则验证其身份；若缺失则对 `materials[]` 执行清单、parser 选择、manifest/chunk 候选生成、provenance 标注和门禁。权限和许可必须允许使用，输出目录不能是已有不同版本的目录。Skill 不要求、不读取或转发任何外部模型 API key；模型调用由宿主 Agent 自身完成，因此 skill 的输入不包含 provider、endpoint、model 或 retry 配置。
+
+当 `materials[]`、`manifest_ref` 和 `chunk_set_ref` 都缺失时，Skill 返回 `awaiting_materials`；当资料存在但没有可复核文本/锚点时返回 `ingestion_failed` 或 `needs_human_review`，不能直接生成 StudyKit。
 
 ### 10.2 Skill 输出
 
@@ -442,7 +506,11 @@ Skill 必须先验证：manifest 与 chunks 的 course/version/unit/source/mater
   "build_id": "…",
   "unit_id": "lecture-02",
   "review_status": "audit_repairs_applied_unverified",
+  "ingestion_status": "reused | deterministic | model_assisted | needs_human_review",
   "artifacts": {
+    "manifest": "…",
+    "chunks": "…",
+    "ingestion_report": "…",
     "studykit_json": "…",
     "studykit_yaml": "…",
     "learner_markdown": "…",
@@ -458,8 +526,9 @@ Skill 必须先验证：manifest 与 chunks 的 course/version/unit/source/mater
 
 ### 10.3 Skill 实现建议
 
-- 让当前模型按 `SKILL.md` 直接写阶段 JSON；不要在 skill 中 import `DeepSeekModel`、读取 `DEEPSEEK_API_KEY` 或调用任何远程 endpoint。
-- 只复用仓库中的 Schema、SourceChunk、manifest 和确定性工具；`scripts/validate_studykit.py` 与 `scripts/render_studykit.py` 可用于本地检查和渲染。
+- 让当前模型先按 `SKILL.md` 完成 ingestion/bootstrap，再写阶段 JSON；不要在 skill 中 import `DeepSeekModel`、读取 `DEEPSEEK_API_KEY` 或调用任何远程 endpoint。
+- `materials[]` 不得因格式或数量被静默丢弃。为每个来源写入 ingestion report；确定性 parser、模型辅助归一化和人工确认必须可区分、可恢复、可审计。
+- 只复用仓库中的 Schema、SourceChunk、manifest 和确定性工具；`scripts/validate_studykit.py` 与 `scripts/render_studykit.py` 可用于本地检查和渲染。需要多 source、heading/slide/paragraph anchor 时，先扩展 Schema/引用适配层，再调用 StudyKit 生成核心。
 - 固定 Pipeline/Prompt/Schema 版本并写入 `run.json`；保留 `validation.json` 和 audit resolution，便于诊断和人工复核。
 - `resume` 只对完全相同的输入和版本指纹开放；版本变化必须新建 build。若上下文中没有旧阶段产物，不要伪造 resume。
 - Skill 允许模型一次完成单元 authoring；批量并发和 provider 重试属于外部后台 Job，不属于 skill。
@@ -519,7 +588,8 @@ skills/
 - SSE 不缓冲、不重复、不缺 stop/[DONE]；
 - 会话超过上下文预算时能摘要而不是失败；
 - 文件 URL 校验、解析、权限和超时有测试；
-- generator skill 能完成 mock smoke test、真实 Lecture smoke test 和失败恢复测试。
+- generator skill 在没有 manifest/chunks 时能从单个或多个 PDF、网页、Markdown、DOCX/PPTX 和用户文件完成 ingestion/bootstrap；已有确定性 parser 时优先复用，否则生成带 provenance 的模型辅助候选；
+- generator skill 不静默丢弃资料，能保留每个 source、scope、anchor 和 ingestion report，并完成 mock smoke test、真实 Lecture smoke test 和失败恢复测试。
 
 ## 13. 开发者第一步
 
