@@ -1,0 +1,41 @@
+{
+  "rubric_version": "mit-6.7960-l2-l3-l4-l8-v1",
+  "score_weights": {
+    "source_and_formula": 50,
+    "core_coverage": 15,
+    "pedagogy": 20,
+    "practice": 10,
+    "consistency_usability": 5
+  },
+  "review_policy": {
+    "model_review": "all anonymous samples",
+    "human_review": "all Critical, score disagreement >10, and deterministic 20% sample",
+    "reruns": "one initial run; rerun only failed/Critical/boundary lecture-mode, at most two additional runs; decide by majority and mean"
+  },
+  "lectures": {
+    "lecture-02": {
+      "must_keep": ["gradient update negative sign", "backpropagation chain-rule formulas"],
+      "must_exclude": ["claims supported only by blank pages"],
+      "exact_formulas": ["descent update retains the minus sign"],
+      "required_qualifiers": ["formula symbols follow the slide definitions"]
+    },
+    "lecture-03": {
+      "must_keep": ["theorem constants", "asymptotic order"],
+      "must_exclude": ["unverified reading of ambiguous handwriting"],
+      "exact_formulas": ["preserve stated theorem constants"],
+      "required_qualifiers": ["mark ambiguous handwritten formula as formula_unresolved"]
+    },
+    "lecture-04": {
+      "must_keep": ["CNN terminology", "index conventions"],
+      "must_exclude": ["hidden book-text layer as evidence"],
+      "exact_formulas": ["retain source indexing convention"],
+      "required_qualifiers": ["distinguish visible slide content from hidden overlay text"]
+    },
+    "lecture-08": {
+      "must_keep": ["Q/K/V definitions", "attention", "permutation equivariance"],
+      "must_exclude": ["hidden overlay prose", "equivariance described as invariance"],
+      "exact_formulas": ["attention scaling and Q/K/V roles"],
+      "required_qualifiers": ["state whether the mapped output is equivariant or invariant"]
+    }
+  }
+}

@@ -1,0 +1,10 @@
+[
+  {"lecture_id":"lecture-02","mode":"fast","structure_valid":true,"score":91,"critical":0,"duration_seconds":200.396969,"unresolved_formula":0,"citation_support_errors":0},
+  {"lecture_id":"lecture-02","mode":"standard","structure_valid":true,"score":96,"critical":0,"duration_seconds":185.575871,"unresolved_formula":0,"citation_support_errors":0},
+  {"lecture_id":"lecture-03","mode":"fast","structure_valid":true,"score":74,"critical":0,"duration_seconds":181.456371,"unresolved_formula":1,"citation_support_errors":0},
+  {"lecture_id":"lecture-03","mode":"standard","structure_valid":true,"score":82,"critical":0,"duration_seconds":185.575871,"unresolved_formula":1,"citation_support_errors":0},
+  {"lecture_id":"lecture-04","mode":"fast","structure_valid":true,"score":69,"critical":0,"duration_seconds":156.617176,"unresolved_formula":0,"citation_support_errors":0},
+  {"lecture_id":"lecture-04","mode":"standard","structure_valid":true,"score":75,"critical":0,"duration_seconds":134.466464,"unresolved_formula":0,"citation_support_errors":0},
+  {"lecture_id":"lecture-08","mode":"fast","structure_valid":true,"score":89.666667,"critical":0,"duration_seconds":171.834342,"unresolved_formula":0,"citation_support_errors":0.333333},
+  {"lecture_id":"lecture-08","mode":"standard","structure_valid":true,"score":98,"critical":0,"duration_seconds":197.343173,"unresolved_formula":0,"citation_support_errors":0}
+]

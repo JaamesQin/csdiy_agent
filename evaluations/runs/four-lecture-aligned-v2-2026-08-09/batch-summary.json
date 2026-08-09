@@ -1,0 +1,29 @@
+{
+  "status": "succeeded",
+  "authoritative_run": "four-lecture-aligned-v2-2026-08-09",
+  "rejected_run": "four-lecture-aligned-2026-08-09",
+  "rejection_reason": "Multiple modes shared one model turn, so mode-specific authoring time could not be measured or treated as independent.",
+  "units": ["lecture-02", "lecture-03", "lecture-04", "lecture-08"],
+  "modes": ["fast", "standard", "strict"],
+  "artifact_validation": {"passed": 12, "failed": 0},
+  "blind_scores": {
+    "fast": {"lecture-02": 91, "lecture-03": 74, "lecture-04": 69, "lecture-08_attempts": [74, 97, 98], "lecture-08_majority_score_mean": 89.667, "mean": 80.917, "majority_critical": 0},
+    "standard": {"lecture-02": 96, "lecture-03": 82, "lecture-04": 75, "lecture-08": 98, "mean": 87.75, "critical": 0},
+    "strict": {"lecture-02": 84, "lecture-03": 91, "lecture-04": 71, "lecture-08": 97, "mean": 85.75, "critical": 0}
+  },
+  "decision_timing_seconds": {"fast": 710.303810, "standard": 702.961379, "strict": 847.342490},
+  "default_mode_tests": {
+    "fast_structure_all_pass": true,
+    "fast_zero_majority_critical": true,
+    "fast_no_new_critical_vs_standard": true,
+    "fast_mean_within_3_points_of_standard": false,
+    "fast_each_lecture_within_5_points_of_standard": false,
+    "fast_at_least_30_percent_faster": false,
+    "fast_no_new_unresolved_or_support_error": false
+  },
+  "selected_default": "standard",
+  "release_decision": "approved",
+  "release_notes": "Standard deductions are prompt-level representation improvements, not release blockers; hard delivery gates remain unchanged.",
+  "strict_role": "explicit submission/publish mode",
+  "tests": {"repository": "156 passed", "benchmark_targeted": "8 passed"}
+}

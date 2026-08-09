@@ -1,0 +1,28 @@
+{
+  "timing_version": "coordinator-dispatch-receipt-v1",
+  "clock": "UTC wall clock",
+  "records": [
+    {"unit_id":"lecture-02","mode":"fast","dispatched_at":"2026-08-09T13:50:38.676305337Z","completed_at":"2026-08-09T13:53:59.073274012Z","elapsed_seconds":200.396969},
+    {"unit_id":"lecture-03","mode":"fast","dispatched_at":"2026-08-09T13:50:38.676305337Z","completed_at":"2026-08-09T13:53:40.132676091Z","elapsed_seconds":181.456371},
+    {"unit_id":"lecture-04","mode":"fast","dispatched_at":"2026-08-09T13:50:38.676305337Z","completed_at":"2026-08-09T13:53:15.293481071Z","elapsed_seconds":156.617176},
+    {"unit_id":"lecture-08","mode":"fast","dispatched_at":"2026-08-09T13:53:15.293481071Z","completed_at":"2026-08-09T13:57:34.496795797Z","elapsed_seconds":259.203315},
+    {"unit_id":"lecture-02","mode":"standard","dispatched_at":"2026-08-09T13:54:07.961649837Z","completed_at":"2026-08-09T13:57:13.537520691Z","elapsed_seconds":185.575871},
+    {"unit_id":"lecture-03","mode":"standard","dispatched_at":"2026-08-09T13:54:07.961649837Z","completed_at":"2026-08-09T13:57:13.537520691Z","elapsed_seconds":185.575871},
+    {"unit_id":"lecture-04","mode":"standard","dispatched_at":"2026-08-09T13:57:13.537520691Z","completed_at":"2026-08-09T13:59:28.003984271Z","elapsed_seconds":134.466464},
+    {"unit_id":"lecture-08","mode":"standard","dispatched_at":"2026-08-09T13:57:34.496795797Z","completed_at":"2026-08-09T14:00:51.839968614Z","elapsed_seconds":197.343173},
+    {"unit_id":"lecture-02","mode":"strict","dispatched_at":"2026-08-09T13:57:13.537520691Z","completed_at":"2026-08-09T14:03:13.675796216Z","elapsed_seconds":360.138276},
+    {"unit_id":"lecture-03","mode":"strict","dispatched_at":"2026-08-09T13:59:28.003984271Z","completed_at":"2026-08-09T14:02:41.684537000Z","elapsed_seconds":193.680553},
+    {"unit_id":"lecture-04","mode":"strict","dispatched_at":"2026-08-09T14:00:51.839968614Z","completed_at":"2026-08-09T14:02:46.334791361Z","elapsed_seconds":114.494823},
+    {"unit_id":"lecture-08","mode":"strict","dispatched_at":"2026-08-09T14:02:46.334791361Z","completed_at":"2026-08-09T14:05:45.363629331Z","elapsed_seconds":179.028838},
+    {"unit_id":"lecture-08","mode":"fast","attempt":2,"dispatched_at":"2026-08-09T14:14:45.273592123Z","completed_at":"2026-08-09T14:17:22.510467112Z","elapsed_seconds":157.236875},
+    {"unit_id":"lecture-08","mode":"fast","attempt":3,"dispatched_at":"2026-08-09T14:19:00.492940360Z","completed_at":"2026-08-09T14:20:39.555775634Z","elapsed_seconds":99.062835}
+  ],
+  "mode_totals_seconds": {"fast":797.673831,"standard":702.961379,"strict":847.34249},
+  "decision_mode_totals_seconds": {"fast":710.303810,"standard":702.961379,"strict":847.34249},
+  "decision_timing_rule": "For a rerun unit, use the mean elapsed time across all attempts; other units use their sole attempt.",
+  "notes": [
+    "Elapsed includes queue/message delivery overhead and the complete independent model turn.",
+    "Tasks within each mode may overlap across units; totals are summed unit costs, not batch makespan.",
+    "The rejected predecessor run is excluded because multiple modes were prepared in one agent turn."
+  ]
+}

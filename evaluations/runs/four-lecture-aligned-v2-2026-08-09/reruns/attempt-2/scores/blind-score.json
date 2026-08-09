@@ -1,0 +1,56 @@
+{
+  "rubric_version": "mit-6.7960-l2-l3-l4-l8-v1",
+  "evaluation_mode": "independent_blind",
+  "sample_count": 1,
+  "category_maxima": {
+    "source_and_formula": 50,
+    "core_coverage": 15,
+    "pedagogy": 20,
+    "practice": 10,
+    "consistency_usability": 5
+  },
+  "severity_policy": {
+    "critical_precedence": true,
+    "rule": "Any Critical finding makes the sample ineligible regardless of numeric total."
+  },
+  "scores": {
+    "sample-975ac8dd11c91244": {
+      "lecture_id": "lecture-08",
+      "categories": {
+        "source_and_formula": 49,
+        "core_coverage": 15,
+        "pedagogy": 19,
+        "practice": 10,
+        "consistency_usability": 4
+      },
+      "total": 97,
+      "errors": {
+        "critical": 0,
+        "major": 0,
+        "minor": 1
+      },
+      "eligible": true,
+      "category_rationale": {
+        "source_and_formula": "The artifact preserves anchored Q/K/V definitions, QK^T/√m attention scaling, softmax weighting, AV value aggregation, multi-head shapes, and the permutation-equivariance equation. It also explicitly limits evidence to visible slide content.",
+        "core_coverage": "Complete coverage of tokenization, token mixing, token-wise MLPs, dynamic attention, Q/K/V, multi-head attention, ViT blocks, positional codes, causal masking, and image-to-text cross-attention.",
+        "pedagogy": "The six objectives and concise claims form a clear progression from CNN locality limits through attention to causal and multimodal architectures.",
+        "practice": "Six progressive, anchored exercises test tensor shapes, token information flow, Q/K/V attention, equivariance, causal paths, and cross-attention sources with explicit deliverables and evaluation criteria.",
+        "consistency_usability": "Symbols and terminology are coherent, but several citation arrays repeat the same page anchor, creating minor review noise."
+      },
+      "findings": [
+        {
+          "severity": "Minor",
+          "rubric_evidence": {
+            "path": "score_weights.consistency_usability",
+            "requirement": "Evidence and anchors should remain concise and reviewable."
+          },
+          "artifact_evidence": {
+            "path": "claims[1].anchors, claims[7].anchors, claims[9].anchors, claims[10].anchors, formulas[0].anchors, formulas[6].anchors, practice[3].anchors, practice[4].anchors",
+            "value": "Each cited array repeats an identical page anchor; examples include page 14 twice for claims[1] and formulas[0], page 39 twice for claims[7], page 43 twice for claims[9] and formulas[6], and page 51 twice for claims[10] and practice[4]."
+          },
+          "assessment": "The duplication does not change factual support, formula fidelity, or eligibility, but it adds avoidable citation clutter."
+        }
+      ]
+    }
+  }
+}
