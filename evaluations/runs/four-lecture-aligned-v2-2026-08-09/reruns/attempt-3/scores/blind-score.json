@@ -1,0 +1,43 @@
+{
+  "rubric_version": "mit-6.7960-l2-l3-l4-l8-v1",
+  "evaluation_mode": "independent_blind",
+  "sample_count": 1,
+  "category_maxima": {
+    "source_and_formula": 50,
+    "core_coverage": 15,
+    "pedagogy": 20,
+    "practice": 10,
+    "consistency_usability": 5
+  },
+  "severity_policy": {
+    "critical_precedence": true,
+    "rule": "Any Critical finding makes the sample ineligible regardless of numeric total."
+  },
+  "scores": {
+    "sample-a68cdb9e60b53f82": {
+      "lecture_id": "lecture-08",
+      "categories": {
+        "source_and_formula": 49,
+        "core_coverage": 15,
+        "pedagogy": 19,
+        "practice": 10,
+        "consistency_usability": 5
+      },
+      "total": 98,
+      "errors": {
+        "critical": 0,
+        "major": 0,
+        "minor": 0
+      },
+      "eligible": true,
+      "category_rationale": {
+        "source_and_formula": "The artifact preserves anchored Q/K/V projections, QK^T/√m attention scaling, softmax weights, AV value aggregation, multi-head composition, and the exact permutation-equivariance equation. Its limitations explicitly exclude flagged hidden-text chunks and restrict claims to clean, visible slide content.",
+        "core_coverage": "Complete coverage of CNN locality limits, patch tokens, token mixing, token-wise MLPs, dynamic attention, Q/K/V, multi-head attention, ViT blocks, positional information, causal masking, and image-to-text cross-attention.",
+        "pedagogy": "The objectives and explanations follow a clear progression from local connectivity through attention mechanics to positional, causal, and multimodal uses while maintaining precise terminology.",
+        "practice": "Six progressive, page-anchored exercises test tensor shapes, token information flow, Q/K/V attention shapes, equivariance versus invariance, causal masking, and cross-attention source roles with explicit evidence and evaluation criteria.",
+        "consistency_usability": "Symbols, tensor conventions, terminology, source boundaries, limitations, and page anchors are internally consistent and reviewable."
+      },
+      "findings": []
+    }
+  }
+}

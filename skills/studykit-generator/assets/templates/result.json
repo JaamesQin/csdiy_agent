@@ -1,0 +1,12 @@
+{
+  "status": "partial",
+  "build_id": "",
+  "courses": [],
+  "completed_units": [],
+  "failed_stage": null,
+  "retry_count": 0,
+  "recoverable": true,
+  "artifacts": {},
+  "issues": [],
+  "next_action": "continue_authoring"
+}

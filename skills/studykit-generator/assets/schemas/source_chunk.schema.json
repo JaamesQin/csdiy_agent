@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://coursepilot.local/skills/studykit-generator/source-chunk-v0.1.json",
+  "title": "Portable SourceChunk",
+  "type": "object",
+  "required": ["chunk_id", "material_set_id", "scope", "owner_id", "course_id", "course_version", "unit_id", "source_id", "anchor", "heading", "content", "content_type", "parser_version", "parse_warnings"],
+  "properties": {
+    "chunk_id": {"type": "string", "minLength": 1},
+    "material_set_id": {"type": "string", "minLength": 1},
+    "scope": {"enum": ["public", "private"]},
+    "owner_id": {"type": ["string", "null"]},
+    "course_id": {"type": ["string", "null"]},
+    "course_version": {"type": ["string", "null"]},
+    "unit_id": {"type": "string", "minLength": 1},
+    "source_id": {"type": "string", "minLength": 1},
+    "anchor": {"$ref": "#/$defs/anchor"},
+    "heading": {"type": ["string", "null"]},
+    "content": {"type": "string"},
+    "content_type": {"enum": ["text", "code", "formula", "mixed"]},
+    "parser_version": {"type": "string", "minLength": 1},
+    "parse_warnings": {"type": "array", "items": {"type": "string"}},
+    "provenance": {"enum": ["deterministic", "model_assisted"]},
+    "formula_regions": {"type": "array", "items": {"$ref": "#/$defs/formula"}}
+  },
+  "allOf": [
+    {"if": {"properties": {"scope": {"const": "public"}}}, "then": {"properties": {"owner_id": {"type": "null"}}}},
+    {"if": {"properties": {"scope": {"const": "private"}}}, "then": {"properties": {"owner_id": {"type": "string", "minLength": 1}}}}
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "anchor": {
+      "type": "object", "required": ["type", "value"],
+      "properties": {
+        "type": {"enum": ["page", "heading", "slide", "paragraph", "sheet", "image"]},
+        "value": {"oneOf": [{"type": "integer", "minimum": 1}, {"type": "string", "minLength": 1}]},
+        "bbox": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "number"}}
+      }, "additionalProperties": false
+    },
+    "formula": {
+      "type": "object", "required": ["status"],
+      "properties": {
+        "status": {"enum": ["resolved", "formula_unresolved"]},
+        "latex": {"type": "string"}, "image": {"type": "string"},
+        "bbox": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "number"}},
+        "warnings": {"type": "array", "items": {"type": "string"}}
+      }, "additionalProperties": false
+    }
+  }
+}

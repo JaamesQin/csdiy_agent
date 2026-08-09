@@ -1,0 +1,12 @@
+{
+  "quality_mode": "",
+  "parallel_units": "auto",
+  "worker_count": 1,
+  "semantic_passes": 0,
+  "stage_duration_seconds": {},
+  "retries": [],
+  "repairs": [],
+  "reviewed_page_count": 0,
+  "input_tokens": null,
+  "output_tokens": null
+}

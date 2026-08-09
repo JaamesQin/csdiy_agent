@@ -1,0 +1,21 @@
+{
+  "studykit_version": "0.1",
+  "status": "draft",
+  "course_id": null,
+  "course_version": null,
+  "unit_id": "unit-01",
+  "title": "Unit title",
+  "language": "zh-CN",
+  "scope": {"included_sources": [], "citation_anchor_types": ["page"]},
+  "learning_objectives": [],
+  "prerequisites": [],
+  "outline": [],
+  "core_concepts": [],
+  "glossary": [],
+  "common_misconceptions": [],
+  "learning_sequence": [],
+  "practice": [],
+  "citations": [],
+  "review": {"generator_review_status": "pending", "audit_findings": []},
+  "limitations": []
+}

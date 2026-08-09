@@ -1,0 +1,16 @@
+{
+  "decision_version": "default-mode-v1",
+  "evaluation_id": "four-lecture-aligned-v2-2026-08-09",
+  "lectures": ["lecture-02", "lecture-03", "lecture-04", "lecture-08"],
+  "default_quality_mode": "standard",
+  "fast_passed_all_rules": false,
+  "release_status": "approved",
+  "reasons": [
+    "fast is over 5 points lower on lecture-03",
+    "fast is over 5 points lower on lecture-04",
+    "fast is over 5 points lower on lecture-08",
+    "fast average is over 3 points lower",
+    "fast is not at least 30% faster",
+    "fast adds citation support errors on lecture-08"
+  ]
+}

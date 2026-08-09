@@ -1,0 +1,19 @@
+manifest_version: "0.1"
+pipeline_version: "0.2.0"
+quality_mode: ""
+page_selector_version: review-pages-v1
+delivery_policy: draft
+parallel_units: auto
+course_id: null
+course_version: null
+title: ""
+language: zh-CN
+material_sets:
+  - material_set_id: ""
+    scope: private
+    owner_id: ""
+    input_fingerprint: ""
+sources: []
+units: []
+grouping_evidence: []
+warnings: []
