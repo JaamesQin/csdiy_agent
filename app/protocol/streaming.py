@@ -46,9 +46,14 @@ async def completion_stream(
     created: int,
     answer: str,
     *,
+    usage: dict[str, int] | None = None,
     inject_error: bool = False,
 ) -> AsyncIterator[str]:
-    usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+    completion_usage = usage or {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0,
+    }
     yield _frame(completion_id, created, {"role": "assistant"})
 
     try:
@@ -63,7 +68,7 @@ async def completion_stream(
             created,
             {},
             finish_reason="stop",
-            usage=usage,
+            usage=completion_usage,
             error={
                 "type": "stream_error",
                 "message": "The stream ended because an internal error occurred.",
@@ -77,7 +82,7 @@ async def completion_stream(
         created,
         {},
         finish_reason="stop",
-        usage=usage,
+        usage=completion_usage,
     )
     yield "data: [DONE]\n\n"
 

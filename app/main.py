@@ -1,4 +1,4 @@
-"""CoursePilot minimal OpenAI-compatible FastAPI application."""
+"""CoursePilot OpenAI-compatible Agent application."""
 
 from __future__ import annotations
 
@@ -13,12 +13,14 @@ from app.api.chat_completions import router as chat_router
 from app.api.models import router as models_router
 from app.protocol.errors import (
     http_exception_handler,
+    server_exception_handler,
     validation_exception_handler,
 )
 
-app = FastAPI(title="CoursePilot protocol probe", version="0.1.0")
+app = FastAPI(title="CoursePilot Agent", version="0.2.0")
 app.add_exception_handler(HTTPException, http_exception_handler)
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
+app.add_exception_handler(Exception, server_exception_handler)
 app.include_router(models_router)
 app.include_router(chat_router)
 

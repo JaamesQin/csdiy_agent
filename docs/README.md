@@ -22,6 +22,11 @@
 - [模板课程与用户资料双入口方案](material_source_strategy.md)
 - [StudyKit v0.1 冻结标准](studykit_standard.md)
 
+## 阶段 3：在线 Agent
+
+- [Developers Guide：画像、路由、代码辅导与后续检索](developers_guide.md)
+- [当前在线与离线能力矩阵](project_status.md)
+
 ## 参考材料
 
 - `references/智能共创平台-帮助文档.zip`：清小搭智能共创平台帮助文档归档。

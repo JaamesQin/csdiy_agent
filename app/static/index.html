@@ -18,7 +18,7 @@
           <span class="brand-mark" aria-hidden="true">C</span>
           <span>
             <strong>CoursePilot</strong>
-            <small>本地协议实验室</small>
+            <small>本地 Agent 实验室</small>
           </span>
         </a>
 
@@ -41,29 +41,29 @@
           <p class="eyebrow">OPENAI-COMPATIBLE CHAT</p>
           <h1>从一次真实对话开始验证。</h1>
           <p>
-            页面直接调用本机的 <code>/v1/chat/completions</code>，用于检查鉴权、
-            多轮消息和 SSE 流式输出。
+            页面直接调用本机的 <code>/v1/chat/completions</code>，可体验主动学习画像、
+            意图路由、Python 静态代码辅导和 SSE 流式输出。
           </p>
           <div class="starter-grid">
-            <button class="starter" type="button" data-prompt="你好，请介绍一下你自己。">
-              <span>基础对话</span>
-              <small>验证非空回复与中文输出</small>
+            <button class="starter" type="button" data-prompt="我想学习系统方向，每周可以投入 6 小时，而且有 Python 基础。">
+              <span>建立学习画像</span>
+              <small>记录方向、时间与已有基础</small>
             </button>
             <button
               class="starter"
               type="button"
-              data-prompt="请记住数字 149，并在回复中复述它。"
+              data-prompt="查看我的学习画像"
             >
-              <span>上下文检查</span>
-              <small>开始一轮多轮消息测试</small>
+              <span>查看与纠正画像</span>
+              <small>画像可跨本地会话读取和删除</small>
             </button>
             <button
               class="starter"
               type="button"
-              data-prompt="用三点说明这次接入测试应该检查什么。"
+              data-prompt="请做静态代码辅导，说明诊断和验证步骤：&#10;```python&#10;def add(x, values=[]):&#10;    values.append(x)&#10;    return values&#10;```"
             >
-              <span>结构化回复</span>
-              <small>观察长内容的流式渲染</small>
+              <span>代码辅导</span>
+              <small>只做静态分析，不运行用户代码</small>
             </button>
           </div>
         </section>
@@ -104,7 +104,8 @@
           </div>
         </form>
         <p class="privacy-note">
-          密钥仅保存在当前浏览器会话中，不会写入页面或对话记录。
+          密钥仅保存在当前浏览器会话；匿名用户 ID 保存在本地浏览器，学习画像写入本机 SQLite。
+          可发送“删除我的画像”清除服务器侧画像。
         </p>
       </footer>
     </div>

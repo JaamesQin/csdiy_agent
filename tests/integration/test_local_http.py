@@ -101,10 +101,9 @@ def test_live_auth_and_non_streaming(live_server_url: str) -> None:
 
     assert response.status_code == 200
     assert response.headers["content-type"].startswith("application/json")
-    assert (
-        response.json()["choices"][0]["message"]["content"]
-        == "接入测试成功。收到用户消息：本地黑盒测试"
-    )
+    content = response.json()["choices"][0]["message"]["content"]
+    assert "画像" in content
+    assert "代码" in content
 
 
 def test_live_sse_headers_order_and_timing(live_server_url: str) -> None:
