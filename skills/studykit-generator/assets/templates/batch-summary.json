@@ -1,0 +1,8 @@
+{
+  "status": "partial",
+  "parallel_units": "auto",
+  "worker_count": 1,
+  "units": [],
+  "succeeded_units": [],
+  "failed_units": []
+}

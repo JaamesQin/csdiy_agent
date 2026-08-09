@@ -1,0 +1,6 @@
+interface:
+  display_name: "StudyKit Generator"
+  short_description: "Generate cited StudyKits with selectable quality modes"
+  default_prompt: "Use $studykit-generator to turn these course materials into cited, validated StudyKits. Use the evaluated standard default unless I override it; preserve notation, emit renderable LaTeX and page-specific unresolved formulas, and exclude hidden-text evidence."
+policy:
+  allow_implicit_invocation: true

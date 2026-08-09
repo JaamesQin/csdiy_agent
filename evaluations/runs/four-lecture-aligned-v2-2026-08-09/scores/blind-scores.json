@@ -1,0 +1,589 @@
+{
+  "rubric_version": "mit-6.7960-l2-l3-l4-l8-v1",
+  "evaluation_mode": "independent_blind",
+  "sample_count": 12,
+  "category_maxima": {
+    "source_and_formula": 50,
+    "core_coverage": 15,
+    "pedagogy": 20,
+    "practice": 10,
+    "consistency_usability": 5
+  },
+  "severity_policy": {
+    "critical_precedence": true,
+    "rule": "Any Critical finding makes the sample ineligible regardless of numeric total."
+  },
+  "scores": {
+    "sample-0d15624d9cc05255": {
+      "lecture_id": "lecture-04",
+      "categories": {
+        "source_and_formula": 26,
+        "core_coverage": 14,
+        "pedagogy": 18,
+        "practice": 9,
+        "consistency_usability": 4
+      },
+      "total": 71,
+      "errors": {
+        "critical": 0,
+        "major": 2,
+        "minor": 1
+      },
+      "eligible": true,
+      "category_rationale": {
+        "source_and_formula": "Claims have page anchors and avoid presenting unverified formulas, but the artifact contains no formula objects, does not retain the source indexing convention, and reports zero reviewed pages.",
+        "core_coverage": "Covers CNN locality, weight sharing, equivariance, channels, receptive field, pooling, stride, dilation, U-Net, ResNet, and neural fields.",
+        "pedagogy": "Objectives and explanations distinguish equivariance from invariance and organize architecture tradeoffs coherently.",
+        "practice": "Five anchored design and comparison tasks are substantive and include expected evidence.",
+        "consistency_usability": "Internally coherent, but the formula limitation is not represented as page-specific unresolved formula metadata."
+      },
+      "findings": [
+        {
+          "severity": "Major",
+          "rubric_evidence": {
+            "path": "lectures.lecture-04.must_keep / exact_formulas",
+            "requirement": "Keep index conventions and retain the source indexing convention."
+          },
+          "artifact_evidence": {
+            "path": "formulas",
+            "value": [],
+            "related_text": "limitations[1]: 复杂公式排版无法由归档 PDF 逐式视觉确认，因此最终学习包不含公式对象"
+          },
+          "assessment": "The required indexing convention is omitted rather than preserved, so a central source/formula requirement cannot be audited."
+        },
+        {
+          "severity": "Major",
+          "rubric_evidence": {
+            "path": "lectures.lecture-04.must_exclude / required_qualifiers",
+            "requirement": "Exclude hidden book-text evidence and distinguish visible slide content from hidden overlay text."
+          },
+          "artifact_evidence": {
+            "path": "reviewed_page_count and limitations",
+            "value": 0,
+            "related_text": "limitations distinguish slide chunks from an archived PDF but never identify visible content versus hidden overlay text"
+          },
+          "assessment": "With zero reviewed pages and no explicit overlay distinction, the artifact does not demonstrate the rubric-required evidence boundary."
+        },
+        {
+          "severity": "Minor",
+          "rubric_evidence": {
+            "path": "score_weights.consistency_usability",
+            "requirement": "The StudyKit should be reviewable and usable."
+          },
+          "artifact_evidence": {
+            "path": "limitations[1] and formulas",
+            "value": "A global formula caveat is supplied, but no page-specific formula_unresolved records are present."
+          },
+          "assessment": "A reviewer cannot tell which source expressions were deliberately excluded."
+        }
+      ]
+    },
+    "sample-1113431262b879a7": {
+      "lecture_id": "lecture-04",
+      "categories": {
+        "source_and_formula": 30,
+        "core_coverage": 14,
+        "pedagogy": 18,
+        "practice": 8,
+        "consistency_usability": 5
+      },
+      "total": 75,
+      "errors": {
+        "critical": 0,
+        "major": 2,
+        "minor": 1
+      },
+      "eligible": true,
+      "category_rationale": {
+        "source_and_formula": "Page-anchored conceptual claims are strong, but all formula/index evidence is omitted and the visible-versus-hidden overlay boundary is not explicit.",
+        "core_coverage": "Broad, accurate coverage of CNN terminology and major architecture concepts.",
+        "pedagogy": "Clear conceptual progression and strong distinctions among equivariance, invariance, stride, dilation, and skip connections.",
+        "practice": "Five useful tasks, though none exercises the required source indexing convention.",
+        "consistency_usability": "Consistent terminology, page anchors, and limitations."
+      },
+      "findings": [
+        {
+          "severity": "Major",
+          "rubric_evidence": {
+            "path": "lectures.lecture-04.must_keep / exact_formulas",
+            "requirement": "Keep index conventions and retain the source indexing convention."
+          },
+          "artifact_evidence": {
+            "path": "formulas",
+            "value": [],
+            "related_text": "limitations[1]: 复杂公式的抽取文本排版不能由归档 PDF 的可见页面逐式核验，因此未转写为最终公式元数据"
+          },
+          "assessment": "The source indexing convention is missing from both formulas and prose."
+        },
+        {
+          "severity": "Major",
+          "rubric_evidence": {
+            "path": "lectures.lecture-04.must_exclude / required_qualifiers",
+            "requirement": "Exclude hidden book-text evidence and distinguish visible slide content from hidden overlay text."
+          },
+          "artifact_evidence": {
+            "path": "limitations",
+            "value": "The artifact discusses an archived PDF, slide chunks, and third-party images, but does not state the visible-slide/hidden-overlay distinction."
+          },
+          "assessment": "The required provenance boundary is not explicitly recorded."
+        },
+        {
+          "severity": "Minor",
+          "rubric_evidence": {
+            "path": "score_weights.practice",
+            "requirement": "Practice should exercise core required content."
+          },
+          "artifact_evidence": {
+            "path": "practice",
+            "value": "All five tasks are conceptual/design tasks; none asks the learner to interpret or preserve a CNN index convention."
+          },
+          "assessment": "Practice does not test the lecture-specific formula/index requirement."
+        }
+      ]
+    },
+    "sample-1761294fac71c7ba": {
+      "lecture_id": "lecture-03",
+      "categories": {
+        "source_and_formula": 42,
+        "core_coverage": 15,
+        "pedagogy": 19,
+        "practice": 10,
+        "consistency_usability": 5
+      },
+      "total": 91,
+      "errors": {
+        "critical": 0,
+        "major": 1,
+        "minor": 0
+      },
+      "eligible": true,
+      "category_rationale": {
+        "source_and_formula": "Theorem constants, asymptotic orders, and ten anchored formulas are preserved cleanly, but no ambiguous handwritten formula is marked unresolved.",
+        "core_coverage": "Complete coverage of approximation, Lipschitz construction, dimensional scaling, kink bounds, and depth separation.",
+        "pedagogy": "Strong logical boundaries among approximation, optimization, and generalization.",
+        "practice": "Eight progressive, anchored derivation and critique tasks with precise expected evidence.",
+        "consistency_usability": "Coherent, renderable formulas and specific limitations."
+      },
+      "findings": [
+        {
+          "severity": "Major",
+          "rubric_evidence": {
+            "path": "lectures.lecture-03.must_exclude / required_qualifiers",
+            "requirement": "Exclude unverified readings of ambiguous handwriting and mark an ambiguous handwritten formula as formula_unresolved."
+          },
+          "artifact_evidence": {
+            "path": "formulas[*].status",
+            "value": "All 10 formula records have status resolved; none has status formula_unresolved.",
+            "related_text": "limitations[2] asserts all final formulas were visually checked but does not identify the rubric-designated ambiguous handwritten item"
+          },
+          "assessment": "The required ambiguity marker is absent, so the reviewer cannot distinguish a verified transcription from the formula the rubric requires to remain unresolved."
+        }
+      ]
+    },
+    "sample-4804f0aaf98b4cca": {
+      "lecture_id": "lecture-02",
+      "categories": {
+        "source_and_formula": 38,
+        "core_coverage": 15,
+        "pedagogy": 18,
+        "practice": 10,
+        "consistency_usability": 3
+      },
+      "total": 84,
+      "errors": {
+        "critical": 0,
+        "major": 1,
+        "minor": 1
+      },
+      "eligible": true,
+      "category_rationale": {
+        "source_and_formula": "The negative descent sign and chain-rule formulas appear accurately in anchored claim text, but the structured formula inventory is empty.",
+        "core_coverage": "Comprehensive optimization, backpropagation, batching, branching, parameter-sharing, and input-optimization coverage.",
+        "pedagogy": "Clear explanations and objectives, including explicit sign-convention discussion.",
+        "practice": "Six strong derivation and verification tasks, including the numerical example and negative-learning-rate convention.",
+        "consistency_usability": "All 81 pages appear in the global anchor list, including pages the limitations call transition pages, which weakens anchor specificity."
+      },
+      "findings": [
+        {
+          "severity": "Major",
+          "rubric_evidence": {
+            "path": "lectures.lecture-02.must_keep / exact_formulas",
+            "requirement": "Keep backpropagation chain-rule formulas and retain the minus sign in the descent update."
+          },
+          "artifact_evidence": {
+            "path": "formulas",
+            "value": [],
+            "related_text": "claims[1] contains θ^(k+1)=θ^k−η∇_θJ(θ^k), and claims[6]/claims[8] contain chain-rule expressions"
+          },
+          "assessment": "The mathematical content is present in prose but absent from the benchmark's structured formula channel, preventing formula-level status and provenance review."
+        },
+        {
+          "severity": "Minor",
+          "rubric_evidence": {
+            "path": "lectures.lecture-02.must_exclude and score_weights.consistency_usability",
+            "requirement": "Do not rely on blank pages; anchors should remain reviewable."
+          },
+          "artifact_evidence": {
+            "path": "anchors and limitations[1]",
+            "value": "The global anchors enumerate pages 1 through 81, while limitations[1] identifies pages 31, 35, and 74 as transition pages not suitable as core evidence."
+          },
+          "assessment": "No claim is supported only by those pages, but the all-page global inventory is overbroad and makes evidence review less precise."
+        }
+      ]
+    },
+    "sample-4878e65b868f0018": {
+      "lecture_id": "lecture-02",
+      "categories": {
+        "source_and_formula": 46,
+        "core_coverage": 14,
+        "pedagogy": 17,
+        "practice": 9,
+        "consistency_usability": 5
+      },
+      "total": 91,
+      "errors": {
+        "critical": 0,
+        "major": 0,
+        "minor": 1
+      },
+      "eligible": true,
+      "category_rationale": {
+        "source_and_formula": "Eleven anchored, renderable formulas preserve the negative descent sign and core chain rules; the page-22 clipping formula record is under-specified.",
+        "core_coverage": "Covers all central backpropagation material, with somewhat less explicit treatment of curvature and normalization/residual remedies.",
+        "pedagogy": "Good progression from optimization to computation graphs and non-parameter gradients.",
+        "practice": "Six anchored tasks cover shapes, branching, and numerical backpropagation.",
+        "consistency_usability": "Consistent symbols, limitations, and anchors."
+      },
+      "findings": [
+        {
+          "severity": "Minor",
+          "rubric_evidence": {
+            "path": "score_weights.source_and_formula",
+            "requirement": "Structured formulas should faithfully represent the associated source claim."
+          },
+          "artifact_evidence": {
+            "path": "formulas[3]",
+            "value": "v=\\nabla_\\theta J(\\theta^k)",
+            "related_text": "claims[4] discusses clipping a large gradient to a threshold range on page 22"
+          },
+          "assessment": "The structured record defines v but omits the clipping/update expression that the page-22 claim is meant to support."
+        }
+      ]
+    },
+    "sample-57d03e24c9474ede": {
+      "lecture_id": "lecture-08",
+      "categories": {
+        "source_and_formula": 28,
+        "core_coverage": 14,
+        "pedagogy": 18,
+        "practice": 9,
+        "consistency_usability": 5
+      },
+      "total": 74,
+      "errors": {
+        "critical": 1,
+        "major": 0,
+        "minor": 0
+      },
+      "eligible": false,
+      "category_rationale": {
+        "source_and_formula": "Q/K/V roles and equivariance are anchored, but the central attention formula omits the required dot-product scaling and never defines the score s.",
+        "core_coverage": "Broad transformer coverage, with the exact scaled-attention mechanism materially incomplete.",
+        "pedagogy": "Clear conceptual descriptions and correct equivariance-versus-invariance language.",
+        "practice": "Six useful tasks, but the attention exercise uses arbitrary scores and cannot detect the missing scaling step.",
+        "consistency_usability": "Otherwise internally coherent and well anchored."
+      },
+      "findings": [
+        {
+          "severity": "Critical",
+          "rubric_evidence": {
+            "path": "lectures.lecture-08.must_keep / exact_formulas",
+            "requirement": "Keep Q/K/V definitions and attention, including attention scaling and Q/K/V roles."
+          },
+          "artifact_evidence": {
+            "path": "formulas[3] and claims[4]",
+            "value": "q=W_qt, k=W_kt, v=W_vt, A=softmax(s), T_out=AV",
+            "related_text": "The artifact never gives s=QK^T/√m (or an equivalent scaled dot-product expression); the claim says only that similarity is passed through softmax."
+          },
+          "assessment": "A defining factor in the lecture's attention equation is absent from both formula and explanation. This is a central exact-formula failure, so Critical precedence makes the sample ineligible."
+        }
+      ]
+    },
+    "sample-62143fb7348b65ee": {
+      "lecture_id": "lecture-04",
+      "categories": {
+        "source_and_formula": 30,
+        "core_coverage": 11,
+        "pedagogy": 16,
+        "practice": 7,
+        "consistency_usability": 5
+      },
+      "total": 69,
+      "errors": {
+        "critical": 0,
+        "major": 2,
+        "minor": 2
+      },
+      "eligible": true,
+      "category_rationale": {
+        "source_and_formula": "Concept claims are anchored, but formula/index evidence and the hidden-overlay distinction are absent.",
+        "core_coverage": "Covers core convolutional locality, sharing, equivariance, receptive field, stride, dilation, U-Net, ResNet, and fields, but omits explicit multi-channel/output-feature-map treatment and cross-channel pooling.",
+        "pedagogy": "Clear but more compressed than the other lecture-04 artifacts.",
+        "practice": "Four useful tasks; neither multi-channel CNN reasoning nor the required indexing convention is practiced.",
+        "consistency_usability": "Internally consistent with specific page anchors."
+      },
+      "findings": [
+        {
+          "severity": "Major",
+          "rubric_evidence": {
+            "path": "lectures.lecture-04.must_keep / exact_formulas",
+            "requirement": "Keep index conventions and retain the source indexing convention."
+          },
+          "artifact_evidence": {
+            "path": "formulas",
+            "value": [],
+            "related_text": "limitations[1] states that complex mathematical layout was not transcribed"
+          },
+          "assessment": "The lecture-specific indexing requirement is missing."
+        },
+        {
+          "severity": "Major",
+          "rubric_evidence": {
+            "path": "lectures.lecture-04.must_exclude / required_qualifiers",
+            "requirement": "Exclude hidden book-text evidence and distinguish visible slide content from hidden overlay text."
+          },
+          "artifact_evidence": {
+            "path": "limitations",
+            "value": "No limitation or claim identifies hidden overlay text or explicitly limits evidence to visible slide content."
+          },
+          "assessment": "The required evidence-source distinction is absent."
+        },
+        {
+          "severity": "Minor",
+          "rubric_evidence": {
+            "path": "lectures.lecture-04.must_keep",
+            "requirement": "Keep CNN terminology."
+          },
+          "artifact_evidence": {
+            "path": "claims",
+            "value": "No claim explicitly explains input-channel aggregation into multiple output feature maps."
+          },
+          "assessment": "An important part of CNN terminology and tensor semantics is omitted."
+        },
+        {
+          "severity": "Minor",
+          "rubric_evidence": {
+            "path": "score_weights.practice",
+            "requirement": "Practice should cover the central lecture content."
+          },
+          "artifact_evidence": {
+            "path": "practice",
+            "value": "Only four tasks are provided; none covers multi-channel convolution, output feature maps, or indexing."
+          },
+          "assessment": "Practice breadth is narrower than the artifact's objectives and the rubric."
+        }
+      ]
+    },
+    "sample-75cdc1e642562708": {
+      "lecture_id": "lecture-08",
+      "categories": {
+        "source_and_formula": 48,
+        "core_coverage": 15,
+        "pedagogy": 19,
+        "practice": 10,
+        "consistency_usability": 5
+      },
+      "total": 97,
+      "errors": {
+        "critical": 0,
+        "major": 0,
+        "minor": 0
+      },
+      "eligible": true,
+      "category_rationale": {
+        "source_and_formula": "Anchored Q/K/V definitions, QK^T/√m scaling, AV aggregation, multi-head shapes, and the permutation-equivariance equation satisfy all lecture-specific requirements.",
+        "core_coverage": "Complete tokenization, token mixing, GNN analogy, attention, ViT, positional encoding, causality, and cross-attention coverage.",
+        "pedagogy": "Objectives and explanations form a strong, technically accurate learning sequence.",
+        "practice": "Six demanding shape, mechanism, equivariance, causality, and architecture tasks with exact expected evidence.",
+        "consistency_usability": "Consistent dimensions, terminology, limitations, and page anchors."
+      },
+      "findings": []
+    },
+    "sample-8c3ed9f6504a4966": {
+      "lecture_id": "lecture-08",
+      "categories": {
+        "source_and_formula": 49,
+        "core_coverage": 15,
+        "pedagogy": 19,
+        "practice": 10,
+        "consistency_usability": 5
+      },
+      "total": 98,
+      "errors": {
+        "critical": 0,
+        "major": 0,
+        "minor": 0
+      },
+      "eligible": true,
+      "category_rationale": {
+        "source_and_formula": "The artifact preserves anchored Q/K/V roles, scaled dot-product attention, AV aggregation, shape conventions, and the exact permutation-equivariance relation.",
+        "core_coverage": "Complete and accurate lecture-08 coverage without hidden-overlay prose or invariance confusion.",
+        "pedagogy": "Exceptionally clear sequencing from locality limits through attention and causal/cross-attention systems.",
+        "practice": "Seven precise, progressive exercises test shapes, dynamic attention, equivariance, causal paths, and multimodal data flow.",
+        "consistency_usability": "Highly coherent symbols, anchors, limitations, and expected evidence."
+      },
+      "findings": []
+    },
+    "sample-8fe86f7e08d31c28": {
+      "lecture_id": "lecture-03",
+      "categories": {
+        "source_and_formula": 31,
+        "core_coverage": 14,
+        "pedagogy": 18,
+        "practice": 8,
+        "consistency_usability": 3
+      },
+      "total": 74,
+      "errors": {
+        "critical": 0,
+        "major": 2,
+        "minor": 1
+      },
+      "eligible": true,
+      "category_rationale": {
+        "source_and_formula": "The theorem constants and asymptotic claims are present, but every formula command is over-escaped and no ambiguous handwriting is marked unresolved.",
+        "core_coverage": "Covers the main approximation and depth-separation arc, with less formula detail for the d-dimensional construction and shallow-width bound.",
+        "pedagogy": "Objectives and claims are logically organized and preserve scope boundaries.",
+        "practice": "Six solid exercises, fewer than the fuller variants and without a dedicated ambiguity/source-check task.",
+        "consistency_usability": "Double backslashes before LaTeX commands make the structured formulas unreliable for normal rendering."
+      },
+      "findings": [
+        {
+          "severity": "Major",
+          "rubric_evidence": {
+            "path": "lectures.lecture-03.must_exclude / required_qualifiers",
+            "requirement": "Exclude unverified readings of ambiguous handwriting and mark an ambiguous handwritten formula as formula_unresolved."
+          },
+          "artifact_evidence": {
+            "path": "formulas[*].status",
+            "value": "All eight formulas are resolved; there is no formula_unresolved record."
+          },
+          "assessment": "The required ambiguity handling is absent."
+        },
+        {
+          "severity": "Major",
+          "rubric_evidence": {
+            "path": "lectures.lecture-03.exact_formulas and score_weights.source_and_formula",
+            "requirement": "Preserve theorem constants in usable exact formulas."
+          },
+          "artifact_evidence": {
+            "path": "formulas[0:8].latex",
+            "value": "All eight strings contain doubled command prefixes, e.g. |g(x+\\\\Delta x)-g(x)|\\\\le L|\\\\Delta x| and N=4d(L/\\\\varepsilon)^d."
+          },
+          "assessment": "The stored strings are over-escaped and do not represent normal renderable LaTeX commands, weakening exact formula fidelity across the whole formula set."
+        },
+        {
+          "severity": "Minor",
+          "rubric_evidence": {
+            "path": "lectures.lecture-03.must_keep / exact_formulas",
+            "requirement": "Keep theorem constants and asymptotic order."
+          },
+          "artifact_evidence": {
+            "path": "formulas",
+            "value": "The numeric shallow-width lower bound near 7×10^49 is stated only in claims[11] and practice[5], not preserved as a structured formula."
+          },
+          "assessment": "One exact constant-bearing result has weaker formula-level auditability."
+        }
+      ]
+    },
+    "sample-a7297f7cfe733ce3": {
+      "lecture_id": "lecture-03",
+      "categories": {
+        "source_and_formula": 35,
+        "core_coverage": 15,
+        "pedagogy": 19,
+        "practice": 10,
+        "consistency_usability": 3
+      },
+      "total": 82,
+      "errors": {
+        "critical": 0,
+        "major": 2,
+        "minor": 0
+      },
+      "eligible": true,
+      "category_rationale": {
+        "source_and_formula": "All required constants and asymptotic results are represented and anchored, but the formula strings are systematically over-escaped and no formula is marked unresolved.",
+        "core_coverage": "Complete approximation, construction, dimensionality, kink, and depth-separation coverage.",
+        "pedagogy": "Strong distinctions between expressive existence, optimization, and generalization.",
+        "practice": "Eight comprehensive derivation, proof, critique, and decision tasks.",
+        "consistency_usability": "Formula command escaping impairs direct rendering despite otherwise strong consistency."
+      },
+      "findings": [
+        {
+          "severity": "Major",
+          "rubric_evidence": {
+            "path": "lectures.lecture-03.must_exclude / required_qualifiers",
+            "requirement": "Exclude unverified readings of ambiguous handwriting and mark an ambiguous handwritten formula as formula_unresolved."
+          },
+          "artifact_evidence": {
+            "path": "formulas[*].status",
+            "value": "All ten formulas are resolved; none is formula_unresolved."
+          },
+          "assessment": "The rubric-designated ambiguity is not surfaced."
+        },
+        {
+          "severity": "Major",
+          "rubric_evidence": {
+            "path": "lectures.lecture-03.exact_formulas and score_weights.source_and_formula",
+            "requirement": "Preserve theorem constants in usable exact formulas."
+          },
+          "artifact_evidence": {
+            "path": "formulas[0:10].latex",
+            "value": "All ten strings use doubled command prefixes, including \\\\Delta, \\\\varepsilon, \\\\operatorname, and \\\\tfrac."
+          },
+          "assessment": "Systematic over-escaping makes the structured formulas unreliable for standard LaTeX rendering even though the intended constants are recognizable."
+        }
+      ]
+    },
+    "sample-c6827e9dacea222b": {
+      "lecture_id": "lecture-02",
+      "categories": {
+        "source_and_formula": 48,
+        "core_coverage": 15,
+        "pedagogy": 19,
+        "practice": 9,
+        "consistency_usability": 5
+      },
+      "total": 96,
+      "errors": {
+        "critical": 0,
+        "major": 0,
+        "minor": 1
+      },
+      "eligible": true,
+      "category_rationale": {
+        "source_and_formula": "Eleven anchored formulas retain the negative descent sign, chain rule, averaging, branching, and input-gradient equations with explicit source-convention warnings.",
+        "core_coverage": "Complete coverage of optimization pathologies, mitigation, computation graphs, backpropagation, batching, branching, and shared parameters.",
+        "pedagogy": "Accurate, well-scoped objectives and explanations with strong symbol and sign discipline.",
+        "practice": "Six demanding tasks cover conceptual boundaries, shapes, branching, and the numerical worked example.",
+        "consistency_usability": "Consistent and reviewable throughout."
+      },
+      "findings": [
+        {
+          "severity": "Minor",
+          "rubric_evidence": {
+            "path": "score_weights.practice and score_weights.source_and_formula",
+            "requirement": "Expected evidence for a source-specific numerical verification should remain directly traceable."
+          },
+          "artifact_evidence": {
+            "path": "practice[5].anchors",
+            "value": [72, 75, 80],
+            "related_text": "The question says to check against pages 75–80, but intermediate pages 76–79 are not attached to the practice record."
+          },
+          "assessment": "The exercise remains usable, but its cited answer-check range is represented incompletely at the item level."
+        }
+      ]
+    }
+  }
+}

@@ -1,6 +1,6 @@
 # CoursePilot Developers Guide
 
-更新时间：2026-08-08
+更新时间：2026-08-09
 
 本文说明下一阶段如何在现有 StudyKit 生成内核之上开发用户画像、代码辅导、资料检索、意图路由、清小搭多轮 Agent，以及 generator skill。本文的核心约束是：
 
@@ -9,6 +9,11 @@
 ## 1. 当前状态与设计结论
 
 当前生成内核已经完成以下工作：
+
+- `skills/studykit-generator` v0.2.0 已完成并批准发布；四讲对齐盲评选择 `standard` 为默认质量挡位，调用方仍可显式选择 `fast` 或 `strict`。
+- `quality_mode` 与 `delivery_policy` 已分离；前者控制生成/视觉复核深度，后者控制 unresolved 是否允许交付。
+- unit 可按宿主能力并行，同一 unit 的 01→05 保持顺序；每阶段 checkpoint，并记录 worker 与 coordinator 墙钟时间。
+- standard 的后续优化聚焦公式与证据表示：JSON round-trip 后的 LaTeX、逐页 `formula_unresolved`、索引约定，以及可见页面与隐藏叠加文本的明确边界。
 
 - 当前 Pipeline：`studykit-pipeline-v0.11-019`；Prompt：`studykit-staged-v0.8-010`；运行版本：`21`。
 - Evidence → Content → Practice → Audit → 确定性组装的分阶段流程已经可运行。
@@ -216,7 +221,7 @@ last_error
 
 ### P5：generator skill
 
-最后把稳定的离线生成流程包装成模型可读的 `studykit-generator` skill。Skill 是 authoring 规范和操作流程，由被调用的 Agent/模型直接阅读并撰写阶段产物；它不调用外部模型，也不应成为普通用户在线问答时的隐式同步工具。需要批量、无人值守生成时，另行使用 provider-specific CLI 或后台 Job。
+稳定的离线生成流程现已包装为模型可读的 `studykit-generator` v0.2.0 skill。Skill 是 authoring 规范和操作流程，由被调用的 Agent/模型直接阅读并撰写阶段产物；它不调用外部模型，也不应成为普通用户在线问答时的隐式同步工具。需要批量、无人值守生成时，另行使用 provider-specific CLI 或后台 Job。
 
 ## 5. 第一批能力：用户画像分析
 
@@ -475,11 +480,11 @@ fallback_clarification
 
 ## 10. 将 generator 包装成 skill
 
-Skill 的目标是让被调用的 Agent 直接完成一个可追溯的“课程单位离线 authoring”动作，而不是隐藏一个外部 LLM client。未来的 `skills/studykit-generator/SKILL.md` 应让模型使用当前上下文和本地文件完成证据规划、内容撰写、练习设计、一次 Audit、修复、组装和验证；本节是该 Skill 的设计规范，不表示它已经完成实现。
+Skill 的目标是让被调用的 Agent 直接完成一个可追溯的“课程单位离线 authoring”动作，而不是隐藏一个外部 LLM client。现有 `skills/studykit-generator/SKILL.md` 已实现证据规划、内容撰写、练习设计、分挡 Audit、修复、组装、验证、并行计划和计时记录；本节同时作为其集成规范。
 
 Skill 与现有 `scripts/generate_studykit.py` 的边界必须保持清楚：后者是显式配置 DeepSeek 的批处理 CLI，可以由后台任务调用；前者不读取 API key、不创建 provider client、不发起网络请求，也不把失败转交给另一个模型。当前 Agent 就是实际的撰写者。
 
-当前仓库只冻结这份设计规范，尚未提供可直接调用的 `studykit-generator` Skill；在完成真实 Agent 试用、输入/输出契约和回归验收前，不应把它安装到生产 Agent。
+当前仓库已提供可直接调用和打包安装的 `studykit-generator` v0.2.0。四讲独立生成、匿名盲评、Critical 人工复核、默认挡位决策和全仓库测试均已完成，可进入发布流程。
 
 ### 10.1 Skill 输入
 
@@ -491,7 +496,8 @@ unit_id
 output_dir 或 artifact_store key
 language（默认 zh-CN）
 target_minutes（默认 180）
-generation policy（draft/strict）
+quality mode（fast/standard/strict，默认 standard）
+delivery policy（draft/publish，默认 draft）
 ```
 
 调用者还应提供已知的 `course_id`、`course_version`、`material_set_id`、输入 hash、parser/schema 版本和权限上下文；未知字段可以为空，便于 Skill 在 bootstrap 中生成候选。Skill 必须先检查：若 manifest/chunks 已提供则验证其身份；若缺失则对 `materials[]` 执行清单、parser 选择、manifest/chunk 候选生成、provenance 标注和门禁。权限和许可必须允许使用，输出目录不能是已有不同版本的目录。Skill 不要求、不读取或转发任何外部模型 API key；模型调用由宿主 Agent 自身完成，因此 skill 的输入不包含 provider、endpoint、model 或 retry 配置。
@@ -531,7 +537,8 @@ generation policy（draft/strict）
 - 只复用仓库中的 Schema、SourceChunk、manifest 和确定性工具；`scripts/validate_studykit.py` 与 `scripts/render_studykit.py` 可用于本地检查和渲染。需要多 source、heading/slide/paragraph anchor 时，先扩展 Schema/引用适配层，再调用 StudyKit 生成核心。
 - 固定 Pipeline/Prompt/Schema 版本并写入 `run.json`；保留 `validation.json` 和 audit resolution，便于诊断和人工复核。
 - `resume` 只对完全相同的输入和版本指纹开放；版本变化必须新建 build。若上下文中没有旧阶段产物，不要伪造 resume。
-- Skill 允许模型一次完成单元 authoring；批量并发和 provider 重试属于外部后台 Job，不属于 skill。
+- Skill 允许宿主使用隔离子任务并行处理 unit；同一 unit 内阶段保持顺序，coordinator 独占 ingestion、fingerprint 和批次汇总。provider 客户端与凭证仍不属于 skill。
+- Standard authoring 在装配前检查 LaTeX 单层转义、EvidencePlan 公式/索引覆盖、逐页 unresolved 记录和隐藏文本边界；这些检查不扩大为 strict 的全页复核。
 - Skill 不读取或输出 `reasoning_content`，不把内部评估字段暴露给学习者。
 - 交付前运行本地 Schema、引用、学习顺序和 Markdown 检查；出现未解决 blocker 时不输出成功 Markdown。
 
