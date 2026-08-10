@@ -1,0 +1,139 @@
+{
+  "artifact_version": "0.1",
+  "stage": "quality_audit",
+  "status": "succeeded",
+  "generation_policy": "draft",
+  "material_scope": "public",
+  "course_id": "mit-6.7960-fall-2024",
+  "course_version": "fall-2024",
+  "unit_id": "lecture-20",
+  "verdict": "pass_with_documented_limitations",
+  "checks": [
+    {
+      "dimension": "identity",
+      "status": "pass",
+      "finding": "PDF 身份、SHA-256、52页与52张统一页图一致。",
+      "evidence": [
+        {
+          "source_id": "mit6-7960-f24-lec20-f025e970d5",
+          "anchor": {
+            "type": "page",
+            "value": 1
+          }
+        }
+      ]
+    },
+    {
+      "dimension": "coverage",
+      "status": "pass",
+      "finding": "覆盖预算、幂律、两代分配、外推、流形假说、批量和表示核。"
+    },
+    {
+      "dimension": "citations",
+      "status": "pass",
+      "finding": "材料性主张均有原 PDF 页锚。"
+    },
+    {
+      "dimension": "formula_fidelity",
+      "status": "pass",
+      "finding": "八组关键公式已由统一页图视觉复核。"
+    },
+    {
+      "dimension": "experimental_extrapolation",
+      "status": "warning",
+      "finding": "精确指数和大尺度预测均保留课件限制。"
+    },
+    {
+      "dimension": "ordering_and_timing",
+      "status": "pass",
+      "finding": "7步共180分钟，8道练习。"
+    },
+    {
+      "dimension": "copyright_and_integrity",
+      "status": "pass",
+      "finding": "不复制第三方图表，不泄露内部评价字段。"
+    }
+  ],
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "compute_constant_contextual",
+      "message": "C≈6ND 不含所有架构、硬件和系统成本。",
+      "location": {
+        "source_id": "mit6-7960-f24-lec20-f025e970d5",
+        "anchor": {
+          "type": "page",
+          "value": 8
+        }
+      }
+    },
+    {
+      "severity": "warning",
+      "code": "kaplan_exponents_not_universal",
+      "message": "第15页明确要求谨慎看精确指数。",
+      "location": {
+        "source_id": "mit6-7960-f24-lec20-f025e970d5",
+        "anchor": {
+          "type": "page",
+          "value": 15
+        }
+      }
+    },
+    {
+      "severity": "warning",
+      "code": "competing_compute_optimal_fit",
+      "message": "第27页不同制度得到约0.49/0.51。",
+      "location": {
+        "source_id": "mit6-7960-f24-lec20-f025e970d5",
+        "anchor": {
+          "type": "page",
+          "value": 27
+        }
+      }
+    },
+    {
+      "severity": "warning",
+      "code": "large_scale_extrapolation_fragile",
+      "message": "第29页列出多项外推限制。",
+      "location": {
+        "source_id": "mit6-7960-f24-lec20-f025e970d5",
+        "anchor": {
+          "type": "page",
+          "value": 29
+        }
+      }
+    },
+    {
+      "severity": "warning",
+      "code": "intrinsic_dimension_is_hypothesis",
+      "message": "α≈4/d 是假说且 transformer 仅为上界。",
+      "location": {
+        "source_id": "mit6-7960-f24-lec20-f025e970d5",
+        "anchor": {
+          "type": "page",
+          "value": 35
+        }
+      }
+    },
+    {
+      "severity": "warning",
+      "code": "representation_convergence_is_hypothesis",
+      "message": "跨模态收敛被呈现为论文假说。",
+      "location": {
+        "source_id": "mit6-7960-f24-lec20-f025e970d5",
+        "anchor": {
+          "type": "page",
+          "value": 50
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "C≈6ND 是特定训练语境的计算近似，不含全部系统成本。",
+    "0.73/0.27 与约0.49/0.51 来自不同训练和拟合流程，不是永久最优指数。",
+    "外推受代理损失、少量大规模运行、高预算弯曲和单 epoch 限制。",
+    "L(N)≲N^{-4/d} 是玩具上界；α≈4/d 是假说，transformer 只支持上界性质。",
+    "表示核和跨模态收敛趋势不证明语义等价或共同真实模型。",
+    "第三方图表不复制、不细述；外部论文未独立摄取。"
+  ]
+}

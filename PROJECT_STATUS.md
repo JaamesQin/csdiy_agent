@@ -67,7 +67,11 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
 
 - 已新增 EvidencePlan、LearningContent、PracticeFlow、QualityAudit 四个 Schema。
 - 已提供生成 CLI、质量 profile 评估脚本和 Lecture 并发回归调度器。
-- MIT 6.7960 Fall 2024 manifest 已覆盖 Lecture 1–8 所需讲次元数据。
+- MIT 6.7960 Fall 2024 manifest 已覆盖官方可用的 23 讲：Lecture 01–21、23、24；
+  官方缺失的 Lecture 22、25 未创建占位单元。
+- 23 讲 portable StudyKit 已完成结构、引用与渲染验证，并经用户批准待未来数据库导入；
+  紧凑包保存在 `data/reviewed/`，统一 SourceChunks 保存在本地 `data/sources/`，
+  当前在线 Catalog 仍只读取既有 golden 文件。
 - Outline 页码只要求存在于本讲输入 SourceChunks，不要求每页都进入
   Content 的最小证据并集。
 - Practice 的 Prompt 仍要求 5–8 题；验证器允许合理超出，以避免模型偶发

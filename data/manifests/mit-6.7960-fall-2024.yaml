@@ -325,9 +325,346 @@ units:
         index_allowed: true
         anchor_type: page
 
+  - unit_id: lecture-10
+    order: 10
+    title: "Memory and Sequence Modeling"
+    official_resource_title: "Lecture 10: Memory and Sequence Modeling"
+    description: "官方讲义：Memory and Sequence Modeling。"
+    description_status: derived_from_official_resource_title
+    inherits_coursepilot_prerequisites: true
+    core_demo: false
+    sources:
+      - source_id: mit-6.7960-f24-lecture-10-slides
+        type: pdf
+        official_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/resources/mit6_7960_f24_lec10_pdf/
+        download_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/mit6_7960_f24_lec10.pdf
+        local_path: data/raw/mit-6.7960/fall-2024/site/static_resources/mit6_7960_f24_lec10.pdf
+        file_size: 5228690
+        page_count: 69
+        sha256: 17b3fa52fe5153bd11029651bd481c6c749758780d2eb546807ef467cb025f53
+        access_status: public
+        license_status: confirmed
+        license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+        processing_status: approved_with_manual_qa
+        index_allowed: true
+        anchor_type: page
+
+  - unit_id: lecture-11
+    order: 11
+    title: "Representation Learning I"
+    official_resource_title: "Lecture 11: Representation Learning I"
+    description: "官方讲义：Representation Learning I。"
+    description_status: derived_from_official_resource_title
+    inherits_coursepilot_prerequisites: true
+    core_demo: false
+    sources:
+      - source_id: mit-6.7960-f24-lecture-11-slides
+        type: pdf
+        official_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/resources/mit6_7960_f24_lec11_pdf/
+        download_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/mit6_7960_f24_lec11.pdf
+        local_path: data/raw/mit-6.7960/fall-2024/site/static_resources/mit6_7960_f24_lec11.pdf
+        file_size: 7914518
+        page_count: 65
+        sha256: 5c0ea53f8ad62508b27c558524ce379907758e08a536ea31938ac912835328a5
+        access_status: public
+        license_status: confirmed
+        license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+        processing_status: approved_with_manual_qa
+        index_allowed: true
+        anchor_type: page
+
+  - unit_id: lecture-12
+    order: 12
+    title: "Similarity-Based Representation Learning"
+    official_resource_title: "Lecture 12: Similarity-Based Representation Learning"
+    description: "官方讲义：Similarity-Based Representation Learning。"
+    description_status: derived_from_official_resource_title
+    inherits_coursepilot_prerequisites: true
+    core_demo: false
+    sources:
+      - source_id: mit-6.7960-f24-lecture-12-slides
+        type: pdf
+        official_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/resources/mit6_7960_f24_lec12_pdf/
+        download_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/mit6_7960_f24_lec12.pdf
+        local_path: data/raw/mit-6.7960/fall-2024/site/static_resources/mit6_7960_f24_lec12.pdf
+        file_size: 50514699
+        page_count: 70
+        sha256: 11bdb827080e8986fd1424191a332d661462877d09704ec973ce95ff3335b841
+        access_status: public
+        license_status: confirmed
+        license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+        processing_status: approved_with_manual_qa
+        index_allowed: true
+        anchor_type: page
+
+  - unit_id: lecture-13
+    order: 13
+    title: "Architectural Bias on Representations"
+    official_resource_title: "Lecture 13: Architectural Bias on Representations"
+    description: "官方讲义：Architectural Bias on Representations。"
+    description_status: derived_from_official_resource_title
+    inherits_coursepilot_prerequisites: true
+    core_demo: false
+    sources:
+      - source_id: mit-6.7960-f24-lecture-13-slides
+        type: pdf
+        official_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/resources/mit6_7960_f24_lec13_pdf/
+        download_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/mit6_7960_f24_lec13.pdf
+        local_path: data/raw/mit-6.7960/fall-2024/site/static_resources/mit6_7960_f24_lec13.pdf
+        file_size: 3755505
+        page_count: 28
+        sha256: db998b131ffff28fb2583c206e269925bda04d8443b54f6d8729cc2f6614bf43
+        access_status: public
+        license_status: confirmed
+        license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+        processing_status: approved_with_manual_qa
+        index_allowed: true
+        anchor_type: page
+
+  - unit_id: lecture-14
+    order: 14
+    title: "Deep Generative Models I"
+    official_resource_title: "Lecture 14: Deep Generative Models I"
+    description: "官方讲义：Deep Generative Models I。"
+    description_status: derived_from_official_resource_title
+    inherits_coursepilot_prerequisites: true
+    core_demo: false
+    sources:
+      - source_id: mit-6.7960-f24-lecture-14-slides
+        type: pdf
+        official_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/resources/mit6_7960_f24_lec14_pdf/
+        download_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/mit6_7960_f24_lec14.pdf
+        local_path: data/raw/mit-6.7960/fall-2024/site/static_resources/mit6_7960_f24_lec14.pdf
+        file_size: 5913715
+        page_count: 60
+        sha256: cdb640b02e8f7c92f69d96adc96f3c1654c9f418d92239bab6208bfdb633165f
+        access_status: public
+        license_status: confirmed
+        license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+        processing_status: approved_with_manual_qa
+        index_allowed: true
+        anchor_type: page
+
+  - unit_id: lecture-15
+    order: 15
+    title: "Deep Generative Models II"
+    official_resource_title: "Lecture 15: Deep Generative Models II"
+    description: "官方讲义：Deep Generative Models II。"
+    description_status: derived_from_official_resource_title
+    inherits_coursepilot_prerequisites: true
+    core_demo: false
+    sources:
+      - source_id: mit-6.7960-f24-lecture-15-slides
+        type: pdf
+        official_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/resources/mit6_7960_f24_lec15_pdf/
+        download_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/mit6_7960_f24_lec15.pdf
+        local_path: data/raw/mit-6.7960/fall-2024/site/static_resources/mit6_7960_f24_lec15.pdf
+        file_size: 6570532
+        page_count: 42
+        sha256: 1b6adcad794363138261078476f35c473c101e020b4d327811908dbed18635a1
+        access_status: public
+        license_status: confirmed
+        license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+        processing_status: approved_with_manual_qa
+        index_allowed: true
+        anchor_type: page
+
+  - unit_id: lecture-16
+    order: 16
+    title: "Deep Generative Models III"
+    official_resource_title: "Lecture 16: Deep Generative Models III"
+    description: "官方讲义：Deep Generative Models III。"
+    description_status: derived_from_official_resource_title
+    inherits_coursepilot_prerequisites: true
+    core_demo: false
+    sources:
+      - source_id: mit-6.7960-f24-lecture-16-slides
+        type: pdf
+        official_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/resources/mit6_7960_f24_lec16_pdf/
+        download_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/mit6_7960_f24_lec16.pdf
+        local_path: data/raw/mit-6.7960/fall-2024/site/static_resources/mit6_7960_f24_lec16.pdf
+        file_size: 4185694
+        page_count: 84
+        sha256: 388654100754de282b02b6be9eb6a6e3b262879965fc98e3516ea37fe8c5a7b3
+        access_status: public
+        license_status: confirmed
+        license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+        processing_status: approved_with_manual_qa
+        index_allowed: true
+        anchor_type: page
+
+  - unit_id: lecture-17
+    order: 17
+    title: "Out-of-Distribution Generalization"
+    official_resource_title: "Lecture 17: Out-of-Distribution Generalization"
+    description: "官方讲义：Out-of-Distribution Generalization。"
+    description_status: derived_from_official_resource_title
+    inherits_coursepilot_prerequisites: true
+    core_demo: false
+    sources:
+      - source_id: mit-6.7960-f24-lecture-17-slides
+        type: pdf
+        official_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/resources/mit6_7960_f24_lec17_pdf/
+        download_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/mit6_7960_f24_lec17.pdf
+        local_path: data/raw/mit-6.7960/fall-2024/site/static_resources/mit6_7960_f24_lec17.pdf
+        file_size: 5276956
+        page_count: 63
+        sha256: 44d46a8cc80baa225ac8133ba0556b8fec33194fa81c1a95c8395f63742f304f
+        access_status: public
+        license_status: confirmed
+        license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+        processing_status: approved_with_manual_qa
+        index_allowed: true
+        anchor_type: page
+
+  - unit_id: lecture-18
+    order: 18
+    title: "Transfer Learning I"
+    official_resource_title: "Lecture 18: Transfer Learning I"
+    description: "官方讲义：Transfer Learning I。"
+    description_status: derived_from_official_resource_title
+    inherits_coursepilot_prerequisites: true
+    core_demo: false
+    sources:
+      - source_id: mit-6.7960-f24-lecture-18-slides
+        type: pdf
+        official_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/resources/mit6_7960_f24_lec18_pdf/
+        download_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/mit6_7960_f24_lec18.pdf
+        local_path: data/raw/mit-6.7960/fall-2024/site/static_resources/mit6_7960_f24_lec18.pdf
+        file_size: 7401974
+        page_count: 77
+        sha256: 4295ed4e56a37c518e516915e4266c279167d8fe529274b5eb5fed32622d1dde
+        access_status: public
+        license_status: confirmed
+        license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+        processing_status: approved_with_manual_qa
+        index_allowed: true
+        anchor_type: page
+
+  - unit_id: lecture-19
+    order: 19
+    title: "Transfer Learning II"
+    official_resource_title: "Lecture 19: Transfer Learning II"
+    description: "官方讲义：Transfer Learning II。"
+    description_status: derived_from_official_resource_title
+    inherits_coursepilot_prerequisites: true
+    core_demo: false
+    sources:
+      - source_id: mit-6.7960-f24-lecture-19-slides
+        type: pdf
+        official_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/resources/mit6_7960_f24_lec19_pdf/
+        download_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/mit6_7960_f24_lec19.pdf
+        local_path: data/raw/mit-6.7960/fall-2024/site/static_resources/mit6_7960_f24_lec19.pdf
+        file_size: 6809476
+        page_count: 52
+        sha256: 057091ad6e096f4a787122c7cfac852ef1865a8479c076721f3d929830e66aa1
+        access_status: public
+        license_status: confirmed
+        license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+        processing_status: approved_with_manual_qa
+        index_allowed: true
+        anchor_type: page
+
+  - unit_id: lecture-20
+    order: 20
+    title: "Scaling Laws"
+    official_resource_title: "Lecture 20: Scaling Laws"
+    description: "官方讲义：Scaling Laws。"
+    description_status: derived_from_official_resource_title
+    inherits_coursepilot_prerequisites: true
+    core_demo: false
+    sources:
+      - source_id: mit-6.7960-f24-lecture-20-slides
+        type: pdf
+        official_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/resources/mit6_7960_f24_lec20_pdf/
+        download_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/mit6_7960_f24_lec20.pdf
+        local_path: data/raw/mit-6.7960/fall-2024/site/static_resources/mit6_7960_f24_lec20.pdf
+        file_size: 3473526
+        page_count: 52
+        sha256: f025e970d5724f1b38d38ba0fa1540628d57687f53a611f9dff43600d050c226
+        access_status: public
+        license_status: confirmed
+        license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+        processing_status: approved_with_manual_qa
+        index_allowed: true
+        anchor_type: page
+
+  - unit_id: lecture-21
+    order: 21
+    title: "Language Models"
+    official_resource_title: "Lecture 21: Language Models"
+    description: "官方讲义：Language Models。"
+    description_status: derived_from_official_resource_title
+    inherits_coursepilot_prerequisites: true
+    core_demo: false
+    sources:
+      - source_id: mit-6.7960-f24-lecture-21-slides
+        type: pdf
+        official_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/resources/mit6_7960_f24_lec21_pdf/
+        download_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/mit6_7960_f24_lec21.pdf
+        local_path: data/raw/mit-6.7960/fall-2024/site/static_resources/mit6_7960_f24_lec21.pdf
+        file_size: 9473788
+        page_count: 92
+        sha256: cf733935598e732ec145c17daabc3f3697b4ec180cdd8c1d9c92d85a42b23cbe
+        access_status: public
+        license_status: confirmed
+        license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+        processing_status: approved_with_manual_qa
+        index_allowed: true
+        anchor_type: page
+
+  - unit_id: lecture-23
+    order: 23
+    title: "Metrized Deep Learning"
+    official_resource_title: "Lecture 23: Metrized Deep Learning"
+    description: "官方讲义：Metrized Deep Learning。"
+    description_status: derived_from_official_resource_title
+    inherits_coursepilot_prerequisites: true
+    core_demo: false
+    sources:
+      - source_id: mit-6.7960-f24-lecture-23-slides
+        type: pdf
+        official_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/resources/mit6_7960_f24_lec23_pdf/
+        download_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/mit6_7960_f24_lec23.pdf
+        local_path: data/raw/mit-6.7960/fall-2024/site/static_resources/mit6_7960_f24_lec23.pdf
+        file_size: 2689222
+        page_count: 49
+        sha256: 5bf8a70ae920878f7f4445f7413d6f1ed5c09af2b5881d695f8b1e5ccb8e189d
+        access_status: public
+        license_status: confirmed
+        license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+        processing_status: approved_with_manual_qa
+        index_allowed: true
+        anchor_type: page
+
+  - unit_id: lecture-24
+    order: 24
+    title: "Inference Methods for Deep Learning"
+    official_resource_title: "Lecture 24: Inference Methods for Deep Learning"
+    description: "官方讲义：Inference Methods for Deep Learning。"
+    description_status: derived_from_official_resource_title
+    inherits_coursepilot_prerequisites: true
+    core_demo: false
+    sources:
+      - source_id: mit-6.7960-f24-lecture-24-slides
+        type: pdf
+        official_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/resources/mit6_7960_f24_lec24_pdf/
+        download_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/mit6_7960_f24_lec24.pdf
+        local_path: data/raw/mit-6.7960/fall-2024/site/static_resources/mit6_7960_f24_lec24.pdf
+        file_size: 5432768
+        page_count: 56
+        sha256: 64cb81754528aa46387beb8411db8debf840a72fb1550efedb44f549c9819adf
+        access_status: public
+        license_status: confirmed
+        license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+        processing_status: approved_with_manual_qa
+        index_allowed: true
+        anchor_type: page
+
 limitations:
   - Captions, VTT, SRT, video transcripts, video metadata, and timestamp anchors are unsupported and excluded from indexing.
   - Third-party readings linked from the OCW readings page are link-only until separately reviewed.
-  - Per-unit prerequisites and one-sentence descriptions are manually curated from the selected lecture slides and are not official MIT metadata.
+  - Per-unit prerequisites and descriptions marked as manually curated are derived from lecture slides and are not official MIT metadata; descriptions marked as derived from the official resource title only restate that title.
   - PDF text extraction requires manual QA for reading order, formulas, diagrams, and duplicate or hidden text.
-  - Homework and solution files are outside the selected five-unit retrieval scope.
+  - Lecture 22 and Lecture 25 notes are unavailable in the official course package and are not included as units.
+  - Homework and solution files are outside the lecture-note retrieval scope.

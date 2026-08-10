@@ -1,0 +1,67 @@
+{
+  "artifact_version": "0.1",
+  "stage": "quality_audit",
+  "status": "succeeded",
+  "generation_policy": "draft",
+  "material_scope": "public",
+  "course_id": "mit-6.7960-fall-2024",
+  "course_version": "fall-2024",
+  "unit_id": "lecture-08",
+  "verdict": "pass_with_documented_limitations",
+  "checks": [
+    {
+      "dimension": "identity",
+      "status": "pass",
+      "finding": "课程、学期、Lecture 8 与 PDF 讲座身份一致。",
+      "evidence": [
+        {
+          "source_id": "mit6-7960-f24-lec8-e72290651c",
+          "anchor": {
+            "type": "page",
+            "value": 1
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec8-e72290651c",
+          "anchor": {
+            "type": "page",
+            "value": 2
+          }
+        }
+      ]
+    },
+    {
+      "dimension": "coverage",
+      "status": "pass",
+      "finding": "目标和练习覆盖 token、混合、Q/K/V、自注意力、多头、ViT、置换等变、位置编码、因果与跨注意力。"
+    },
+    {
+      "dimension": "citations",
+      "status": "pass",
+      "finding": "材料性主张均使用 portable source_id 与有效页锚点。"
+    },
+    {
+      "dimension": "formula_fidelity",
+      "status": "pass",
+      "finding": "仅采用视觉复核后清晰的 token、attention、多头和等变公式；隐藏书稿与载荷均被排除。"
+    },
+    {
+      "dimension": "ordering_and_timing",
+      "status": "pass",
+      "finding": "由表示和形状进入注意力、对称性、因果与跨模态架构，学习时长合计 180 分钟。"
+    },
+    {
+      "dimension": "copyright_and_integrity",
+      "status": "pass",
+      "finding": "未复刻第三方视觉材料，只保留抽象模块标签与必要公式；练习不提供提交就绪答案。"
+    }
+  ],
+  "issues": [],
+  "limitations": [
+    "仅依据 55 页课程幻灯片及前序视觉审计工件，没有课堂音频或逐字稿。",
+    "原生文本层包含渲染不可见的叠加书稿、latexit 载荷和错位内容；这些内容全部排除。",
+    "第 4—8、31、45—47、53 页的第三方视觉材料未复用，也未据其图像细节扩写结论。",
+    "第 39 页示意代码的 softmax 轴依实现约定，未作为通用实现规范。",
+    "Fourier、地理或图拉普拉斯内容不被外推为唯一位置编码方案；架构图不用于补造训练损失、具体头数或未显示维度。"
+  ]
+}

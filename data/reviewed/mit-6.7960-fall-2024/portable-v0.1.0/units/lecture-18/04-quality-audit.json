@@ -1,0 +1,12 @@
+{
+  "unit_id": "lecture-18",
+  "status": "passed_with_warnings",
+  "checks": {"source_identity": "passed", "page_range": "passed", "visual_diagram_review": "passed", "visual_experiment_review": "passed_with_scope", "citation_coverage": "passed", "duration": "passed", "learner_field_separation": "passed"},
+  "findings": [
+    {"severity": "warning", "code": "validation_assumption", "detail": "第 18 页的抗遗忘策略依赖代表性验证集，分布偏移时未必满足。"},
+    {"severity": "warning", "code": "experiment_scope", "detail": "第 32、39 页只支持所引实验，不能宣称蒸馏或专门化普遍提升。"},
+    {"severity": "warning", "code": "zero_data_rhetoric", "detail": "第 46 页“little or no data”不解释为无需任务信息、校准或评估。"}
+  ],
+  "publication_gate": "human_review_required",
+  "repair_targets": []
+}

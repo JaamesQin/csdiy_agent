@@ -25,6 +25,13 @@
 
 最新外部回归为 Lecture 1–8、concurrency=8、8/8 成功，平均人工质量分 91/100。所有结果通过确定性验证，但修复后的语义没有二次 Audit；因此数据库必须保存 `review_status`，不能把“生成成功”直接当成“已发布”。
 
+2026-08-10 的 host-authored portable 构建已覆盖官方可用的 23 讲并全部通过确定性
+验证；经随机语义抽查后，紧凑包已保存到
+`data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/`，状态为“批准待数据库导入”。
+统一 chunks 保存在忽略版本控制的 `data/sources/.../full-course-v0.1.0/`。
+数据库导入器必须适配 portable `citation.anchor` 结构；在适配完成前，在线运行时
+继续只读现有 golden 文件。
+
 当前在线 API 已从固定回显升级为首批 Agent 运行时：`app/api/chat_completions.py`
 仍只负责 OpenAI 协议，实际编排位于 `app/agent/`。运行时已经执行主动学习画像、
 规则优先的意图路由和 Python 静态代码辅导，并可只读 Lecture 2/8 人工批准的

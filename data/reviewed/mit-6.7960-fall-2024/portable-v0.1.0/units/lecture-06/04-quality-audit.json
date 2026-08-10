@@ -1,0 +1,11 @@
+{
+  "unit_id": "lecture-06",
+  "verdict": "pass_with_warnings",
+  "checks": {"identity": "pass", "coverage": "pass", "citation_anchors": "pass", "ordering": "pass", "timing_minutes": 180, "academic_integrity": "pass", "copyright": "pass"},
+  "issues": [
+    {"id": "w1", "severity": "warning", "category": "formula_fidelity", "location": "core_concepts.c1", "message": "风险公式的原生 PDF 抽取存在符号次序噪声；候选仅用语言区分经验风险与总体风险，未声称逐符号转写。"},
+    {"id": "w2", "severity": "warning", "category": "evidence_scope", "location": "core_concepts.c3-c5", "message": "双下降、简单性偏置、低秩偏置与隐式正则化均按课件中的观察或解释框架表述，不能升级为普遍泛化保证。"}
+  ],
+  "repair_targets": [],
+  "publication_gate": "human_review_required"
+}
