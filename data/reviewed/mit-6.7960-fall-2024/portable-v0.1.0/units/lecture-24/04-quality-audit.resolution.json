@@ -1,0 +1,8 @@
+{
+  "unit_id": "lecture-24",
+  "resolution": "accepted_with_documented_limitations",
+  "resolved": ["序列概率与局部贪心边界已视觉复核", "搜索预算与评分器目标分离表述", "上下文学习只保留特定情形限定", "ARC 结果限定为所引工作", "第 55 页推测未纳入事实性概念"],
+  "unresolved_warnings": ["搜索与测试时训练的效果依赖任务特定目标和验证", "发布前需人工复核公式、实验图与隐藏推理边界"],
+  "candidate_ready": true,
+  "finalize": false
+}

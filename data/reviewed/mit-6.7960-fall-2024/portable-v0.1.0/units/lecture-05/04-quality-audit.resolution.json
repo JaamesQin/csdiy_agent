@@ -1,0 +1,9 @@
+{
+  "unit_id": "lecture-05",
+  "outcome": "accepted_with_documented_limitations",
+  "resolved_issue_ids": [],
+  "unresolved_warning_ids": ["w1", "w2"],
+  "changes": [],
+  "note": "两项 warning 均为来源保真边界，不宜猜测性修复；候选 StudyKit 在 limitations 中向审核者保留说明。",
+  "semantic_reaudit_performed": false
+}

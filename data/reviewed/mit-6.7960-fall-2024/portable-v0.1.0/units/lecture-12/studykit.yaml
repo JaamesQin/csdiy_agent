@@ -1,0 +1,391 @@
+studykit_version: '0.1'
+status: draft
+course_id: mit-6.7960-fall-2024
+course_version: fall-2024
+unit_id: lecture-12
+title: Lecture 12：基于相似性的表示学习
+language: zh-CN
+scope:
+  included_sources:
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    title: 'Lecture 12: Similarity-Based Representation Learning'
+    type: pdf
+    sha256: 11bdb827080e8986fd1424191a332d661462877d09704ec973ce95ff3335b841
+  citation_anchor_types:
+  - page
+learning_objectives:
+- id: lo1
+  objective: 解释好表示中的聚集、分离与稳健性。
+- id: lo2
+  objective: 理解线性/深度度量学习与三元组约束。
+- id: lo3
+  objective: 设计正负对并解释学习到的不变性。
+- id: lo4
+  objective: 分析对比学习工程选择与领域依赖。
+prerequisites:
+- topic: 向量与欧氏距离
+  required_level: 能计算向量距离和点积
+- topic: 分类与交叉熵
+  required_level: 理解 softmax 分类和损失
+- topic: 数据增强
+  required_level: 理解标签保持变换
+outline:
+- order: 1
+  topic: 相似性与好表示
+  anchors:
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 9
+  purpose: 建立几何目标。
+- order: 2
+  topic: 度量学习
+  anchors:
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 12
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 16
+  purpose: 从线性距离到深度编码器。
+- order: 3
+  topic: 对比与三元组约束
+  anchors:
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 18
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 25
+  purpose: 理解相对距离与困难负例。
+- order: 4
+  topic: 正负对与不变性
+  anchors:
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 34
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 45
+  purpose: 理解配对选择教给模型什么。
+- order: 5
+  topic: 工程要素与领域边界
+  anchors:
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 49
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 68
+  purpose: 评估实现与数据域。
+core_concepts:
+- id: c1
+  term: 相似性驱动的好表示
+  claim_type: source_summary
+  explanation: 同类聚集、类别分离、紧凑和对无关扰动稳健是课件列出的好表示性质；相似/不相似配对提供训练反馈。
+  citations:
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 9
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 10
+- id: c2
+  term: 度量学习
+  claim_type: source_summary
+  explanation: 度量学习学习一个变换，使相似样本在表示空间靠近、不相似样本远离；深度方法把线性变换推广为神经编码器。
+  citations:
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 11
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 12
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 16
+- id: c3
+  term: 三元组与困难负样本
+  claim_type: source_summary
+  explanation: 三元组约束要求 anchor 更接近 positive、远离 negative，并保留 margin；困难负例是当前放得比正例更近的负样本。
+  citations:
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 18
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 25
+- id: c4
+  term: 自监督正负对与学习到的不变性
+  claim_type: source_summary
+  explanation: 同一样本的两个增强可作正对，同批其他增强样本可作负例；正对选择定义模型要学习的增强不变性，因此必须考虑语义与领域。
+  citations:
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 34
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 45
+- id: c5
+  term: 工程要素与领域依赖
+  claim_type: source_summary
+  explanation: 增强、投影头、批量与负样本选择都会影响训练。ImageNet 与 iNat21 的对照说明效果不能脱离数据域直接推广。
+  citations:
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 47
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 49
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 51
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 68
+glossary:
+- term: metric learning
+  definition: 根据相似性信息学习表示距离。
+- term: positive pair
+  definition: 希望表示靠近的样本对。
+- term: negative pair
+  definition: 希望表示分离的样本对。
+- term: hard negative
+  definition: 当前比正例更靠近 anchor 的负例。
+- term: projection head
+  definition: 承受对比损失的小型表示变换网络。
+common_misconceptions:
+- misconception: 输入空间距离天然符合语义。
+  correction: 度量学习用于学习任务相关距离。
+- misconception: 任意增强都可作为正对。
+  correction: 增强会定义学习到的不变性。
+- misconception: 批内随机负例一定是真负例。
+  correction: 随机负例可能包含 false negatives。
+learning_sequence:
+- step: 1
+  activity: 学习好表示与相似性反馈。
+  duration_minutes: 25
+  citations:
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 9
+- step: 2
+  activity: 学习线性与深度度量学习。
+  duration_minutes: 30
+  citations:
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 12
+- step: 3
+  activity: 学习三元组与困难负例。
+  duration_minutes: 35
+  citations:
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 18
+- step: 4
+  activity: 设计正负对并分析不变性。
+  duration_minutes: 35
+  citations:
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 34
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 45
+- step: 5
+  activity: 分析投影头、batch 与负样本。
+  duration_minutes: 45
+  citations:
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 49
+- step: 6
+  activity: 用跨数据集对照复盘领域边界。
+  duration_minutes: 10
+  citations:
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 68
+practice:
+- id: p1
+  level: 基础
+  question: 分别写出同类聚集、类别分离和扰动稳健的可观察证据。
+  hint: 考虑样本距离和变换前后表示。
+  deliverable: 三行表。
+  expected_evidence:
+  - 区分三种性质
+  - 使用表示空间证据
+  evaluation:
+    full_credit: 三项均正确
+    partial_credit: 至少两项正确
+  citations:
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 9
+- id: p2
+  level: 应用
+  question: anchor-positive 距离0.7、anchor-negative距离0.9、margin 0.4时，判断三元组约束并给出调整方向。
+  hint: 比较正距离加 margin 与负距离。
+  deliverable: 不等式和建议。
+  expected_evidence:
+  - 相对距离比较正确
+  - 拉近正例或推远负例
+  evaluation:
+    full_credit: 判断和方向正确
+    partial_credit: 只有方向正确
+  citations:
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 18
+- id: p3
+  level: 分析
+  question: 为鸟类细粒度识别设计两种安全正对增强和一种危险增强，并解释诱导的不变性。
+  hint: 颜色和局部形态可能是关键线索。
+  deliverable: 三行设计。
+  expected_evidence:
+  - 安全增强保留语义
+  - 危险增强会删除类别信息
+  - 联系不变性
+  evaluation:
+    full_credit: 设计均有领域理由
+    partial_credit: 未说明不变性
+  citations:
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 45
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 68
+- id: p4
+  level: 分析
+  question: 画出 encoder、projection head、对比损失和下游任务的数据流。
+  hint: 下游使用编码表示。
+  deliverable: 流程图。
+  expected_evidence:
+  - 损失作用于投影输出
+  - 下游使用编码表示
+  evaluation:
+    full_credit: 两条路径均正确
+    partial_credit: 模块齐全但路径混淆
+  citations:
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 49
+- id: p5
+  level: 综合
+  question: 针对小 batch 且存在 false negatives 的数据集，设计正对、负例、队列/batch 和监督信息方案并说明风险。
+  hint: 考虑去偏负例或监督正对。
+  deliverable: 四项设计表。
+  expected_evidence:
+  - 处理负例数量
+  - 处理 false negatives
+  - 说明监督选择
+  - 领域限定
+  evaluation:
+    full_credit: 设计闭合且风险明确
+    partial_credit: 解决两项问题
+  citations:
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 51
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 52
+  - source_id: mit6-7960-f24-lec12-11bdb82708
+    anchor:
+      type: page
+      value: 53
+citations:
+- citation_id: l12-c1
+  source_id: mit6-7960-f24-lec12-11bdb82708
+  anchor:
+    type: page
+    value: 9
+  supports: 好表示的性质
+- citation_id: l12-c2
+  source_id: mit6-7960-f24-lec12-11bdb82708
+  anchor:
+    type: page
+    value: 12
+  supports: 线性度量学习
+- citation_id: l12-c3
+  source_id: mit6-7960-f24-lec12-11bdb82708
+  anchor:
+    type: page
+    value: 18
+  supports: 三元组损失
+- citation_id: l12-c4
+  source_id: mit6-7960-f24-lec12-11bdb82708
+  anchor:
+    type: page
+    value: 34
+  supports: SimCLR 正负样本
+- citation_id: l12-c5
+  source_id: mit6-7960-f24-lec12-11bdb82708
+  anchor:
+    type: page
+    value: 45
+  supports: 增强诱导的不变性
+- citation_id: l12-c6
+  source_id: mit6-7960-f24-lec12-11bdb82708
+  anchor:
+    type: page
+    value: 49
+  supports: 投影头
+- citation_id: l12-c7
+  source_id: mit6-7960-f24-lec12-11bdb82708
+  anchor:
+    type: page
+    value: 51
+  supports: batch 与负样本数量
+- citation_id: l12-c8
+  source_id: mit6-7960-f24-lec12-11bdb82708
+  anchor:
+    type: page
+    value: 68
+  supports: ImageNet 与 iNat21 领域差异
+review:
+  generator_review_status: passed_with_source_warnings
+  audit_findings:
+  - 损失公式采用定性关系
+  - 跨数据集结果保留领域限定
+limitations:
+- 度量和对比损失公式页已视觉核对，但候选不作逐符号推导。
+- 随机负例可能包含 false negatives。
+- ImageNet/iNat21 对照只说明领域依赖，不能推广为所有数据集结论。

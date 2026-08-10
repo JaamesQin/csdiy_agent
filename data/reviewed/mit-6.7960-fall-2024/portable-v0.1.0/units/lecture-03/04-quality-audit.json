@@ -1,0 +1,67 @@
+{
+  "artifact_version": "0.1",
+  "stage": "quality_audit",
+  "status": "succeeded",
+  "generation_policy": "draft",
+  "material_scope": "public",
+  "course_id": "mit-6.7960-fall-2024",
+  "course_version": "fall-2024",
+  "unit_id": "lecture-03",
+  "verdict": "pass_with_documented_limitations",
+  "checks": [
+    {
+      "dimension": "identity",
+      "status": "pass",
+      "finding": "课程、版本、讲次与 PDF 首页及课程尾页一致。",
+      "evidence": [
+        {
+          "source_id": "mit6-7960-f24-lec3-d7db2ac9fd",
+          "anchor": {
+            "type": "page",
+            "value": 1
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec3-d7db2ac9fd",
+          "anchor": {
+            "type": "page",
+            "value": 43
+          }
+        }
+      ]
+    },
+    {
+      "dimension": "coverage",
+      "status": "pass",
+      "finding": "5 个目标覆盖近似边界、三层定理、构造证明、深度分离及实践边界；7 个练习逐级覆盖。"
+    },
+    {
+      "dimension": "citations",
+      "status": "pass",
+      "finding": "所有材料性主张均使用 portable source_id 和有效页锚点。"
+    },
+    {
+      "dimension": "formula_fidelity",
+      "status": "pass",
+      "finding": "保留的公式已按视觉复核记录校正；N=4d(L/epsilon)^d 与约 7×10^49 两个高风险数量均已明确。"
+    },
+    {
+      "dimension": "ordering_and_timing",
+      "status": "pass",
+      "finding": "学习顺序由范围界定到构造、深度分离和决策边界，时长合计 180 分钟。"
+    },
+    {
+      "dimension": "copyright_and_integrity",
+      "status": "pass",
+      "finding": "仅短小转述与必要公式，不复制第三方长段材料，不给出受评作业完整答案。"
+    }
+  ],
+  "issues": [],
+  "limitations": [
+    "PDF 原生文本层噪声较大；本包以逐页可见渲染核验为准。",
+    "第 15、17 页的一维矩形子网络含有难以无歧义辨认的手写上标/向量项，因此不提供其精确 LaTeX；仅保留可见且清楚的构造意图与高维阈值公式。",
+    "第 20、35、38、39 页提到的外部论文没有在本次离线构建中查阅；本包不把幻灯片的一句简介扩写为完整外部定理。",
+    "第 22、36、40 页是章节分隔页，第 23 页是宽深示意图；其低文本提取量不是缺页。",
+    "本包只覆盖 Lecture 3，不延伸到 Lecture 1-2、4-8，也不把第 42 页的下讲预告发展为本讲内容。"
+  ]
+}

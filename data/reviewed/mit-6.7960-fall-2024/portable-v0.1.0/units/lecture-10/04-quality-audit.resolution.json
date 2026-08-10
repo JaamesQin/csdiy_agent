@@ -1,0 +1,15 @@
+{
+  "artifact_version": "0.1",
+  "stage": "quality_audit_resolution",
+  "status": "succeeded",
+  "generation_policy": "draft",
+  "material_scope": "public",
+  "course_id": "mit-6.7960-fall-2024",
+  "course_version": "fall-2024",
+  "unit_id": "lecture-10",
+  "original_audit_verdict": "pass_with_documented_limitations",
+  "targeted_repair_applied": false,
+  "repaired_artifacts": [],
+  "resolution": "无需内容修复；源内讲次编号冲突已显式保留为 warning，未擅自改写源页面。",
+  "final_readiness": "ready_for_chunk_validation_then_finalize"
+}

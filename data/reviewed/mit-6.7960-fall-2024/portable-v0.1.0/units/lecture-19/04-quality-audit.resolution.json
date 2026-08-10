@@ -1,0 +1,43 @@
+{
+  "artifact_version": "0.1",
+  "stage": "quality_audit_resolution",
+  "status": "succeeded",
+  "generation_policy": "draft",
+  "material_scope": "public",
+  "course_id": "mit-6.7960-fall-2024",
+  "course_version": "fall-2024",
+  "unit_id": "lecture-19",
+  "source_audit": "04-quality-audit.json",
+  "resolution_status": "accepted_with_documented_limitations",
+  "resolutions": [
+    {
+      "issue_code": "inverse_mapping_not_guaranteed",
+      "action": "已在解释、公式 warnings 或 limitations 中限定。",
+      "result": "resolved_as_documented_limitation"
+    },
+    {
+      "issue_code": "label_efficiency_experiment_specific",
+      "action": "已在解释、公式 warnings 或 limitations 中限定。",
+      "result": "resolved_as_documented_limitation"
+    },
+    {
+      "issue_code": "counterfactual_not_causal_proof",
+      "action": "已在解释、公式 warnings 或 limitations 中限定。",
+      "result": "resolved_as_documented_limitation"
+    },
+    {
+      "issue_code": "maml_notation_partially_obscured",
+      "action": "已在解释、公式 warnings 或 limitations 中限定。",
+      "result": "resolved_as_documented_limitation"
+    }
+  ],
+  "targeted_repair_applied": false,
+  "remaining_warnings": [
+    "G⁻¹ 是接口抽象，具体模型的存在性、唯一性与可计算性需验证。",
+    "潜空间反事实依赖覆盖、编辑局部性和分布匹配，不自动证明因果。",
+    "第26页约100倍及第40—41页收益是特定实验摘要，不可作通用倍率。",
+    "第46页代码式嵌套含未具名占位符，只保留梯度穿过任务内更新的结论。",
+    "第三方图像不复制、不细述；外部论文未独立摄取。"
+  ],
+  "finalization_authorized": false
+}

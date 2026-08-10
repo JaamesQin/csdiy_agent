@@ -1,0 +1,1152 @@
+studykit_version: '0.1'
+status: draft
+generation_policy: draft
+material_scope: public
+course_id: mit-6.7960-fall-2024
+course_version: fall-2024
+unit_id: lecture-10
+title: Lecture 10：记忆与序列建模
+language: zh-CN
+estimated_study_time_minutes: 180
+scope:
+  included_sources:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    title: 'Lecture 10: Memory and Sequence Modeling'
+    type: application/pdf
+    sha256: 17b3fa52fe5153bd11029651bd481c6c749758780d2eb546807ef467cb025f53
+  citation_anchor_types:
+  - page
+learning_objectives:
+- id: lo-1
+  objective: 识别序列任务中的时间轴、状态与长程依赖需求，并说明有限参数模型为何需要压缩历史。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 9
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 20
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 29
+- id: lo-2
+  objective: 写出 RNN 的状态更新和输出映射，解释展开计算图与跨时间权重共享。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 21
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 22
+- id: lo-3
+  objective: 解释反向传播通过时间如何累加共享参数的梯度，以及长链为何可能产生梯度消失或爆炸。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 28
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 30
+- id: lo-4
+  objective: 用遗忘、写入与输出三个阶段解释 LSTM 的 cell state 更新，不把门控图误读为无条件记忆。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 32
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 35
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 36
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 37
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 38
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 39
+- id: lo-5
+  objective: 把序列联合概率分解为自回归条件概率，并区分训练时条件、交叉熵目标与生成时采样。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 43
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 45
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 50
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 51
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 52
+- id: lo-6
+  objective: 比较 recurrence、temporal convolution 与 attention 在跨时间参数/权重共享上的差异。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 57
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 58
+- id: lo-7
+  objective: 按稀疏化、局部+全局、检索增强和记忆载体分类长上下文方案，并说明上下文窗口不等于有效使用。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 60
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 61
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 62
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 63
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 64
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 66
+prerequisites:
+- topic: 概率论基础
+  required_level: 能使用条件概率、乘法法则与交叉熵。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 43
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 50
+- topic: 神经网络与反向传播
+  required_level: 理解计算图、共享参数和链式法则。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 22
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 28
+- topic: Transformer 基础
+  required_level: 知道注意力权重可依输入动态生成；本单元会与递归和卷积比较。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 57
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 58
+outline:
+- order: 1
+  topic: 序列、状态与记忆
+  anchors:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 9
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 20
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 29
+  purpose: 把输入顺序、隐藏状态与有限参数压缩历史联系起来。
+- order: 2
+  topic: RNN 展开与权重共享
+  anchors:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 21
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 22
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 28
+  purpose: 理解同一递归参数在不同时间步复用以及梯度累加。
+- order: 3
+  topic: 长程依赖与梯度路径
+  anchors:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 29
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 30
+  purpose: 区分模型理论上能传递历史与训练中能否稳定学习。
+- order: 4
+  topic: LSTM 的 cell state 与门控
+  anchors:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 32
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 35
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 36
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 37
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 38
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 39
+  purpose: 按遗忘、写入、更新和输出追踪信息流。
+- order: 5
+  topic: 自回归概率、训练与生成
+  anchors:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 43
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 45
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 50
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 51
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 52
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 53
+  purpose: 连接概率因子分解、词表示、教师条件和解码。
+- order: 6
+  topic: 直接连接旧记忆的方法
+  anchors:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 54
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 57
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 58
+  purpose: 比较递归压缩、卷积共享和数据依赖注意力。
+- order: 7
+  topic: 更长上下文与记忆系统
+  anchors:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 60
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 61
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 62
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 63
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 64
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 66
+  purpose: 从计算复杂度、连接模式、检索和记忆载体审视长上下文。
+core_concepts:
+- id: c1
+  term: 序列与状态压缩
+  claim_type: source_summary
+  explanation: 序列数据沿时间排列。若保留全部历史，记忆随时间增长且属于非参数存储；RNN 用隐藏状态把过去压缩为固定维表示，并假设未来状态只直接依赖前一隐藏状态和当前输入。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 9
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 20
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 29
+- id: c2
+  term: RNN 状态更新
+  claim_type: source
+  explanation: 在时间 t，更新函数 f 把上一隐藏状态和当前输入映射为新状态，输出函数 g 再从新状态产生输出。展开图把一个带反馈的递归层表示为有限时间
+    DAG。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 20
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 21
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 22
+  formula:
+    status: resolved
+    latex: h_t=f(h_{t-1},x_{\mathrm{in}}[t]),\qquad x_{\mathrm{out}}[t]=g(h_t)
+    citation:
+      source_id: mit6-7960-f24-lec10-17b3fa52fe
+      anchor:
+        type: page
+        value: 21
+    warnings:
+    - 公式已由统一 page-image 视觉核对。
+- id: c3
+  term: 跨时间权重共享与 BPTT
+  claim_type: source_summary
+  explanation: 展开后每个时间步使用同一组参数。总目标对共享参数的梯度由各时间副本的贡献累加；反向传播沿展开图穿过多个状态转换。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 22
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 28
+  formula:
+    status: resolved
+    latex: \frac{\partial J}{\partial[W,U,V]}=\sum_{t=0}^{T}\frac{\partial\mathcal{L}(x_{\mathrm{out}}[t],y_t)}{\partial[W,U,V]}
+    citation:
+      source_id: mit6-7960-f24-lec10-17b3fa52fe
+      anchor:
+        type: page
+        value: 28
+    warnings:
+    - 页面同时用 W 的各时间副本说明共享参数梯度求和；这里只保留清晰的总梯度式。
+- id: c4
+  term: 长程依赖与梯度稳定性
+  claim_type: source_summary
+  explanation: RNN 理论上能把遥远信息编码进当前隐藏状态，但依赖链需要反复经过相同转换；课件用长链说明梯度可能消失或爆炸，因此表达可能性不等于训练可达性。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 29
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 30
+- id: c5
+  term: LSTM cell state 与遗忘门
+  claim_type: source_summary
+  explanation: LSTM 被设计为不默认遗忘旧状态。cell state 提供较直接的信息通道；遗忘门根据上一隐藏状态与当前输入产生接近 0–1 的逐元素系数，决定保留或丢弃旧
+    cell 信息。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 32
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 35
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 36
+  formula:
+    status: resolved
+    latex: f_t=\sigma\!\left(W_f[h_{t-1},x_t]+b_f\right)
+    citation:
+      source_id: mit6-7960-f24-lec10-17b3fa52fe
+      anchor:
+        type: page
+        value: 36
+    warnings:
+    - 公式已由统一 page-image 视觉核对；接近 0/1 是门值解释，不声称始终为精确二值。
+- id: c6
+  term: LSTM 写入、更新与输出
+  claim_type: source_summary
+  explanation: 写入阶段先选择要更新的索引并构造候选信息；随后遗忘选定旧信息并写入新信息；最后依据更新后的 cell state 决定当前输出。三个阶段不能互换。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 37
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 38
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 39
+- id: c7
+  term: 自回归概率分解
+  claim_type: source
+  explanation: 联合序列概率可按链式法则分解为每个元素在其前缀条件下的概率乘积。模型因而把序列学习转成一组下一元素预测。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 41
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 43
+  formula:
+    status: resolved
+    latex: p(X)=\prod_{i=1}^{n}p(x_i\mid x_1,\ldots,x_{i-1})
+    citation:
+      source_id: mit6-7960-f24-lec10-17b3fa52fe
+      anchor:
+        type: page
+        value: 43
+    warnings:
+    - 公式已由统一 page-image 视觉核对。
+- id: c8
+  term: 词表示、最大似然与交叉熵
+  claim_type: source_summary
+  explanation: 课件把词表示为词表大小 K 的 one-hot 向量，并把训练写为模型输出与 one-hot 目标之间的交叉熵最小化。训练图使用真实前序词作为条件；生成时可从预测分布采样或选择最可能词。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 45
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 50
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 51
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 52
+  formula:
+    status: resolved
+    latex: f^*=\arg\min_{f\in\mathcal{F}}\sum_{i=1}^{N}H(y_i,\hat y_i)
+    citation:
+      source_id: mit6-7960-f24-lec10-17b3fa52fe
+      anchor:
+        type: page
+        value: 50
+    warnings:
+    - 课件称其为最大似然目标；此处只转写可见的交叉熵优化式。
+- id: c9
+  term: 递归、卷积与注意力的时间共享
+  claim_type: source_summary
+  explanation: 递归在时间上共享 recurrent weights；时序卷积共享 convolution weights；注意力权重则由数据动态决定。后两类方法可直接连接旧观察或隐藏状态到未来预测，减轻只靠递归状态传递的路径限制。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 57
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 58
+- id: c10
+  term: 更长上下文的四类策略
+  claim_type: source_summary
+  explanation: 课件列出稀疏/近似注意力、局部+全局模式、外部检索以及不同记忆载体等路线。模型声明的 token window 只描述可接收长度；页面
+    64 进一步提出何时任务真正需要长程上下文的问题。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 60
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 61
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 62
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 63
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 64
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 66
+glossary:
+- term: hidden state
+  definition: RNN 在时间步之间传递的固定维状态。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 21
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 29
+- term: BPTT
+  definition: 在展开的时间计算图上执行反向传播，并累加共享参数的各时间贡献。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 28
+- term: cell state
+  definition: LSTM 中承载跨时间信息并受门控更新的状态 C_t。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 35
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 38
+- term: autoregressive model
+  definition: 把联合序列概率分解为前缀条件下的逐步预测。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 43
+- term: long-range dependence
+  definition: 预测需要相隔较远的过去信息。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 29
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 54
+- term: retrieval-enhanced
+  definition: 用外部检索把相关内容提供给模型，而不只依赖参数或当前序列状态。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 62
+common_misconceptions:
+- misconception: RNN 隐藏状态固定大小，所以不能表示任何远距离依赖。
+  correction: 课件指出它可把相关远期信息压入隐藏状态；困难在于选择和学习保留什么。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 29
+- misconception: LSTM 默认记住一切且不会遗忘。
+  correction: 它改变默认信息流并学习遗忘门；门仍可选择丢弃或写入信息。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 32
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 36
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 38
+- misconception: 训练和生成时每一步使用相同来源的前序词。
+  correction: 训练图使用真实前序词，生成时使用模型选择或采样的词。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 51
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 52
+- misconception: 更大的上下文窗口证明模型有效使用了全部历史。
+  correction: 窗口只是可接收长度，还需任务证据长度、截断和检索消融。
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 63
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 64
+learning_sequence:
+- step: 1
+  activity: 识别序列任务、状态与有限记忆问题。
+  duration_minutes: 20
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 9
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 20
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 29
+- step: 2
+  activity: 展开 RNN 并追踪跨时间权重共享。
+  duration_minutes: 25
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 21
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 22
+- step: 3
+  activity: 推导共享参数梯度累加并诊断长链稳定性。
+  duration_minutes: 25
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 28
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 30
+- step: 4
+  activity: 按遗忘、写入、更新、输出拆解 LSTM。
+  duration_minutes: 30
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 32
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 35
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 36
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 37
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 38
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 39
+- step: 5
+  activity: 完成自回归分解、词表示、训练与生成练习。
+  duration_minutes: 35
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 43
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 45
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 50
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 51
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 52
+- step: 6
+  activity: 比较递归、卷积与注意力的时间共享。
+  duration_minutes: 20
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 57
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 58
+- step: 7
+  activity: 审计长上下文策略、窗口声明与真实任务需求。
+  duration_minutes: 25
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 60
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 61
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 62
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 63
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 64
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 66
+practice:
+- id: p1
+  level: 基础
+  question: 为一段长度 5 的输入写出 RNN 展开表，逐步列出 h_t 依赖的两个直接输入和 x_out[t] 的来源。
+  hint: 每一步复用同一个 f 与 g。
+  deliverable: 5 行时间步依赖表。
+  expected_evidence:
+  - h_t 依赖 h_{t-1} 与当前输入
+  - 输出来自当前 h_t
+  - 参数跨时间共享
+  evaluation:
+    criteria:
+    - 时间索引正确
+    - 无未来信息
+    - 共享关系清楚
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 20
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 21
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 22
+- id: p2
+  level: 核心推导
+  question: 给定 J=Σ_t L_t，解释共享参数 W 的梯度为何要累加所有时间副本的贡献，并画出至少三步反向路径。
+  hint: 展开图中的 W_i 是同一参数的使用位置。
+  deliverable: 一条梯度求和式和一张反向路径图。
+  expected_evidence:
+  - 目标按时间求和
+  - 共享参数贡献累加
+  - 路径经过隐藏状态链
+  evaluation:
+    criteria:
+    - 链式法则方向正确
+    - 不把 W_i 当独立训练参数
+    - 图可复核
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 28
+- id: p3
+  level: 诊断
+  question: 分别构造一个梯度消失和梯度爆炸的定性案例，说明为什么“RNN 可表达任意远依赖”不保证能学到它。
+  hint: 考虑长链中局部导数反复相乘。
+  deliverable: 两段路径解释和一条表达/优化边界。
+  expected_evidence:
+  - 长链反复乘积
+  - 消失与爆炸方向正确
+  - 区分表达与训练
+  evaluation:
+    criteria:
+    - 机制准确
+    - 边界明确
+    - 不杜撰数值阈值
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 29
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 30
+- id: p4
+  level: 结构追踪
+  question: 按遗忘、写入、cell 更新、输出四步标注 LSTM 信息流，并解释遗忘门接近 0 与接近 1 的不同含义。
+  hint: 先沿 C_{t-1} 到 C_t 的主通道走。
+  deliverable: 四步流程图和门值解释。
+  expected_evidence:
+  - 遗忘旧信息
+  - 选择并写入候选
+  - 更新 cell state
+  - 决定输出
+  - 门值非强制二值
+  evaluation:
+    criteria:
+    - 顺序正确
+    - 状态/隐藏量不混淆
+    - 门值解释谨慎
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 35
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 36
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 37
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 38
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 39
+- id: p5
+  level: 概率推导
+  question: 将四元素序列联合概率展开为自回归条件概率乘积，并标出每项可使用的前缀。
+  hint: 第一项没有历史，后续项只能条件于左侧前缀。
+  deliverable: 完整乘积式与四行条件集合。
+  expected_evidence:
+  - 四个概率因子
+  - 条件只含过去
+  - 与链式法则一致
+  evaluation:
+    criteria:
+    - 索引完整
+    - 无未来泄漏
+    - 概率方向正确
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 43
+- id: p6
+  level: 训练与生成
+  question: 比较训练图中使用真实前序词与生成时从预测分布取词的两条路径，并说明误差如何可能在生成时累积。
+  hint: 不要把训练条件和推理条件混为一谈。
+  deliverable: 两列表格和一条风险说明。
+  expected_evidence:
+  - 训练条件使用 ground truth
+  - 生成使用模型输出
+  - 可采样或取最大概率
+  - 指出条件分布漂移风险
+  evaluation:
+    criteria:
+    - 阶段区分
+    - 路径完整
+    - 不声称唯一解码法
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 50
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 51
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 52
+- id: p7
+  level: 比较
+  question: 从时间共享方式、最远连接路径和权重是否依数据三个维度比较 recurrence、temporal convolution 与 attention。
+  hint: 以第58页三条陈述为主，不扩写外部论文。
+  deliverable: 三行三列表。
+  expected_evidence:
+  - 递归权重共享
+  - 卷积权重共享
+  - 注意力权重动态
+  - 连接路径有区别
+  evaluation:
+    criteria:
+    - 三类不混淆
+    - 证据限于课件
+    - 比较维度一致
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 57
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 58
+- id: p8
+  level: 综合审计
+  question: 为一个声称需要超长上下文的任务设计评估：区分可输入窗口、实际使用历史、检索帮助和任务真正需要的最小证据长度。
+  hint: 窗口大小不是有效记忆的证明。
+  deliverable: 四项评估协议与消融设计。
+  expected_evidence:
+  - 测量窗口能力
+  - 历史截断消融
+  - 检索对照
+  - 任务证据长度
+  - 避免只报模型规格
+  evaluation:
+    criteria:
+    - 可测量
+    - 能区分机制
+    - 不复述过时产品规格为当前事实
+  citations:
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 62
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 63
+  - source_id: mit6-7960-f24-lec10-17b3fa52fe
+    anchor:
+      type: page
+      value: 64
+citations:
+- citation_id: cite-01
+  source_id: mit6-7960-f24-lec10-17b3fa52fe
+  anchor:
+    type: page
+    value: 1
+  supports: Lecture 10 page 1 evidence
+- citation_id: cite-02
+  source_id: mit6-7960-f24-lec10-17b3fa52fe
+  anchor:
+    type: page
+    value: 9
+  supports: Lecture 10 page 9 evidence
+- citation_id: cite-03
+  source_id: mit6-7960-f24-lec10-17b3fa52fe
+  anchor:
+    type: page
+    value: 20
+  supports: Lecture 10 page 20 evidence
+- citation_id: cite-04
+  source_id: mit6-7960-f24-lec10-17b3fa52fe
+  anchor:
+    type: page
+    value: 21
+  supports: Lecture 10 page 21 evidence
+- citation_id: cite-05
+  source_id: mit6-7960-f24-lec10-17b3fa52fe
+  anchor:
+    type: page
+    value: 22
+  supports: Lecture 10 page 22 evidence
+- citation_id: cite-06
+  source_id: mit6-7960-f24-lec10-17b3fa52fe
+  anchor:
+    type: page
+    value: 28
+  supports: Lecture 10 page 28 evidence
+- citation_id: cite-07
+  source_id: mit6-7960-f24-lec10-17b3fa52fe
+  anchor:
+    type: page
+    value: 29
+  supports: Lecture 10 page 29 evidence
+- citation_id: cite-08
+  source_id: mit6-7960-f24-lec10-17b3fa52fe
+  anchor:
+    type: page
+    value: 30
+  supports: Lecture 10 page 30 evidence
+- citation_id: cite-09
+  source_id: mit6-7960-f24-lec10-17b3fa52fe
+  anchor:
+    type: page
+    value: 32
+  supports: Lecture 10 page 32 evidence
+- citation_id: cite-10
+  source_id: mit6-7960-f24-lec10-17b3fa52fe
+  anchor:
+    type: page
+    value: 36
+  supports: Lecture 10 page 36 evidence
+- citation_id: cite-11
+  source_id: mit6-7960-f24-lec10-17b3fa52fe
+  anchor:
+    type: page
+    value: 37
+  supports: Lecture 10 page 37 evidence
+- citation_id: cite-12
+  source_id: mit6-7960-f24-lec10-17b3fa52fe
+  anchor:
+    type: page
+    value: 38
+  supports: Lecture 10 page 38 evidence
+- citation_id: cite-13
+  source_id: mit6-7960-f24-lec10-17b3fa52fe
+  anchor:
+    type: page
+    value: 39
+  supports: Lecture 10 page 39 evidence
+- citation_id: cite-14
+  source_id: mit6-7960-f24-lec10-17b3fa52fe
+  anchor:
+    type: page
+    value: 43
+  supports: Lecture 10 page 43 evidence
+- citation_id: cite-15
+  source_id: mit6-7960-f24-lec10-17b3fa52fe
+  anchor:
+    type: page
+    value: 45
+  supports: Lecture 10 page 45 evidence
+- citation_id: cite-16
+  source_id: mit6-7960-f24-lec10-17b3fa52fe
+  anchor:
+    type: page
+    value: 50
+  supports: Lecture 10 page 50 evidence
+- citation_id: cite-17
+  source_id: mit6-7960-f24-lec10-17b3fa52fe
+  anchor:
+    type: page
+    value: 51
+  supports: Lecture 10 page 51 evidence
+- citation_id: cite-18
+  source_id: mit6-7960-f24-lec10-17b3fa52fe
+  anchor:
+    type: page
+    value: 52
+  supports: Lecture 10 page 52 evidence
+- citation_id: cite-19
+  source_id: mit6-7960-f24-lec10-17b3fa52fe
+  anchor:
+    type: page
+    value: 57
+  supports: Lecture 10 page 57 evidence
+- citation_id: cite-20
+  source_id: mit6-7960-f24-lec10-17b3fa52fe
+  anchor:
+    type: page
+    value: 58
+  supports: Lecture 10 page 58 evidence
+- citation_id: cite-21
+  source_id: mit6-7960-f24-lec10-17b3fa52fe
+  anchor:
+    type: page
+    value: 60
+  supports: Lecture 10 page 60 evidence
+- citation_id: cite-22
+  source_id: mit6-7960-f24-lec10-17b3fa52fe
+  anchor:
+    type: page
+    value: 61
+  supports: Lecture 10 page 61 evidence
+- citation_id: cite-23
+  source_id: mit6-7960-f24-lec10-17b3fa52fe
+  anchor:
+    type: page
+    value: 62
+  supports: Lecture 10 page 62 evidence
+- citation_id: cite-24
+  source_id: mit6-7960-f24-lec10-17b3fa52fe
+  anchor:
+    type: page
+    value: 64
+  supports: Lecture 10 page 64 evidence
+- citation_id: cite-25
+  source_id: mit6-7960-f24-lec10-17b3fa52fe
+  anchor:
+    type: page
+    value: 66
+  supports: Lecture 10 page 66 evidence
+review:
+  generator_review_status: audited_draft
+  audit_findings:
+  - 69 页原 PDF 已逐页盘点；RNN、BPTT、LSTM 遗忘门、自回归和交叉熵公式用统一 page-images 核对。
+  - 外部论文列表只按课件分类，不扩写为论文定理或当前产品规格。
+  - 第三方图像页不作为视觉事实来源；练习只使用抽象序列与计算图。
+  - 学习顺序合计 180 分钟，8 道练习从 RNN 展开递进到长上下文评估。
+limitations:
+- PDF 第1页标题为 Lecture 10，第2页可见编号写作 11；本包按文件名、元数据和项目 unit 约定使用 lecture-10，并记录此源内不一致。
+- 多页原生文本含 latexit 载荷和重叠书稿；精确公式仅采用经过 page-image 核对的页面。
+- 第60—63页列举的模型复杂度和上下文窗口属于 Fall 2024 课件陈述，不作为 2026 年当前产品规格。
+- 未摄取课件链接的外部论文；对 Reformer、Performer、Linformer、Transformer-XL、Longformer、BigBird 与
+  RETRO 只做页面级分类。
+- 第三方权利图像不复制、不描述其视觉细节。

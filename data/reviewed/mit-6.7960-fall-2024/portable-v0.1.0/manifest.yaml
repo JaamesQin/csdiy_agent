@@ -8,6 +8,26 @@ term: Fall
 year: 2024
 course_version: fall-2024
 language: en
+learner_language: zh-CN
+target_minutes_per_unit: 180
+generation_policy: draft
+build_id: 4f758f6f76878aac08ccea9683b9f20fe1f040bd02d153d801606309ecf71882
+input_fingerprint: b5f8b4963964a5873c022b904fc9d3cf8cf27d0a49046e09a2895c449938514a
+ingestion_report_sha256: e15164050b6b58430a3a76360229eb7c10da06c58549fb6aea72efd3e196a006
+chunks_sha256: 692fac70bf34368f054e308d92c740177353c7965310531c75ca12c3a7409ef2
+schema_sha256: 4e47639f49af216c431a2d1eb1caa1e0e0878742e29b8c36bd021cd477cb74e1
+pipeline_version: studykit-generator-v0.1.0
+prompt_version: host-authoring-v0.1.0
+material_sets:
+  - material_set_id: public-mit-6.7960-fall-2024-lecture-notes
+    scope: public
+    owner_id: null
+    input_fingerprint: b5f8b4963964a5873c022b904fc9d3cf8cf27d0a49046e09a2895c449938514a
+grouping_evidence:
+  - official OCW lecture-notes list and resource metadata
+  - trusted local course manifest with verified PDF hashes and page counts
+warnings:
+  - Lecture 22 and Lecture 25 are unavailable in the official OCW snapshot and are intentionally absent.
 official_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/
 official_download_url: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/download/
 downloaded_from: https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/download/

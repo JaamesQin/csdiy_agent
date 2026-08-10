@@ -1,0 +1,44 @@
+{
+  "artifact_version": "0.1",
+  "stage": "quality_audit_resolution",
+  "status": "succeeded",
+  "generation_policy": "draft",
+  "material_scope": "public",
+  "course_id": "mit-6.7960-fall-2024",
+  "course_version": "fall-2024",
+  "unit_id": "lecture-16",
+  "source_audit": "04-quality-audit.json",
+  "resolution_status": "accepted_with_documented_limitations",
+  "resolutions": [
+    {
+      "issue_code": "discriminator_label_convention_reversed",
+      "action": "在候选 StudyKit 的解释、公式 warnings 或 limitations 中显式记录证据边界。",
+      "result": "resolved_as_documented_limitation"
+    },
+    {
+      "issue_code": "training_claim_not_universal",
+      "action": "在候选 StudyKit 的解释、公式 warnings 或 limitations 中显式记录证据边界。",
+      "result": "resolved_as_documented_limitation"
+    },
+    {
+      "issue_code": "third_party_visuals_excluded",
+      "action": "在候选 StudyKit 的解释、公式 warnings 或 limitations 中显式记录证据边界。",
+      "result": "resolved_as_documented_limitation"
+    },
+    {
+      "issue_code": "unpaired_scope_limited",
+      "action": "在候选 StudyKit 的解释、公式 warnings 或 limitations 中显式记录证据边界。",
+      "result": "resolved_as_documented_limitation"
+    }
+  ],
+  "targeted_repair_applied": false,
+  "remaining_warnings": [
+    "第20页把 d_φ 的高输出标为 synthetic、低输出标为 real；本包忠实保留该约定，不能与常见“判别器输出真实概率”的公式直接混用。",
+    "第31页关于 L1 组合目标带来稳定训练或快速收敛的描述属于课件设置下的经验性陈述，不是普遍保证。",
+    "课件中的鸟类、facade、生成图像、LLaVA 等第三方视觉示例不复制，也不描述其具体视觉内容。",
+    "课件提及的具体系统或模型只按 Fall 2024 页面作教学分类，不据此声明 2026 年当前能力。",
+    "外部论文没有独立摄取，实验结果与架构细节不作为新增主张。",
+    "无配对翻译仍需域级数据、结构性约束或其他假设；第83页不能支持所有任务都无需配对数据。"
+  ],
+  "finalization_authorized": false
+}

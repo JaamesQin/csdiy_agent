@@ -1,0 +1,520 @@
+studykit_version: '0.1'
+status: draft
+access_scope: public
+course_id: mit-6.7960-fall-2024
+course_version: fall-2024
+unit_id: lecture-14
+title: Lecture 14：深度生成模型 I
+language: zh-CN
+scope:
+  included_sources:
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    title: 'Lecture 14: Deep Generative Models I'
+    type: pdf
+    sha256: cdb640b02e8f7c92f69d96adc96f3c1654c9f418d92239bab6208bfdb633165f
+    access_status: public
+  citation_anchor_types:
+  - page
+learning_objectives:
+- id: obj-1
+  objective: 从生成算法与联合概率分布两种角度定义生成模型。
+- id: obj-2
+  objective: 区分离散 PMF 与连续 PDF 的归一化。
+- id: obj-3
+  objective: 比较直接学习生成器与间接学习评分函数。
+- id: obj-4
+  objective: 用留出数据似然区分建模、记忆和泛化。
+- id: obj-5
+  objective: 解释能量模型、自回归模型、扩散模型和 GAN 的训练与采样机制。
+- id: obj-6
+  objective: 识别把复杂生成转化为监督子问题序列的共同策略。
+prerequisites:
+- topic: 概率基础
+  required_level: 理解随机变量、联合/条件概率、求和与积分归一化。
+- topic: 神经网络分类器
+  required_level: 理解网络输出类别分布与反向传播。
+- topic: 最大似然
+  required_level: 能解释提高观测数据概率的目标。
+outline:
+- order: 1
+  topic: 生成模型与概率基础
+  anchors:
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 4
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 8
+  purpose: 定义对象。
+- order: 2
+  topic: 直接、间接与评价
+  anchors:
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 17
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 27
+  purpose: 建立学习和泛化标准。
+- order: 3
+  topic: 能量模型
+  anchors:
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 30
+  purpose: 理解评分、归一化和正负样本对比。
+- order: 4
+  topic: 自回归模型
+  anchors:
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 37
+  purpose: 把联合分布分解为条件预测。
+- order: 5
+  topic: 扩散模型
+  anchors:
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 47
+  purpose: 把生成组织为去噪序列。
+- order: 6
+  topic: GAN
+  anchors:
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 58
+  purpose: 理解生成器—判别器交替训练。
+core_concepts:
+- id: concept-1
+  term: 生成模型
+  claim_type: source_summary
+  explanation: 生成模型既可指能产生类似数据样本的算法，也可用统计语言描述为数据变量上的联合概率分布。神经网络因此可从确定映射扩展为显式或隐式地表示输出分布。
+  citations:
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 4
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 7
+- id: concept-2
+  term: PMF 与 PDF
+  claim_type: source_summary
+  explanation: 离散随机变量的概率质量函数在全部取值上求和为 1；连续随机变量的概率密度函数在全域积分为 1。密度值本身不等同于单点概率。
+  citations:
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 8
+- id: concept-3
+  term: 直接与间接生成学习
+  claim_type: source_summary
+  explanation: 直接路线学习从潜变量 Z 到样本 X 的生成器；间接路线学习从样本 X 到实数分数的函数，再寻找高分区域。两者分别把困难放在映射生成和评分后采样。
+  citations:
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 17
+- id: concept-4
+  term: 生成模型的泛化
+  claim_type: source_summary
+  explanation: 仅复刻训练集的“档案柜”能生成真实样本却没有学到可泛化分布。讲义建议在留出数据上用似然评估：新而真实的数据也应获得较高概率。
+  citations:
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 25
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 27
+- id: concept-5
+  term: 能量模型
+  claim_type: source_summary
+  explanation: 能量函数为样本评分，并经配分函数归一化为密度。对数似然梯度包含降低数据能量的项与来自归一化常数、可写成模型分布期望的项；训练以数据样本和模型样本形成对比。
+  citations:
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 30
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 33
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 34
+- id: concept-6
+  term: 自回归模型
+  claim_type: source_summary
+  explanation: 链式法则把联合分布精确分解为按顺序的条件分布；每一步可视为预测下一个词或值的分类问题，并按顺序采样生成完整对象。
+  citations:
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 35
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 37
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 38
+- id: concept-7
+  term: 扩散模型
+  claim_type: source_summary
+  explanation: 前向过程逐步向数据加噪；生成时从简单噪声分布出发逐步去噪。训练构造相邻噪声层级的输入—目标对，把每一步变成监督预测，随机性使同一条件可产生不同结果。
+  citations:
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 45
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 47
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 48
+- id: concept-8
+  term: 生成对抗网络
+  claim_type: source_summary
+  explanation: GAN 中生成器把潜变量映射为假样本，判别器区分真实与生成样本。训练交替更新判别器和生成器；讲义指出全局最优时生成分布复现数据分布。
+  citations:
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 54
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 58
+glossary:
+- term: generative model
+  translation: 生成模型
+  definition: 定义或隐式实现数据分布并可生成样本的模型。
+- term: probability mass function
+  translation: 概率质量函数
+  definition: 离散取值概率之和为 1 的函数。
+- term: probability density function
+  translation: 概率密度函数
+  definition: 积分为 1、通过区间积分给出概率的函数。
+- term: energy-based model
+  translation: 能量模型
+  definition: 以能量评分并经归一化定义密度的模型。
+- term: autoregressive model
+  translation: 自回归模型
+  definition: 按顺序条件分解联合分布的模型。
+- term: diffusion model
+  translation: 扩散模型
+  definition: 通过加噪前向过程和学习的逐步去噪生成样本的模型。
+- term: GAN
+  translation: 生成对抗网络
+  definition: 由生成器和判别器交替对抗训练的生成模型。
+common_misconceptions:
+- misconception: 能生成训练样本就说明学会了数据分布。
+  correction: 记忆训练集也能做到；需要在留出数据上检查泛化。
+- misconception: PDF 在某一点的值就是该点概率。
+  correction: 连续变量概率由区间上的密度积分给出。
+- misconception: 扩散与自回归没有共同结构。
+  correction: 两者都把生成组织为一系列可监督学习的预测问题，但顺序含义不同。
+- misconception: GAN 同时一次性优化两个网络。
+  correction: 讲义描述的是判别器和生成器交替训练。
+learning_sequence:
+- step: 1
+  activity: 前置自检与生成目标
+  duration_minutes: 15
+- step: 2
+  activity: 概率基础、直接与间接学习，完成 ex-1、ex-2
+  duration_minutes: 30
+  citations:
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 17
+- step: 3
+  activity: 评价与能量模型，完成 ex-3、ex-4
+  duration_minutes: 30
+  citations:
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 30
+- step: 4
+  activity: 自回归模型，完成 ex-5
+  duration_minutes: 35
+  citations:
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 37
+- step: 5
+  activity: 扩散模型，完成 ex-6
+  duration_minutes: 35
+  citations:
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 47
+- step: 6
+  activity: GAN 与方法比较，完成 ex-7
+  duration_minutes: 35
+  citations:
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 58
+practice:
+- id: ex-1
+  level: 基础
+  question: 分别给出一个离散和连续随机变量例子，写出 PMF 求和归一化与 PDF 积分归一化，并解释为什么连续单点密度不是单点概率。
+  hint: 概率对应质量或面积。
+  deliverable: 两个例子和 100 字解释。
+  expected_evidence:
+  - 两种归一化正确
+  - 区分密度与概率
+  evaluation:
+    full_credit: 公式和解释均正确。
+    partial_credit: 归一化正确但混淆密度与概率。
+  citations:
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 8
+- id: ex-2
+  level: 基础
+  question: 把潜变量生成器和样本评分器分别归入直接或间接路线，并比较各自还需解决的采样步骤。
+  hint: 使用 G:Z→X 与 E:X→R。
+  deliverable: 两行对照表。
+  expected_evidence:
+  - 映射方向和路线正确
+  evaluation:
+    full_credit: 两条路线与采样含义完整。
+    partial_credit: 分类正确但未说明采样。
+  citations:
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 17
+- id: ex-3
+  level: 进阶
+  question: 分析“随机返回一条训练样本”的档案柜生成器：它为何能骗过只看训练样本的评价，又为何可能在留出似然上失败？
+  hint: 区分训练复刻和对新数据赋高概率。
+  deliverable: 150 字评审意见。
+  expected_evidence:
+  - 识别记忆
+  - 解释留出评价
+  evaluation:
+    full_credit: 准确区分拟合、记忆与泛化。
+    partial_credit: 只说过拟合未联系评价。
+  citations:
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 25
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 27
+- id: ex-4
+  level: 进阶
+  question: 用文字拆解能量模型对数似然梯度中的数据项与模型期望项，并说明为什么需要模型样本形成对比。
+  hint: 一个方向抬高数据概率，另一个处理归一化。
+  deliverable: 双栏流程图。
+  expected_evidence:
+  - 两项角色正确
+  - 解释模型采样
+  evaluation:
+    full_credit: 数据项、归一化项及对比关系完整。
+    partial_credit: 知道正负样本但未说明归一化来源。
+  citations:
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 30
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 34
+- id: ex-5
+  level: 进阶
+  question: 为四个符号的序列写出联合概率的自回归链式分解，并画出顺序采样过程。
+  hint: 每一项只条件于已经生成的前缀。
+  deliverable: 一个分解式和四步采样图。
+  expected_evidence:
+  - 链式分解正确
+  - 条件方向正确
+  evaluation:
+    full_credit: 分解与采样严格对应。
+    partial_credit: 有分解但条件顺序错误。
+  citations:
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 37
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 38
+- id: ex-6
+  level: 挑战
+  question: 画出扩散的“数据→逐步加噪”和“噪声→逐步去噪”双向流程，并说明训练对 (x_t,x_{t-1}) 如何把生成变成监督预测。
+  hint: 不要使用或解答讲义第 49–50 页作业。
+  deliverable: 双向流程图和 150 字说明。
+  expected_evidence:
+  - 加噪与去噪方向正确
+  - 训练对解释正确
+  evaluation:
+    full_credit: 前向、生成和监督训练三者完整。
+    partial_credit: 流程正确但训练对含义不清。
+  citations:
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 45
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 47
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 53
+- id: ex-7
+  level: 挑战
+  question: 比较自回归、扩散与 GAN：训练信号、采样顺序、模型组件和一个潜在瓶颈各是什么？
+  hint: 来源只直接支持前三项的机制；瓶颈须标为个人分析。
+  deliverable: 三行四列表。
+  expected_evidence:
+  - 三种机制准确
+  - 来源与分析分开
+  evaluation:
+    full_credit: 比较维度完整且不把推测冒充讲义结论。
+    partial_credit: 主要机制正确但比较不齐。
+  citations:
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 53
+  - source_id: mit6-7960-f24-lec14-cdb640b02e
+    anchor:
+      type: page
+      value: 58
+citations:
+- citation_id: lec14-p4
+  source_id: mit6-7960-f24-lec14-cdb640b02e
+  anchor:
+    type: page
+    value: 4
+  supports: 生成模型定义。
+- citation_id: lec14-p8
+  source_id: mit6-7960-f24-lec14-cdb640b02e
+  anchor:
+    type: page
+    value: 8
+  supports: PMF/PDF。
+- citation_id: lec14-p17
+  source_id: mit6-7960-f24-lec14-cdb640b02e
+  anchor:
+    type: page
+    value: 17
+  supports: 直接/间接路线。
+- citation_id: lec14-p27
+  source_id: mit6-7960-f24-lec14-cdb640b02e
+  anchor:
+    type: page
+    value: 27
+  supports: 留出似然。
+- citation_id: lec14-p30
+  source_id: mit6-7960-f24-lec14-cdb640b02e
+  anchor:
+    type: page
+    value: 30
+  supports: 能量似然梯度。
+- citation_id: lec14-p37
+  source_id: mit6-7960-f24-lec14-cdb640b02e
+  anchor:
+    type: page
+    value: 37
+  supports: 自回归链式分解。
+- citation_id: lec14-p47
+  source_id: mit6-7960-f24-lec14-cdb640b02e
+  anchor:
+    type: page
+    value: 47
+  supports: 扩散训练对。
+- citation_id: lec14-p53
+  source_id: mit6-7960-f24-lec14-cdb640b02e
+  anchor:
+    type: page
+    value: 53
+  supports: 监督问题序列。
+- citation_id: lec14-p58
+  source_id: mit6-7960-f24-lec14-cdb640b02e
+  anchor:
+    type: page
+    value: 58
+  supports: GAN 交替训练。
+review:
+  generator_review_status: passed
+  audit_findings: []
+  reviewed_pages:
+  - 3
+  - 4
+  - 7
+  - 8
+  - 17
+  - 20
+  - 25
+  - 27
+  - 28
+  - 30
+  - 33
+  - 34
+  - 35
+  - 37
+  - 38
+  - 42
+  - 45
+  - 46
+  - 47
+  - 48
+  - 52
+  - 53
+  - 54
+  - 55
+  - 56
+  - 57
+  - 58
+  - 59
+  visual_reviewed_pages:
+  - 7
+  - 8
+  - 17
+  - 20
+  - 27
+  - 30
+  - 35
+  - 38
+  - 45
+  - 47
+  - 53
+  - 58
+  learner_rendering: expected_evidence 和 evaluation 为内部反馈字段，禁止渲染给学习者。
+  assessment_safety: 第 49–50 页作业内容已排除。
+limitations:
+- 仅基于 Lecture 14 可见讲义。
+- 不复现或解答第 49–50 页课程作业。
+- 这是生成模型第一讲的概念地图，不替代各方法的完整推导。
