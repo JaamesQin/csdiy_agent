@@ -1,0 +1,957 @@
+studykit_version: '0.1'
+status: draft
+course_id: mit-6.s081-fall-2021
+course_version: fall-2021
+unit_id: lecture-02
+title: C and gdb
+language: zh-CN
+scope:
+  included_sources:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    title: C and gdb
+    type: pdf
+    sha256: 23a20d21e9ef23d594e5b7284dece81b44884def29cad0308451b744ad5e0d54
+    official_urls:
+    - https://pdos.csail.mit.edu/6.828/2021/lec/6S081-Intro-to-C-Fa21.pdf
+    - https://pdos.csail.mit.edu/6.828/2021/lec/gdb_slides.pdf
+    local_path: data/raw/mit-6.s081/fall-2021/prepared/lecture-02-c-and-gdb.pdf
+    resource_vintage: fall-2021
+    license_status: unknown_artifact_scope
+    redistribution_allowed: false
+  citation_anchor_types:
+  - page
+learning_objectives:
+- id: o1
+  objective: 能够依据存储区和生命周期分析 C 程序中的指针安全问题。
+  evidence_required: 能够以页级来源解释或应用该目标。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 13
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 15
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 33
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 34
+- id: o2
+  objective: 能够用数组连续布局和指针算术追踪地址与元素访问。
+  evidence_required: 能够以页级来源解释或应用该目标。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 22
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 23
+- id: o3
+  objective: 能够说明声明、定义、头文件与源文件的协作边界。
+  evidence_required: 能够以页级来源解释或应用该目标。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 37
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 47
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 50
+- id: o4
+  objective: 能够为一个可复现的故障选择合适的 GDB 运行控制与检查命令。
+  evidence_required: 能够以页级来源解释或应用该目标。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 78
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 82
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 89
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 94
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 99
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 102
+- id: o5
+  objective: 能够把 C 级内存推理与调试器观察结果结合成可验证的故障假设。
+  evidence_required: 能够以页级来源解释或应用该目标。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 57
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 82
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 94
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 99
+prerequisites:
+- topic: 基本命令行操作
+  required_level: 能够在两个终端中运行构建工具和调试器。
+- topic: 一种高级语言的函数与控制流
+  required_level: 理解变量、函数调用、条件和循环即可；本单元会突出 C 的差异。
+- topic: 十六进制与字节
+  required_level: 能把地址视为数值并按字节解释内存。
+outline:
+- order: 1
+  topic: C 的执行模型与类型
+  purpose: 区分 C 与高级动态语言的执行/类型模型，并理解定宽表示与手工内存管理为何重要。
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 3
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 5
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 8
+- order: 2
+  topic: 内存区域、指针与内存安全
+  purpose: 解释栈、静态区、堆的生命周期，并识别悬空指针、重复释放和越界访问风险。
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 13
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 15
+- order: 3
+  topic: 数组与指针算术
+  purpose: 用连续布局解释数组索引、地址偏移及数组表达式与指针表达式的关系。
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 22
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 23
+- order: 4
+  topic: 函数返回值与对象生命周期
+  purpose: 判断何时不能返回栈上对象的地址，以及何时需要由调用者管理堆对象。
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 33
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 34
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 35
+- order: 5
+  topic: 声明、定义与源文件组织
+  purpose: 说明声明/定义的区别以及头文件、源文件和 include guard 的职责。
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 37
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 47
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 50
+- order: 6
+  topic: 字符串、库函数与复合数据
+  purpose: 解释空字符终止、常见内存函数和结构体布局所带来的接口约束。
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 45
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 57
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 59
+- order: 7
+  topic: 位操作的系统编程用途
+  purpose: 用掩码完成置位、清位和条件检查，并说明它们与权限/标志位表示的联系。
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 64
+- order: 8
+  topic: GDB 调试工作流
+  purpose: 在 QEMU/GDB 环境中组合单步、运行控制、断点、观察点、表达式和栈回溯来验证假设。
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 78
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 82
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 86
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 89
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 92
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 94
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 99
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 102
+core_concepts:
+- id: c1
+  term: 显式内存生命周期
+  claim_type: source_summary
+  explanation: C 把栈、静态区和堆的生命周期暴露给程序员；局部栈对象在函数返回后不能继续作为有效对象使用。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 13
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 33
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 34
+- id: c2
+  term: 指针与内存安全
+  claim_type: source_summary
+  explanation: 指针描述内存位置并允许直接读写；这种能力同时带来 use-after-free、double-free 和越界访问等风险。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 15
+- id: c3
+  term: 数组的连续布局
+  claim_type: source_summary
+  explanation: 数组元素在内存中连续排列，索引访问可理解为对首地址做按元素大小缩放的偏移后解引用。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 22
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 23
+- id: c4
+  term: 声明与定义
+  claim_type: source_summary
+  explanation: 声明告知名称和类型，定义则分配对象或给出函数实现；共享声明通常放在头文件中。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 37
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 47
+- id: c5
+  term: C 字符串契约
+  claim_type: source_summary
+  explanation: C 字符串是以空字符结尾的字符数组；缺少终止符会使依赖它的字符串函数越界读取。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 45
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 57
+- id: c6
+  term: 断点、条件断点与观察点
+  claim_type: source_summary
+  explanation: 断点按位置暂停，条件断点只在谓词成立时暂停，观察点则在表达式或地址内容变化时暂停。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 89
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 92
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 94
+- id: c7
+  term: 状态检查与栈回溯
+  claim_type: source_summary
+  explanation: GDB 可用 print/x 检查有类型表达式或原始内存，并用寄存器、栈帧和 backtrace 重建执行上下文。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 99
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 102
+glossary:
+- term: stack memory
+  definition: 随函数调用建立、返回后可被复用的栈内存。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 13
+- term: dangling pointer
+  definition: 仍保存地址但所指对象生命周期已经结束的指针。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 34
+- term: watchpoint
+  definition: 在表达式值或指定地址内容发生变化时暂停执行的调试器机制。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 94
+- term: backtrace
+  definition: 按调用关系显示当前栈帧序列的调试器视图。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 102
+common_misconceptions:
+- misconception: 数组就是可自动扩容的列表。
+  correction: C 数组长度固定，元素连续存放；越过边界不会自动扩容。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 22
+- misconception: 只要函数返回了一个地址，该地址就一直有效。
+  correction: 若地址指向函数的局部栈对象，函数返回后对象已结束生命周期。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 33
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 34
+- misconception: step 与 next 完全相同。
+  correction: 两者都按源码行前进，但 step 会进入被调函数，next 会跨过调用。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 82
+- misconception: print 和 x 都只是以相同方式显示内存。
+  correction: print 计算带类型的 C 表达式；x 按指定格式检查原始内存。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 99
+learning_sequence:
+- step: 1
+  activity: 完成十六进制、字节和函数调用的前置检查。
+  duration_minutes: 20
+  objective_ids:
+  - o1
+  - o2
+  - o3
+  - o4
+  - o5
+  practice_ids: []
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 3
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 8
+- step: 2
+  activity: 学习 C 的存储区、指针、数组和生命周期。
+  duration_minutes: 35
+  objective_ids:
+  - o1
+  - o2
+  - o3
+  - o4
+  - o5
+  practice_ids: []
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 13
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 15
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 22
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 23
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 33
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 34
+- step: 3
+  activity: 梳理声明、头文件、字符串和常用内存接口。
+  duration_minutes: 25
+  objective_ids:
+  - o1
+  - o2
+  - o3
+  - o4
+  - o5
+  practice_ids: []
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 37
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 45
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 47
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 50
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 57
+- step: 4
+  activity: 完成指针追踪与生命周期诊断练习。
+  duration_minutes: 30
+  objective_ids:
+  - o1
+  - o2
+  - o3
+  - o4
+  - o5
+  practice_ids: []
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 22
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 23
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 33
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 34
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 35
+- step: 5
+  activity: 建立 GDB 运行控制、断点、观察点和状态检查工具箱。
+  duration_minutes: 35
+  objective_ids:
+  - o1
+  - o2
+  - o3
+  - o4
+  - o5
+  practice_ids: []
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 78
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 82
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 86
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 89
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 92
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 94
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 99
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 102
+- step: 6
+  activity: 完成综合调试案例并用证据表自评。
+  duration_minutes: 35
+  objective_ids:
+  - o1
+  - o2
+  - o3
+  - o4
+  - o5
+  practice_ids:
+  - p1
+  - p2
+  - p3
+  - p4
+  - p5
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 57
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 89
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 94
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 99
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 102
+practice:
+- id: p1
+  level: 基础
+  question: 给出一个含局部变量、静态变量和 malloc 对象的短函数，画出三类对象的生命周期，并标出函数返回后仍有效的对象。
+  hint: 先按栈、静态区、堆分类，再判断释放责任。
+  deliverable: 一张带时间轴的内存区域图。
+  expected_evidence:
+  - 正确区分三个存储区
+  - 明确函数返回与 free 对有效性的影响
+  evaluation:
+    full_credit: 交付物覆盖全部预期证据，推理与页级来源一致，且清楚声明假设。
+    partial_credit: 主要方向正确，但遗漏一个关键不变量、权衡或来源支撑。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 13
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 14
+  academic_integrity: 独立设计的形成性练习；不要求提交课程实验代码或复现被评答案。
+- id: p2
+  level: 基础到应用
+  question: 对一个五元素 int 数组，分别用下标与指针算术表达第三个元素，并解释地址增量为何不是一个字节。
+  hint: 把指针加一解释为移动一个所指类型的大小。
+  deliverable: 两种等价表达式与三句话解释。
+  expected_evidence:
+  - 表达式引用同一元素
+  - 说明缩放由元素类型决定
+  evaluation:
+    full_credit: 交付物覆盖全部预期证据，推理与页级来源一致，且清楚声明假设。
+    partial_credit: 主要方向正确，但遗漏一个关键不变量、权衡或来源支撑。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 22
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 23
+  academic_integrity: 独立设计的形成性练习；不要求提交课程实验代码或复现被评答案。
+- id: p3
+  level: 诊断
+  question: 审查一个返回局部数组地址的辅助函数，指出失效时刻，并提出不泄漏内存的接口修正方案。
+  hint: 先处理对象所有权，再决定由谁分配、由谁释放。
+  deliverable: 问题定位、修正后的接口契约和释放责任说明。
+  expected_evidence:
+  - 指出悬空地址
+  - 修正方案包含明确所有权
+  evaluation:
+    full_credit: 交付物覆盖全部预期证据，推理与页级来源一致，且清楚声明假设。
+    partial_credit: 主要方向正确，但遗漏一个关键不变量、权衡或来源支撑。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 33
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 34
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 35
+  academic_integrity: 独立设计的形成性练习；不要求提交课程实验代码或复现被评答案。
+- id: p4
+  level: 应用
+  question: 为“循环到第 500 次后某字段偶尔被改写”的故障设计 GDB 调试计划。必须说明条件断点、观察点、单步策略和待检查状态。
+  hint: 不要一开始逐行执行；先用条件缩小时间窗口，再监视写入。
+  deliverable: 按命令类别组织的调试步骤和每步预期证据。
+  expected_evidence:
+  - 正确区分条件断点与观察点
+  - 使用 print/x 或栈回溯验证假设
+  evaluation:
+    full_credit: 交付物覆盖全部预期证据，推理与页级来源一致，且清楚声明假设。
+    partial_credit: 主要方向正确，但遗漏一个关键不变量、权衡或来源支撑。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 82
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 89
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 92
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 94
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 99
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 102
+  academic_integrity: 独立设计的形成性练习；不要求提交课程实验代码或复现被评答案。
+- id: p5
+  level: 综合
+  question: 构造一个不依赖课程实验答案的小型 C 内存错误案例，并写出从症状、假设、断点到证据确认的完整调试记录模板。
+  hint: 案例只需十余行；重点是证据链而非复杂代码。
+  deliverable: 案例代码、假设表、调试命令与判定标准。
+  expected_evidence:
+  - 错误与生命周期或边界有关
+  - 每个命令对应一个可证伪假设
+  - 不复述旧作业解答
+  evaluation:
+    full_credit: 交付物覆盖全部预期证据，推理与页级来源一致，且清楚声明假设。
+    partial_credit: 主要方向正确，但遗漏一个关键不变量、权衡或来源支撑。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 57
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 78
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 89
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 94
+  - source_id: mit-6.s081-f21-lecture-02-material
+    anchor:
+      type: page
+      value: 99
+  academic_integrity: 独立设计的形成性练习；不要求提交课程实验代码或复现被评答案。
+citations:
+- citation_id: cite-p001
+  source_id: mit-6.s081-f21-lecture-02-material
+  anchor:
+    type: page
+    value: 1
+  supports: 单元身份、边界或学习流程支撑
+- citation_id: cite-p003
+  source_id: mit-6.s081-f21-lecture-02-material
+  anchor:
+    type: page
+    value: 3
+  supports: C 的执行模型与类型
+- citation_id: cite-p005
+  source_id: mit-6.s081-f21-lecture-02-material
+  anchor:
+    type: page
+    value: 5
+  supports: C 的执行模型与类型
+- citation_id: cite-p008
+  source_id: mit-6.s081-f21-lecture-02-material
+  anchor:
+    type: page
+    value: 8
+  supports: C 的执行模型与类型
+- citation_id: cite-p013
+  source_id: mit-6.s081-f21-lecture-02-material
+  anchor:
+    type: page
+    value: 13
+  supports: 内存区域、指针与内存安全
+- citation_id: cite-p014
+  source_id: mit-6.s081-f21-lecture-02-material
+  anchor:
+    type: page
+    value: 14
+  supports: 内存区域、指针与内存安全
+- citation_id: cite-p015
+  source_id: mit-6.s081-f21-lecture-02-material
+  anchor:
+    type: page
+    value: 15
+  supports: 内存区域、指针与内存安全
+- citation_id: cite-p022
+  source_id: mit-6.s081-f21-lecture-02-material
+  anchor:
+    type: page
+    value: 22
+  supports: 数组与指针算术
+- citation_id: cite-p023
+  source_id: mit-6.s081-f21-lecture-02-material
+  anchor:
+    type: page
+    value: 23
+  supports: 数组与指针算术
+- citation_id: cite-p033
+  source_id: mit-6.s081-f21-lecture-02-material
+  anchor:
+    type: page
+    value: 33
+  supports: 函数返回值与对象生命周期
+- citation_id: cite-p034
+  source_id: mit-6.s081-f21-lecture-02-material
+  anchor:
+    type: page
+    value: 34
+  supports: 函数返回值与对象生命周期
+- citation_id: cite-p035
+  source_id: mit-6.s081-f21-lecture-02-material
+  anchor:
+    type: page
+    value: 35
+  supports: 函数返回值与对象生命周期
+- citation_id: cite-p037
+  source_id: mit-6.s081-f21-lecture-02-material
+  anchor:
+    type: page
+    value: 37
+  supports: 声明、定义与源文件组织
+- citation_id: cite-p045
+  source_id: mit-6.s081-f21-lecture-02-material
+  anchor:
+    type: page
+    value: 45
+  supports: 字符串、库函数与复合数据
+- citation_id: cite-p047
+  source_id: mit-6.s081-f21-lecture-02-material
+  anchor:
+    type: page
+    value: 47
+  supports: 声明、定义与源文件组织
+- citation_id: cite-p050
+  source_id: mit-6.s081-f21-lecture-02-material
+  anchor:
+    type: page
+    value: 50
+  supports: 声明、定义与源文件组织
+- citation_id: cite-p057
+  source_id: mit-6.s081-f21-lecture-02-material
+  anchor:
+    type: page
+    value: 57
+  supports: 字符串、库函数与复合数据
+- citation_id: cite-p059
+  source_id: mit-6.s081-f21-lecture-02-material
+  anchor:
+    type: page
+    value: 59
+  supports: 字符串、库函数与复合数据
+- citation_id: cite-p064
+  source_id: mit-6.s081-f21-lecture-02-material
+  anchor:
+    type: page
+    value: 64
+  supports: 位操作的系统编程用途
+- citation_id: cite-p078
+  source_id: mit-6.s081-f21-lecture-02-material
+  anchor:
+    type: page
+    value: 78
+  supports: GDB 调试工作流
+- citation_id: cite-p082
+  source_id: mit-6.s081-f21-lecture-02-material
+  anchor:
+    type: page
+    value: 82
+  supports: GDB 调试工作流
+- citation_id: cite-p086
+  source_id: mit-6.s081-f21-lecture-02-material
+  anchor:
+    type: page
+    value: 86
+  supports: GDB 调试工作流
+- citation_id: cite-p089
+  source_id: mit-6.s081-f21-lecture-02-material
+  anchor:
+    type: page
+    value: 89
+  supports: GDB 调试工作流
+- citation_id: cite-p092
+  source_id: mit-6.s081-f21-lecture-02-material
+  anchor:
+    type: page
+    value: 92
+  supports: GDB 调试工作流
+- citation_id: cite-p094
+  source_id: mit-6.s081-f21-lecture-02-material
+  anchor:
+    type: page
+    value: 94
+  supports: GDB 调试工作流
+- citation_id: cite-p099
+  source_id: mit-6.s081-f21-lecture-02-material
+  anchor:
+    type: page
+    value: 99
+  supports: GDB 调试工作流
+- citation_id: cite-p102
+  source_id: mit-6.s081-f21-lecture-02-material
+  anchor:
+    type: page
+    value: 102
+  supports: GDB 调试工作流
+review:
+  generator_review_status: pending_independent_audit
+  audit_findings: []
+  quality_mode: standard
+  delivery_policy: draft
+limitations:
+- 材料由 2021 C 讲义与一份标注为 2018 的 GDB 讲义合并；GDB 命令概念可用，但其中 JOS/x86 示例的历史语境不应当作 2021 xv6/RISC-V
+  的配置事实。
+- 第 69–77 页含旧作业解答，已从内容与练习证据中排除。
+- 本单元没有保留结构化公式；所有位运算与地址关系均以可追溯文字和代码概念表达。

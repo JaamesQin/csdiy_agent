@@ -1,0 +1,123 @@
+{
+  "quality_mode": "standard",
+  "page_selector_version": "review-pages-v1",
+  "source_hash": "34d933608f8c2bc99278d0cc9f45202358768a46ab9aa2e49936679388c60acd",
+  "selected_pages": [
+    1,
+    6,
+    7,
+    8,
+    9,
+    10,
+    12,
+    13,
+    14,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26
+  ],
+  "selection_reasons": {
+    "1": [
+      "identity"
+    ],
+    "6": [
+      "evidence_plan"
+    ],
+    "7": [
+      "evidence_plan"
+    ],
+    "8": [
+      "evidence_plan"
+    ],
+    "9": [
+      "deterministic_20_percent_sample",
+      "evidence_plan"
+    ],
+    "10": [
+      "evidence_plan"
+    ],
+    "12": [
+      "deterministic_20_percent_sample"
+    ],
+    "13": [
+      "identity",
+      "evidence_plan"
+    ],
+    "14": [
+      "evidence_plan"
+    ],
+    "16": [
+      "evidence_plan"
+    ],
+    "17": [
+      "evidence_plan"
+    ],
+    "18": [
+      "evidence_plan"
+    ],
+    "19": [
+      "deterministic_20_percent_sample"
+    ],
+    "20": [
+      "evidence_plan"
+    ],
+    "21": [
+      "evidence_plan"
+    ],
+    "22": [
+      "risk"
+    ],
+    "23": [
+      "evidence_plan"
+    ],
+    "24": [
+      "risk"
+    ],
+    "25": [
+      "evidence_plan"
+    ],
+    "26": [
+      "identity",
+      "evidence_plan"
+    ]
+  },
+  "sampled_pages": [
+    9,
+    12,
+    19
+  ],
+  "required_final_formula_pages": [],
+  "actual_reviewed_pages": [
+    1,
+    6,
+    7,
+    8,
+    9,
+    10,
+    12,
+    13,
+    14,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26
+  ],
+  "independent_audit": true,
+  "blockers_after_reaudit": [],
+  "review_outcome": "passed"
+}

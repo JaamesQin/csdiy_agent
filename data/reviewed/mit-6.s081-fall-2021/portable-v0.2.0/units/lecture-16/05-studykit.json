@@ -1,0 +1,757 @@
+{
+  "studykit_version": "0.1",
+  "status": "draft",
+  "course_id": "mit-6.s081-fall-2021",
+  "course_version": "fall-2021",
+  "unit_id": "lecture-16",
+  "title": "MIT 6.S081 第 16 讲：文件系统性能与快速崩溃恢复",
+  "language": "zh-CN",
+  "scope": {
+    "included_sources": [
+      {
+        "source_id": "mit-6.s081-f21-lecture-16-material",
+        "title": "File-system performance and fast crash recovery lecture notes",
+        "type": "pdf",
+        "sha256": "ceefd8bbf4ffd15b54f7cd1d2cf18f4782a4f150a6d180a560904f7ac1d8b370",
+        "official_url": "https://pdos.csail.mit.edu/6.828/2021/lec/l-journal.txt",
+        "local_path": "data/raw/mit-6.s081/fall-2021/prepared/lecture-16-file-system-performance-and-fast-crash-recovery.pdf",
+        "resource_vintage": "2020_resource_linked_by_fall_2021_schedule"
+      }
+    ],
+    "citation_anchor_types": [
+      "page"
+    ]
+  },
+  "learning_objectives": [
+    {
+      "id": "obj-1",
+      "objective": "解释 write-ahead logging 的提交点、home 写入和崩溃恢复不变量。",
+      "requirement_ids": [
+        "req-01"
+      ]
+    },
+    {
+      "id": "obj-2",
+      "objective": "分析异步更新、批处理与事务并发如何改善性能并改变持久化语义。",
+      "requirement_ids": [
+        "req-02"
+      ]
+    },
+    {
+      "id": "obj-3",
+      "objective": "追踪循环日志扫描、序列号、最后有效 commit 与幂等 replay 的恢复过程。",
+      "requirement_ids": [
+        "req-03"
+      ]
+    },
+    {
+      "id": "obj-4",
+      "objective": "比较 journaled data 与 ordered data，并说明块重用、revoke、预留和校验和处理的风险。",
+      "requirement_ids": [
+        "req-04"
+      ]
+    }
+  ],
+  "prerequisites": [
+    {
+      "topic": "文件系统块、inode 与空闲位图",
+      "required_level": "能理解一次操作可能同时修改 inode、目录、位图和数据块，并需保持跨块不变量。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 1
+          }
+        }
+      ]
+    },
+    {
+      "topic": "缓存与磁盘持久性",
+      "required_level": "知道 RAM 缓存在崩溃后丢失，而课程模型假定磁盘仍可读取。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 3
+          }
+        }
+      ]
+    }
+  ],
+  "outline": [
+    {
+      "order": 1,
+      "topic": "写前日志与提交点",
+      "anchors": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 1
+          }
+        }
+      ],
+      "purpose": "建立原子磁盘更新与恢复的核心不变量。"
+    },
+    {
+      "order": 2,
+      "topic": "异步、批处理与并发事务",
+      "anchors": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 2
+          }
+        }
+      ],
+      "purpose": "理解 ext3 相比同步 xv6 日志的性能来源与语义代价。"
+    },
+    {
+      "order": 3,
+      "topic": "循环日志恢复与事务隔离",
+      "anchors": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 3
+          }
+        }
+      ],
+      "purpose": "说明如何找到有效日志尾部以及为何事务边界限制并发。"
+    },
+    {
+      "order": 4,
+      "topic": "ordered data 与日志空间安全",
+      "anchors": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        }
+      ],
+      "purpose": "比较只记录元数据时的数据顺序、块生命周期和设备重排风险。"
+    }
+  ],
+  "core_concepts": [
+    {
+      "id": "concept-01",
+      "term": "写前日志与提交点",
+      "claim_type": "source_summary",
+      "explanation": "事务先把修改块写入日志，再写入描述已提交内容的记录；只有完成提交后才允许把修改安装到文件系统 home 位置。崩溃后，恢复程序重放已提交事务并忽略未完成事务，使多步元数据更新表现为全有或全无。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "concept-02",
+      "term": "异步、批处理与并发事务",
+      "claim_type": "source_summary",
+      "explanation": "系统调用先修改缓存并快速返回，日志可定期批量提交。批处理摊薄描述/提交与寻道成本，并吸收对同一块的多次修改；开放、提交、写回和释放阶段可重叠。但崩溃可能遗失最近已返回的调用，要求需要持久保证的应用显式使用 fsync。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "concept-03",
+      "term": "循环日志恢复与事务隔离",
+      "claim_type": "source_summary",
+      "explanation": "恢复从日志超级块记录的最老事务开始，依据 magic、序列号和 commit 找到最后完整事务，按顺序重放。重放可重复执行；事务间还要防止后续系统调用的缓存修改被前一事务错误写入日志，因此关闭/快照边界对一致性很重要。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "concept-04",
+      "term": "ordered data 与日志空间安全",
+      "claim_type": "source_summary",
+      "explanation": "ordered data 不把文件内容写入日志，而是在提交相关元数据前先把内容写到 home 位置，避免元数据指向旧数据。块类型改变与重用需要延迟或 revoke 记录；日志空间预留防止尚未写回的旧版本丢失。设备写缓存可能重排写入，事务校验和可帮助恢复判断提交记录与数据是否匹配。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        }
+      ]
+    }
+  ],
+  "glossary": [
+    {
+      "term": "write-ahead rule（写前规则）",
+      "definition": "在把修改写回文件系统 home 位置前，先把事务完整提交到磁盘日志。",
+      "pages": [
+        1
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 1
+          }
+        }
+      ]
+    },
+    {
+      "term": "commit point（提交点）",
+      "definition": "事务的 commit 记录完成持久化、恢复因此把它视为已提交的边界。",
+      "pages": [
+        1,
+        2
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 1
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 2
+          }
+        }
+      ]
+    },
+    {
+      "term": "write absorption（写吸收）",
+      "definition": "一个批次内多次修改同一块时，只需为最终缓存版本安排较少磁盘写。",
+      "pages": [
+        2
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 2
+          }
+        }
+      ]
+    },
+    {
+      "term": "revoke record",
+      "definition": "恢复时阻止重放某个旧日志块的记录，用于块被重新解释或重用的情形。",
+      "pages": [
+        4
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        }
+      ]
+    }
+  ],
+  "common_misconceptions": [
+    {
+      "misconception": "系统调用返回就一定表示数据已经安全写入磁盘。",
+      "correction": "异步更新可能在崩溃后遗失最近完成的调用；需要持久保证的应用要使用 fsync。",
+      "pages": [
+        2
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 2
+          }
+        }
+      ]
+    },
+    {
+      "misconception": "找到日志中的 descriptor 就可以重放该事务。",
+      "correction": "恢复必须确认事务具有完整有效的 commit，并忽略最后的部分事务。",
+      "pages": [
+        3
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 3
+          }
+        }
+      ]
+    },
+    {
+      "misconception": "ordered data 可以在任意时刻写文件内容。",
+      "correction": "内容必须在相关元数据 commit 前写入，避免恢复后 inode 指向旧或他人数据。",
+      "pages": [
+        4
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        }
+      ]
+    }
+  ],
+  "learning_sequence": [
+    {
+      "step": 1,
+      "activity": "核对前置知识、材料年代与本讲证据边界。",
+      "duration_minutes": 15,
+      "objective_ids": [
+        "obj-1"
+      ],
+      "practice_ids": [],
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 1
+          }
+        }
+      ]
+    },
+    {
+      "step": 2,
+      "activity": "精读“写前日志与提交点”与“异步、批处理与并发事务”，按来源页整理因果链。",
+      "duration_minutes": 35,
+      "objective_ids": [
+        "obj-1",
+        "obj-2"
+      ],
+      "practice_ids": [],
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 1
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 2
+          }
+        }
+      ]
+    },
+    {
+      "step": 3,
+      "activity": "比较“循环日志恢复与事务隔离”与“ordered data 与日志空间安全”，画出状态或控制流。",
+      "duration_minutes": 35,
+      "objective_ids": [
+        "obj-3",
+        "obj-4"
+      ],
+      "practice_ids": [],
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 3
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        }
+      ]
+    },
+    {
+      "step": 4,
+      "activity": "完成基础辨析与逐步追踪练习，并逐项回查页码。",
+      "duration_minutes": 35,
+      "objective_ids": [
+        "obj-1",
+        "obj-2"
+      ],
+      "practice_ids": [
+        "practice-01",
+        "practice-02"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 1
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 2
+          }
+        }
+      ]
+    },
+    {
+      "step": 5,
+      "activity": "完成机制分析与设计取舍练习，明确不变量和失败条件。",
+      "duration_minutes": 40,
+      "objective_ids": [
+        "obj-2",
+        "obj-3",
+        "obj-4"
+      ],
+      "practice_ids": [
+        "practice-03",
+        "practice-04"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 3
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        }
+      ]
+    },
+    {
+      "step": 6,
+      "activity": "完成综合解释，使用来源页自检术语、边界和证据。",
+      "duration_minutes": 20,
+      "objective_ids": [
+        "obj-1",
+        "obj-2",
+        "obj-3",
+        "obj-4"
+      ],
+      "practice_ids": [
+        "practice-05"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 1
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 2
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 3
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        }
+      ]
+    }
+  ],
+  "practice": [
+    {
+      "id": "practice-01",
+      "level": "trace",
+      "objective_ids": [
+        "obj-1"
+      ],
+      "question": "追踪一个同时更新 inode 与空闲位图的事务：日志数据、commit、home 写入、日志释放依次何时发生？分别分析在四个边界崩溃后的恢复结果。",
+      "hint": "先标出 write-ahead rule 和 freeing rule。",
+      "deliverable": "事件时间线和四个崩溃点结果表。",
+      "expected_evidence": [
+        "未 commit 事务不安装",
+        "已 commit 事务可重放",
+        "home 完成前不释放日志"
+      ],
+      "evaluation": {
+        "full_credit": "四个崩溃点均保持全有或全无的不变量。",
+        "partial_credit": "主顺序正确，但一个恢复边界解释不完整。"
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "practice-02",
+      "level": "analysis",
+      "objective_ids": [
+        "obj-2"
+      ],
+      "question": "分别解释异步更新、批处理、缓存写吸收和阶段并发为何能提高吞吐；再写出它们带来的一个用户可见持久性风险。",
+      "hint": "性能理由与 crash semantics 分开写。",
+      "deliverable": "四项收益和一项语义风险。",
+      "expected_evidence": [
+        "收益机制彼此区分",
+        "指出返回后仍可能因崩溃丢失"
+      ],
+      "evaluation": {
+        "full_credit": "四项收益均准确，并用 fsync 边界解释风险。",
+        "partial_credit": "列出收益但混淆批处理与并发，或未说明风险。"
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "practice-03",
+      "level": "trace",
+      "objective_ids": [
+        "obj-3"
+      ],
+      "question": "给定“一个已释放旧区段、两个完整事务、一个部分事务”的循环日志，写出恢复扫描如何用起点、序列号和 commit 找到重放范围。",
+      "hint": "不需要构造字节格式，只标识事务状态。",
+      "deliverable": "扫描决策树和重放列表。",
+      "expected_evidence": [
+        "从超级块指向的最老事务开始",
+        "停在坏 magic/序列或缺失 commit",
+        "只重放完整事务"
+      ],
+      "evaluation": {
+        "full_credit": "起点、停止条件、最后有效提交和顺序重放均正确。",
+        "partial_credit": "知道忽略部分事务，但缺少起点或序列号作用。"
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "practice-04",
+      "level": "comparison",
+      "objective_ids": [
+        "obj-4"
+      ],
+      "question": "比较 journaled data 与 ordered data 对同一次扩展文件写入的磁盘写序列、写放大和崩溃后可见结果。",
+      "hint": "ordered 模式先写数据 home，再提交元数据。",
+      "deliverable": "两列时序图和取舍结论。",
+      "expected_evidence": [
+        "journaled 模式记录内容与元数据",
+        "ordered 模式内容先行且只记录元数据",
+        "说明性能与原子范围差异"
+      ],
+      "evaluation": {
+        "full_credit": "时序与取舍均符合笔记。",
+        "partial_credit": "知道 ordered 模式少写一次数据，但时序或崩溃结果含混。"
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "practice-05",
+      "level": "synthesis",
+      "objective_ids": [
+        "obj-1",
+        "obj-2",
+        "obj-3",
+        "obj-4"
+      ],
+      "question": "为一个日志文件系统写一份崩溃一致性评审清单：commit 顺序、事务重放、块重用、日志空间、设备重排、应用 fsync 各至少一项。",
+      "hint": "每项写“不变量—违反后果—来源页”。",
+      "deliverable": "六项以上评审清单。",
+      "expected_evidence": [
+        "覆盖内核日志与应用持久性两层",
+        "每项有明确失败后果"
+      ],
+      "evaluation": {
+        "full_credit": "六类风险完整且所有结论有页码。",
+        "partial_credit": "覆盖四到五类风险，或部分项没有失败后果。"
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 1
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 2
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 3
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-16-material",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        }
+      ]
+    }
+  ],
+  "citations": [
+    {
+      "citation_id": "cite-01",
+      "source_id": "mit-6.s081-f21-lecture-16-material",
+      "anchor": {
+        "type": "page",
+        "value": 1
+      },
+      "supports": "xv6 日志、write-ahead 与 ext3 日志结构"
+    },
+    {
+      "citation_id": "cite-02",
+      "source_id": "mit-6.s081-f21-lecture-16-material",
+      "anchor": {
+        "type": "page",
+        "value": 2
+      },
+      "supports": "异步、批处理、并发与 fsync"
+    },
+    {
+      "citation_id": "cite-03",
+      "source_id": "mit-6.s081-f21-lecture-16-material",
+      "anchor": {
+        "type": "page",
+        "value": 3
+      },
+      "supports": "循环日志恢复和事务边界"
+    },
+    {
+      "citation_id": "cite-04",
+      "source_id": "mit-6.s081-f21-lecture-16-material",
+      "anchor": {
+        "type": "page",
+        "value": 4
+      },
+      "supports": "journaled/ordered data 与块重用"
+    },
+    {
+      "citation_id": "cite-05",
+      "source_id": "mit-6.s081-f21-lecture-16-material",
+      "anchor": {
+        "type": "page",
+        "value": 5
+      },
+      "supports": "日志预留、写缓存与校验和"
+    }
+  ],
+  "review": {
+    "generator_review_status": "pending_independent_audit",
+    "audit_findings": []
+  },
+  "limitations": [
+    "来源是 Fall 2021 官方课表显式链接的 2020 文本讲义，经确定性分页生成 PDF；页码是派生 PDF 页码。",
+    "材料以 ext3 与 xv6 为案例，不是现代 Linux 文件系统实现或磁盘格式的完整规范。",
+    "页面很长且由纯文本分页；引用定位到页，但精确段落边界需结合原始文本核对。"
+  ]
+}

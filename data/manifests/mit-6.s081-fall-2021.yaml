@@ -25,6 +25,8 @@ access_status: public
 site_license_status: CC-BY-3.0-US
 lecture_artifact_license_status: unknown_artifact_scope
 redistribution_status: local_processing_only
+derived_studykit_redistribution_status: user_approved
+derived_studykit_redistribution_reviewed_at: '2026-08-10'
 inventory_sha256: a07a800dca6eb3d623b50692395430be11b8027678a3ef93f241d45773c5ffa1
 coverage:
   numbered_lectures_discovered: 25
