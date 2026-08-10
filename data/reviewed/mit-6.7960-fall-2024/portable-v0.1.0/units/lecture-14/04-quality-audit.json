@@ -1,0 +1,5 @@
+{
+  "stage":"quality_audit","unit_id":"lecture-14","status":"passed_with_resolution","checks":{"source_identity":"passed","page_range":"passed:1-60","citation_coverage":"passed","visual_formula_review":"passed","duration":"passed:180","language":"passed:zh-CN","access_scope":"passed:public","assessment_safety":"passed","learner_secret_policy":"passed"},
+  "visual_findings":[{"pages":[8,30,38],"finding":"归一化、能量似然梯度和条件下一步分布已对照页面图像。"},{"pages":[45,47,53,58],"finding":"扩散与 GAN 关键流程图已视觉复核。"}],
+  "findings":[{"id":"qa-14-1","severity":"high","issue":"第 49–50 页含课程作业内容。","resolution_required":true}]
+}

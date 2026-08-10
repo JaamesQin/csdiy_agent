@@ -1,0 +1,8 @@
+{
+  "unit_id": "lecture-18",
+  "resolution": "accepted_with_documented_limitations",
+  "resolved": ["明确 UDA 的目标域无标签条件", "蒸馏和压缩图只作限定实验观察", "将基础模型少数据表述改为非零数据保证", "软提示与离散提示分开"],
+  "unresolved_warnings": ["微调策略仍需任务特定验证", "发布前需人工复核图表语义"],
+  "candidate_ready": true,
+  "finalize": false
+}

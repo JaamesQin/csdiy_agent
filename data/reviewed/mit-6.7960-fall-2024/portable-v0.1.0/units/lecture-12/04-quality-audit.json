@@ -1,0 +1,11 @@
+{
+  "unit_id": "lecture-12",
+  "verdict": "pass_with_warnings",
+  "checks": {"identity": "pass", "coverage": "pass", "citation_anchors": "pass", "visual_fidelity": "pass", "ordering": "pass", "timing_minutes": 180, "academic_integrity": "pass", "copyright": "pass"},
+  "issues": [
+    {"id": "w1", "severity": "warning", "category": "formula_fidelity", "location": "core_concepts.c2-c4", "message": "度量与对比损失页已视觉核对，但候选采用定性关系，避免在无独立公式复核时逐符号转写。"},
+    {"id": "w2", "severity": "warning", "category": "domain_shift", "location": "core_concepts.c5", "message": "ImageNet 与 iNat21 的对照只支持效果具有数据域依赖，不支持对所有数据集的排序。"}
+  ],
+  "repair_targets": [],
+  "publication_gate": "human_review_required"
+}

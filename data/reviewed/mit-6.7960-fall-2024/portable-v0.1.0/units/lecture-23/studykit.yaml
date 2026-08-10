@@ -1,0 +1,502 @@
+studykit_version: '0.1'
+status: draft
+access_scope: public
+course_id: mit-6.7960-fall-2024
+course_version: fall-2024
+unit_id: lecture-23
+title: Lecture 23：度量化深度学习
+language: zh-CN
+scope:
+  included_sources:
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    title: 'Lecture 23: Metrized Deep Learning'
+    type: pdf
+    sha256: 5bf8a70ae920878f7f4445f7413d6f1ed5c09af2b5881d695f8b1e5ccb8e189d
+    access_status: public
+  citation_anchor_types:
+  - page
+learning_objectives:
+- id: obj-1
+  objective: 解释权重范数如何控制网络 Taylor 展开及陡峭下降。
+- id: obj-2
+  objective: 从 Gauss–Newton 分解识别 Lipschitz 与 Lipschitz-smooth 条件。
+- id: obj-3
+  objective: 描述模块、well-normed 属性、sharpness 与组合器。
+- id: obj-4
+  objective: 说明无量纲且紧的界为何被用于主张学习率跨尺度迁移。
+- id: obj-5
+  objective: 推导对偶映射并联系谱范数陡峭下降与 Shampoo。
+- id: obj-6
+  objective: 区分理论命题、特定实验结果和未来开放问题。
+prerequisites:
+- topic: 多元微积分
+  required_level: 理解梯度、Hessian 与二阶 Taylor 展开。
+- topic: 范数与对偶范数
+  required_level: 理解诱导范数、谱范数和约束线性最大化。
+- topic: 神经网络优化
+  required_level: 理解学习率、SGD、Adam 与矩阵梯度。
+outline:
+- order: 1
+  topic: 用范数控制网络敏感性
+  anchors:
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 9
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 13
+  purpose: 建立优化理论目标。
+- order: 2
+  topic: 模块与组合器理论
+  anchors:
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 20
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 24
+  purpose: 把层的理论组合成网络理论。
+- order: 3
+  topic: 尺度与学习率迁移
+  anchors:
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 29
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 34
+  purpose: 连接理论与实验。
+- order: 4
+  topic: 模块化对偶与 Shampoo
+  anchors:
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 39
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 40
+  purpose: 由范数选择更新方向。
+- order: 5
+  topic: 边界与未来问题
+  anchors:
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 47
+  purpose: 区分已证、已观测与待研究。
+core_concepts:
+- id: concept-1
+  term: 范数下的陡峭下降
+  claim_type: source_summary
+  explanation: 二阶 Taylor 上界把损失变化写成梯度线性项与由 sharpness λ、权重范数平方控制的二次项。选择不同范数会改变单位球上的最陡方向，因此优化步骤应与参数空间几何匹配。
+  citations:
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 9
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 36
+- id: concept-2
+  term: 网络 Taylor 控制
+  claim_type: source_summary
+  explanation: 对复合损失 L=ℓ∘f，Gauss–Newton 分解把 Hessian 二次型分为网络二阶导数与损失二阶导数相关的两部分。目标是构造权重范数，同时控制
+    f 对权重扰动的一阶响应和二阶响应。
+  citations:
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 10
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 12
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 13
+- id: concept-3
+  term: 度量化模块
+  claim_type: source_summary
+  explanation: 模块包含输入、权重和输出空间，以及 forward、sensitivity、mass 和权重 norm 属性。well-normed
+    条件约束输入与权重微扰的一阶输出变化；原子、无权重 bond 与复合模块通过组合规则构建网络。
+  citations:
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 18
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 20
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 23
+- id: concept-4
+  term: 模块 sharpness 与组合
+  claim_type: source_summary
+  explanation: (α,β,γ)-sharp 分别控制权重—权重、输入—权重和输入—输入二阶导数。讲义主张这些属性具有结合式组合律，从而可由层级属性推导复合网络的二阶控制。
+  citations:
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 24
+- id: concept-5
+  term: 尺度与学习率迁移
+  claim_type: source_summary
+  explanation: 讲义的尺度论点是：若 Lipschitz 常数不依赖宽度、深度等尺度且界在尺度变化时保持紧，那么控制模块权重扰动范数即可稳定控制输出变化，进而支持学习率迁移。第
+    34 页曲线是特定 GPT/OpenWebText 设置下的实验支持，不是普遍保证。
+  citations:
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 29
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 34
+- id: concept-6
+  term: 模块化对偶与 Shampoo
+  claim_type: source_summary
+  explanation: 对偶映射在所选范数单位球上最大化梯度内积。模块化对偶先求每层映射，再按串联和并联结构递归组合；矩阵层的 Shampoo 核心步骤可解释为谱范数下的陡峭下降。
+  citations:
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 36
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 39
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 40
+- id: concept-7
+  term: 实验与开放问题边界
+  claim_type: source_summary
+  explanation: 讲义展示 nanoGPT 学习率迁移和速度记录作为当前实践结果，并把鲁棒性、低精度模型等表述为未来的模块敏感性问题。这些页面支持研究方向和个别观察，不证明所有架构、数据或硬件上的优势。
+  citations:
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 34
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 42
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 47
+glossary:
+- term: sharpness
+  translation: 陡峭度
+  definition: 二阶损失变化相对于所选范数的上界常数。
+- term: well-normed module
+  translation: 良好定范模块
+  definition: 一阶输入与权重敏感性满足指定界的模块。
+- term: module mass
+  translation: 模块质量参数
+  definition: 组合规则中分配权重尺度的正数属性。
+- term: duality map
+  translation: 对偶映射
+  definition: 在范数单位球上最大化与梯度内积的映射。
+- term: spectral norm
+  translation: 谱范数
+  definition: 矩阵作为线性算子的最大伸缩率。
+- term: learning-rate transfer
+  translation: 学习率迁移
+  definition: 尺度变化后仍可沿用合适学习率的性质。
+common_misconceptions:
+- misconception: 梯度下降方向与参数范数无关。
+  correction: 最陡方向由所选范数及其对偶几何决定。
+- misconception: 每层有界即可自动保证任意组合紧且无量纲。
+  correction: 需要明确的组合规则和属性传播。
+- misconception: 第 34 页证明学习率在所有设置都能迁移。
+  correction: 该页是特定训练设置的实验结果。
+- misconception: 第 47 页已经解决低精度鲁棒性。
+  correction: 该页明确把它列为未来问题。
+learning_sequence:
+- step: 1
+  activity: 前置范数与 Taylor 自检
+  duration_minutes: 15
+- step: 2
+  activity: Taylor 控制与 Gauss–Newton，完成 ex-1
+  duration_minutes: 35
+  citations:
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 12
+- step: 3
+  activity: 模块、组合器与 sharpness，完成 ex-2、ex-3
+  duration_minutes: 40
+  citations:
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 24
+- step: 4
+  activity: 尺度与实验解读，完成 ex-4
+  duration_minutes: 30
+- step: 5
+  activity: 对偶映射与 Shampoo，完成 ex-5
+  duration_minutes: 35
+- step: 6
+  activity: 证据边界与开放问题，完成 ex-6
+  duration_minutes: 25
+practice:
+- id: ex-1
+  level: 进阶
+  question: 从 L=ℓ∘f 的 Gauss–Newton 分解出发，把需要控制的两类项与网络一阶/二阶权重响应对应起来。
+  hint: 一项含 f 的二阶导数，另一项含 f 的一阶导数两次。
+  deliverable: 两行对应表。
+  expected_evidence:
+  - 两项与控制条件对应正确
+  evaluation:
+    full_credit: 分解、范数和两种敏感性完整。
+    partial_credit: 只抄公式未解释。
+  citations:
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 10
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 12
+- id: ex-2
+  level: 基础
+  question: 为线性层列出输入、权重、输出空间及 forward、sensitivity、mass、norm 四个属性，并说明 well-normed 条件检查什么。
+  hint: 对照第 20–21 页。
+  deliverable: 模块卡片。
+  expected_evidence:
+  - 空间和四属性齐全
+  evaluation:
+    full_credit: 定义与一阶界完整。
+    partial_credit: 遗漏属性或混淆输入范数。
+  citations:
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 20
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 21
+- id: ex-3
+  level: 进阶
+  question: 把残差块 a·Identity+b·M 分解成原子、bond、串联/并联组合，并说明模块属性为何必须满足结合式组合。
+  hint: 组合顺序不应改变同一网络的理论属性。
+  deliverable: 组合树和 120 字说明。
+  expected_evidence:
+  - 组合结构正确
+  - 解释结合性
+  evaluation:
+    full_credit: 结构和理论理由准确。
+    partial_credit: 能画结构但未解释结合性。
+  citations:
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 16
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 17
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 22
+- id: ex-4
+  level: 进阶
+  question: 阅读第 34 页曲线，分别写出实验直接观察、讲义的理论解释和不能据此声称的普遍结论。
+  hint: 记录数据集、训练步数、基础优化器与变化轴。
+  deliverable: 证据三分表。
+  expected_evidence:
+  - 观察/解释/外推分离
+  evaluation:
+    full_credit: 实验条件与边界清楚。
+    partial_credit: 把实验曲线写成定理。
+  citations:
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 29
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 34
+- id: ex-5
+  level: 挑战
+  question: 写出 dualize(G)=argmax_{||A||=1}⟨A,G⟩，解释为什么欧氏、谱范数几何会给出不同更新，并把 Shampoo 矩阵步骤定位为谱范数下陡峭方向。
+  hint: 方向来自单位球，步长另行缩放。
+  deliverable: 公式、几何草图和 150 字说明。
+  expected_evidence:
+  - 对偶映射、范数依赖、Shampoo 联系正确
+  evaluation:
+    full_credit: 三者逻辑完整。
+    partial_credit: 只写 Shampoo 公式。
+  citations:
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 36
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 39
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 40
+- id: ex-6
+  level: 挑战
+  question: 把本讲六条陈述分别标为定义、理论命题、实验观察或开放问题，并为每条附页码；至少包含学习率迁移曲线、nanoGPT 记录和低精度鲁棒性。
+  hint: 第 47 页使用“future”和“we believe”。
+  deliverable: 六行证据边界表。
+  expected_evidence:
+  - 证据类型和页码准确
+  evaluation:
+    full_credit: 四类边界清晰，无不当外推。
+    partial_credit: 把开放问题或实验当定理。
+  citations:
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 34
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 42
+  - source_id: mit6-7960-f24-lec23-5bf8a70ae9
+    anchor:
+      type: page
+      value: 47
+citations:
+- citation_id: lec23-p9
+  source_id: mit6-7960-f24-lec23-5bf8a70ae9
+  anchor:
+    type: page
+    value: 9
+  supports: Taylor 上界与陡峭下降。
+- citation_id: lec23-p12
+  source_id: mit6-7960-f24-lec23-5bf8a70ae9
+  anchor:
+    type: page
+    value: 12
+  supports: 一二阶控制条件。
+- citation_id: lec23-p20
+  source_id: mit6-7960-f24-lec23-5bf8a70ae9
+  anchor:
+    type: page
+    value: 20
+  supports: 模块定义。
+- citation_id: lec23-p24
+  source_id: mit6-7960-f24-lec23-5bf8a70ae9
+  anchor:
+    type: page
+    value: 24
+  supports: 模块 sharpness。
+- citation_id: lec23-p29
+  source_id: mit6-7960-f24-lec23-5bf8a70ae9
+  anchor:
+    type: page
+    value: 29
+  supports: 尺度论点。
+- citation_id: lec23-p34
+  source_id: mit6-7960-f24-lec23-5bf8a70ae9
+  anchor:
+    type: page
+    value: 34
+  supports: 学习率迁移实验。
+- citation_id: lec23-p39
+  source_id: mit6-7960-f24-lec23-5bf8a70ae9
+  anchor:
+    type: page
+    value: 39
+  supports: 模块化对偶。
+- citation_id: lec23-p40
+  source_id: mit6-7960-f24-lec23-5bf8a70ae9
+  anchor:
+    type: page
+    value: 40
+  supports: Shampoo 与谱范数。
+- citation_id: lec23-p47
+  source_id: mit6-7960-f24-lec23-5bf8a70ae9
+  anchor:
+    type: page
+    value: 47
+  supports: 未来开放问题。
+review:
+  generator_review_status: passed
+  audit_findings: []
+  reviewed_pages:
+  - 3
+  - 4
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 26
+  - 28
+  - 29
+  - 30
+  - 32
+  - 33
+  - 34
+  - 36
+  - 37
+  - 38
+  - 39
+  - 40
+  - 41
+  - 42
+  - 43
+  - 44
+  - 45
+  - 46
+  - 47
+  - 48
+  visual_reviewed_pages:
+  - 9
+  - 10
+  - 12
+  - 13
+  - 20
+  - 24
+  - 29
+  - 34
+  - 36
+  - 39
+  - 40
+  - 42
+  - 47
+  learner_rendering: expected_evidence 和 evaluation 为内部反馈字段，禁止渲染给学习者。
+  boundary: 理论、实验与开放问题已分层。
+limitations:
+- 仅基于 Lecture 23 可见讲义。
+- 第 34、42 页结果限定于讲义展示的实验设置。
+- 第 47 页是未来研究判断，不是已验证结论。

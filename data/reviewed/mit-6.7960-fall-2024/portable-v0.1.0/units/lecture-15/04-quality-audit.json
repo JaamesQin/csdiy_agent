@@ -1,0 +1,98 @@
+{
+  "artifact_version": "0.1",
+  "stage": "quality_audit",
+  "status": "succeeded",
+  "generation_policy": "draft",
+  "material_scope": "public",
+  "course_id": "mit-6.7960-fall-2024",
+  "course_version": "fall-2024",
+  "unit_id": "lecture-15",
+  "verdict": "pass_with_documented_limitations",
+  "checks": [
+    {
+      "dimension": "identity",
+      "status": "pass",
+      "finding": "PDF 文件、首页和页数支持 Lecture 15 身份；source_id 与 SHA-256 已绑定。",
+      "evidence": [
+        {
+          "source_id": "mit6-7960-f24-lec15-1b6adcad79",
+          "anchor": {
+            "type": "page",
+            "value": 1
+          }
+        }
+      ]
+    },
+    {
+      "dimension": "coverage",
+      "status": "pass",
+      "finding": "覆盖表征/生成方向、潜变量边缘似然、Monte Carlo、重要性采样、近似后验、ELBO、Gaussian bottleneck、训练流程与比较边界。"
+    },
+    {
+      "dimension": "citations",
+      "status": "pass",
+      "finding": "材料性主张均使用原 PDF 页锚；课件所引外部论文与第三方图像未被当作独立证据。"
+    },
+    {
+      "dimension": "formula_fidelity",
+      "status": "pass",
+      "finding": "收录的五个公式均已对统一 page-image 视觉复核；对模糊或未完整显示的重参数化细节未作猜测。"
+    },
+    {
+      "dimension": "ordering_and_timing",
+      "status": "pass",
+      "finding": "7 步合计 180 分钟；练习从辨析、推导进到设计与审查。"
+    },
+    {
+      "dimension": "copyright_and_integrity",
+      "status": "pass",
+      "finding": "不复制第三方图像，不描述其受版权保护的视觉细节，不提供受评作业完整答案。"
+    }
+  ],
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "true_posterior_is_didactic",
+      "message": "第18页以真实后验写重要性采样恒等式；真实后验通常不可直接获得，必须防止学习者把它误当成可执行采样器。",
+      "location": {
+        "source_id": "mit6-7960-f24-lec15-1b6adcad79",
+        "anchor": {
+          "type": "page",
+          "value": 18
+        }
+      }
+    },
+    {
+      "severity": "warning",
+      "code": "disentanglement_not_guaranteed",
+      "message": "第30页 Gaussian bottleneck 图示不足以支持必然语义解耦。",
+      "location": {
+        "source_id": "mit6-7960-f24-lec15-1b6adcad79",
+        "anchor": {
+          "type": "page",
+          "value": 30
+        }
+      }
+    },
+    {
+      "severity": "warning",
+      "code": "third_party_visuals_excluded",
+      "message": "第35—39页示例视觉含第三方内容，只保留页面级课程结论。",
+      "location": {
+        "source_id": "mit6-7960-f24-lec15-1b6adcad79",
+        "anchor": {
+          "type": "page",
+          "value": 35
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "第18页的真实后验 p_θ(z|x) 用于推导重要性采样；实际训练需用可学习的 q_ψ(z|x) 近似，不能把前者当作可直接调用的采样分布。",
+    "第30页 Gaussian bottleneck 的图示不构成语义解耦、独立因素或可控性的保证。",
+    "重参数化相关页面没有足够清晰且完整的公式证据，本包不猜测或补写精确公式。",
+    "第35—39页的第三方生成示例不复制，也不描述其具体视觉内容。",
+    "第41页是课程语境下对典型模型家族的粗略对照，不覆盖所有变体。",
+    "课件所链接或引用的外部论文没有独立摄取，因此不以它们支持新增主张。"
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "stage":"quality_audit","unit_id":"lecture-13","status":"passed_with_resolution","checks":{"source_identity":"passed","page_range":"passed:1-28","citation_coverage":"passed","visual_formula_review":"passed","duration":"passed:180","language":"passed:zh-CN","access_scope":"passed:public","learner_secret_policy":"passed"},
+  "visual_findings":[{"pages":[9,17],"finding":"核展开与协方差示例已对照页面图像。"},{"pages":[18,25],"finding":"条件化示意与 ReLU 递推仅保留页面可确认层级，不臆补难辨符号。"}],
+  "findings":[{"id":"qa-13-1","severity":"low","issue":"第 25 页精细手写闭式公式不宜逐字符转写。","resolution_required":true}]
+}

@@ -98,6 +98,12 @@ Prompt 固定为 `studykit-staged-v0.8-010`，当前 Pipeline 为
 模型修复，空响应重试 24 次后全部成功。详细机器摘要见
 `data/regression/studykit-v21-lectures-01-08/regression-summary.json`。
 
+2026-08-10 另完成一次 host-authored portable 全课程构建，覆盖官方可用的
+Lecture 01–21、23、24 共 23 讲。23/23 均通过 portable schema、引用锚和渲染验证，
+并经 Lecture 09、18、21 随机语义抽查后批准待入库。紧凑审核包位于
+`data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/`；它尚未接入在线 Catalog，
+也不能直接混入采用另一 Schema 的 `data/golden/`。
+
 本轮完成的流程改进包括：
 
 - 所有 blocker 先按字段所有权归一化和规范位置去重，再路由到 Evidence、

@@ -1,0 +1,2289 @@
+# UC Berkeley CS 61B Spring 2024 source manifest. Raw files and derived chunks are intentionally gitignored.
+manifest_version: '0.1'
+course_id: ucb-cs61b-spring-2024
+primary_course_number: CS 61B
+title: Data Structures
+institution: University of California, Berkeley
+department: Electrical Engineering and Computer Sciences
+term: Spring
+year: 2024
+course_version: spring-2024
+language: en
+official_url: https://sp24.datastructur.es/
+official_schedule_url: https://sp24.datastructur.es/
+official_download_url: null
+downloaded_from: https://sp24.datastructur.es/
+local_snapshot: data/raw/ucb-cs61b/spring-2024/site/
+instructors:
+- Justin Yokota
+- Peyrin Kao
+course_prerequisites:
+- CS 61A, CS 88, E7, or equivalent programming experience
+course_prerequisites_source: https://sp24.datastructur.es/policies/
+reviewed_at: '2026-08-09'
+access_status: public_with_one_auth_gated_slide_deck
+license_status: unknown
+redistribution_status: local_processing_only
+inventory_sha256: b995182866969255d3a39c93c1d8b3723fdefa5148f6d5589e38328e31501878
+coverage:
+  numbered_lecture_units_discovered: 40
+  numbered_lecture_units_prepared: 40
+  original_slide_decks_downloaded: 39
+  official_recording_asr_transcript_fallbacks: 1
+  lecture_units_chunked: 40
+  lecture_source_pages: 2860
+  source_chunks: 2860
+  rendered_page_images: 2860
+  standard_visual_review_pages: 418
+  formula_candidate_pages: 1247
+  empty_chunks: 0
+  source_gap:
+    unit_id: lecture-34
+    title: Software Engineering III
+    scheduled_slide_deck_status: authentication_required
+    prepared_source: deterministic PDF derived from official public recording's uncorrected English ASR
+      captions
+  excluded_nonlecture_schedule_rows: 10
+  excluded_linked_resources:
+    discussion_topics: 13
+    lab_topics: 10
+    project_milestone_rows: 8
+    homework_rows: 6
+    graded_exams: true
+    discussion_worksheets_and_solutions: true
+    spring_2023_prerecorded_video_links: true
+    spring_2024_recordings_and_readings_as_extra_sources: true
+processing:
+  scope: public
+  parser_version: pdf-page-v0.2
+  chunk_schema: schemas/source_chunk.schema.json
+  page_selector_version: review-pages-v1
+  quality_mode: standard
+  source_constraint: exactly_one_source_and_one_material_set_per_unit
+  generation_status: not_started_stop_before_studykit_generation
+limitations:
+- No explicit course, site, or slide license was found; originals and derived chunks remain local and
+  are not approved for redistribution.
+- Lecture 34 uses uncorrected automatic captions from the official Spring 2024 recording because its scheduled
+  Google Slides deck requires authentication.
+- Native PDF text is retrieval evidence, not a guarantee of formula fidelity; formula-bearing pages require
+  final-formula visual verification during authoring.
+shared_sources:
+- source_id: ucb-cs61b-sp24-course-home-schedule
+  type: html
+  title: Course home and schedule
+  official_url: https://sp24.datastructur.es/
+  local_path: data/raw/ucb-cs61b/spring-2024/site/index.html
+  file_size: 63417
+  sha256: a1e13d31aa8fa67bce9131ad919a516a33753c551b085964ce2b634125999228
+  access_status: public
+  license_status: unknown
+  redistribution_allowed: false
+  processing_status: metadata_only
+  index_allowed: false
+  notes: Authoritative course identity, chronological lecture schedule, and resource links. Retained for
+    provenance only; not mixed into lecture generation chunks.
+- source_id: ucb-cs61b-sp24-course-policies
+  type: html
+  title: Course policies
+  official_url: https://sp24.datastructur.es/policies/
+  local_path: data/raw/ucb-cs61b/spring-2024/site/policies/index.html
+  file_size: 81485
+  sha256: 8656b69d486176f593bcd49941d0d15b938ef0f54d7ae36ca441f904a9f6e7ea
+  access_status: public
+  license_status: unknown
+  redistribution_allowed: false
+  processing_status: metadata_only
+  index_allowed: false
+  notes: Used to verify term, lecture cadence, course expectations, and access context. Not included in
+    lecture generation chunks.
+- source_id: ucb-cs61b-sp24-course-staff
+  type: html
+  title: Course staff
+  official_url: https://sp24.datastructur.es/staff/
+  local_path: data/raw/ucb-cs61b/spring-2024/site/staff/index.html
+  file_size: 89203
+  sha256: 1e890207c63e700e73f0dc17eeb96821af7b6fce05e52246c211d8b50c60be01
+  access_status: public
+  license_status: unknown
+  redistribution_allowed: false
+  processing_status: metadata_only
+  index_allowed: false
+  notes: Used to verify the Spring 2024 instructors. Not included in lecture generation chunks.
+- source_id: ucb-cs61b-sp24-course-resources
+  type: html
+  title: Course resources
+  official_url: https://sp24.datastructur.es/resources/
+  local_path: data/raw/ucb-cs61b/spring-2024/site/resources/index.html
+  file_size: 25191
+  sha256: ad0098562e2923491ef0f8684448da2615212e73f0cd60cb5beb59253688acfc
+  access_status: public
+  license_status: unknown
+  redistribution_allowed: false
+  processing_status: metadata_only
+  index_allowed: false
+  notes: Course resource index retained as metadata only.
+- source_id: ucb-cs61b-sp24-labs-index
+  type: html
+  title: Labs index
+  official_url: https://sp24.datastructur.es/labs/
+  local_path: data/raw/ucb-cs61b/spring-2024/site/labs/index.html
+  file_size: 21796
+  sha256: 8cf3ac48382c39f18cbb210f0e2f3b027af539ab2762358c4d59beda538c3f3d
+  access_status: public
+  license_status: unknown
+  redistribution_allowed: false
+  processing_status: metadata_only
+  index_allowed: false
+  notes: Public lab metadata only. Lab specifications, slide decks, and assessed work are excluded from
+    lecture evidence.
+- source_id: ucb-cs61b-sp24-homeworks-index
+  type: html
+  title: Homeworks index
+  official_url: https://sp24.datastructur.es/homeworks/
+  local_path: data/raw/ucb-cs61b/spring-2024/site/homeworks/index.html
+  file_size: 20924
+  sha256: 5a90f6afb7e6a9f39a37986d275fa191285cba5786c67b148345b571d2b55ccc
+  access_status: public
+  license_status: unknown
+  redistribution_allowed: false
+  processing_status: metadata_only
+  index_allowed: false
+  notes: Public homework metadata only. Assessed work and Gradescope-gated materials are excluded from
+    lecture evidence.
+- source_id: ucb-cs61b-sp24-projects-index
+  type: html
+  title: Projects index
+  official_url: https://sp24.datastructur.es/projects/
+  local_path: data/raw/ucb-cs61b/spring-2024/site/projects/index.html
+  file_size: 21701
+  sha256: dad073ca400596a21cf42a8e6a95da9049d5645f8ec810c3d44dc85c1401f4d2
+  access_status: public
+  license_status: unknown
+  redistribution_allowed: false
+  processing_status: metadata_only
+  index_allowed: false
+  notes: Public project metadata only. Project specifications and assessed work are excluded from lecture
+    evidence.
+- source_id: ucb-cs61b-sp24-calendar
+  type: html
+  title: Course calendar
+  official_url: https://sp24.datastructur.es/calendar/
+  local_path: data/raw/ucb-cs61b/spring-2024/site/calendar/index.html
+  file_size: 29008
+  sha256: 2e88a6c266669da848e4655c3463b818839e1e19fccd9430e33e434d577f555b
+  access_status: public
+  license_status: unknown
+  redistribution_allowed: false
+  processing_status: metadata_only
+  index_allowed: false
+  notes: Calendar metadata retained for schedule provenance only.
+units:
+- unit_id: lecture-01
+  order: 1
+  title: Intro
+  official_resource_title: Intro
+  scheduled_date: '2024-01-17'
+  schedule_slide_url: https://docs.google.com/presentation/d/19NEzpJJ-a0lI-tdz9yC1kP-8Apt2oZm-918IsDiqgYQ
+  schedule_reading: Ch 1
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/1.-introduction
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=tby2de4c1u8
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PLnp31xXvnfRq5wRDN8wZFy7GrrJXUtr1q
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-01-slides
+    material_set_id: ucb-cs61b-sp24-lecture-01
+    type: pdf
+    title: Intro lecture slides
+    official_url: https://docs.google.com/presentation/d/19NEzpJJ-a0lI-tdz9yC1kP-8Apt2oZm-918IsDiqgYQ
+    download_url: https://docs.google.com/presentation/d/19NEzpJJ-a0lI-tdz9yC1kP-8Apt2oZm-918IsDiqgYQ/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-01-intro.pdf
+    file_size: 769012
+    page_count: 50
+    sha256: 622ea2455e39bbddf438f3d407b84034e54abe8f53396f73c4f64627cda68dd2
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-01/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-01/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-01/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-01/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-01/review-plan.json
+    formula_candidate_count: 14
+    visual_reviewed_pages:
+    - 1
+    - 9
+    - 10
+    - 18
+    - 20
+    - 25
+    - 38
+    - 50
+- unit_id: lecture-02
+  order: 2
+  title: Defining and Using Classes
+  official_resource_title: Defining and Using Classes
+  scheduled_date: '2024-01-19'
+  schedule_slide_url: https://docs.google.com/presentation/d/1zt0yh_gzmfjCdB1y7DzTdwNSfTtepnQAtORH7PqebQM
+  schedule_reading: Ch 2
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/2.-defining-and-using-classes
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=PK9ueGEHcjE
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PLnp31xXvnfRqziLs3JZ6LIH73ZsVtvsGy
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-02-slides
+    material_set_id: ucb-cs61b-sp24-lecture-02
+    type: pdf
+    title: Defining and Using Classes lecture slides
+    official_url: https://docs.google.com/presentation/d/1zt0yh_gzmfjCdB1y7DzTdwNSfTtepnQAtORH7PqebQM
+    download_url: https://docs.google.com/presentation/d/1zt0yh_gzmfjCdB1y7DzTdwNSfTtepnQAtORH7PqebQM/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-02-defining-and-using-classes.pdf
+    file_size: 714219
+    page_count: 49
+    sha256: 0ac633a97df044b0ea79a255d2983aab5fa1e703159db04b94a4794ae9549842
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-02/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-02/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-02/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-02/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-02/review-plan.json
+    formula_candidate_count: 24
+    visual_reviewed_pages:
+    - 1
+    - 23
+    - 25
+    - 29
+    - 30
+    - 33
+    - 37
+    - 48
+    - 49
+- unit_id: lecture-03
+  order: 3
+  title: 'Lists I: References, Recursion, and Lists'
+  official_resource_title: 'Lists I: References, Recursion, and Lists'
+  scheduled_date: '2024-01-22'
+  schedule_slide_url: https://docs.google.com/presentation/d/1G5k4HcjJ7C2fT_9xQdvpfWjKC4xQa--5FnwXPGf0nwg
+  schedule_reading: Ch 3
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/3.-references-recursion-and-lists
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=33B7eyjSO58
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PLnp31xXvnfRpb4EQp0tOFJNZUXHnxTfXm
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-03-slides
+    material_set_id: ucb-cs61b-sp24-lecture-03
+    type: pdf
+    title: 'Lists I: References, Recursion, and Lists lecture slides'
+    official_url: https://docs.google.com/presentation/d/1G5k4HcjJ7C2fT_9xQdvpfWjKC4xQa--5FnwXPGf0nwg
+    download_url: https://docs.google.com/presentation/d/1G5k4HcjJ7C2fT_9xQdvpfWjKC4xQa--5FnwXPGf0nwg/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-03-lists-i-references-recursion-and-lists.pdf
+    file_size: 621697
+    page_count: 64
+    sha256: b1ce53507dac2805df2e657a08281d015497088d9b27b603925a0f2e0d27bf80
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-03/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-03/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-03/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-03/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-03/review-plan.json
+    formula_candidate_count: 44
+    visual_reviewed_pages:
+    - 1
+    - 7
+    - 8
+    - 17
+    - 23
+    - 26
+    - 30
+    - 32
+    - 34
+    - 53
+    - 55
+    - 58
+    - 64
+- unit_id: lecture-04
+  order: 4
+  title: 'Lists II: SLLists'
+  official_resource_title: 'Lists II: SLLists'
+  scheduled_date: '2024-01-24'
+  schedule_slide_url: https://docs.google.com/presentation/d/1Uty7XFuhRuCg3SoaSaViXzJhPTZDoYUV878L2I_pe_k
+  schedule_reading: Ch 4
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/4.-sllists
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=Rli_V5yGkrI
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PLnp31xXvnfRqyuN_xxm4o1Woa44dXW_N8
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-04-slides
+    material_set_id: ucb-cs61b-sp24-lecture-04
+    type: pdf
+    title: 'Lists II: SLLists lecture slides'
+    official_url: https://docs.google.com/presentation/d/1Uty7XFuhRuCg3SoaSaViXzJhPTZDoYUV878L2I_pe_k
+    download_url: https://docs.google.com/presentation/d/1Uty7XFuhRuCg3SoaSaViXzJhPTZDoYUV878L2I_pe_k/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-04-lists-ii-sllists.pdf
+    file_size: 762781
+    page_count: 97
+    sha256: fa92e0e2189f2680384e56b5b3c0af57b446e36d0d0cceb4658f22bce8f74dcf
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-04/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-04/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-04/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-04/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-04/review-plan.json
+    formula_candidate_count: 58
+    visual_reviewed_pages:
+    - 1
+    - 11
+    - 17
+    - 19
+    - 26
+    - 28
+    - 43
+    - 49
+    - 59
+    - 79
+    - 81
+    - 82
+    - 92
+    - 97
+- unit_id: lecture-05
+  order: 5
+  title: 'Lists III: DLLists and Arrays'
+  official_resource_title: 'Lists III: DLLists and Arrays'
+  scheduled_date: '2024-01-26'
+  schedule_slide_url: https://docs.google.com/presentation/d/1jjivjdvD4mx6qb4bd4rUKB6FDZbYtveJ5NKeyVeA1lk
+  schedule_reading: Ch 5, Ch 6
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/5.-dllists
+  - https://cs61b-2.gitbook.io/cs61b-textbook/6.-arrays
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=rf8beYo231Q
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PLnp31xXvnfRpPjLuN6-QJUFeK_mBZPve4
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-05-slides
+    material_set_id: ucb-cs61b-sp24-lecture-05
+    type: pdf
+    title: 'Lists III: DLLists and Arrays lecture slides'
+    official_url: https://docs.google.com/presentation/d/1jjivjdvD4mx6qb4bd4rUKB6FDZbYtveJ5NKeyVeA1lk
+    download_url: https://docs.google.com/presentation/d/1jjivjdvD4mx6qb4bd4rUKB6FDZbYtveJ5NKeyVeA1lk/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-05-lists-iii-dllists-and-arrays.pdf
+    file_size: 596345
+    page_count: 48
+    sha256: e907b970b8bd0abf89a68073e27af28e15de3b44f08b1594e3b3de93f3d0fcec
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-05/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-05/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-05/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-05/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-05/review-plan.json
+    formula_candidate_count: 26
+    visual_reviewed_pages:
+    - 1
+    - 15
+    - 20
+    - 24
+    - 36
+    - 38
+    - 40
+    - 44
+    - 48
+- unit_id: lecture-06
+  order: 6
+  title: Testing
+  official_resource_title: Testing
+  scheduled_date: '2024-01-29'
+  schedule_slide_url: https://docs.google.com/presentation/d/1AxuxcFWc_9U-gmdBRPGcEqE-7Q0-48hEw5Iupbama74
+  schedule_reading: Ch 7, TDD is dead, Unit Tests Are Waste, Response
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/7.-testing
+  - https://dhh.dk/2014/tdd-is-dead-long-live-testing.html
+  - http://www.rbcs-us.com/documents/Why-Most-Unit-Testing-is-Waste.pdf
+  - http://henrikwarne.com/2014/09/04/a-response-to-why-most-unit-testing-is-waste/
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=rJ1gCk41lbo
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PLnp31xXvnfRqRR4OQx_I3YPkA87bO0whh
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-06-slides
+    material_set_id: ucb-cs61b-sp24-lecture-06
+    type: pdf
+    title: Testing lecture slides
+    official_url: https://docs.google.com/presentation/d/1AxuxcFWc_9U-gmdBRPGcEqE-7Q0-48hEw5Iupbama74
+    download_url: https://docs.google.com/presentation/d/1AxuxcFWc_9U-gmdBRPGcEqE-7Q0-48hEw5Iupbama74/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-06-testing.pdf
+    file_size: 1061188
+    page_count: 121
+    sha256: 20a95e5170a8707c1c8f16a17fe34dd8c0a53d5e3aed8ba3319c11e88673f243
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-06/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-06/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-06/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-06/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-06/review-plan.json
+    formula_candidate_count: 73
+    visual_reviewed_pages:
+    - 1
+    - 10
+    - 25
+    - 26
+    - 59
+    - 61
+    - 70
+    - 77
+    - 78
+    - 86
+    - 93
+    - 99
+    - 118
+    - 120
+    - 121
+- unit_id: lecture-07
+  order: 7
+  title: 'Lists IV: Arrays and Lists'
+  official_resource_title: 'Lists IV: Arrays and Lists'
+  scheduled_date: '2024-01-31'
+  schedule_slide_url: https://docs.google.com/presentation/d/1RJuwap1NZDYFUS7eiPy_SZu7oWHJladwuhKQpQcTjt8
+  schedule_reading: Ch 8
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/8.-arraylist
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=DnYJueFQgs4
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PLnp31xXvnfRrv834ePjKGB7i1az039-Gw
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-07-slides
+    material_set_id: ucb-cs61b-sp24-lecture-07
+    type: pdf
+    title: 'Lists IV: Arrays and Lists lecture slides'
+    official_url: https://docs.google.com/presentation/d/1RJuwap1NZDYFUS7eiPy_SZu7oWHJladwuhKQpQcTjt8
+    download_url: https://docs.google.com/presentation/d/1RJuwap1NZDYFUS7eiPy_SZu7oWHJladwuhKQpQcTjt8/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-07-lists-iv-arrays-and-lists.pdf
+    file_size: 923453
+    page_count: 90
+    sha256: 388e96ba9c2160c315c2453638cebaf9405a89a301f161693a77727cb9fcfbcf
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-07/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-07/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-07/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-07/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-07/review-plan.json
+    formula_candidate_count: 43
+    visual_reviewed_pages:
+    - 1
+    - 13
+    - 44
+    - 45
+    - 56
+    - 57
+    - 58
+    - 60
+    - 70
+    - 78
+    - 80
+    - 82
+    - 90
+- unit_id: lecture-08
+  order: 8
+  title: 'Inheritance I: Interface and Implementation Inheritance'
+  official_resource_title: 'Inheritance I: Interface and Implementation Inheritance'
+  scheduled_date: '2024-02-02'
+  schedule_slide_url: https://docs.google.com/presentation/d/1LxnOVy_k13llkePdQIdBrZ5jEpgRmbrvMilD-ppRjlc
+  schedule_reading: Ch 9
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/9.-inheritance-i-interface-and-implementation-inheritance
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=-dobEvKn8mM
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PLnp31xXvnfRqJVbwFNWwRrGyBwedwLnuW
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-08-slides
+    material_set_id: ucb-cs61b-sp24-lecture-08
+    type: pdf
+    title: 'Inheritance I: Interface and Implementation Inheritance lecture slides'
+    official_url: https://docs.google.com/presentation/d/1LxnOVy_k13llkePdQIdBrZ5jEpgRmbrvMilD-ppRjlc
+    download_url: https://docs.google.com/presentation/d/1LxnOVy_k13llkePdQIdBrZ5jEpgRmbrvMilD-ppRjlc/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-08-inheritance-i-interface-and-implementation-inheritance.pdf
+    file_size: 582217
+    page_count: 68
+    sha256: a8e80f29bd57a28cc756594de88baf458f3d9df2a5bd835a90c767ed1eb930c2
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-08/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-08/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-08/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-08/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-08/review-plan.json
+    formula_candidate_count: 32
+    visual_reviewed_pages:
+    - 1
+    - 7
+    - 14
+    - 34
+    - 44
+    - 47
+    - 50
+    - 51
+    - 62
+    - 63
+    - 68
+- unit_id: lecture-09
+  order: 9
+  title: 'Inheritance II: Extends, Casting, Higher Order Functions'
+  official_resource_title: 'Inheritance II: Extends, Casting, Higher Order Functions'
+  scheduled_date: '2024-02-05'
+  schedule_slide_url: https://docs.google.com/presentation/d/1jVqC44HVViVtajnF18KsZ6MdIfseTfOSerfvxH4pzP0
+  schedule_reading: Ch 10
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/10.-inheritance-ii-extends-casting-higher-order-functions
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=IreQ12TQiHk
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PLnp31xXvnfRrLnGlBmWCRXEuKF5Am09yB
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-09-slides
+    material_set_id: ucb-cs61b-sp24-lecture-09
+    type: pdf
+    title: 'Inheritance II: Extends, Casting, Higher Order Functions lecture slides'
+    official_url: https://docs.google.com/presentation/d/1jVqC44HVViVtajnF18KsZ6MdIfseTfOSerfvxH4pzP0
+    download_url: https://docs.google.com/presentation/d/1jVqC44HVViVtajnF18KsZ6MdIfseTfOSerfvxH4pzP0/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-09-inheritance-ii-extends-casting-higher-order-functions.pdf
+    file_size: 978302
+    page_count: 96
+    sha256: dbc25760bbe7fae5d811501b7f944c4ef38fade915b87f99fb29cc2c07960e99
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-09/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-09/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-09/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-09/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-09/review-plan.json
+    formula_candidate_count: 51
+    visual_reviewed_pages:
+    - 1
+    - 5
+    - 9
+    - 12
+    - 27
+    - 42
+    - 48
+    - 64
+    - 67
+    - 71
+    - 72
+    - 75
+    - 92
+    - 96
+- unit_id: lecture-10
+  order: 10
+  title: 'Inheritance III: Subtype Polymorphism, Comparators, Comparable'
+  official_resource_title: 'Inheritance III: Subtype Polymorphism, Comparators, Comparable'
+  scheduled_date: '2024-02-07'
+  schedule_slide_url: https://docs.google.com/presentation/d/1WpISEkGajVCwARZy6w-XDF5sofm1cITUhfAlPUnnnos
+  schedule_reading: Ch 11
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/11.-subtype-polymorphism-comparators-comparable
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=bkE2Fnsr7No
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PLnp31xXvnfRqAB5rg3v2NvfF_cb9OJ9cB
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-10-slides
+    material_set_id: ucb-cs61b-sp24-lecture-10
+    type: pdf
+    title: 'Inheritance III: Subtype Polymorphism, Comparators, Comparable lecture slides'
+    official_url: https://docs.google.com/presentation/d/1WpISEkGajVCwARZy6w-XDF5sofm1cITUhfAlPUnnnos
+    download_url: https://docs.google.com/presentation/d/1WpISEkGajVCwARZy6w-XDF5sofm1cITUhfAlPUnnnos/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-10-inheritance-iii-subtype-polymorphism-comparators-comparable.pdf
+    file_size: 982254
+    page_count: 82
+    sha256: 34d2cde34d4a9676d2d79d7f19dd42416a6fb88d99a403ae1683f5a01f59c7b6
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-10/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-10/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-10/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-10/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-10/review-plan.json
+    formula_candidate_count: 34
+    visual_reviewed_pages:
+    - 1
+    - 13
+    - 14
+    - 18
+    - 41
+    - 42
+    - 43
+    - 49
+    - 51
+    - 79
+    - 82
+- unit_id: lecture-11
+  order: 11
+  title: 'Inheritance IV: Iterators, Object Methods'
+  official_resource_title: 'Inheritance IV: Iterators, Object Methods'
+  scheduled_date: '2024-02-09'
+  schedule_slide_url: https://docs.google.com/presentation/d/1bahvjVtbMcc2kuyzYQfQtD8EJyIiIkWnSALVSMuyQhI
+  schedule_reading: Ch 12
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/12.-exceptions-iterators-object-methods
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=DOVCs-bZ3Tk
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PLnp31xXvnfRrvh9PM0gK9fm7VAD0HdijJ
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-11-slides
+    material_set_id: ucb-cs61b-sp24-lecture-11
+    type: pdf
+    title: 'Inheritance IV: Iterators, Object Methods lecture slides'
+    official_url: https://docs.google.com/presentation/d/1bahvjVtbMcc2kuyzYQfQtD8EJyIiIkWnSALVSMuyQhI
+    download_url: https://docs.google.com/presentation/d/1bahvjVtbMcc2kuyzYQfQtD8EJyIiIkWnSALVSMuyQhI/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-11-inheritance-iv-iterators-object-methods.pdf
+    file_size: 789765
+    page_count: 95
+    sha256: 7e587fab9608f942b52321122d209e1816bd33fa7bd0ab17ad5de9c393add8ca
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-11/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-11/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-11/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-11/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-11/review-plan.json
+    formula_candidate_count: 68
+    visual_reviewed_pages:
+    - 1
+    - 8
+    - 14
+    - 23
+    - 24
+    - 42
+    - 43
+    - 48
+    - 49
+    - 53
+    - 55
+    - 76
+    - 87
+    - 95
+- unit_id: lecture-12
+  order: 12
+  title: Asymptotics I
+  official_resource_title: Asymptotics I
+  scheduled_date: '2024-02-12'
+  schedule_slide_url: https://docs.google.com/presentation/d/1CH4rsIIvu5pbmoWUNl9QdkPQYYkJc-ptX85CBhytlzM
+  schedule_reading: Ch 13
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/13.-asymptotics-i
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=79lzg2R-f-4
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PLnp31xXvnfRrajvLNrqCND6CQUbqaR0mU
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-12-slides
+    material_set_id: ucb-cs61b-sp24-lecture-12
+    type: pdf
+    title: Asymptotics I lecture slides
+    official_url: https://docs.google.com/presentation/d/1CH4rsIIvu5pbmoWUNl9QdkPQYYkJc-ptX85CBhytlzM
+    download_url: https://docs.google.com/presentation/d/1CH4rsIIvu5pbmoWUNl9QdkPQYYkJc-ptX85CBhytlzM/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-12-asymptotics-i.pdf
+    file_size: 769391
+    page_count: 63
+    sha256: fcdb0b1bd01620fcadb119d8c198a0f05918b0980afc40257f7a800808e5484c
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-12/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-12/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-12/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-12/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-12/review-plan.json
+    formula_candidate_count: 43
+    visual_reviewed_pages:
+    - 1
+    - 4
+    - 8
+    - 14
+    - 20
+    - 24
+    - 27
+    - 29
+    - 30
+    - 32
+    - 45
+    - 62
+    - 63
+- unit_id: lecture-13
+  order: 13
+  title: 'Ask Anything: Midterm 1'
+  official_resource_title: 'Ask Anything: Midterm 1'
+  scheduled_date: '2024-02-14'
+  schedule_slide_url: https://docs.google.com/presentation/d/1XfRFqI5g6sM6LW2tWShnX-V2kVhBg6NJbIG6gvPtBn0
+  schedule_reading: null
+  schedule_reading_urls: []
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=2Q1g4A-P2V8
+  schedule_prerecorded_video_urls: []
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-13-slides
+    material_set_id: ucb-cs61b-sp24-lecture-13
+    type: pdf
+    title: 'Ask Anything: Midterm 1 lecture slides'
+    official_url: https://docs.google.com/presentation/d/1XfRFqI5g6sM6LW2tWShnX-V2kVhBg6NJbIG6gvPtBn0
+    download_url: https://docs.google.com/presentation/d/1XfRFqI5g6sM6LW2tWShnX-V2kVhBg6NJbIG6gvPtBn0/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-13-ask-anything-midterm-1.pdf
+    file_size: 190203
+    page_count: 11
+    sha256: cd74e6f9b495e0e3f33dccb11c1f4ad609e183efbc8176f5bc6d69e02bc0b101
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-13/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-13/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-13/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-13/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-13/review-plan.json
+    formula_candidate_count: 2
+    visual_reviewed_pages:
+    - 1
+    - 6
+    - 8
+    - 9
+    - 11
+- unit_id: lecture-14
+  order: 14
+  title: Disjoint Sets
+  official_resource_title: Disjoint Sets
+  scheduled_date: '2024-02-16'
+  schedule_slide_url: https://docs.google.com/presentation/d/18pzklQAvV94ODFpjeB60Rzj79wFHdkIB-ePWR_MeClk
+  schedule_reading: Ch 14
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/14.-disjoint-sets
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=w043wDFL2Co
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PLnp31xXvnfRpMlYLU0hWYDMHNtcGi-Qmm
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-14-slides
+    material_set_id: ucb-cs61b-sp24-lecture-14
+    type: pdf
+    title: Disjoint Sets lecture slides
+    official_url: https://docs.google.com/presentation/d/18pzklQAvV94ODFpjeB60Rzj79wFHdkIB-ePWR_MeClk
+    download_url: https://docs.google.com/presentation/d/18pzklQAvV94ODFpjeB60Rzj79wFHdkIB-ePWR_MeClk/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-14-disjoint-sets.pdf
+    file_size: 750591
+    page_count: 70
+    sha256: 27a513ac0b3a02fa2aaa0da52acedbceed22928169c7f051f4ec4ec40b35c09b
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-14/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-14/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-14/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-14/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-14/review-plan.json
+    formula_candidate_count: 22
+    visual_reviewed_pages:
+    - 1
+    - 7
+    - 19
+    - 35
+    - 37
+    - 40
+    - 68
+    - 70
+- unit_id: lecture-15
+  order: 15
+  title: Asymptotics II
+  official_resource_title: Asymptotics II
+  scheduled_date: '2024-02-21'
+  schedule_slide_url: https://docs.google.com/presentation/d/1zlmNjzu42WAEmyJFG2tYRZJIguExSFq5B__equ3-GaM
+  schedule_reading: Ch 15
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/15.-asymptotics-ii
+  schedule_recording_urls:
+  - https://youtu.be/cy83wpE6Qj0
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PLnp31xXvnfRqwuAZ5q3P5xUxe2xNZL3an
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-15-slides
+    material_set_id: ucb-cs61b-sp24-lecture-15
+    type: pdf
+    title: Asymptotics II lecture slides
+    official_url: https://docs.google.com/presentation/d/1zlmNjzu42WAEmyJFG2tYRZJIguExSFq5B__equ3-GaM
+    download_url: https://docs.google.com/presentation/d/1zlmNjzu42WAEmyJFG2tYRZJIguExSFq5B__equ3-GaM/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-15-asymptotics-ii.pdf
+    file_size: 1095433
+    page_count: 92
+    sha256: 8044ece7dddd2cb1113cc66701a936150753707aa8ec18fdfc3ba07ecd2a9ae1
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-15/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-15/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-15/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-15/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-15/review-plan.json
+    formula_candidate_count: 78
+    visual_reviewed_pages:
+    - 1
+    - 5
+    - 8
+    - 40
+    - 45
+    - 46
+    - 48
+    - 61
+    - 73
+    - 80
+    - 82
+    - 84
+    - 88
+    - 92
+- unit_id: lecture-16
+  order: 16
+  title: ADTs, Sets, Maps, BSTs
+  official_resource_title: ADTs, Sets, Maps, BSTs
+  scheduled_date: '2024-02-23'
+  schedule_slide_url: https://docs.google.com/presentation/d/1tAXgjwVKsnH7AR-iCvkDM-rQFwrg4OnKVZzqPixZWI8
+  schedule_reading: Ch 16
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/16.-adts-and-bsts
+  schedule_recording_urls:
+  - https://youtu.be/qVM6VC1ZfIE
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PLnp31xXvnfRrks2Xi7wU8s82FcwPaINYs
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-16-slides
+    material_set_id: ucb-cs61b-sp24-lecture-16
+    type: pdf
+    title: ADTs, Sets, Maps, BSTs lecture slides
+    official_url: https://docs.google.com/presentation/d/1tAXgjwVKsnH7AR-iCvkDM-rQFwrg4OnKVZzqPixZWI8
+    download_url: https://docs.google.com/presentation/d/1tAXgjwVKsnH7AR-iCvkDM-rQFwrg4OnKVZzqPixZWI8/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-16-adts-sets-maps-bsts.pdf
+    file_size: 677304
+    page_count: 56
+    sha256: 5a28a6928a624300530dcd8deb28f95c9fbab58821b33c53cecbde12a66d3d8b
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-16/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-16/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-16/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-16/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-16/review-plan.json
+    formula_candidate_count: 12
+    visual_reviewed_pages:
+    - 1
+    - 25
+    - 28
+    - 30
+    - 32
+    - 36
+    - 56
+- unit_id: lecture-17
+  order: 17
+  title: B-Trees (2-3, 2-3-4 Trees)
+  official_resource_title: B-Trees (2-3, 2-3-4 Trees)
+  scheduled_date: '2024-02-26'
+  schedule_slide_url: https://docs.google.com/presentation/d/1uQYk0Hxhf0jhnp-aXxoIGNGM2w_yILMyukRctRPc9Uo
+  schedule_reading: Ch 17
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/17.-b-trees
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=B-uPNBrYotc
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PLnp31xXvnfRoMUlGWsTyt-WHK-SuyXK_E
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-17-slides
+    material_set_id: ucb-cs61b-sp24-lecture-17
+    type: pdf
+    title: B-Trees (2-3, 2-3-4 Trees) lecture slides
+    official_url: https://docs.google.com/presentation/d/1uQYk0Hxhf0jhnp-aXxoIGNGM2w_yILMyukRctRPc9Uo
+    download_url: https://docs.google.com/presentation/d/1uQYk0Hxhf0jhnp-aXxoIGNGM2w_yILMyukRctRPc9Uo/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-17-b-trees-2-3-2-3-4-trees.pdf
+    file_size: 506517
+    page_count: 61
+    sha256: 4519e943278b31be32bdbdda0378a6dd8489c486fb7b55122effc817f8b83413
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-17/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-17/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-17/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-17/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-17/review-plan.json
+    formula_candidate_count: 38
+    visual_reviewed_pages:
+    - 1
+    - 9
+    - 12
+    - 24
+    - 31
+    - 33
+    - 39
+    - 47
+    - 50
+    - 56
+    - 60
+    - 61
+- unit_id: lecture-18
+  order: 18
+  title: Red Black Trees
+  official_resource_title: Red Black Trees
+  scheduled_date: '2024-02-28'
+  schedule_slide_url: https://docs.google.com/presentation/d/1WJze5Odoy4ZR1vqPM8X6duaZ5GGm_D7SaYrtOa5RnsA
+  schedule_reading: Ch 18
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/18.-red-black-trees
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=Z-INBpfIN78
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PLnp31xXvnfRrYOYhFXExoXfP8uhHHCIri
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-18-slides
+    material_set_id: ucb-cs61b-sp24-lecture-18
+    type: pdf
+    title: Red Black Trees lecture slides
+    official_url: https://docs.google.com/presentation/d/1WJze5Odoy4ZR1vqPM8X6duaZ5GGm_D7SaYrtOa5RnsA
+    download_url: https://docs.google.com/presentation/d/1WJze5Odoy4ZR1vqPM8X6duaZ5GGm_D7SaYrtOa5RnsA/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-18-red-black-trees.pdf
+    file_size: 580714
+    page_count: 78
+    sha256: 70037fe042d02e8ab342be197053194bff55be7069bc98999b6e298da08611dd
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-18/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-18/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-18/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-18/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-18/review-plan.json
+    formula_candidate_count: 3
+    visual_reviewed_pages:
+    - 1
+    - 3
+    - 39
+    - 44
+    - 46
+    - 50
+    - 78
+- unit_id: lecture-19
+  order: 19
+  title: Hashing
+  official_resource_title: Hashing
+  scheduled_date: '2024-03-01'
+  schedule_slide_url: https://docs.google.com/presentation/d/12Su6RdBjVCGd5MrKE6Y5s-J4OyBgv--v-4LHjEwtJbU
+  schedule_reading: Ch 19
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/19.-hashing
+  schedule_recording_urls:
+  - https://youtu.be/9kcG-8TrbBA
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PLnp31xXvnfRr_rFqN57yjZtcw_P4UiJ7a
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-19-slides
+    material_set_id: ucb-cs61b-sp24-lecture-19
+    type: pdf
+    title: Hashing lecture slides
+    official_url: https://docs.google.com/presentation/d/12Su6RdBjVCGd5MrKE6Y5s-J4OyBgv--v-4LHjEwtJbU
+    download_url: https://docs.google.com/presentation/d/12Su6RdBjVCGd5MrKE6Y5s-J4OyBgv--v-4LHjEwtJbU/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-19-hashing.pdf
+    file_size: 2135849
+    page_count: 103
+    sha256: c52e5ba017d884b60553252c2370bec7eecfa6fc0ec1a8927168c81fd6fe0c75
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-19/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-19/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-19/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-19/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-19/review-plan.json
+    formula_candidate_count: 46
+    visual_reviewed_pages:
+    - 1
+    - 28
+    - 32
+    - 34
+    - 39
+    - 52
+    - 53
+    - 62
+    - 64
+    - 65
+    - 93
+    - 95
+    - 103
+- unit_id: lecture-20
+  order: 20
+  title: Hashing II
+  official_resource_title: Hashing II
+  scheduled_date: '2024-03-04'
+  schedule_slide_url: https://docs.google.com/presentation/d/1EGP_BWIbha4xQ4A5PJLAVIQaK6G0RbWZfrVDd0GmS08
+  schedule_reading: Ch 20
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/20.-hashing-ii
+  schedule_recording_urls:
+  - https://youtu.be/cTzrgZ9aBR8
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PLnp31xXvnfRrSxUje7m5-Y41ELVPm50N_
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-20-slides
+    material_set_id: ucb-cs61b-sp24-lecture-20
+    type: pdf
+    title: Hashing II lecture slides
+    official_url: https://docs.google.com/presentation/d/1EGP_BWIbha4xQ4A5PJLAVIQaK6G0RbWZfrVDd0GmS08
+    download_url: https://docs.google.com/presentation/d/1EGP_BWIbha4xQ4A5PJLAVIQaK6G0RbWZfrVDd0GmS08/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-20-hashing-ii.pdf
+    file_size: 843706
+    page_count: 63
+    sha256: 5139f637bb6d25c4e9d3e199b8b93eca5e083df96f1cbce604753a5401062e05
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-20/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-20/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-20/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-20/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-20/review-plan.json
+    formula_candidate_count: 30
+    visual_reviewed_pages:
+    - 1
+    - 4
+    - 22
+    - 32
+    - 37
+    - 39
+    - 40
+    - 48
+    - 50
+    - 63
+- unit_id: lecture-21
+  order: 21
+  title: Heaps and Priority Queues
+  official_resource_title: Heaps and Priority Queues
+  scheduled_date: '2024-03-06'
+  schedule_slide_url: https://docs.google.com/presentation/d/1XVJfoSYH2ItiD1rz9yvyEf_HelejbfkYxQgukbgclSY
+  schedule_reading: Ch 21
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/21.-heaps-and-priority-queues
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=oeHW_h085dI
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PLnp31xXvnfRrFJrMMOkrShULQ3KeoqZB9
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-21-slides
+    material_set_id: ucb-cs61b-sp24-lecture-21
+    type: pdf
+    title: Heaps and Priority Queues lecture slides
+    official_url: https://docs.google.com/presentation/d/1XVJfoSYH2ItiD1rz9yvyEf_HelejbfkYxQgukbgclSY
+    download_url: https://docs.google.com/presentation/d/1XVJfoSYH2ItiD1rz9yvyEf_HelejbfkYxQgukbgclSY/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-21-heaps-and-priority-queues.pdf
+    file_size: 640671
+    page_count: 64
+    sha256: d337b76b56e3eb1d0564d02fe2a2ca6523b402ef0d56ddb31a2e2d813e3d38dc
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-21/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-21/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-21/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-21/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-21/review-plan.json
+    formula_candidate_count: 7
+    visual_reviewed_pages:
+    - 1
+    - 7
+    - 9
+    - 11
+    - 13
+    - 19
+    - 32
+    - 64
+- unit_id: lecture-22
+  order: 22
+  title: Tree and Graph Traversals
+  official_resource_title: Tree and Graph Traversals
+  scheduled_date: '2024-03-08'
+  schedule_slide_url: https://docs.google.com/presentation/d/1Gyke5ZMrgcMuBTa7qHAoklWZB3yf_yqQAymK2nV-Nqs
+  schedule_reading: Ch 22
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/22.-tree-traversals-and-graphs
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=fHQPvxFQeqw
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PLnp31xXvnfRoXCSo4Hx8TEZBsIpag6lMs
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-22-slides
+    material_set_id: ucb-cs61b-sp24-lecture-22
+    type: pdf
+    title: Tree and Graph Traversals lecture slides
+    official_url: https://docs.google.com/presentation/d/1Gyke5ZMrgcMuBTa7qHAoklWZB3yf_yqQAymK2nV-Nqs
+    download_url: https://docs.google.com/presentation/d/1Gyke5ZMrgcMuBTa7qHAoklWZB3yf_yqQAymK2nV-Nqs/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-22-tree-and-graph-traversals.pdf
+    file_size: 1254326
+    page_count: 107
+    sha256: 12b42a3a4ffbddaba184af8c001429373d167c634a48273a02b9f5862c56ec09
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-22/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-22/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-22/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-22/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-22/review-plan.json
+    formula_candidate_count: 62
+    visual_reviewed_pages:
+    - 1
+    - 23
+    - 28
+    - 43
+    - 54
+    - 70
+    - 74
+    - 75
+    - 79
+    - 81
+    - 82
+    - 90
+    - 92
+    - 93
+    - 107
+- unit_id: lecture-23
+  order: 23
+  title: Graph Traversals and Implementations
+  official_resource_title: Graph Traversals and Implementations
+  scheduled_date: '2024-03-11'
+  schedule_slide_url: https://docs.google.com/presentation/d/1NKWnXSJ8pUn1E2Cw6zidxMRuXf_aINKCpW7XpEkyz6c
+  schedule_reading: Ch 23
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/23.-graph-traversals-and-implementations
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=rr6XL7hkIFU
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/watch?v=YgPtwbWpLaM&list=PLnp31xXvnfRqyRDKtQeHvjxhonhNuaOAK
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-23-slides
+    material_set_id: ucb-cs61b-sp24-lecture-23
+    type: pdf
+    title: Graph Traversals and Implementations lecture slides
+    official_url: https://docs.google.com/presentation/d/1NKWnXSJ8pUn1E2Cw6zidxMRuXf_aINKCpW7XpEkyz6c
+    download_url: https://docs.google.com/presentation/d/1NKWnXSJ8pUn1E2Cw6zidxMRuXf_aINKCpW7XpEkyz6c/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-23-graph-traversals-and-implementations.pdf
+    file_size: 878297
+    page_count: 78
+    sha256: c3b904edf5313e051457c89522f9d6648cf168678d9673cdda49d3b6dd7376ad
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-23/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-23/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-23/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-23/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-23/review-plan.json
+    formula_candidate_count: 49
+    visual_reviewed_pages:
+    - 1
+    - 8
+    - 12
+    - 15
+    - 29
+    - 32
+    - 38
+    - 39
+    - 45
+    - 54
+    - 57
+    - 61
+    - 67
+    - 78
+- unit_id: lecture-24
+  order: 24
+  title: Shortest Paths
+  official_resource_title: Shortest Paths
+  scheduled_date: '2024-03-13'
+  schedule_slide_url: https://docs.google.com/presentation/d/1mT-F0fxm-sVZj9EQS_E_QMv5SVfeCGptI9vsKpyp57Y
+  schedule_reading: Ch 24
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/24.-shortest-paths
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=nhdM3_bLY8w
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/watch?v=iMoFtG1md3w&list=PLnp31xXvnfRrbIn8mZ3pmpgygnfwp2zjW
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-24-slides
+    material_set_id: ucb-cs61b-sp24-lecture-24
+    type: pdf
+    title: Shortest Paths lecture slides
+    official_url: https://docs.google.com/presentation/d/1mT-F0fxm-sVZj9EQS_E_QMv5SVfeCGptI9vsKpyp57Y
+    download_url: https://docs.google.com/presentation/d/1mT-F0fxm-sVZj9EQS_E_QMv5SVfeCGptI9vsKpyp57Y/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-24-shortest-paths.pdf
+    file_size: 1000304
+    page_count: 120
+    sha256: dbba163d05b84f318c97d02710f45d58585685ecace839d1b7d8964123fec75e
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-24/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-24/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-24/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-24/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-24/review-plan.json
+    formula_candidate_count: 77
+    visual_reviewed_pages:
+    - 1
+    - 5
+    - 24
+    - 39
+    - 60
+    - 63
+    - 64
+    - 68
+    - 69
+    - 102
+    - 108
+    - 116
+    - 117
+    - 120
+- unit_id: lecture-25
+  order: 25
+  title: Minimum Spanning Trees
+  official_resource_title: Minimum Spanning Trees
+  scheduled_date: '2024-03-15'
+  schedule_slide_url: https://docs.google.com/presentation/d/13pPWHDLRUX2TAUUUK5ucEQ6dF3vUjzkj_C_iXDGaTPU
+  schedule_reading: Ch 25
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/25.-minimum-spanning-trees
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=dMY3Srv-vho
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/watch?v=vnKK38JS9Ik&list=PLnp31xXvnfRr6RTCpKB1Xj3n9bZffJQ7L
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-25-slides
+    material_set_id: ucb-cs61b-sp24-lecture-25
+    type: pdf
+    title: Minimum Spanning Trees lecture slides
+    official_url: https://docs.google.com/presentation/d/13pPWHDLRUX2TAUUUK5ucEQ6dF3vUjzkj_C_iXDGaTPU
+    download_url: https://docs.google.com/presentation/d/13pPWHDLRUX2TAUUUK5ucEQ6dF3vUjzkj_C_iXDGaTPU/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-25-minimum-spanning-trees.pdf
+    file_size: 1046119
+    page_count: 110
+    sha256: 2d089d5185040406d4ebc008d9eff1009dd80c68a715791e2ed0856a415da943
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-25/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-25/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-25/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-25/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-25/review-plan.json
+    formula_candidate_count: 22
+    visual_reviewed_pages:
+    - 1
+    - 5
+    - 8
+    - 20
+    - 41
+    - 45
+    - 52
+    - 55
+    - 107
+    - 110
+- unit_id: lecture-26
+  order: 26
+  title: Directed Acyclic Graphs
+  official_resource_title: Directed Acyclic Graphs
+  scheduled_date: '2024-03-18'
+  schedule_slide_url: https://docs.google.com/presentation/d/1UHVEYtQhV7EQ74ETn5MvCsnRzsCzmp3MvXL84hXbw-g
+  schedule_reading: Ch 28
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/28.-reductions-and-decomposition
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=HtXDt0gDvk4
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PLnp31xXvnfRprqOwH0sojH3VLONWXtYM0
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-26-slides
+    material_set_id: ucb-cs61b-sp24-lecture-26
+    type: pdf
+    title: Directed Acyclic Graphs lecture slides
+    official_url: https://docs.google.com/presentation/d/1UHVEYtQhV7EQ74ETn5MvCsnRzsCzmp3MvXL84hXbw-g
+    download_url: https://docs.google.com/presentation/d/1UHVEYtQhV7EQ74ETn5MvCsnRzsCzmp3MvXL84hXbw-g/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-26-directed-acyclic-graphs.pdf
+    file_size: 676285
+    page_count: 64
+    sha256: 33c61b6967c9cf129a051559a94f3df1f3d4773c12eaa151bc6e3dd32f8c54a4
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-26/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-26/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-26/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-26/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-26/review-plan.json
+    formula_candidate_count: 28
+    visual_reviewed_pages:
+    - 1
+    - 8
+    - 24
+    - 26
+    - 30
+    - 31
+    - 32
+    - 36
+    - 48
+    - 64
+- unit_id: lecture-27
+  order: 27
+  title: Software Engineering I
+  official_resource_title: Software Engineering I
+  scheduled_date: '2024-03-20'
+  schedule_slide_url: https://docs.google.com/presentation/d/15afX6n25MybwUmm58M2xn8KqjQbMYHTQcTJ7u3h_I2M
+  schedule_reading: Ch 27
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/27.-software-engineering-i
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=qhprXS1kw00
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/watch?v=JfATr-BBPY0
+  optional_on_official_schedule: true
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-27-slides
+    material_set_id: ucb-cs61b-sp24-lecture-27
+    type: pdf
+    title: Software Engineering I lecture slides
+    official_url: https://docs.google.com/presentation/d/15afX6n25MybwUmm58M2xn8KqjQbMYHTQcTJ7u3h_I2M
+    download_url: https://docs.google.com/presentation/d/15afX6n25MybwUmm58M2xn8KqjQbMYHTQcTJ7u3h_I2M/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-27-software-engineering-i.pdf
+    file_size: 2043794
+    page_count: 42
+    sha256: 26f2cc2871908a2f8e52a08b8254aabce9c49e6452fc072be58a3ddcc5145a13
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-27/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-27/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-27/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-27/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-27/review-plan.json
+    formula_candidate_count: 0
+    visual_reviewed_pages:
+    - 1
+    - 21
+    - 41
+    - 42
+- unit_id: lecture-28
+  order: 28
+  title: Prefix Operations and Tries
+  official_resource_title: Prefix Operations and Tries
+  scheduled_date: '2024-03-22'
+  schedule_slide_url: https://docs.google.com/presentation/d/1tcKJNY-ultPxwaHtYn-kd-DV7aXcuBQm6resYvpoCkw
+  schedule_reading: Ch 26
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/26.-prefix-operations-and-tries
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=ez4WLTrahBg
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/watch?v=F8Q-SHW2hAM&list=PLnp31xXvnfRoMxe8IbO1qF3lXwudLHVDk
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-28-slides
+    material_set_id: ucb-cs61b-sp24-lecture-28
+    type: pdf
+    title: Prefix Operations and Tries lecture slides
+    official_url: https://docs.google.com/presentation/d/1tcKJNY-ultPxwaHtYn-kd-DV7aXcuBQm6resYvpoCkw
+    download_url: https://docs.google.com/presentation/d/1tcKJNY-ultPxwaHtYn-kd-DV7aXcuBQm6resYvpoCkw/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-28-prefix-operations-and-tries.pdf
+    file_size: 831490
+    page_count: 59
+    sha256: 5f015b3f5c4c58101e826a0fc2c4d24503e3c60c852b817e07509f6ea0ffd129
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-28/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-28/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-28/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-28/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-28/review-plan.json
+    formula_candidate_count: 27
+    visual_reviewed_pages:
+    - 1
+    - 6
+    - 30
+    - 38
+    - 39
+    - 40
+    - 41
+    - 46
+    - 55
+    - 59
+- unit_id: lecture-29
+  order: 29
+  title: 'Sorting I: Selection Sort, Heapsort'
+  official_resource_title: 'Sorting I: Selection Sort, Heapsort'
+  scheduled_date: '2024-04-01'
+  schedule_slide_url: https://docs.google.com/presentation/d/1aleYBt-L8bwyaxw9tXPN3bMI5XxWxmpgfvvSEo9KxD0
+  schedule_reading: Ch 29
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/29.-basic-sorts
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=4D3VHeLLymg
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PLnp31xXvnfRrK9o_QZyGOCbQVFTsqOPtN
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-29-slides
+    material_set_id: ucb-cs61b-sp24-lecture-29
+    type: pdf
+    title: 'Sorting I: Selection Sort, Heapsort lecture slides'
+    official_url: https://docs.google.com/presentation/d/1aleYBt-L8bwyaxw9tXPN3bMI5XxWxmpgfvvSEo9KxD0
+    download_url: https://docs.google.com/presentation/d/1aleYBt-L8bwyaxw9tXPN3bMI5XxWxmpgfvvSEo9KxD0/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-29-sorting-i-selection-sort-heapsort.pdf
+    file_size: 519594
+    page_count: 95
+    sha256: a15c6da8ad65cd6300a20be0d9452f8034d4b71d287335b9268be2a29d8e3df1
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-29/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-29/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-29/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-29/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-29/review-plan.json
+    formula_candidate_count: 14
+    visual_reviewed_pages:
+    - 1
+    - 11
+    - 48
+    - 79
+    - 90
+    - 92
+    - 95
+- unit_id: lecture-30
+  order: 30
+  title: 'Sorting II: Mergesort and Insertion Sort'
+  official_resource_title: 'Sorting II: Mergesort and Insertion Sort'
+  scheduled_date: '2024-04-03'
+  schedule_slide_url: https://docs.google.com/presentation/d/1MqmOxfh1c6gS4hk9hvuRR_hWXWTnCIXMqLGXwRX4Pvk
+  schedule_reading: Ch 30
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/30.-quicksort
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=NSbdNXO8WaQ
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PLnp31xXvnfRqsfDWZNS86oYmHFY6UKA2t
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-30-slides
+    material_set_id: ucb-cs61b-sp24-lecture-30
+    type: pdf
+    title: 'Sorting II: Mergesort and Insertion Sort lecture slides'
+    official_url: https://docs.google.com/presentation/d/1MqmOxfh1c6gS4hk9hvuRR_hWXWTnCIXMqLGXwRX4Pvk
+    download_url: https://docs.google.com/presentation/d/1MqmOxfh1c6gS4hk9hvuRR_hWXWTnCIXMqLGXwRX4Pvk/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-30-sorting-ii-mergesort-and-insertion-sort.pdf
+    file_size: 628431
+    page_count: 112
+    sha256: b080fc9db7e7651d08d41b9172d05273faaee163f2b6a3392f3dda7ac9f27a28
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-30/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-30/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-30/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-30/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-30/review-plan.json
+    formula_candidate_count: 59
+    visual_reviewed_pages:
+    - 1
+    - 8
+    - 11
+    - 13
+    - 56
+    - 57
+    - 73
+    - 78
+    - 80
+    - 83
+    - 96
+    - 107
+    - 110
+    - 112
+- unit_id: lecture-31
+  order: 31
+  title: Software Engineering II
+  official_resource_title: Software Engineering II
+  scheduled_date: '2024-04-05'
+  schedule_slide_url: https://docs.google.com/presentation/d/1P1Uc8phy1GW1M4A8PA7mJJMWqb2QgOfewwwB1wMnFlU/edit#slide=id.g2c95eb66b0d_0_7
+  schedule_reading: Ch 31
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/31.-software-engineering-ii
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=8ZZmTVXDVZc
+  schedule_prerecorded_video_urls: []
+  optional_on_official_schedule: true
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-31-slides
+    material_set_id: ucb-cs61b-sp24-lecture-31
+    type: pdf
+    title: Software Engineering II lecture slides
+    official_url: https://docs.google.com/presentation/d/1P1Uc8phy1GW1M4A8PA7mJJMWqb2QgOfewwwB1wMnFlU/edit#slide=id.g2c95eb66b0d_0_7
+    download_url: https://docs.google.com/presentation/d/1P1Uc8phy1GW1M4A8PA7mJJMWqb2QgOfewwwB1wMnFlU/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-31-software-engineering-ii.pdf
+    file_size: 1895361
+    page_count: 51
+    sha256: 11d10c2250976b1e67e246c4b8a8b5d67c33d5a3224c62a30df4953babc266a6
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-31/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-31/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-31/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-31/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-31/review-plan.json
+    formula_candidate_count: 10
+    visual_reviewed_pages:
+    - 1
+    - 2
+    - 21
+    - 23
+    - 24
+    - 26
+    - 34
+    - 51
+- unit_id: lecture-32
+  order: 32
+  title: 'Sorting III: Quicksort'
+  official_resource_title: 'Sorting III: Quicksort'
+  scheduled_date: '2024-04-08'
+  schedule_slide_url: https://docs.google.com/presentation/d/11vRyW0ZPrsxUhRHCBgkygy01PlL1amB66n9FZQN03wo
+  schedule_reading: Ch 32
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/32.-more-quick-sort-sorting-summary
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=-DSHhIIIoeM
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PLnp31xXvnfRrHHQP93qqc_QBNBF_WEQLy
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-32-slides
+    material_set_id: ucb-cs61b-sp24-lecture-32
+    type: pdf
+    title: 'Sorting III: Quicksort lecture slides'
+    official_url: https://docs.google.com/presentation/d/11vRyW0ZPrsxUhRHCBgkygy01PlL1amB66n9FZQN03wo
+    download_url: https://docs.google.com/presentation/d/11vRyW0ZPrsxUhRHCBgkygy01PlL1amB66n9FZQN03wo/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-32-sorting-iii-quicksort.pdf
+    file_size: 724297
+    page_count: 80
+    sha256: a4f836a6b4e9ee9ac116be7bdb0aed9fa18423d8c1cfc9660c57886667eb9620
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-32/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-32/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-32/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-32/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-32/review-plan.json
+    formula_candidate_count: 31
+    visual_reviewed_pages:
+    - 1
+    - 17
+    - 18
+    - 23
+    - 31
+    - 33
+    - 39
+    - 40
+    - 41
+    - 80
+- unit_id: lecture-33
+  order: 33
+  title: 'Sorting IV: Sorting and Algorithmic Bounds'
+  official_resource_title: 'Sorting IV: Sorting and Algorithmic Bounds'
+  scheduled_date: '2024-04-10'
+  schedule_slide_url: https://docs.google.com/presentation/d/1sqpg9sM-0719KGcWzYmmrWlj0azaafgIAiM8U98jKi4/edit
+  schedule_reading: Ch 34
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/34.-sorting-and-algorithmic-bounds
+  schedule_recording_urls:
+  - https://youtu.be/WOLogwH6mYg
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PLnp31xXvnfRqEadgCMXeo1gnlIxnETooG
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-33-slides
+    material_set_id: ucb-cs61b-sp24-lecture-33
+    type: pdf
+    title: 'Sorting IV: Sorting and Algorithmic Bounds lecture slides'
+    official_url: https://docs.google.com/presentation/d/1sqpg9sM-0719KGcWzYmmrWlj0azaafgIAiM8U98jKi4/edit
+    download_url: https://docs.google.com/presentation/d/1sqpg9sM-0719KGcWzYmmrWlj0azaafgIAiM8U98jKi4/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-33-sorting-iv-sorting-and-algorithmic-bounds.pdf
+    file_size: 922815
+    page_count: 76
+    sha256: 9aaf5728e92883952bfa3e02cba69812766df48aee288f82ac1903a257f9cd31
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-33/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-33/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-33/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-33/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-33/review-plan.json
+    formula_candidate_count: 37
+    visual_reviewed_pages:
+    - 1
+    - 3
+    - 20
+    - 29
+    - 37
+    - 38
+    - 44
+    - 59
+    - 63
+    - 66
+    - 67
+    - 69
+    - 70
+    - 76
+- unit_id: lecture-34
+  order: 34
+  title: Software Engineering III
+  official_resource_title: Software Engineering III
+  scheduled_date: '2024-04-12'
+  schedule_slide_url: https://docs.google.com/presentation/d/1nE_oD8Mx6tRcO6zOnz7KbSxCtaZpaoDlcPhKzfNXrqI/edit?usp=sharing
+  schedule_reading: Ch 33
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/33.-software-engineering-iii
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=8XY1TNODHw4
+  schedule_prerecorded_video_urls: []
+  optional_on_official_schedule: true
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-34-recording-transcript
+    material_set_id: ucb-cs61b-sp24-lecture-34
+    type: pdf
+    title: Software Engineering III official recording ASR transcript fallback
+    official_url: https://www.youtube.com/watch?v=8XY1TNODHw4
+    download_url: https://www.youtube.com/watch?v=8XY1TNODHw4
+    local_path: data/raw/ucb-cs61b/spring-2024/derived/lecture-34-software-engineering-iii-recording-transcript.pdf
+    file_size: 30195
+    page_count: 9
+    sha256: f8ee50a1cac26978ee61b9e3d99000f2113e4334f9755b5107cf8b0d4299d683
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-34/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-34/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-34/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-34/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-34/review-plan.json
+    formula_candidate_count: 1
+    visual_reviewed_pages:
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+    source_role: official_recording_asr_transcript_fallback
+    scheduled_slide_url: https://docs.google.com/presentation/d/1nE_oD8Mx6tRcO6zOnz7KbSxCtaZpaoDlcPhKzfNXrqI/edit?usp=sharing
+    scheduled_slide_download_url: https://docs.google.com/presentation/d/1nE_oD8Mx6tRcO6zOnz7KbSxCtaZpaoDlcPhKzfNXrqI/export/pdf
+    scheduled_slide_access_status: authentication_required
+    raw_caption_vtt_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-34-software-engineering-iii.en.vtt
+    raw_caption_vtt_sha256: 6dd96bfb6c707f284fa8a5756726e92495b69c4dc69a6f80f736868a5beaff90
+    raw_caption_json3_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-34-software-engineering-iii.en.json3
+    raw_caption_json3_sha256: e5723d8dafb9dd3b2727fb139c5451c2e2cdbe88249359aa3c59c836229cef13
+    derived_markdown_path: data/raw/ucb-cs61b/spring-2024/derived/lecture-34-software-engineering-iii-recording-transcript.md
+    derived_markdown_sha256: e39d8c854282ce569f486ac0050c4c45a8198ec0f5b760d3981c6d00a7d75ca6
+    derivation_status: deterministic_uncorrected_automatic_caption_transcript
+    notes: Fallback is derived from the official public Spring 2024 recording's English ASR captions;
+      it is not the inaccessible original slide deck and may contain recognition errors.
+- unit_id: lecture-35
+  order: 35
+  title: 'Sorting V: More Quicksort, Radix Sorts'
+  official_resource_title: 'Sorting V: More Quicksort, Radix Sorts'
+  scheduled_date: '2024-04-15'
+  schedule_slide_url: https://docs.google.com/presentation/d/14jNEZC-YKUuxIr3Cxsvz1Kb6eX0jCjvjevb1zD8NRj4
+  schedule_reading: Ch 35
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/35.-radix-sorts
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=pOe_5A11OB0
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PLnp31xXvnfRr4cg5TeJZplLTlOVmMNE0d
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-35-slides
+    material_set_id: ucb-cs61b-sp24-lecture-35
+    type: pdf
+    title: 'Sorting V: More Quicksort, Radix Sorts lecture slides'
+    official_url: https://docs.google.com/presentation/d/14jNEZC-YKUuxIr3Cxsvz1Kb6eX0jCjvjevb1zD8NRj4
+    download_url: https://docs.google.com/presentation/d/14jNEZC-YKUuxIr3Cxsvz1Kb6eX0jCjvjevb1zD8NRj4/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-35-sorting-v-more-quicksort-radix-sorts.pdf
+    file_size: 569547
+    page_count: 79
+    sha256: adf4422a8a7f771036a6948409a2206a99917734d07086dabc35e17da7d7f0ac
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-35/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-35/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-35/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-35/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-35/review-plan.json
+    formula_candidate_count: 15
+    visual_reviewed_pages:
+    - 1
+    - 8
+    - 40
+    - 59
+    - 63
+    - 70
+    - 79
+- unit_id: lecture-36
+  order: 36
+  title: 'Sorting VI: Radix vs. Comparison Sorting'
+  official_resource_title: 'Sorting VI: Radix vs. Comparison Sorting'
+  scheduled_date: '2024-04-17'
+  schedule_slide_url: https://docs.google.com/presentation/d/1wSTXwNB-D75VbHCtKqnr7QlOQtV-3wg6vTLNpNw7Qwk
+  schedule_reading: Ch 36
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/36.-sorting-and-data-structures-conclusion
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=EwqK7T5MsPI
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PLnp31xXvnfRoDV1sFRy3Hdx0N6BMZjI1n
+  optional_on_official_schedule: false
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-36-slides
+    material_set_id: ucb-cs61b-sp24-lecture-36
+    type: pdf
+    title: 'Sorting VI: Radix vs. Comparison Sorting lecture slides'
+    official_url: https://docs.google.com/presentation/d/1wSTXwNB-D75VbHCtKqnr7QlOQtV-3wg6vTLNpNw7Qwk
+    download_url: https://docs.google.com/presentation/d/1wSTXwNB-D75VbHCtKqnr7QlOQtV-3wg6vTLNpNw7Qwk/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-36-sorting-vi-radix-vs-comparison-sorting.pdf
+    file_size: 380053
+    page_count: 44
+    sha256: bbacceb1bb4e2bfeb47d452ca67fce5de723c552e4c00f684fc966b3bd2215c7
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-36/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-36/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-36/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-36/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-36/review-plan.json
+    formula_candidate_count: 23
+    visual_reviewed_pages:
+    - 1
+    - 3
+    - 6
+    - 16
+    - 20
+    - 22
+    - 27
+    - 31
+    - 44
+- unit_id: lecture-37
+  order: 37
+  title: Software Engineering IV
+  official_resource_title: Software Engineering IV
+  scheduled_date: '2024-04-19'
+  schedule_slide_url: https://docs.google.com/presentation/d/13TE3w603C6zt1q5vWRL9WmbwxkG0VjFluIIHSbV0qNU/edit
+  schedule_reading: Ch 37
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/37-software-engineering-iv
+  schedule_recording_urls:
+  - https://youtu.be/ePwXhqEP5j0?si=fWxxOIUydgU68KFK
+  schedule_prerecorded_video_urls: []
+  optional_on_official_schedule: true
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-37-slides
+    material_set_id: ucb-cs61b-sp24-lecture-37
+    type: pdf
+    title: Software Engineering IV lecture slides
+    official_url: https://docs.google.com/presentation/d/13TE3w603C6zt1q5vWRL9WmbwxkG0VjFluIIHSbV0qNU/edit
+    download_url: https://docs.google.com/presentation/d/13TE3w603C6zt1q5vWRL9WmbwxkG0VjFluIIHSbV0qNU/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-37-software-engineering-iv.pdf
+    file_size: 7491736
+    page_count: 51
+    sha256: 67043ce29873337dacc56a4d76979a50b559a8512ebbb55f8b55066c687a7024
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-37/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-37/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-37/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-37/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-37/review-plan.json
+    formula_candidate_count: 6
+    visual_reviewed_pages:
+    - 1
+    - 26
+    - 31
+    - 32
+    - 39
+    - 47
+    - 51
+- unit_id: lecture-38
+  order: 38
+  title: Compression
+  official_resource_title: Compression
+  scheduled_date: '2024-04-22'
+  schedule_slide_url: https://docs.google.com/presentation/d/1k4tgpf7xaW-uhlHYlp3izZRYtBGMYPVRlHCmmpN6QXQ
+  schedule_reading: Ch 38
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/38.-compression-and-complexity
+  schedule_recording_urls:
+  - https://youtu.be/yq_besFUtIM
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PL8FaHk7qbOD6kGO6F1uWKggr-Ie9TCMUZ&disable_polymer=true
+  optional_on_official_schedule: true
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-38-slides
+    material_set_id: ucb-cs61b-sp24-lecture-38
+    type: pdf
+    title: Compression lecture slides
+    official_url: https://docs.google.com/presentation/d/1k4tgpf7xaW-uhlHYlp3izZRYtBGMYPVRlHCmmpN6QXQ
+    download_url: https://docs.google.com/presentation/d/1k4tgpf7xaW-uhlHYlp3izZRYtBGMYPVRlHCmmpN6QXQ/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-38-compression.pdf
+    file_size: 944310
+    page_count: 71
+    sha256: e64e1abcca8be93156b4283b0eca031546de83fe73349b64aee952b5e5533d98
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-38/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-38/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-38/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-38/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-38/review-plan.json
+    formula_candidate_count: 15
+    visual_reviewed_pages:
+    - 1
+    - 4
+    - 8
+    - 10
+    - 11
+    - 22
+    - 23
+    - 36
+    - 64
+    - 66
+    - 71
+- unit_id: lecture-39
+  order: 39
+  title: Complexity and P=NP?
+  official_resource_title: Complexity and P=NP?
+  scheduled_date: '2024-04-24'
+  schedule_slide_url: https://docs.google.com/presentation/d/1QFwbmMVE0Wlvg-gnWnemTxRX_t7h6IlhCQU69dcAkaA
+  schedule_reading: Ch 39
+  schedule_reading_urls:
+  - https://cs61b-2.gitbook.io/cs61b-textbook/39.-compression-complexity-p-np
+  schedule_recording_urls:
+  - https://youtu.be/T2yVIIvWewI
+  schedule_prerecorded_video_urls:
+  - https://www.youtube.com/playlist?list=PL8FaHk7qbOD5nfUOOXco_8Sx5Nkt-Wgq8
+  optional_on_official_schedule: true
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-39-slides
+    material_set_id: ucb-cs61b-sp24-lecture-39
+    type: pdf
+    title: Complexity and P=NP? lecture slides
+    official_url: https://docs.google.com/presentation/d/1QFwbmMVE0Wlvg-gnWnemTxRX_t7h6IlhCQU69dcAkaA
+    download_url: https://docs.google.com/presentation/d/1QFwbmMVE0Wlvg-gnWnemTxRX_t7h6IlhCQU69dcAkaA/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-39-complexity-and-p-np.pdf
+    file_size: 1358264
+    page_count: 55
+    sha256: 513e64161b2f0d1d88eb10a834b96fcbc06be2a00e1300ff1dd5d04d7c96ae73
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-39/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-39/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-39/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-39/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-39/review-plan.json
+    formula_candidate_count: 20
+    visual_reviewed_pages:
+    - 1
+    - 18
+    - 20
+    - 28
+    - 47
+    - 51
+    - 52
+    - 55
+- unit_id: lecture-40
+  order: 40
+  title: Summary, Fun
+  official_resource_title: Summary, Fun
+  scheduled_date: '2024-04-26'
+  schedule_slide_url: https://docs.google.com/presentation/d/1MmnYUoi-4Wyt6_3BcBdt_WkrL1XECZ9ypCyUmhW7e2U
+  schedule_reading: null
+  schedule_reading_urls: []
+  schedule_recording_urls:
+  - https://www.youtube.com/watch?v=utxAtIWl8Xw
+  schedule_prerecorded_video_urls: []
+  optional_on_official_schedule: true
+  description_status: derived_from_official_schedule
+  inherits_course_prerequisites: true
+  core_demo: false
+  sources:
+  - source_id: ucb-cs61b-sp24-lecture-40-slides
+    material_set_id: ucb-cs61b-sp24-lecture-40
+    type: pdf
+    title: Summary, Fun lecture slides
+    official_url: https://docs.google.com/presentation/d/1MmnYUoi-4Wyt6_3BcBdt_WkrL1XECZ9ypCyUmhW7e2U
+    download_url: https://docs.google.com/presentation/d/1MmnYUoi-4Wyt6_3BcBdt_WkrL1XECZ9ypCyUmhW7e2U/export/pdf
+    local_path: data/raw/ucb-cs61b/spring-2024/site/lectures/lecture-40-summary-fun.pdf
+    file_size: 1479030
+    page_count: 36
+    sha256: 8abc835a9bd8d2971c7a018a46df5d6394443a696543ef2d18398bd23e790518
+    access_status: public
+    license_status: unknown
+    redistribution_allowed: false
+    processing_status: chunks_ready_visual_qa_passed
+    index_allowed: true
+    anchor_type: page
+    parser_version: pdf-page-v0.2
+    chunks_path: data/sources/ucb-cs61b-spring-2024/lecture-40/chunks.jsonl
+    page_images_path: data/sources/ucb-cs61b-spring-2024/lecture-40/page-images-lowres/
+    formula_candidates_path: data/sources/ucb-cs61b-spring-2024/lecture-40/formula-candidates.json
+    ingestion_report_path: data/sources/ucb-cs61b-spring-2024/lecture-40/ingestion-report.json
+    review_plan_path: data/sources/ucb-cs61b-spring-2024/lecture-40/review-plan.json
+    formula_candidate_count: 3
+    visual_reviewed_pages:
+    - 1
+    - 3
+    - 6
+    - 9
+    - 10
+    - 11
+    - 18
+    - 35
+    - 36

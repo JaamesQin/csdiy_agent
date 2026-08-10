@@ -90,6 +90,7 @@ Agent 编排：意图路由、主动画像、静态代码辅导、安全校验
 | CourseManifest 与来源审核 | 已完成初稿 |
 | Lecture 2 黄金 StudyKit | v0.1 已通过 Schema、引用、术语、公式方向复核和人工批准 |
 | Lecture 8 StudyKit | v0.1 已完成 Schema、引用、术语、公式方向、练习事实性复核和人工批准 |
+| 全课程 portable StudyKit 包 | Lecture 01–21、23、24 共 23 讲已验证并批准待入库；暂存于 `data/reviewed/`，尚未接入在线 Catalog |
 | SourceChunk Schema 与 PDF 页级解析 | 已完成；Lecture 2、8 的 chunks 已在本地生成并通过校验，未随公开仓库上传 |
 | 黄金 StudyKit 在线读取 | 已完成：Lecture 2、8，只读人工批准版本 |
 | 线上 SourceChunk 检索与 RAG | 尚未开始 |

@@ -1,0 +1,391 @@
+studykit_version: '0.1'
+status: draft
+course_id: mit-6.7960-fall-2024
+course_version: fall-2024
+unit_id: lecture-06
+title: Lecture 6：神经网络泛化
+language: zh-CN
+scope:
+  included_sources:
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    title: 'Lecture 6: Neural Network Generalization'
+    type: pdf
+    sha256: 4d0ff8f34ed93ae58cb4eb9ddfa8f9eb08fa64f4cddae338f933da73356bb476
+  citation_anchor_types:
+  - page
+learning_objectives:
+- id: lo1
+  objective: 区分经验风险、总体风险、近似、优化与泛化问题。
+- id: lo2
+  objective: 解释拟合或记忆训练数据为何不足以保证泛化。
+- id: lo3
+  objective: 解释经典复杂度图景、插值与双下降的张力。
+- id: lo4
+  objective: 比较多种归纳偏置并限定其证据范围。
+prerequisites:
+- topic: 监督学习
+  required_level: 理解训练集、测试集、损失与模型拟合
+- topic: 基础概率
+  required_level: 理解数据分布上的期望
+- topic: 神经网络优化
+  required_level: 知道梯度下降、初始化与权重衰减
+outline:
+- order: 1
+  topic: 泛化问题定义
+  anchors:
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 3
+  purpose: 建立风险与误差术语。
+- order: 2
+  topic: 记忆与归纳偏置
+  anchors:
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 6
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 19
+  purpose: 理解拟合训练集之外的问题。
+- order: 3
+  topic: 复杂度、插值与双下降
+  anchors:
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 30
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 42
+  purpose: 比较经典理论与深网现象。
+- order: 4
+  topic: 深网中的偏置来源
+  anchors:
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 50
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 61
+  purpose: 组织参数化、深度、优化和架构偏置。
+core_concepts:
+- id: c1
+  term: 经验风险与总体风险
+  claim_type: source_summary
+  explanation: 训练直接最小化训练样本上的经验风险，而目标是在数据分布上的总体风险较小；泛化关注二者差异。
+  citations:
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 3
+- id: c2
+  term: 记忆与归纳偏置
+  claim_type: source_summary
+  explanation: 文件柜模型能保存训练样本，却没有为新输入提供可靠规则；拟合之外还要考察系统偏向哪些函数。
+  citations:
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 6
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 19
+- id: c3
+  term: 插值与双下降
+  claim_type: source_summary
+  explanation: 在刚达到零训练误差的插值阈值附近，测试风险可能升高；容量继续增加后，测试风险又可能下降。
+  citations:
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 29
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 30
+- id: c4
+  term: 简单性与低秩偏置
+  claim_type: source_summary
+  explanation: 课件讨论参数—函数映射中的简单性偏好，以及深度与表示有效秩之间的经验关系；它们不是无条件泛化保证。
+  citations:
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 50
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 52
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 60
+- id: c5
+  term: 隐式正则化与结构先验
+  claim_type: source_summary
+  explanation: 优化器、初始化、权重衰减、架构对称性与领域约束都可能偏好某些解；恰当的深网复杂度度量仍是开放问题。
+  citations:
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 46
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 61
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 62
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 63
+glossary:
+- term: empirical risk
+  definition: 训练样本上的平均损失。
+- term: population risk
+  definition: 数据分布上的期望损失。
+- term: interpolation
+  definition: 把训练样本拟合到零训练误差。
+- term: inductive bias
+  definition: 学习系统在多个拟合解之间的偏好。
+- term: implicit regularization
+  definition: 优化过程对所选解产生的隐含偏好。
+common_misconceptions:
+- misconception: 训练误差为零就代表已经泛化。
+  correction: 零训练误差只说明拟合训练样本。
+- misconception: 参数越多测试性能必然越差。
+  correction: 双下降图景包含插值后测试风险再次下降的区域。
+- misconception: 一种偏置已经完整解释所有深网泛化。
+  correction: 课件并列多种机制并保留开放问题。
+learning_sequence:
+- step: 1
+  activity: 建立风险与泛化术语。
+  duration_minutes: 25
+  citations:
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 3
+- step: 2
+  activity: 分析文件柜模型与归纳偏置。
+  duration_minutes: 30
+  citations:
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 6
+- step: 3
+  activity: 比较复杂度视角与双下降。
+  duration_minutes: 40
+  citations:
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 30
+- step: 4
+  activity: 分析随机标签与复杂度度量。
+  duration_minutes: 30
+  citations:
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 42
+- step: 5
+  activity: 比较多种深网归纳偏置。
+  duration_minutes: 45
+  citations:
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 50
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 61
+- step: 6
+  activity: 复盘证据范围。
+  duration_minutes: 10
+practice:
+- id: p1
+  level: 基础
+  question: 区分经验风险、总体风险与泛化问题。
+  hint: 指出各自使用的数据范围。
+  deliverable: 三条定义。
+  expected_evidence:
+  - 训练样本
+  - 数据分布
+  - 二者差异
+  evaluation:
+    full_credit: 三者区分清楚
+    partial_credit: 只区分训练与测试
+  citations:
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 3
+- id: p2
+  level: 应用
+  question: 用文件柜模型解释为什么记住训练样本仍可能总体风险很高。
+  hint: 考虑未存过的新输入。
+  deliverable: 100 字解释。
+  expected_evidence:
+  - 区分记忆与规则
+  - 联系未见数据
+  evaluation:
+    full_credit: 解释链完整
+    partial_credit: 结论正确但理由不足
+  citations:
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 6
+- id: p3
+  level: 分析
+  question: 画出双下降定性图，标出经典区、插值阈值和过参数化区并解释趋势。
+  hint: 无需精确数值。
+  deliverable: 带标签草图与说明。
+  expected_evidence:
+  - 插值阈值
+  - 测试风险峰值
+  - 插值后可能下降
+  evaluation:
+    full_credit: 区域和趋势完整
+    partial_credit: 图形基本正确
+  citations:
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 30
+- id: p4
+  level: 分析
+  question: 随机标签可被拟合为何会让简单容量界变宽松？它是否证明所有神经网络都不能泛化？
+  hint: 区分能拟合与会选择哪个解。
+  deliverable: 两段论证。
+  expected_evidence:
+  - 容量界可能宽松
+  - 不作全称否定
+  - 引出选择偏置
+  evaluation:
+    full_credit: 证据与限制清楚
+    partial_credit: 只解释容量问题
+  citations:
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 42
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 46
+- id: p5
+  level: 综合
+  question: 比较参数化简单性、深度低秩、优化器、架构对称性和领域约束五类偏置，并写明各自不能推出什么。
+  hint: 用表格组织证据和边界。
+  deliverable: 五行比较表。
+  expected_evidence:
+  - 覆盖五类偏置
+  - 证据锚点
+  - 范围限定
+  evaluation:
+    full_credit: 五类完整且范围准确
+    partial_credit: 至少三类完整
+  citations:
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 50
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 52
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 61
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 62
+  - source_id: mit6-7960-f24-lec6-4d0ff8f34e
+    anchor:
+      type: page
+      value: 63
+citations:
+- citation_id: l06-c1
+  source_id: mit6-7960-f24-lec6-4d0ff8f34e
+  anchor:
+    type: page
+    value: 3
+  supports: 经验风险、总体风险与泛化
+- citation_id: l06-c2
+  source_id: mit6-7960-f24-lec6-4d0ff8f34e
+  anchor:
+    type: page
+    value: 6
+  supports: 文件柜模型
+- citation_id: l06-c3
+  source_id: mit6-7960-f24-lec6-4d0ff8f34e
+  anchor:
+    type: page
+    value: 19
+  supports: 简单模块化归纳偏置
+- citation_id: l06-c4
+  source_id: mit6-7960-f24-lec6-4d0ff8f34e
+  anchor:
+    type: page
+    value: 30
+  supports: 双下降图景
+- citation_id: l06-c5
+  source_id: mit6-7960-f24-lec6-4d0ff8f34e
+  anchor:
+    type: page
+    value: 42
+  supports: 随机标签拟合观察
+- citation_id: l06-c6
+  source_id: mit6-7960-f24-lec6-4d0ff8f34e
+  anchor:
+    type: page
+    value: 50
+  supports: 参数—函数映射的简单性偏置
+- citation_id: l06-c7
+  source_id: mit6-7960-f24-lec6-4d0ff8f34e
+  anchor:
+    type: page
+    value: 52
+  supports: 深度低秩偏置
+- citation_id: l06-c8
+  source_id: mit6-7960-f24-lec6-4d0ff8f34e
+  anchor:
+    type: page
+    value: 61
+  supports: 优化器隐式正则化
+- citation_id: l06-c9
+  source_id: mit6-7960-f24-lec6-4d0ff8f34e
+  anchor:
+    type: page
+    value: 62
+  supports: 架构对称性
+- citation_id: l06-c10
+  source_id: mit6-7960-f24-lec6-4d0ff8f34e
+  anchor:
+    type: page
+    value: 63
+  supports: 领域特定约束
+review:
+  generator_review_status: passed_with_source_warnings
+  audit_findings:
+  - 风险公式未作逐符号转写
+  - 经验观察均保留范围限定
+limitations:
+- 风险公式的 PDF 文本抽取存在符号次序噪声，本候选只保留可核对的概念关系。
+- 双下降和多种偏置按课件中的经验观察或解释框架表述，不构成普遍泛化保证。
+- 发布前需人工对照图示密集页面复核。

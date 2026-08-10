@@ -1,0 +1,345 @@
+studykit_version: '0.1'
+status: draft
+course_id: mit-6.7960-fall-2024
+course_version: fall-2024
+unit_id: lecture-11
+title: Lecture 11：表示学习 I
+language: zh-CN
+scope:
+  included_sources:
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    title: 'Lecture 11: Representation Learning I'
+    type: pdf
+    sha256: 5c0ea53f8ad62508b27c558524ce379907758e08a536ea31938ac912835328a5
+  citation_anchor_types:
+  - page
+learning_objectives:
+- id: lo1
+  objective: 定义向量表示、编码器和逐层表示变换。
+- id: lo2
+  objective: 解释表示迁移与微调的基本流程。
+- id: lo3
+  objective: 从多个标准评价表示。
+- id: lo4
+  objective: 比较压缩和预测两类表示学习路线。
+prerequisites:
+- topic: 神经网络前向传播
+  required_level: 理解层、参数和特征向量
+- topic: 监督学习
+  required_level: 理解训练与下游任务
+- topic: 向量与距离
+  required_level: 能读懂向量空间和欧氏距离
+outline:
+- order: 1
+  topic: 表示与编码器
+  anchors:
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    anchor:
+      type: page
+      value: 22
+  purpose: 建立形式定义。
+- order: 2
+  topic: 迁移与微调
+  anchors:
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    anchor:
+      type: page
+      value: 29
+  purpose: 理解表示复用。
+- order: 3
+  topic: 好表示的维度
+  anchors:
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    anchor:
+      type: page
+      value: 31
+  purpose: 建立评价框架。
+- order: 4
+  topic: 压缩式方法
+  anchors:
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    anchor:
+      type: page
+      value: 35
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    anchor:
+      type: page
+      value: 48
+  purpose: 理解自编码、聚类和量化。
+- order: 5
+  topic: 预测式自监督方法
+  anchors:
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    anchor:
+      type: page
+      value: 56
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    anchor:
+      type: page
+      value: 62
+  purpose: 理解预文本任务与掩码预测。
+core_concepts:
+- id: c1
+  term: 表示与编码器
+  claim_type: source_summary
+  explanation: 编码器把输入映射为特征向量；深网每层可看作表示之间的变换。
+  citations:
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    anchor:
+      type: page
+      value: 6
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    anchor:
+      type: page
+      value: 22
+- id: c2
+  term: 迁移与微调
+  claim_type: source_summary
+  explanation: 表示可作为先验知识支持新任务；微调用任务 A 的参数初始化任务 B 并继续训练。
+  citations:
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    anchor:
+      type: page
+      value: 24
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    anchor:
+      type: page
+      value: 29
+- id: c3
+  term: 好表示的性质
+  claim_type: source_summary
+  explanation: 紧凑、充分、解耦、可解释和利于下游任务是课件列出的评价维度，不是统一充分条件。
+  citations:
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    anchor:
+      type: page
+      value: 31
+- id: c4
+  term: 压缩式表示学习
+  claim_type: source_summary
+  explanation: 压缩路线去除冗余或把连续数据量化为离散类别，包含自编码、聚类和向量量化等方法。
+  citations:
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    anchor:
+      type: page
+      value: 35
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    anchor:
+      type: page
+      value: 48
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    anchor:
+      type: page
+      value: 49
+- id: c5
+  term: 预测式自监督学习
+  claim_type: source_summary
+  explanation: 自监督从原始数据构造预测目标；掩码预测是代表方法。其优于普通自编码的原因在课件中仍是开放问题。
+  citations:
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    anchor:
+      type: page
+      value: 56
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    anchor:
+      type: page
+      value: 62
+glossary:
+- term: encoder
+  definition: 把输入映射为特征向量的函数。
+- term: finetuning
+  definition: 用预训练参数初始化新任务并继续训练。
+- term: vector quantization
+  definition: 把连续数据映射到离散代码。
+- term: pretext task
+  definition: 从原始数据构造目标的自监督任务。
+- term: imputation
+  definition: 预测缺失数据。
+common_misconceptions:
+- misconception: 表示只存在于网络最终输出。
+  correction: 中间层也形成表示。
+- misconception: 自监督完全没有监督信号。
+  correction: 它从数据自身构造目标。
+- misconception: 掩码预测优势已有定论。
+  correction: 课件明确称其原因仍是开放问题。
+learning_sequence:
+- step: 1
+  activity: 学习表示与编码器并完成数据流练习。
+  duration_minutes: 25
+  citations:
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    anchor:
+      type: page
+      value: 22
+- step: 2
+  activity: 学习迁移与微调。
+  duration_minutes: 25
+  citations:
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    anchor:
+      type: page
+      value: 29
+- step: 3
+  activity: 评价好表示的多个维度。
+  duration_minutes: 30
+  citations:
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    anchor:
+      type: page
+      value: 31
+- step: 4
+  activity: 学习压缩式方法。
+  duration_minutes: 40
+  citations:
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    anchor:
+      type: page
+      value: 35
+- step: 5
+  activity: 学习自监督和掩码预测。
+  duration_minutes: 45
+  citations:
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    anchor:
+      type: page
+      value: 56
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    anchor:
+      type: page
+      value: 62
+- step: 6
+  activity: 复盘压缩与预测方法地图。
+  duration_minutes: 15
+practice:
+- id: p1
+  level: 基础
+  question: 写出输入、编码器、表示向量和下游分类器的数据流。
+  hint: 编码器输出向量。
+  deliverable: 箭头图与符号说明。
+  expected_evidence:
+  - 输入经编码器得到向量
+  - 下游任务使用表示
+  evaluation:
+    full_credit: 数据流正确
+    partial_credit: 术语不完整
+  citations:
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    anchor:
+      type: page
+      value: 22
+- id: p2
+  level: 应用
+  question: 比较冻结编码器与端到端微调会更新哪些参数。
+  hint: 考虑预训练参数是否继续变化。
+  deliverable: 两列表格。
+  expected_evidence:
+  - 冻结只更新新头
+  - 微调更新部分或全部预训练参数
+  evaluation:
+    full_credit: 边界清楚
+    partial_credit: 只说明一种
+  citations:
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    anchor:
+      type: page
+      value: 29
+- id: p3
+  level: 分析
+  question: 从五个评价维度检查一个表示，并举出一个维度间权衡。
+  hint: 低维不必然充分。
+  deliverable: 五行检查表。
+  expected_evidence:
+  - 五个维度
+  - 至少一个权衡
+  evaluation:
+    full_credit: 维度和权衡合理
+    partial_credit: 覆盖至少三个维度
+  citations:
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    anchor:
+      type: page
+      value: 31
+- id: p4
+  level: 分析
+  question: 把自编码、k-means、未来预测、补全和预文本任务按压缩/预测分类。
+  hint: 参考方法表。
+  deliverable: 五行分类表。
+  expected_evidence:
+  - 分类正确
+  - 解释两类目标
+  evaluation:
+    full_credit: 五项均正确
+    partial_credit: 至少四项正确
+  citations:
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    anchor:
+      type: page
+      value: 35
+- id: p5
+  level: 综合
+  question: 解释掩码预测可能优于普通自编码的三条课件假设，并说明证据边界。
+  hint: 瓶颈、复制捷径、下游任务。
+  deliverable: 三点加一条边界。
+  expected_evidence:
+  - 三条假设
+  - 明确开放问题
+  evaluation:
+    full_credit: 假设和边界准确
+    partial_credit: 列出两条假设
+  citations:
+  - source_id: mit6-7960-f24-lec11-5c0ea53f8a
+    anchor:
+      type: page
+      value: 62
+citations:
+- citation_id: l11-c1
+  source_id: mit6-7960-f24-lec11-5c0ea53f8a
+  anchor:
+    type: page
+    value: 22
+  supports: 表示与编码器定义
+- citation_id: l11-c2
+  source_id: mit6-7960-f24-lec11-5c0ea53f8a
+  anchor:
+    type: page
+    value: 29
+  supports: 微调流程
+- citation_id: l11-c3
+  source_id: mit6-7960-f24-lec11-5c0ea53f8a
+  anchor:
+    type: page
+    value: 31
+  supports: 好表示的评价维度
+- citation_id: l11-c4
+  source_id: mit6-7960-f24-lec11-5c0ea53f8a
+  anchor:
+    type: page
+    value: 35
+  supports: 压缩与预测两类路线
+- citation_id: l11-c5
+  source_id: mit6-7960-f24-lec11-5c0ea53f8a
+  anchor:
+    type: page
+    value: 48
+  supports: k-means 压缩视角
+- citation_id: l11-c6
+  source_id: mit6-7960-f24-lec11-5c0ea53f8a
+  anchor:
+    type: page
+    value: 56
+  supports: 自监督预文本任务
+- citation_id: l11-c7
+  source_id: mit6-7960-f24-lec11-5c0ea53f8a
+  anchor:
+    type: page
+    value: 62
+  supports: 掩码预测假设与开放问题
+review:
+  generator_review_status: passed_with_source_warnings
+  audit_findings:
+  - 评价维度不作为充分条件
+  - 掩码预测原因保留开放问题标签
+limitations:
+- 图像神经元可视化仅作为观察性材料，不支持因果结论。
+- 掩码预测优于自编码的原因按课件标注为假设和开放问题。
+- 发布前仍需人工语义复核。

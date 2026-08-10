@@ -1,0 +1,11 @@
+{
+  "unit_id": "lecture-11",
+  "verdict": "pass_with_warnings",
+  "checks": {"identity": "pass", "coverage": "pass", "citation_anchors": "pass", "visual_fidelity": "pass", "ordering": "pass", "timing_minutes": 180, "academic_integrity": "pass", "copyright": "pass"},
+  "issues": [
+    {"id": "w1", "severity": "warning", "category": "evidence_scope", "location": "core_concepts.c3", "message": "好表示的性质是课件列出的评价维度，不应解读为同时可满足的充分条件。"},
+    {"id": "w2", "severity": "warning", "category": "open_question", "location": "core_concepts.c5", "message": "掩码预测优于自编码的原因被课件明确标为假设和开放问题。"}
+  ],
+  "repair_targets": [],
+  "publication_gate": "human_review_required"
+}

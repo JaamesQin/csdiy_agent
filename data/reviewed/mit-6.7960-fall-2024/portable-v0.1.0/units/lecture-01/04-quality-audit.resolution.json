@@ -1,0 +1,8 @@
+{
+  "stage":"04-quality-audit-resolution",
+  "unit_id":"lecture-01",
+  "status":"no_repair_needed",
+  "repairs":[],
+  "remaining_blockers":[],
+  "assembly_instruction":"从已审计的 02-learning-content.json 与 03-practice-flow.json 组装；内部 expected_evidence 保留在 JSON 数据模型中，但 learner Markdown 不渲染。"
+}
