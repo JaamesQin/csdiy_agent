@@ -1,0 +1,1810 @@
+{
+  "studykit_version": "0.1",
+  "status": "draft",
+  "generation_policy": "draft",
+  "material_scope": "public",
+  "course_id": "mit-6.7960-fall-2024",
+  "course_version": "fall-2024",
+  "unit_id": "lecture-09",
+  "title": "Lecture 9：深度学习实践与调试指南",
+  "language": "zh-CN",
+  "estimated_study_time_minutes": 180,
+  "scope": {
+    "included_sources": [
+      {
+        "source_id": "mit6-7960-f24-lec9-132cf6994a",
+        "title": "Lecture 9: Hacker's Guide to Deep Learning",
+        "type": "application/pdf",
+        "sha256": "132cf6994a86b2ea3329d3d51259fafec0fa3377e26560eb28bdadef338ed730"
+      }
+    ],
+    "citation_anchor_types": [
+      "page"
+    ]
+  },
+  "learning_objectives": [
+    {
+      "id": "lo-1",
+      "objective": "建立从原始样本、预处理后张量到模型输入的逐层数据检查清单。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 7
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 12
+          }
+        }
+      ]
+    },
+    {
+      "id": "lo-2",
+      "objective": "解释标准化、数据增强与问题难度之间的关系，并用训练曲线诊断数据是否过易或尚未拟合。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 14
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 15
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        }
+      ]
+    },
+    {
+      "id": "lo-3",
+      "objective": "把“先用简单模型”落实为可复现的基线，并区分讲者在 2024 年给出的默认选择与普适定理。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 26
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 40
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 41
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 42
+          }
+        }
+      ]
+    },
+    {
+      "id": "lo-4",
+      "objective": "按单样本、批次、小数据集到完整数据集的顺序调试优化，并用参考损失做 sanity check。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 48
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 49
+          }
+        }
+      ]
+    },
+    {
+      "id": "lo-5",
+      "objective": "解释学习率、批大小、迭代计数、checkpoint、梯度裁剪与优化器选择的相互影响。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 50
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 51
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 52
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 55
+          }
+        }
+      ]
+    },
+    {
+      "id": "lo-6",
+      "objective": "建立训练/评估模式、日志、配置、断点与异常检测组成的可复现实验闭环。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 56
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 59
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 62
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 63
+          }
+        }
+      ]
+    },
+    {
+      "id": "lo-7",
+      "objective": "诊断常见自动微分、内存、GPU 计时与并行化错误，并以实际吞吐验证计算优化。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 64
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 65
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 66
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 67
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 68
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 69
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 70
+          }
+        }
+      ]
+    }
+  ],
+  "prerequisites": [
+    {
+      "topic": "基础监督学习",
+      "required_level": "理解训练/测试集、损失、分类与回归。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 40
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 48
+          }
+        }
+      ]
+    },
+    {
+      "topic": "PyTorch 张量与自动微分",
+      "required_level": "能读张量形状、requires_grad、forward/backward 与上下文管理器。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 64
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 65
+          }
+        }
+      ]
+    },
+    {
+      "topic": "实验设计基础",
+      "required_level": "能一次改变一个变量，并记录配置与指标。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 59
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 62
+          }
+        }
+      ]
+    }
+  ],
+  "outline": [
+    {
+      "order": 1,
+      "topic": "看数据：分布、异常值与模型实际输入",
+      "anchors": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 6
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 7
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 12
+          }
+        }
+      ],
+      "purpose": "在训练前确认数据内容、类型、形状、范围和 reshape 语义。"
+    },
+    {
+      "order": 2,
+      "topic": "预处理、增强与问题难度",
+      "anchors": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 14
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 15
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 25
+          }
+        }
+      ],
+      "purpose": "把标准化和随机扰动放进数据分布与泛化语境。"
+    },
+    {
+      "order": 3,
+      "topic": "简单基线与模型默认项",
+      "anchors": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 26
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 40
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 41
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 42
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 44
+          }
+        }
+      ],
+      "purpose": "从简单可调试基线出发，谨慎使用讲者的时代性默认建议。"
+    },
+    {
+      "order": 4,
+      "topic": "优化调试阶梯与损失基线",
+      "anchors": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 48
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 49
+          }
+        }
+      ],
+      "purpose": "先证明管线能拟合小规模数据，再讨论泛化。"
+    },
+    {
+      "order": 5,
+      "topic": "学习率、批大小、checkpoint 与优化器",
+      "anchors": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 50
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 51
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 52
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 55
+          }
+        }
+      ],
+      "purpose": "理解超参数改变如何影响有效更新与可恢复性。"
+    },
+    {
+      "order": 6,
+      "topic": "评估、日志和可复现实验",
+      "anchors": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 56
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 59
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 62
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 63
+          }
+        }
+      ],
+      "purpose": "让每次实验的配置、模式和诊断证据都可追踪。"
+    },
+    {
+      "order": 7,
+      "topic": "常见错误与计算扩展",
+      "anchors": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 64
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 65
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 66
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 67
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 68
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 69
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 70
+          }
+        }
+      ],
+      "purpose": "用正确的 autograd、内存、同步和吞吐检查逐步扩展计算。"
+    }
+  ],
+  "core_concepts": [
+    {
+      "id": "c1",
+      "term": "数据检查闭环",
+      "claim_type": "source_summary",
+      "explanation": "先查看输入、输出和损失，再检查随机样本、目标分布、异常值与近邻。尤其要检查传给模型的张量，而不仅是磁盘上的数据；类型、形状、梯度标志、数值范围、均值和方差是最小诊断集合。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 6
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 7
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "term": "按维标准化",
+      "claim_type": "source",
+      "explanation": "对每个输入维度减去该维均值并除以标准差，使不同单位或尺度的维度进入相近范围。均值和方差应由训练数据口径确定，不能用测试集信息污染训练。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        }
+      ],
+      "formula": {
+        "status": "resolved",
+        "latex": "x_k\\leftarrow\\frac{x_k-\\mathbb{E}[x_k]}{\\sqrt{\\operatorname{Var}[x_k]}}\\quad\\forall k",
+        "citation": {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        },
+        "warnings": [
+          "公式已由统一 page-image 视觉核对；课件未讨论零方差维度的工程处理。"
+        ]
+      }
+    },
+    {
+      "id": "c3",
+      "term": "数据增强与域随机化",
+      "claim_type": "source_summary",
+      "explanation": "训练时对数据施加随机扰动，目标是让测试样本看起来像另一种训练扰动。它改变训练分布，必须检查扰动是否仍保持任务标签语义。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 14
+          }
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "term": "训练曲线与问题难度",
+      "claim_type": "source_summary",
+      "explanation": "课件把很快达到低损失视为数据可能过易，把始终不下降视为尚未拟合，把艰难但持续下降视为更理想的学习问题。该图是诊断启发式，不是任何任务都适用的判据。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 15
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "term": "简单基线",
+      "claim_type": "source_summary",
+      "explanation": "第一次实验应使用尽可能简单的模型，并分别在有/无新想法时运行，以便构建、调试、分享和归因。课件关于 cross-entropy、Adam、Transformer、layer norm 的建议标注为 2024 年默认选择，必须按任务和时间背景理解。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 26
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 40
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 41
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 42
+          }
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "term": "优化调试阶梯",
+      "claim_type": "source_summary",
+      "explanation": "先过拟合一个样本，再拟合一个批次，然后尝试整个或微型数据集；先确认训练集可拟合，再讨论测试集泛化。这个顺序把数据、模型和优化故障逐层隔离。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 48
+          }
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "term": "参考损失 sanity check",
+      "claim_type": "source_summary",
+      "explanation": "分类交叉熵可与均匀预测比较，例如二分类和十分类的对数概率基线；平方损失可与预测目标均值或零比较。损失恒定时还应检查零初始化等错误。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 49
+          }
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "term": "学习率、批大小与迭代",
+      "claim_type": "source_summary",
+      "explanation": "课件将学习率和批大小列为关键超参数，建议先用常数学习率、按 SGD 迭代而非 epoch 安排日程，并在模型变化后重新调学习率，因为梯度尺度可能改变。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 50
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 51
+          }
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "term": "可恢复且可审计的训练",
+      "claim_type": "source_summary",
+      "explanation": "checkpoint 可在空间与时间之间取舍、积累梯度、崩溃后恢复，并留下调试轨迹；评估时应切换并核对 eval 模式，配置与日志应记录全部实验参数。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 52
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 56
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 59
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 62
+          }
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "term": "GPU 正确性先于扩展",
+      "claim_type": "source_summary",
+      "explanation": "无梯度推理、GPU 同步计时、计算图生命周期和叶张量原地修改都会影响正确性或测量。并行化应从单设备到单机多设备再到多机，并检查每秒迭代是否真的改善。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 64
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 65
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 66
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 67
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 68
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 69
+          }
+        }
+      ]
+    }
+  ],
+  "glossary": [
+    {
+      "term": "domain randomization / data augmentation",
+      "definition": "训练时随机扰动数据，使测试样本落入训练扰动覆盖范围。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 14
+          }
+        }
+      ]
+    },
+    {
+      "term": "sanity check",
+      "definition": "用可计算的参考行为检查损失、模式或数据管线是否合理。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 49
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 56
+          }
+        }
+      ]
+    },
+    {
+      "term": "checkpoint",
+      "definition": "保存训练状态以支持恢复、梯度累积或事后调试。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 52
+          }
+        }
+      ]
+    },
+    {
+      "term": "effective learning rate",
+      "definition": "由显式学习率与梯度尺度共同决定的实际更新尺度。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 50
+          }
+        }
+      ]
+    },
+    {
+      "term": "leaf tensor",
+      "definition": "直接创建、不是可微操作结果的计算图叶节点。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 64
+          }
+        }
+      ]
+    }
+  ],
+  "common_misconceptions": [
+    {
+      "misconception": "磁盘文件看起来正确就说明模型输入正确。",
+      "correction": "预处理和 reshape 可能改变数据，必须检查实际传给模型的张量。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 7
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 12
+          }
+        }
+      ]
+    },
+    {
+      "misconception": "训练损失迅速接近零总是好事。",
+      "correction": "课件把它也视为问题可能过易的信号，需要结合目标难度判断。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 15
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        }
+      ]
+    },
+    {
+      "misconception": "讲者的 2024 默认模型建议是普适定理。",
+      "correction": "这些是带时间背景的实践建议，应由任务基线验证。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 41
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 42
+          }
+        }
+      ]
+    },
+    {
+      "misconception": "retain_graph=True 是所有二次 backward 报错的首选修复。",
+      "correction": "课件提醒该错误常表示做了不想做的事，应先检查计算图设计。",
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 67
+          }
+        }
+      ]
+    }
+  ],
+  "learning_sequence": [
+    {
+      "step": 1,
+      "activity": "建立数据检查清单并检查 reshape 语义。",
+      "duration_minutes": 20,
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 12
+          }
+        }
+      ]
+    },
+    {
+      "step": 2,
+      "activity": "学习标准化、增强和训练曲线诊断。",
+      "duration_minutes": 25,
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 14
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 15
+          }
+        }
+      ]
+    },
+    {
+      "step": 3,
+      "activity": "建立简单基线并审视 2024 默认建议的适用边界。",
+      "duration_minutes": 20,
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 26
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 40
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 41
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 42
+          }
+        }
+      ]
+    },
+    {
+      "step": 4,
+      "activity": "执行单样本—批次—微型数据集的优化调试阶梯。",
+      "duration_minutes": 25,
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 48
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 49
+          }
+        }
+      ]
+    },
+    {
+      "step": 5,
+      "activity": "比较学习率、批大小、checkpoint 与优化器策略。",
+      "duration_minutes": 30,
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 50
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 51
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 52
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 55
+          }
+        }
+      ]
+    },
+    {
+      "step": 6,
+      "activity": "搭建评估、日志、配置和调试闭环。",
+      "duration_minutes": 30,
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 56
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 59
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 62
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 63
+          }
+        }
+      ]
+    },
+    {
+      "step": 7,
+      "activity": "完成 autograd/GPU 错误诊断与计算扩展练习。",
+      "duration_minutes": 30,
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 64
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 65
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 66
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 67
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 68
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 69
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 70
+          }
+        }
+      ]
+    }
+  ],
+  "practice": [
+    {
+      "id": "p1",
+      "level": "基础检查",
+      "question": "为一个批次张量设计 inspect_data 输出，并说明每个字段能排查哪类问题。",
+      "hint": "至少覆盖类型、形状、requires_grad、范围、均值和方差。",
+      "deliverable": "一张字段—故障对照表。",
+      "expected_evidence": [
+        "六类字段齐全",
+        "区分磁盘数据与模型实际输入",
+        "包含异常范围或形状诊断"
+      ],
+      "evaluation": {
+        "criteria": [
+          "覆盖完整",
+          "诊断对应合理",
+          "不泄露真实私有样本"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 7
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "level": "基础计算",
+      "question": "给定两个量纲差异很大的输入维，写出逐维标准化公式，并说明均值/方差应从哪一部分数据估计。",
+      "hint": "防止测试信息进入训练预处理。",
+      "deliverable": "公式、口径说明和一条数据泄漏警告。",
+      "expected_evidence": [
+        "逐维减均值除标准差",
+        "使用训练集统计量",
+        "指出零方差需单独处理"
+      ],
+      "evaluation": {
+        "criteria": [
+          "公式正确",
+          "口径无泄漏",
+          "限制明确"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "level": "诊断",
+      "question": "为三条训练曲线分别提出“数据过易、尚未拟合、困难但在学习”的诊断，并给出下一项最小实验。",
+      "hint": "一次只改变一个因素。",
+      "deliverable": "三行诊断表和三个最小实验。",
+      "expected_evidence": [
+        "诊断与第15页一致",
+        "实验可区分原因",
+        "不把启发式写成定理"
+      ],
+      "evaluation": {
+        "criteria": [
+          "证据边界",
+          "可操作性",
+          "变量控制"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 15
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "level": "核心流程",
+      "question": "为新任务设计一个从单样本到完整数据集的拟合阶梯，写明每级通过条件和失败后检查项。",
+      "hint": "先验证训练管线，再验证泛化。",
+      "deliverable": "四级调试流程图。",
+      "expected_evidence": [
+        "单样本",
+        "单批次",
+        "微型数据集",
+        "完整训练集",
+        "每级有通过条件"
+      ],
+      "evaluation": {
+        "criteria": [
+          "顺序正确",
+          "故障隔离清楚",
+          "未跳到测试集调参"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 48
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 49
+          }
+        }
+      ]
+    },
+    {
+      "id": "p5",
+      "level": "核心比较",
+      "question": "解释为什么改变模型后需要重新调学习率，并设计按迭代数对齐的两次实验比较。",
+      "hint": "关注梯度尺度和 epoch 口径。",
+      "deliverable": "因果说明、实验配置与对齐横轴。",
+      "expected_evidence": [
+        "模型变化可能改变梯度尺度",
+        "使用 SGD 迭代对齐",
+        "批大小口径明确"
+      ],
+      "evaluation": {
+        "criteria": [
+          "比较公平",
+          "变量记录完整",
+          "结论不过度"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 50
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 51
+          }
+        }
+      ]
+    },
+    {
+      "id": "p6",
+      "level": "工程实践",
+      "question": "设计一次可中断恢复的训练运行：列出 checkpoint、配置、日志、评估模式和异常检测策略。",
+      "hint": "把恢复与事后审计都纳入。",
+      "deliverable": "运行清单与恢复演练步骤。",
+      "expected_evidence": [
+        "保存必要状态",
+        "记录全部参数",
+        "核对 eval/training",
+        "包含 NaN 诊断"
+      ],
+      "evaluation": {
+        "criteria": [
+          "可恢复",
+          "可复现",
+          "模式正确"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 52
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 56
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 59
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 62
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 63
+          }
+        }
+      ]
+    },
+    {
+      "id": "p7",
+      "level": "错误诊断",
+      "question": "分别诊断叶张量原地修改、推理时 OOM、GPU 计时偏差和二次 backward 四个案例。",
+      "hint": "不要把 retain_graph=True 当成所有二次 backward 错误的默认修复。",
+      "deliverable": "四行原因—检查—最小修复表。",
+      "expected_evidence": [
+        "避免叶张量原地修改",
+        "推理使用 no_grad",
+        "计时前同步",
+        "解释计算图释放"
+      ],
+      "evaluation": {
+        "criteria": [
+          "原因准确",
+          "修复最小",
+          "不掩盖设计错误"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 64
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 65
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 66
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 67
+          }
+        }
+      ]
+    },
+    {
+      "id": "p8",
+      "level": "综合",
+      "question": "制定从单 GPU 到多机的扩展门槛，并用利用率和每秒迭代数判断扩展是否值得。",
+      "hint": "每一级先证明正确性，再比较吞吐。",
+      "deliverable": "三级扩展决策表和回退条件。",
+      "expected_evidence": [
+        "单设备先工作",
+        "单机多设备后扩展",
+        "多机最后",
+        "检查实际吞吐",
+        "记录批大小影响"
+      ],
+      "evaluation": {
+        "criteria": [
+          "门槛清楚",
+          "指标可测",
+          "能回退"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 68
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 69
+          }
+        },
+        {
+          "source_id": "mit6-7960-f24-lec9-132cf6994a",
+          "anchor": {
+            "type": "page",
+            "value": 70
+          }
+        }
+      ]
+    }
+  ],
+  "citations": [
+    {
+      "citation_id": "cite-01",
+      "source_id": "mit6-7960-f24-lec9-132cf6994a",
+      "anchor": {
+        "type": "page",
+        "value": 1
+      },
+      "supports": "Lecture 9 page 1 evidence"
+    },
+    {
+      "citation_id": "cite-02",
+      "source_id": "mit6-7960-f24-lec9-132cf6994a",
+      "anchor": {
+        "type": "page",
+        "value": 5
+      },
+      "supports": "Lecture 9 page 5 evidence"
+    },
+    {
+      "citation_id": "cite-03",
+      "source_id": "mit6-7960-f24-lec9-132cf6994a",
+      "anchor": {
+        "type": "page",
+        "value": 8
+      },
+      "supports": "Lecture 9 page 8 evidence"
+    },
+    {
+      "citation_id": "cite-04",
+      "source_id": "mit6-7960-f24-lec9-132cf6994a",
+      "anchor": {
+        "type": "page",
+        "value": 9
+      },
+      "supports": "Lecture 9 page 9 evidence"
+    },
+    {
+      "citation_id": "cite-05",
+      "source_id": "mit6-7960-f24-lec9-132cf6994a",
+      "anchor": {
+        "type": "page",
+        "value": 14
+      },
+      "supports": "Lecture 9 page 14 evidence"
+    },
+    {
+      "citation_id": "cite-06",
+      "source_id": "mit6-7960-f24-lec9-132cf6994a",
+      "anchor": {
+        "type": "page",
+        "value": 15
+      },
+      "supports": "Lecture 9 page 15 evidence"
+    },
+    {
+      "citation_id": "cite-07",
+      "source_id": "mit6-7960-f24-lec9-132cf6994a",
+      "anchor": {
+        "type": "page",
+        "value": 26
+      },
+      "supports": "Lecture 9 page 26 evidence"
+    },
+    {
+      "citation_id": "cite-08",
+      "source_id": "mit6-7960-f24-lec9-132cf6994a",
+      "anchor": {
+        "type": "page",
+        "value": 40
+      },
+      "supports": "Lecture 9 page 40 evidence"
+    },
+    {
+      "citation_id": "cite-09",
+      "source_id": "mit6-7960-f24-lec9-132cf6994a",
+      "anchor": {
+        "type": "page",
+        "value": 41
+      },
+      "supports": "Lecture 9 page 41 evidence"
+    },
+    {
+      "citation_id": "cite-10",
+      "source_id": "mit6-7960-f24-lec9-132cf6994a",
+      "anchor": {
+        "type": "page",
+        "value": 42
+      },
+      "supports": "Lecture 9 page 42 evidence"
+    },
+    {
+      "citation_id": "cite-11",
+      "source_id": "mit6-7960-f24-lec9-132cf6994a",
+      "anchor": {
+        "type": "page",
+        "value": 48
+      },
+      "supports": "Lecture 9 page 48 evidence"
+    },
+    {
+      "citation_id": "cite-12",
+      "source_id": "mit6-7960-f24-lec9-132cf6994a",
+      "anchor": {
+        "type": "page",
+        "value": 49
+      },
+      "supports": "Lecture 9 page 49 evidence"
+    },
+    {
+      "citation_id": "cite-13",
+      "source_id": "mit6-7960-f24-lec9-132cf6994a",
+      "anchor": {
+        "type": "page",
+        "value": 50
+      },
+      "supports": "Lecture 9 page 50 evidence"
+    },
+    {
+      "citation_id": "cite-14",
+      "source_id": "mit6-7960-f24-lec9-132cf6994a",
+      "anchor": {
+        "type": "page",
+        "value": 52
+      },
+      "supports": "Lecture 9 page 52 evidence"
+    },
+    {
+      "citation_id": "cite-15",
+      "source_id": "mit6-7960-f24-lec9-132cf6994a",
+      "anchor": {
+        "type": "page",
+        "value": 55
+      },
+      "supports": "Lecture 9 page 55 evidence"
+    },
+    {
+      "citation_id": "cite-16",
+      "source_id": "mit6-7960-f24-lec9-132cf6994a",
+      "anchor": {
+        "type": "page",
+        "value": 56
+      },
+      "supports": "Lecture 9 page 56 evidence"
+    },
+    {
+      "citation_id": "cite-17",
+      "source_id": "mit6-7960-f24-lec9-132cf6994a",
+      "anchor": {
+        "type": "page",
+        "value": 62
+      },
+      "supports": "Lecture 9 page 62 evidence"
+    },
+    {
+      "citation_id": "cite-18",
+      "source_id": "mit6-7960-f24-lec9-132cf6994a",
+      "anchor": {
+        "type": "page",
+        "value": 64
+      },
+      "supports": "Lecture 9 page 64 evidence"
+    },
+    {
+      "citation_id": "cite-19",
+      "source_id": "mit6-7960-f24-lec9-132cf6994a",
+      "anchor": {
+        "type": "page",
+        "value": 68
+      },
+      "supports": "Lecture 9 page 68 evidence"
+    },
+    {
+      "citation_id": "cite-20",
+      "source_id": "mit6-7960-f24-lec9-132cf6994a",
+      "anchor": {
+        "type": "page",
+        "value": 70
+      },
+      "supports": "Lecture 9 page 70 evidence"
+    }
+  ],
+  "review": {
+    "generator_review_status": "audited_draft",
+    "audit_findings": [
+      "72 页原 PDF 已通过逐页文本盘点；第9页标准化公式使用统一 page-image 视觉核对。",
+      "所有工程建议均作为 2024 课程中的 source_summary，不提升为永久或普适最佳实践。",
+      "第三方图像和图表细节未复刻，练习只使用抽象诊断情景。",
+      "学习顺序合计 180 分钟，8 道练习覆盖数据、模型、优化、评估、调试与计算。"
+    ]
+  },
+  "limitations": [
+    "本讲以实践启发式为主，不把经验建议表述为理论保证。",
+    "含第三方视觉材料的页面仅引用课件文字或抽象关系，不描述受限图像细节。",
+    "硬件、框架 API 与所谓“默认选择”具有时间敏感性；本 StudyKit 只复述 Fall 2024 课件语境。",
+    "第9页标准化公式未给出零方差维度、估计偏差或数据泄漏的完整处理；相关内容仅作为学习者检查项。"
+  ]
+}

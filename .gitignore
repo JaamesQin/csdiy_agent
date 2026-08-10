@@ -6,6 +6,7 @@ __pycache__/
 htmlcov/
 .env
 *:Zone.Identifier
+/.agents/
 
 # Local reference materials supplied outside the source repository.
 /0720线上说明会.pptx
@@ -25,3 +26,4 @@ htmlcov/
 /storage/
 /artifacts/
 /outputs/
+.DS_Store

@@ -1,0 +1,54 @@
+{
+  "artifact_version": "0.1",
+  "stage": "quality_audit_resolution",
+  "status": "succeeded",
+  "generation_policy": "draft",
+  "material_scope": "public",
+  "course_id": "mit-6.7960-fall-2024",
+  "course_version": "fall-2024",
+  "unit_id": "lecture-20",
+  "source_audit": "04-quality-audit.json",
+  "resolution_status": "accepted_with_documented_limitations",
+  "resolutions": [
+    {
+      "issue_code": "compute_constant_contextual",
+      "action": "已在解释、公式 warnings、练习或 limitations 中限定。",
+      "result": "resolved_as_documented_limitation"
+    },
+    {
+      "issue_code": "kaplan_exponents_not_universal",
+      "action": "已在解释、公式 warnings、练习或 limitations 中限定。",
+      "result": "resolved_as_documented_limitation"
+    },
+    {
+      "issue_code": "competing_compute_optimal_fit",
+      "action": "已在解释、公式 warnings、练习或 limitations 中限定。",
+      "result": "resolved_as_documented_limitation"
+    },
+    {
+      "issue_code": "large_scale_extrapolation_fragile",
+      "action": "已在解释、公式 warnings、练习或 limitations 中限定。",
+      "result": "resolved_as_documented_limitation"
+    },
+    {
+      "issue_code": "intrinsic_dimension_is_hypothesis",
+      "action": "已在解释、公式 warnings、练习或 limitations 中限定。",
+      "result": "resolved_as_documented_limitation"
+    },
+    {
+      "issue_code": "representation_convergence_is_hypothesis",
+      "action": "已在解释、公式 warnings、练习或 limitations 中限定。",
+      "result": "resolved_as_documented_limitation"
+    }
+  ],
+  "targeted_repair_applied": false,
+  "remaining_warnings": [
+    "C≈6ND 是特定训练语境的计算近似，不含全部系统成本。",
+    "0.73/0.27 与约0.49/0.51 来自不同训练和拟合流程，不是永久最优指数。",
+    "外推受代理损失、少量大规模运行、高预算弯曲和单 epoch 限制。",
+    "L(N)≲N^{-4/d} 是玩具上界；α≈4/d 是假说，transformer 只支持上界性质。",
+    "表示核和跨模态收敛趋势不证明语义等价或共同真实模型。",
+    "第三方图表不复制、不细述；外部论文未独立摄取。"
+  ],
+  "finalization_authorized": false
+}

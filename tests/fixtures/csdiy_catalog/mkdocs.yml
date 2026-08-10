@@ -1,0 +1,9 @@
+site_name: Fixture
+nav:
+  - 前言: index.md
+  - 必学工具:
+      - Git: tools/git.md
+  - 数据结构与算法:
+      - "UCB CS61B: Data Structures": courses/cs61b.md
+      - "UCB CS61B: Data Structures (English)": courses/cs61b.en.md
+      - "A learning roadmap": roadmap.md

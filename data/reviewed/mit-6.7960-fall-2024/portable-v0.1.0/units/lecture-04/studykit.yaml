@@ -1,0 +1,1117 @@
+studykit_version: '0.1'
+status: draft
+generation_policy: draft
+material_scope: public
+course_id: mit-6.7960-fall-2024
+course_version: fall-2024
+unit_id: lecture-04
+title: MIT 6.7960 Lecture 4：网格架构
+language: zh-CN
+scope:
+  included_sources:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    title: 'Lecture 4: Architectures for Grids'
+    type: application/pdf
+    sha256: 8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463
+  citation_anchor_types:
+  - page
+learning_objectives:
+- id: lo1
+  objective: 用讲义的假设空间图，定性解释增加数据与收紧架构约束为何都可能使学习解更接近真实解。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 4
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 6
+- id: lo2
+  objective: 区分平移等变与不变，并把大而重叠的 patch 与逐像素语义分割联系起来。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 19
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 22
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 23
+- id: lo3
+  objective: 从局部连接与权重共享解释卷积层，并准确读写讲义中的二维卷积公式。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 25
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 27
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 29
+- id: lo4
+  objective: 根据输入通道数、输出通道数和核尺寸，推断多通道卷积的张量形状、滤波器数与权重参数数。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 41
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 46
+- id: lo5
+  objective: 计算最大池化与平均池化，并解释空间池化稳定性和跨通道池化示例。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 48
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 49
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 53
+- id: lo6
+  objective: 依据可见图示，定性比较下采样、步长操作、空洞滤波器与感受野。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 58
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 60
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 62
+- id: lo7
+  objective: 按顺序说明 im2col、bmm 与 col2im 在讲义所示卷积实现中的角色。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 64
+- id: lo8
+  objective: 比较 image-to-image 编码器—解码器、U-Net 跳连与 ResNet 残差相加的可见结构。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 67
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 70
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 71
+- id: lo9
+  objective: 说明位置编码的目的，并读出神经场、SIREN 与 NeRF 示例的坐标输入和场值输出。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 76
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 78
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 80
+prerequisites:
+- topic: 线性代数与张量形状
+  required_level: 能做矩阵/张量维度检查，并理解求和、最大值和均值符号。
+- topic: 基础神经网络
+  required_level: 知道全连接层、非线性激活与前向传播的基本角色。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 3
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 26
+- topic: 图像坐标与通道
+  required_level: 能把 RGB 图像理解为带两个空间轴和一个通道轴的张量。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 38
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 42
+outline:
+- order: 1
+  topic: 为什么需要架构归纳偏置
+  anchors:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 4
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 8
+  purpose: 用数据、假设空间和真实解的图示建立架构选择动机。
+- order: 2
+  topic: 语义分割、patch 与平移等变
+  anchors:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 18
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 23
+  purpose: 从逐像素任务进入对每个位置使用同一局部函数的思想。
+- order: 3
+  topic: 卷积层与多通道形状
+  anchors:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 25
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 41
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 46
+  purpose: 把局部连接、权重共享、核、滤波器组和通道形状统一起来。
+- order: 4
+  topic: 池化、采样与感受野
+  anchors:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 48
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 58
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 62
+  purpose: 理解局部聚合、空间分辨率与输入依赖范围之间的关系。
+- order: 5
+  topic: 实现与 image-to-image 架构
+  anchors:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 64
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 67
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 71
+  purpose: 从卷积的矩阵化实现过渡到编码器—解码器与跳跃连接。
+- order: 6
+  topic: 位置编码与神经场
+  anchors:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 76
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 80
+  purpose: 讨论需要绝对位置时如何显式输入坐标，并把坐标映射到场值。
+core_concepts:
+- id: c1-architecture-bias
+  term: 假设空间与架构约束
+  claim_type: source_summary
+  explanation: 讲义用图示表达一个定性观点：更多数据会缩小“与数据相符”的解集合；更受约束的架构则缩小假设空间。两条路径都可能帮助学习解靠近真实解。讲义把好的架构描述为既能表示目标函数、又尽量精简，并便于基于梯度的搜索、并行和
+    GPU 计算；这不是形式化定理。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 5
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 6
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 8
+- id: c2-equivariance-segmentation
+  term: 语义分割与平移等变
+  claim_type: source_summary
+  explanation: 小 patch 能提高输出网格分辨率，却可能缺少识别所需上下文；讲义因而转向大而重叠的 patch，并把逐像素类别图称为语义分割。平移等变表示：输入平移后，输出按同样方式平移，而不是输出保持不变。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 19
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 22
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 23
+  formula:
+    status: resolved
+    latex: f(\operatorname{translate}(x))=\operatorname{translate}(f(x))
+    citation:
+      source_id: mit6-7960-f24-lec4-8bddd7b92d
+      anchor:
+        type: page
+        value: 23
+    warnings:
+    - 第23页同时出现 'Translation invariance' 字样；本式及同页 'equivariant mapping' 标签明确支持等变性。
+- id: c3-convolution-sharing
+  term: 卷积、局部连接与权重共享
+  claim_type: source_summary
+  explanation: 卷积核对每个局部 patch 应用同一组权重。局部连接限制每个输出所依赖的输入范围，权重共享则让不同位置复用同一局部函数。矩阵视角下，讲义把卷积展示为受
+    Toeplitz 结构约束、参数更少的线性层。下式严格保留第25页可见的正索引约定。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 25
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 27
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 29
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 32
+  formula:
+    status: resolved
+    latex: x_{\mathrm{out}}[n,m]=b+\sum_{k_1,k_2=-K}^{K}w[k_1,k_2]x_{\mathrm{in}}[n+k_1,m+k_2]
+    citation:
+      source_id: mit6-7960-f24-lec4-8bddd7b92d
+      anchor:
+        type: page
+        value: 25
+    warnings: []
+- id: c4-multichannel
+  term: 多输入多输出卷积
+  claim_type: source_summary
+  explanation: 每个输出通道由所有输入通道的卷积响应求和，再加该输出通道的偏置。若空间核为 K_1×K_2，输入通道数为 C_l，则每个滤波器含 K_1K_2C_l
+    个权重；输出通道数 C_{l+1} 等于滤波器数。第44—45页的例子从 3×128×128 映射到 96×128×128，因此每个 3×3 滤波器有 27
+    个权重，滤波器组有 96 个滤波器；该计数按可见选项不含偏置。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 41
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 44
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 45
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 46
+  formula:
+    status: resolved
+    latex: x_{\mathrm{out}}[c_2,:,:]=\sum_{c_1=1}^{C_{\mathrm{in}}}w[c_1,c_2,:,:]\star
+      x_{\mathrm{in}}[c_1,:,:]+b[c_2]
+    citation:
+      source_id: mit6-7960-f24-lec4-8bddd7b92d
+      anchor:
+        type: page
+        value: 41
+    warnings:
+    - 第39—40页存在偏置/输出索引歧义；计算规则以第41、44—46页为准。
+- id: c5-pooling
+  term: 池化与局部稳定性
+  claim_type: source_summary
+  explanation: 最大池化在邻域中取最大激活，平均池化取邻域均值。讲义用边缘响应说明：空间位置上的最大池化可对小平移保持稳定；跨特征通道取最大值则可让任意所示方向的边缘都产生较大响应。这里说的是示例中的稳定性或不变性，不等同于卷积映射的平移等变。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 48
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 49
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 51
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 53
+  formula:
+    status: resolved
+    latex: y_j=\max_{j'\in\mathcal{N}(j)}h_{j'},\qquad y_j=\frac{1}{|\mathcal{N}(j)|}\sum_{j'\in\mathcal{N}(j)}h_{j'}
+    citation:
+      source_id: mit6-7960-f24-lec4-8bddd7b92d
+      anchor:
+        type: page
+        value: 48
+    warnings:
+    - 平均池化公式位于第49页；本条的主公式引用第48页，且概念 citations 同时包含第49页。
+- id: c6-sampling-receptive-field
+  term: 下采样、步长、空洞与感受野
+  claim_type: source_summary
+  explanation: 下采样减少保留的空间位置；步长操作把卷积或池化与下采样合并；空洞滤波器在核元素之间留出间隔，从而以较少参数覆盖更大的感受野。感受野表示某个输出所依赖的输入位置集合，堆叠局部卷积会让较深输出依赖更宽的输入区域。本学习包只保留可见图示支持的定性关系。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 56
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 58
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 60
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 62
+- id: c7-conv-implementation
+  term: im2col → bmm → col2im
+  claim_type: source_summary
+  explanation: 讲义给出一个基础实现流程：im2col 把 N×M×C 输入整理为 Npatches×(K×K×C) 的 patch 行；bmm 与卷积核做批量矩阵乘；col2im
+    再把 patch 形式还原为空间输出。该页是流程概述，并未给出边界、步长或内存布局等细节。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 64
+- id: c8-image-to-image-skips
+  term: Image-to-image 与跳跃连接
+  claim_type: source_summary
+  explanation: 编码器逐步下采样得到紧凑表示，解码器上采样回到空间输出；image-to-image 图示在对应分辨率之间加入跳跃连接。U-Net 页展示编码器到解码器的跨层通路；ResNet
+    页展示把变换 F(x_in) 与输入直接相加。若要改变维度，讲义另给出 W x_in 的线性支路。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 67
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 68
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 70
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 71
+  formula:
+    status: resolved
+    latex: x_{\mathrm{out}}=F(x_{\mathrm{in}})+x_{\mathrm{in}}
+    citation:
+      source_id: mit6-7960-f24-lec4-8bddd7b92d
+      anchor:
+        type: page
+        value: 71
+    warnings:
+    - 可见 U-Net 页只展示跳连拓扑；不据隐藏文本断言拼接维度或精确层索引规则。
+- id: c9-positional-neural-fields
+  term: 位置编码与神经场
+  claim_type: source_summary
+  explanation: 当任务需要绝对位置时，讲义给出两种方向：选用不具平移不变性的架构，或把位置信息加入卷积滤波器输入，称为位置编码。神经场把坐标映射到场值：二维示例把
+    (x,y) 映射到标量强度；SIREN 页展示连续二维坐标到颜色；NeRF 页展示位置加方向组成的 5D 输入到颜色与体密度。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 76
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 77
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 78
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 79
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 80
+  formula:
+    status: resolved
+    latex: \Phi:\mathbb{R}^{2}\to\mathbb{R},\qquad l=\Phi(x,y)
+    citation:
+      source_id: mit6-7960-f24-lec4-8bddd7b92d
+      anchor:
+        type: page
+        value: 78
+    warnings:
+    - 第79—80页把示例网络标成 CNN/Conv net；本学习包只保留其可见输入输出映射，不据此断言具体实现类型。
+glossary:
+- term: 假设空间
+  definition: 某一架构允许表示的候选函数集合。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 6
+- term: 平移等变
+  definition: 输入平移会导致输出按相同方式平移。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 36
+- term: 权重共享
+  definition: 在不同空间位置复用同一组局部权重。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 29
+- term: 特征图
+  definition: 滤波器组的一个输出通道所形成的二维响应图。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 42
+- term: 感受野
+  definition: 某个输出单元所依赖的输入位置集合。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 62
+- term: 位置编码
+  definition: 向局部滤波器输入加入位置信息。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 76
+- term: 神经场
+  definition: 以坐标为输入、输出相应场值的函数表示。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 78
+common_misconceptions:
+- misconception: 平移等变等同于平移不变。
+  correction: 等变要求输出随输入一起平移；不变则要求输出不因变换而改变。第23页公式支持前者。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 23
+- misconception: 每个输出通道只看一个输入通道。
+  correction: 第41页的一般式对全部输入通道求和，每个输出通道对应一个跨输入通道的滤波器。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 41
+- misconception: 空洞滤波器通过增加权重数量扩大覆盖范围。
+  correction: 第60页的可见结论是以较少参数覆盖更大的感受野。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 60
+- misconception: 所有跳跃连接都执行同一种合并。
+  correction: 本讲可见地展示 U-Net 的跨层通路与 ResNet 的逐元素相加；U-Net 的具体拼接规则没有在可见页写明。
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 70
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 71
+learning_sequence:
+- step: 1
+  activity: 前置自检：张量轴、线性映射、ReLU、二维坐标。
+  duration_minutes: 10
+- step: 2
+  activity: 阅读假设空间图：比较增加数据与收紧架构约束。
+  duration_minutes: 15
+  objective_ids:
+  - lo1
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 4
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 8
+- step: 3
+  activity: 从 patch 分类过渡到逐像素语义分割，写出平移等变关系。
+  duration_minutes: 15
+  objective_ids:
+  - lo2
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 19
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 23
+- step: 4
+  activity: 完成 p1–p2：架构约束与等变/不变辨析。
+  duration_minutes: 20
+  objective_ids:
+  - lo1
+  - lo2
+  practice_ids:
+  - p1
+  - p2
+- step: 5
+  activity: 学习局部连接、权重共享、二维卷积与多通道滤波器组。
+  duration_minutes: 25
+  objective_ids:
+  - lo3
+  - lo4
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 25
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 41
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 46
+- step: 6
+  activity: 完成 p3–p4：公式索引、输出形状与参数计数。
+  duration_minutes: 20
+  objective_ids:
+  - lo3
+  - lo4
+  practice_ids:
+  - p3
+  - p4
+- step: 7
+  activity: 学习最大/平均池化，并用可见图示比较下采样、步长、空洞与感受野。
+  duration_minutes: 20
+  objective_ids:
+  - lo5
+  - lo6
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 48
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 60
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 62
+- step: 8
+  activity: 完成 p5–p6：池化计算与采样/感受野定性比较。
+  duration_minutes: 15
+  objective_ids:
+  - lo5
+  - lo6
+  practice_ids:
+  - p5
+  - p6
+- step: 9
+  activity: 串联 im2col 实现流程、编码器—解码器、U-Net 跳连与 ResNet 残差支路。
+  duration_minutes: 15
+  objective_ids:
+  - lo7
+  - lo8
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 64
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 70
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 71
+- step: 10
+  activity: 完成 p7–p8：实现流程排序与跳连结构比较。
+  duration_minutes: 10
+  objective_ids:
+  - lo7
+  - lo8
+  practice_ids:
+  - p7
+  - p8
+- step: 11
+  activity: 学习位置编码和坐标到场值的映射，完成 p9。
+  duration_minutes: 10
+  objective_ids:
+  - lo9
+  practice_ids:
+  - p9
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 76
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 80
+- step: 12
+  activity: 闭环回顾：逐项检查九个目标，并标出仍会混淆的符号或结构。
+  duration_minutes: 5
+  objective_ids:
+  - lo1
+  - lo2
+  - lo3
+  - lo4
+  - lo5
+  - lo6
+  - lo7
+  - lo8
+  - lo9
+practice:
+- id: p1
+  level: 基础·解释
+  question: 用不超过 120 字比较两种缩小学习解不确定性的路径：增加数据与使用更受约束的架构。再说明为什么“约束越多越好”不是这组图的正确结论。
+  hint: 同时检查假设空间是否仍能表示目标函数。
+  deliverable: 一段对照说明，包含两条路径和一个必要条件。
+  expected_evidence:
+  - 能区分数据约束与架构约束
+  - 指出架构仍需具有目标函数的表示能力
+  - 保持定性表述
+  evaluation:
+    full_credit: 三项证据齐全且不把图示宣称为定理。
+    partial_credit: 能说出两条路径但缺少表示能力条件。
+  objective_ids:
+  - lo1
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 6
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 8
+- id: p2
+  level: 基础·辨析
+  question: 假设输入图像向右平移 5 像素。分别写出“等变输出”和“不变输出”应发生什么，并解释哪一种对应第23页的公式。
+  hint: 问自己：输出是跟着移动，还是完全不变？
+  deliverable: 两行行为描述加一行公式对应判断。
+  expected_evidence:
+  - 等变时输出同向平移
+  - 不变时输出值不随平移改变
+  - 把第23页公式判为等变
+  evaluation:
+    full_credit: 三项均正确。
+    partial_credit: 能描述其中一种但混淆术语。
+  objective_ids:
+  - lo2
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 23
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 36
+- id: p3
+  level: 核心·符号
+  question: 按第25页公式，列出计算 x_out[n,m] 所需的三类量，并解释为什么把同一个 w 用在不同 (n,m) 上体现了权重共享。不要改写源公式的正索引号。
+  hint: 分别寻找偏置、核权重与对应输入位置。
+  deliverable: 公式抄写、三类量列表和两句权重共享说明。
+  expected_evidence:
+  - 公式索引与第25页一致
+  - 识别 b、w 和局部 x_in
+  - 说明不同位置复用同一 w
+  evaluation:
+    full_credit: 符号忠实且权重共享解释清楚。
+    partial_credit: 概念正确但擅自翻转索引或遗漏偏置。
+  objective_ids:
+  - lo3
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 25
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 29
+- id: p4
+  level: 核心·计算
+  question: 输入为 3×128×128，使用 96 个 3×3 滤波器并保持可见示例的空间尺寸。求：(1) 输出形状；(2) 每个滤波器的权重数；(3)
+    滤波器组的权重总数。最后说明这些数是否包含偏置。
+  hint: 每个滤波器跨越全部 3 个输入通道；输出通道数等于滤波器数。
+  deliverable: 三个数值及一行偏置口径说明。
+  expected_evidence:
+  - 输出通道与滤波器数一致
+  - 每滤波器按 3×3×3 计权重
+  - 总权重为每滤波器权重乘滤波器数
+  - 明确不含偏置
+  evaluation:
+    full_credit: 形状、两项计数与口径全部一致。
+    partial_credit: 方法正确但一个乘法或偏置口径错误。
+  objective_ids:
+  - lo4
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 44
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 45
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 46
+- id: p5
+  level: 核心·计算
+  question: 对邻域 {−2, 1, 5, 0} 分别计算最大池化与平均池化。再用一句话说明为什么空间最大池化可能对小幅边缘位移保持稳定。
+  hint: 均值要除以邻域元素数；稳定性关注最大响应是否仍落在池化邻域中。
+  deliverable: 两个数值和一句机制说明。
+  expected_evidence:
+  - 正确取最大值
+  - 正确求和并除以 4
+  - 把稳定性与邻域内最大响应联系起来
+  evaluation:
+    full_credit: 两项计算与机制均正确。
+    partial_credit: 计算正确但稳定性解释含糊。
+  objective_ids:
+  - lo5
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 48
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 49
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 51
+- id: p6
+  level: 核心·比较
+  question: 只依据第56—60页可见图示，完成三列比较：下采样改变什么、步长操作合并了什么、空洞滤波器如何扩大覆盖范围。不得补写源中不可见的逐项公式、整除条件或频域结论。
+  hint: 关注输出位置密度、操作组合和核元素间距。
+  deliverable: 三列表格，每列 1–2 句。
+  expected_evidence:
+  - 下采样减少空间位置
+  - 步长把卷积或池化与下采样合并
+  - 空洞通过间隔覆盖更大感受野且不以增加可见权重数为机制
+  evaluation:
+    full_credit: 三列均由可见图示支持且没有越界扩展。
+    partial_credit: 比较大体正确但加入未由可见页支持的细节。
+  objective_ids:
+  - lo6
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 56
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 58
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 60
+- id: p7
+  level: 核心·流程
+  question: 把以下产物按流程排序并配对操作：patch 矩阵、批量矩阵乘、空间输出。说明 im2col、bmm、col2im 各自负责哪一步。
+  hint: 先把局部块排成行，再计算，再还原空间布局。
+  deliverable: 三步箭头图，每步附一行输入/输出角色。
+  expected_evidence:
+  - 顺序为 im2col→bmm→col2im
+  - im2col 形成 patch 矩阵
+  - bmm 与核相乘
+  - col2im 恢复空间组织
+  evaluation:
+    full_credit: 顺序和角色完整。
+    partial_credit: 顺序正确但一个角色不清楚。
+  objective_ids:
+  - lo7
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 64
+- id: p8
+  level: 进阶·结构
+  question: 比较第70页 U-Net 图和第71页 ResNet 图：(1) 跳连跨越的范围；(2) 可见的合并方式；(3) 哪一个可直接写成 x_out=F(x_in)+x_in。对
+    U-Net 不得断言可见页未写明的拼接维度。
+  hint: 看箭头跨越多少层，以及图中是否出现加号。
+  deliverable: 三行对照表和一个对应公式。
+  expected_evidence:
+  - 识别 U-Net 的编码器到解码器跨层通路
+  - 识别 ResNet 的加法节点
+  - 把残差公式对应到 ResNet
+  - 不臆造 U-Net 合并细节
+  evaluation:
+    full_credit: 四项证据齐全且边界清楚。
+    partial_credit: 能区分两者但对 U-Net 合并方式过度推断。
+  objective_ids:
+  - lo8
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 70
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 71
+- id: p9
+  level: 进阶·迁移
+  question: 为三个例子填写“输入→输出”：二维灰度神经场、SIREN 颜色场、NeRF。然后说明当任务需要绝对位置时，位置编码解决了哪类信息缺失。不要沿用第79—80页对网络类型的标签。
+  hint: 分别查看第78、79、80页的坐标和场值；位置编码把位置显式送入局部滤波器。
+  deliverable: 三条映射和 2–3 句位置编码说明。
+  expected_evidence:
+  - 二维坐标到标量强度
+  - 连续二维坐标到颜色
+  - 5D 位置/方向到颜色与体密度
+  - 说明显式绝对位置信息的作用
+  evaluation:
+    full_credit: 四项证据齐全且不扩展网络实现类型。
+    partial_credit: 映射基本正确但遗漏方向或密度。
+  objective_ids:
+  - lo9
+  citations:
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 76
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 78
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 79
+  - source_id: mit6-7960-f24-lec4-8bddd7b92d
+    anchor:
+      type: page
+      value: 80
+citations:
+- citation_id: cite-identity
+  source_id: mit6-7960-f24-lec4-8bddd7b92d
+  anchor:
+    type: page
+    value: 1
+  supports: 讲次标题、讲者、课程与学期
+- citation_id: cite-architecture
+  source_id: mit6-7960-f24-lec4-8bddd7b92d
+  anchor:
+    type: page
+    value: 6
+  supports: 假设空间与受约束架构
+- citation_id: cite-good-architecture
+  source_id: mit6-7960-f24-lec4-8bddd7b92d
+  anchor:
+    type: page
+    value: 8
+  supports: 好的架构的定性标准
+- citation_id: cite-segmentation
+  source_id: mit6-7960-f24-lec4-8bddd7b92d
+  anchor:
+    type: page
+    value: 22
+  supports: 语义分割与逐像素类别图
+- citation_id: cite-equivariance
+  source_id: mit6-7960-f24-lec4-8bddd7b92d
+  anchor:
+    type: page
+    value: 23
+  supports: 平移等变公式
+- citation_id: cite-conv-formula
+  source_id: mit6-7960-f24-lec4-8bddd7b92d
+  anchor:
+    type: page
+    value: 25
+  supports: 二维卷积可见公式
+- citation_id: cite-sharing
+  source_id: mit6-7960-f24-lec4-8bddd7b92d
+  anchor:
+    type: page
+    value: 29
+  supports: 局部连接与权重共享
+- citation_id: cite-toeplitz
+  source_id: mit6-7960-f24-lec4-8bddd7b92d
+  anchor:
+    type: page
+    value: 32
+  supports: Toeplitz 约束与参数减少
+- citation_id: cite-multichannel
+  source_id: mit6-7960-f24-lec4-8bddd7b92d
+  anchor:
+    type: page
+    value: 41
+  supports: 一般多输入多输出卷积公式
+- citation_id: cite-filter-size
+  source_id: mit6-7960-f24-lec4-8bddd7b92d
+  anchor:
+    type: page
+    value: 46
+  supports: 每滤波器权重数与滤波器数
+- citation_id: cite-max-pool
+  source_id: mit6-7960-f24-lec4-8bddd7b92d
+  anchor:
+    type: page
+    value: 48
+  supports: 最大池化公式
+- citation_id: cite-mean-pool
+  source_id: mit6-7960-f24-lec4-8bddd7b92d
+  anchor:
+    type: page
+    value: 49
+  supports: 平均池化公式
+- citation_id: cite-channel-pool
+  source_id: mit6-7960-f24-lec4-8bddd7b92d
+  anchor:
+    type: page
+    value: 53
+  supports: 跨通道池化不变性示例
+- citation_id: cite-stride
+  source_id: mit6-7960-f24-lec4-8bddd7b92d
+  anchor:
+    type: page
+    value: 58
+  supports: 步长操作把运算与下采样合并
+- citation_id: cite-dilation
+  source_id: mit6-7960-f24-lec4-8bddd7b92d
+  anchor:
+    type: page
+    value: 60
+  supports: 空洞滤波器与较大感受野
+- citation_id: cite-rf
+  source_id: mit6-7960-f24-lec4-8bddd7b92d
+  anchor:
+    type: page
+    value: 62
+  supports: 感受野可见图示
+- citation_id: cite-implementation
+  source_id: mit6-7960-f24-lec4-8bddd7b92d
+  anchor:
+    type: page
+    value: 64
+  supports: im2col、bmm、col2im 流程
+- citation_id: cite-encoder-decoder
+  source_id: mit6-7960-f24-lec4-8bddd7b92d
+  anchor:
+    type: page
+    value: 67
+  supports: 编码器—解码器结构
+- citation_id: cite-unet
+  source_id: mit6-7960-f24-lec4-8bddd7b92d
+  anchor:
+    type: page
+    value: 70
+  supports: U-Net 跳跃连接图
+- citation_id: cite-resnet
+  source_id: mit6-7960-f24-lec4-8bddd7b92d
+  anchor:
+    type: page
+    value: 71
+  supports: ResNet 残差公式
+- citation_id: cite-position
+  source_id: mit6-7960-f24-lec4-8bddd7b92d
+  anchor:
+    type: page
+    value: 76
+  supports: 位置编码动机与定义
+- citation_id: cite-field
+  source_id: mit6-7960-f24-lec4-8bddd7b92d
+  anchor:
+    type: page
+    value: 78
+  supports: 二维坐标到标量场
+- citation_id: cite-siren
+  source_id: mit6-7960-f24-lec4-8bddd7b92d
+  anchor:
+    type: page
+    value: 79
+  supports: 连续二维坐标到颜色
+- citation_id: cite-nerf
+  source_id: mit6-7960-f24-lec4-8bddd7b92d
+  anchor:
+    type: page
+    value: 80
+  supports: 5D 位置/方向到颜色与体密度
+review:
+  generator_review_status: audited_draft
+  audit_findings:
+  - 84 个 PDF 页锚点与公式候选页已有旧 host-skill 视觉复核记录；本批次只迁移可见页面支持的内容。
+  - 保留平移等变、二维/多通道卷积、池化与残差公式；索引或标签有歧义处均附限制。
+  - 隐藏或覆盖文本层独有的步长、空洞、aliasing、U-Net 拼接维度等细节未纳入。
+  - 所有引用使用 source_id mit6-7960-f24-lec4-8bddd7b92d 与 page anchor。
+  target_minutes: 180
+  practice_coverage: 9/9
+limitations:
+- PDF 多页原生文本层含不可见或被覆盖的教材内容；本学习包只保留可见幻灯片或与可见内容一致的清洁文本证据。
+- 第23页同时出现 'Translation invariance' 与明确的等变公式；本学习包依据公式和 'equivariant mapping' 标签讲授等变性。
+- 第39—40页的偏置/输出索引存在可见歧义；计算练习改以第41、44—46页为证据。
+- 第59—60页原生文本含不可见的逐项公式和其他说明；本学习包对步长与空洞卷积只做可见图示支持的定性比较。
+- 第70页只可见 U-Net 跳连拓扑，未写明拼接维度或精确层索引；这些细节不纳入学习要求。
+- 第79—80页把示例网络标成 CNN/Conv net；本学习包只保留坐标到场值的可见映射，不断言具体实现类型。
+- 未提供讲课录音、转录或讲者备注；对纯图示页采取保守解释。
