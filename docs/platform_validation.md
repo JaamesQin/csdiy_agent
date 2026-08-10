@@ -1,6 +1,6 @@
 # 清小搭平台与本地协议验证记录
 
-> 更新日期：2026-07-31
+> 更新日期：2026-08-10
 > 当前结论：本地协议验证通过，清小搭生产平台验证待执行
 
 ## 1. 验证范围
@@ -175,3 +175,27 @@ CSRF、同源校验、限流和账号画像隔离，同时保留原有 API Key �
 - 登录后的 Web UI 保留画像查看/删除、意图路由和 Python 静态代码辅导入口，不保存匿名 ID 或 API Key；
 - 未配置 DeepSeek 时仍可使用规则路由、明确画像识别和 Python AST 诊断；
 - 4 项真实 HTTP/SSE 测试在 `127.0.0.1` 临时端口全部通过。
+
+## 9. 2026-08-10 多语言辅导与能力帮助验证
+
+本节记录当前候选版本的最新验证，前述 36/210 项结果保留为历史基线。新增验证覆盖
+能力目录、Help 路由优先级、CSDIY 多语言别名、所有保证的 Tree-sitter grammar、
+Python/Triton AST、解析器失败降级和未标语言边界。
+
+```text
+.venv/bin/pytest -q --ignore=tests/integration/test_local_http.py
+250 passed
+
+.venv/bin/pytest -q tests/integration/test_local_http.py
+4 passed
+```
+
+合计 `254 passed`。验证确认：
+
+- `/help` 和“你目前有哪些功能”只列学习画像与多语言静态代码辅导；
+- `/help code`、“代码辅导支持什么语言”和“课程导航是什么”返回目录中的对应帮助/状态；
+- Help 在画像观察前返回，不写入学习画像；“C++ 中什么是 virtual”不会误路由到 Help；
+- C/C++、CUDA、ISPC、LaTeX 等错误代码返回结构位置，Triton 使用 Python 宿主语法；
+- 所有保证的 grammar 从安装包离线加载，测试过程不需要外部模型或网络；
+- 未标语言不会默认按 Python 解析，课程专用 DSL 和解析器异常会透明降级；
+- 所有代码辅导路径仍为 `ran_code=false`，OpenAI JSON/SSE 顺序和真实 loopback HTTP 保持兼容。

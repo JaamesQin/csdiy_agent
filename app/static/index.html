@@ -95,9 +95,13 @@
           <h1>从一次真实对话开始。</h1>
           <p>
             页面通过账号会话调用本机的 <code>/v1/chat/completions</code>；学习画像只属于当前账号，
-            并可体验意图路由、Python 静态代码辅导和 SSE 流式输出。
+            并可体验功能帮助、多语言静态代码辅导和 SSE 流式输出。
           </p>
           <div class="starter-grid">
+            <button class="starter" type="button" data-prompt="/help">
+              <span>查看当前功能</span>
+              <small>列出已上线能力与具体使用方式</small>
+            </button>
             <button class="starter" type="button" data-prompt="我想学习系统方向，每周可以投入 6 小时，而且有 Python 基础。">
               <span>建立学习画像</span>
               <small>保存明确提供的方向、时间和基础</small>
@@ -116,7 +120,7 @@
               data-prompt="请做静态代码辅导，说明诊断和验证步骤：&#10;```python&#10;def add(x, values=[]):&#10;    values.append(x)&#10;    return values&#10;```"
             >
               <span>代码辅导</span>
-              <small>只做静态分析，不运行用户代码</small>
+              <small>支持 CSDIY 多语言，只做静态分析</small>
             </button>
           </div>
         </section>

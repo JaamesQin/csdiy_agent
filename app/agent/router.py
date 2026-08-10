@@ -8,11 +8,13 @@ import re
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from app.agent.contracts import (
+    CapabilityId,
     CourseContext,
     Intent,
     RouteDecision,
     RouteOutcome,
 )
+from app.agent.capabilities import CAPABILITIES, match_capability_help
 from app.agent.model_support import normalized_usage
 from app.catalog.studykits import StudyKitStore
 from app.generation.model import ModelError, StructuredModel
@@ -29,6 +31,7 @@ class _ModelRoute(BaseModel):
     course_id: str | None = None
     course_version: str | None = None
     unit_id: str | None = None
+    capability_id: CapabilityId | None = None
     required_context: list[str] = Field(default_factory=list)
     clarifying_question: str | None = None
 
@@ -84,6 +87,14 @@ class IntentRouter:
                 user_prompt=json.dumps(
                     {
                         "intents": [intent.value for intent in Intent],
+                        "capabilities": [
+                            {
+                                "id": item.capability_id.value,
+                                "title": item.title,
+                                "availability": item.availability,
+                            }
+                            for item in CAPABILITIES
+                        ],
                         "latest_user_message": latest[:10000],
                         "known_context": (
                             course_context.model_dump() if course_context else None
@@ -94,6 +105,7 @@ class IntentRouter:
                             "course_id": None,
                             "course_version": None,
                             "unit_id": None,
+                            "capability_id": None,
                             "required_context": [],
                             "clarifying_question": None,
                         },
@@ -168,6 +180,11 @@ class IntentRouter:
                 intent=intent,
                 confidence=candidate.confidence,
                 course_context=resolved_context,
+                capability_id=(
+                    candidate.capability_id
+                    if intent is Intent.CAPABILITY_HELP
+                    else None
+                ),
                 required_context=candidate.required_context,
                 clarifying_question=candidate.clarifying_question,
                 reason="model_classifier",
@@ -179,6 +196,24 @@ class IntentRouter:
         self, text: str, course_context: CourseContext | None
     ) -> RouteDecision | None:
         lowered = text.lower().strip()
+        help_match = match_capability_help(text)
+        if help_match.handled:
+            return RouteDecision(
+                intent=Intent.CAPABILITY_HELP,
+                confidence=1.0,
+                course_context=course_context,
+                capability_id=(
+                    help_match.capability.capability_id
+                    if help_match.capability is not None
+                    else None
+                ),
+                clarifying_question=help_match.unknown_topic,
+                reason=(
+                    "capability_help_unknown"
+                    if help_match.unknown_topic
+                    else "capability_help_rule"
+                ),
+            )
         if re.search(r"admin_generate_studykit|后台生成|运行生成器|authoring job", lowered):
             return RouteDecision(
                 intent=Intent.ADMIN_GENERATE_STUDYKIT,

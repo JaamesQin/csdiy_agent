@@ -9,7 +9,7 @@ CoursePilot 是一个面向中文计算机科学自学者的循证学习 Agent�
 - 本地网页支持用户名注册、密码登录、会话恢复和注销，不再要求用户在浏览器中输入服务器 API Key。
 - 每个账号可以保存、查看和删除最小学习画像：学习方向、每周时间和明确陈述的技术基础。
 - 画像按服务端账号 UUID 隔离；不保存完整对话、用户代码、traceback 或模型推理。
-- 在线 Agent 已接入规则优先的意图路由、主动学习画像、Python 优先的静态代码辅导和透明降级。
+- 在线 Agent 已接入规则优先的意图路由、`/help` 能力目录、主动学习画像、多语言静态代码辅导和透明降级。
 - 在线课程上下文只读取 Schema 合法、人工批准的 Lecture 2/8 黄金 StudyKit，不暴露内部评分字段。
 - 分阶段 StudyKit 生成器执行 Evidence → Content → Practice → Audit → 确定性组装，并输出 JSON/YAML/Markdown。
 
@@ -38,8 +38,8 @@ CoursePilot 是一个面向中文计算机科学自学者的循证学习 Agent�
 ## 核心能力
 
 - 主动学习画像：从用户明确陈述中识别学习方向、目标、基础、每周时间和讲解偏好；网页登录按账号保存，受信 API Key 客户端可使用 `legacy:<user>` 逻辑隔离，并支持查看、纠正和删除。
-- 意图路由：规则优先、结构化模型兜底；当前执行画像分析、Python 优先的静态代码辅导和澄清，未接入能力会透明说明。
-- 代码辅导：提供静态诊断、假设、验证步骤和下一次尝试；不运行用户代码，也不代写可提交作业。
+- 意图路由与帮助：规则优先、结构化模型兜底；`/help` 或“你有哪些功能”只列已上线能力，`/help code`、`/help profile` 和自然语言询问返回具体用法，未接入能力会透明说明状态。
+- 代码辅导：Python/Triton 使用 Python AST，C/C++、CUDA、ISPC、LaTeX、Java、Go、Rust、函数式语言、Web/SQL、Verilog 和汇编等使用离线 Tree-sitter 语法解析；提供诊断、假设、验证步骤和下一次尝试，不运行用户代码，也不代写可提交作业。
 - 已审核 StudyKit 读取：在线辅导可以读取 Lecture 2/8 黄金 StudyKit 的目标、概念和页码引用，不暴露内部评分字段。
 - 离线 StudyKit 生成：生成包含目标、前置知识、提纲、术语、练习、引用和限制说明的中文学习包。
 - 规划中：完整课程导航、MaterialSet 权限、在线检索、材料答疑、练习反馈和学习复盘。
@@ -81,10 +81,10 @@ Agent 编排：意图路由、主动画像、静态代码辅导、安全校验
 | 清小搭接入协议调研 | 已完成 |
 | 自研后端架构与仓库结构 | 已完成最小实现 |
 | OpenAI 兼容 API 实现 | 已完成 |
-| Bearer、Cookie 会话、JSON、SSE 和错误契约测试 | 已完成；210 项测试通过 |
+| Bearer、Cookie 会话、JSON、SSE 和错误契约测试 | 已完成；254 项测试通过 |
 | 本地账号、会话、CSRF 与画像隔离 | 已完成安全 MVP |
-| 意图路由、主动画像和静态代码辅导 | 已完成首版 |
-| 本地聊天测试界面 | 已接入账号登录、画像管理和代码辅导入口 |
+| 意图路由、能力帮助、主动画像和多语言静态代码辅导 | 已完成首版 |
+| 本地聊天测试界面 | 已接入账号登录、功能总览、画像管理和代码辅导入口 |
 | 云端部署方式 | 已确认，等待生产版本部署 |
 | 首个模板课程与核心讲次冻结 | 已完成：MIT 6.7960，Lecture 2 和 8 为核心 Demo |
 | CourseManifest 与来源审核 | 已完成初稿 |
@@ -112,7 +112,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-设置本地接入密钥。配置 `DEEPSEEK_API_KEY` 后会启用低置信路由、画像候选和语义代码辅导；不配置时仍可使用规则路由、显式画像识别和 Python AST 静态诊断：
+设置本地接入密钥。配置 `DEEPSEEK_API_KEY` 后会启用低置信路由、画像候选和语义代码辅导；不配置时仍可使用规则路由、功能帮助、显式画像识别、Python AST 与离线 Tree-sitter 多语言语法诊断：
 
 ```bash
 export COURSEPILOT_API_KEY="$(openssl rand -hex 32)"
@@ -163,7 +163,7 @@ Cookie 认证的 `POST /v1/chat/completions` 同样要求 `X-CSRF-Token`。API K
 .venv/bin/pytest -q
 ```
 
-当前基线为 `210 passed`，其中 4 项真实 HTTP 测试会绑定 `127.0.0.1` 临时端口。覆盖密码和令牌非明文存储、v1→v2 迁移、并发注册、会话过期/撤销、CSRF、同源校验、限流、跨账号隔离、legacy 兼容、JSON/SSE 契约、意图路由、画像 SQLite 生命周期、并发隔离、静态代码诊断、学术诚信、StudyKit 引用白名单、生成管线和真实本地 HTTP/SSE。
+当前基线为 `254 passed`，其中 4 项真实 HTTP 测试会绑定 `127.0.0.1` 临时端口。覆盖密码和令牌非明文存储、v1→v2 迁移、并发注册、会话过期/撤销、CSRF、同源校验、限流、跨账号隔离、legacy 兼容、JSON/SSE 契约、能力帮助与路由优先级、画像 SQLite 生命周期、多语言解析器与诊断、学术诚信、StudyKit 引用白名单、生成管线和真实本地 HTTP/SSE。
 
 ## 安全与隐私
 
@@ -215,4 +215,4 @@ Cookie 认证的 `POST /v1/chat/completions` 同样要求 `X-CSRF-Token`。API K
 
 ## 开发状态说明
 
-仓库已经包含账号注册/登录与安全会话、OpenAI 兼容服务、规则优先的意图路由、按可信 subject 隔离且可撤回的 SQLite 学习画像、Python AST 静态代码辅导、只读黄金 StudyKit 上下文，以及完整的分阶段 StudyKit 生成内核。Lecture 2/8 的原始 PDF 和抽取 chunks 仅保留在本地；线上 SourceChunk 检索、未收录资料入口、材料答疑、练习反馈和学习复盘仍属于后续阶段。
+仓库已经包含账号注册/登录与安全会话、OpenAI 兼容服务、规则优先的意图路由与能力目录、按可信 subject 隔离且可撤回的 SQLite 学习画像、Python AST 与 Tree-sitter 多语言静态代码辅导、只读黄金 StudyKit 上下文，以及完整的分阶段 StudyKit 生成内核。Lecture 2/8 的原始 PDF 和抽取 chunks 仅保留在本地；线上 SourceChunk 检索、未收录资料入口、材料答疑、练习反馈和学习复盘仍属于后续阶段。

@@ -17,7 +17,7 @@
 StudyKit JSON/YAML/Markdown。
 
 本地账号、会话安全和可信 subject 学习画像已经落地，产品运行时也已加入意图路由、
-主动学习画像和静态代码辅导。尚未完成的是用户资料接入、MaterialSet 权限、
+能力帮助、主动学习画像和多语言静态代码辅导。尚未完成的是用户资料接入、MaterialSet 权限、
 在线 SourceChunk 检索、材料答疑、完整 LearnerState、清小搭生产部署和真实用户验收。
 
 ## 二、能力状态矩阵
@@ -37,11 +37,12 @@ StudyKit JSON/YAML/Markdown。
 | 本地账号与会话 | 已完成安全 MVP | 邮箱、找回/修改密码和账号删除不在首版 |
 | OpenAI 兼容 API | 双身份兼容且已接入首批 Agent 路由 | 扩展检索、答疑、练习与复盘 handler |
 | 主动学习画像 | 已完成账号/legacy 隔离的 SQLite MVP | 验证清小搭稳定身份并演进完整 LearnerState |
-| 代码辅导 | 已完成 Python 静态优先 MVP | 接入 SourceChunk 检索；沙箱执行不属于当前范围 |
+| 能力帮助 | 已完成可发现能力目录与 `/help` | 新能力接入时同步状态与帮助内容 |
+| 代码辅导 | 已完成 Python AST + Tree-sitter 多语言静态 MVP | 接入 SourceChunk 检索；沙箱执行不属于当前范围 |
 | 材料答疑 | 待完成 | 权限过滤、检索、引用和端到端测试 |
 | LearnerState/复盘 | 有账号隔离的画像事实基础 | 练习/代码证据更新、目标映射和复盘状态机 |
 | 清小搭接入 | 本地协议已验证 | 账号级文件、会话、超时和生产实测 |
-| 自动化测试 | 210 项通过 | MaterialSet 权限、检索和生产测试 |
+| 自动化测试 | 254 项通过 | MaterialSet 权限、检索和生产测试 |
 
 ## 三、已经完成的生成闭环
 
@@ -110,7 +111,7 @@ Prompt 固定为 `studykit-staged-v0.8-010`，当前 Pipeline 为
 - 标题优先使用 manifest/unit 的可信标题，内部 `EvidencePlan` 等标签不进入
   学习者文本；外部回归 8 讲均未发现内部标签泄漏。
 
-这些修复、账号安全链路及新增在线运行时已有 210 项自动化测试覆盖，并已通过 v21 新鲜外部全量回归；由于设计
+这些修复、账号安全链路及新增在线运行时已有 254 项自动化测试覆盖，并已通过 v21 新鲜外部全量回归；由于设计
 上不进行二次语义 Audit，`repairs_applied_unverified` 结果仍必须人工复核。
 
 仍需关注的语义问题：
@@ -150,7 +151,8 @@ MaterialSet 与检索接口是 Agent 编排的主要前置依赖；端到端和�
 
 当前在线 Agent 的约束：StudyKitGenerator 只在离线流程运行；Cookie 会话只使用
 服务端验证的 `account:<uuid>`，API Key 请求的 `user` 只映射为 `legacy:<user>`、
-不能替代生产授权；代码辅导始终为静态分析并返回 `ran_code=false`；课程页码只来自
+不能替代生产授权；能力总览只展示已经上线的能力；代码辅导始终为静态分析并返回
+`ran_code=false`，语言解析不调用编译器或执行用户代码；课程页码只来自
 Lecture 2/8 人工批准的黄金 StudyKit。
 
 ## 七、下一阶段完成定义

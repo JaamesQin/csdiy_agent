@@ -27,7 +27,7 @@
 
 当前在线 API 已从固定回显升级为首批 Agent 运行时：`app/api/chat_completions.py`
 仍只负责 OpenAI 协议，实际编排位于 `app/agent/`。运行时已经执行主动学习画像、
-规则优先的意图路由和 Python 静态代码辅导，并可只读 Lecture 2/8 人工批准的
+规则优先的意图路由、能力帮助和多语言静态代码辅导，并可只读 Lecture 2/8 人工批准的
 黄金 StudyKit。完整 Catalog、SourceChunk 检索、材料答疑、练习反馈和复盘仍未接入。
 慢速 generator 继续与 `/v1/chat/completions` 严格隔离。
 
@@ -36,8 +36,9 @@ API Key 客户端继续把 OpenAI `user` 映射到 `legacy:<user>`。请求体 `
 不能覆盖账号身份。完整认证、CSRF 和数据库迁移契约见
 [账号认证与画像隔离](account_authentication.md)。
 
-当前自动化测试基线为 `210 passed`。在线模型通过现有 `DeepSeekModel` 惰性加载；
-未配置 `DEEPSEEK_API_KEY` 时规则路由、显式画像抽取和 Python AST 诊断仍可用。
+当前自动化测试基线为 `254 passed`。在线模型通过现有 `DeepSeekModel` 惰性加载；
+未配置 `DEEPSEEK_API_KEY` 时规则路由、功能帮助、显式画像抽取、Python AST 和
+Tree-sitter 多语言语法诊断仍可用。
 
 当前本地生成器仍有明确边界：一个生成请求使用一个 `material_set_id`、一个课程单位、一个 source，并要求整数页码 anchor。多来源课程、网页标题 anchor、混合公共/私有资料需要先在 ingestion 层拆成可生成的 unit 或扩展生成器，不能由在线 Agent 临时拼接后绕过 Evidence 校验。
 
@@ -230,6 +231,8 @@ last_error
 首版已经实现。路由在任何课程读取前确定任务类型，规则高置信命中时不调用模型；
 其余请求通过结构化 DeepSeek 输出分类。置信度低于 `0.70` 或课程身份不能由
 StudyKitStore 验证时只返回一个澄清问题。
+能力查询由 `app/agent/capabilities.py` 中的目录先于画像和代码规则处理；该目录同时
+提供路由别名、上线状态、帮助内容和未上线替代方式，避免在编排器中维护重复列表。
 
 ### P4：清小搭主题 Agent 和多层对话
 
@@ -362,11 +365,23 @@ async def tutor_code(
 
 `TutorResult` 至少包含 `answer`、`citations`、`diagnostics`、`next_checks`、`ran_code` 和 `safety_notes`。`ran_code` 为 false 时不得用“运行结果表明”之类措辞。
 
-该接口已经在 `app/code_tutor/` 实现。Python 使用 `ast.parse` 和少量保守规则；
-其他语言只提供标记为静态的模型建议。`ran_code` 在当前版本恒为 `false`。模型只
-能返回上下文允许列表中的 citation token，再由代码映射到人工审核 StudyKit 的
-真实 source/page。`expected_evidence`、evaluation rubric 和 authoring 字段在
+该接口已经在 `app/code_tutor/` 实现。`languages.py` 维护 CSDIY 语言规范名、围栏
+别名和解析策略；Python/Triton 使用 `ast.parse`，其余主流语言使用固定版本、安装时
+自包含的 Tree-sitter grammar。未标语言不再默认按 Python 处理；BCL、TIRx、Lean、
+F* 等无可靠 grammar 的课程 DSL 明确标记为模型静态建议。解析器最多返回 5 个
+`ERROR`/missing 结构位置，不能被描述成编译通过。
+
+`ran_code` 在当前版本恒为 `false`，在线路径不调用编译器、解释器或 GPU 工具链。
+模型只能返回上下文允许列表中的 citation token，再由代码映射到人工审核 StudyKit
+的真实 source/page。`expected_evidence`、evaluation rubric 和 authoring 字段在
 构造 Prompt 前被移除。作业完整解答请求在调用模型前由确定性规则拒绝。
+
+### 6.4 能力帮助
+
+`CapabilitySpec` 是用户可见功能的单一事实源。`/help` 只渲染 `available` 能力；
+`/help code`、`/help profile`、自然语言用法询问和未上线能力说明均复用同一目录。
+`CAPABILITY_HELP` 在编排层调用画像观察前直接返回，因此功能查询不会写画像或触发
+不必要的辅导模型调用。新增在线能力时必须同时更新目录状态、别名、示例、限制和测试。
 
 ## 7. 资料检索系统
 

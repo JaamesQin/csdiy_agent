@@ -140,7 +140,26 @@ async def test_complete_assignment_solution_is_refused_before_model_call() -> No
     assert result.ran_code is False
 
 
-async def test_non_python_is_explicitly_static_only() -> None:
+async def test_cpp_syntax_error_is_deterministic_and_never_run() -> None:
+    tutor = CodeTutorService(ReviewedFileStudyKitStore())
+
+    result = await tutor.tutor_code(
+        user_id=None,
+        conversation_id=None,
+        course_context=None,
+        code="int main( { return 0; }",
+        language="cpp",
+        error_text=None,
+        question="审阅这段代码",
+        profile=LearnerProfile(),
+    )
+
+    assert result.diagnostics[0].code == "syntax_error"
+    assert result.diagnostics[0].line == 1
+    assert result.ran_code is False
+
+
+async def test_unlabelled_code_is_not_assumed_to_be_python() -> None:
     tutor = CodeTutorService(ReviewedFileStudyKitStore())
 
     result = await tutor.tutor_code(
@@ -148,11 +167,41 @@ async def test_non_python_is_explicitly_static_only() -> None:
         conversation_id=None,
         course_context=None,
         code="int main() { return 0; }",
-        language="cpp",
+        language=None,
         error_text=None,
         question="审阅这段代码",
         profile=LearnerProfile(),
     )
 
-    assert result.diagnostics[0].code == "static_language_only"
+    assert result.diagnostics[0].code == "language_required"
+    assert "```cpp" in result.diagnostics[0].message
+    assert result.ran_code is False
+
+
+async def test_model_receives_normalized_non_python_language() -> None:
+    model = FakeStructuredModel(
+        {
+            "observation": "循环边界需要进一步确认。",
+            "diagnostic_hypotheses": [],
+            "next_checks": [],
+            "next_attempt": "检查最后一次迭代。",
+            "citation_ids": [],
+            "safety_notes": [],
+        }
+    )
+    tutor = CodeTutorService(ReviewedFileStudyKitStore(), model=model)
+
+    result = await tutor.tutor_code(
+        user_id=None,
+        conversation_id=None,
+        course_context=None,
+        code="int main() { return 0; }",
+        language="c++",
+        error_text=None,
+        question="审阅这段代码",
+        profile=LearnerProfile(),
+    )
+
+    assert '"language": "cpp"' in model.calls[0]["user_prompt"]
+    assert '"language_display_name": "C++"' in model.calls[0]["user_prompt"]
     assert result.ran_code is False
