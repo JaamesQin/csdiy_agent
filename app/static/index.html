@@ -74,7 +74,7 @@
           <span class="brand-mark" aria-hidden="true">C</span>
           <span>
             <strong>CoursePilot</strong>
-            <small>个人学习空间</small>
+            <small>个人 Agent 学习空间</small>
           </span>
         </a>
 
@@ -94,7 +94,8 @@
           <p class="eyebrow">PRIVATE LEARNING PROFILE</p>
           <h1>从一次真实对话开始。</h1>
           <p>
-            页面通过账号会话调用 <code>/v1/chat/completions</code>；学习画像只属于当前账号。
+            页面通过账号会话调用本机的 <code>/v1/chat/completions</code>；学习画像只属于当前账号，
+            并可体验意图路由、Python 静态代码辅导和 SSE 流式输出。
           </p>
           <div class="starter-grid">
             <button class="starter" type="button" data-prompt="我想学习系统方向，每周可以投入 6 小时，而且有 Python 基础。">
@@ -102,12 +103,20 @@
               <small>保存明确提供的方向、时间和基础</small>
             </button>
             <button class="starter" type="button" data-prompt="查看我的学习画像">
-              <span>查看学习画像</span>
+              <span>查看与纠正画像</span>
               <small>检查当前账号保存的最小事实</small>
             </button>
             <button class="starter" type="button" data-prompt="删除我的画像">
               <span>删除学习画像</span>
               <small>清除当前账号的服务器端画像</small>
+            </button>
+            <button
+              class="starter"
+              type="button"
+              data-prompt="请做静态代码辅导，说明诊断和验证步骤：&#10;```python&#10;def add(x, values=[]):&#10;    values.append(x)&#10;    return values&#10;```"
+            >
+              <span>代码辅导</span>
+              <small>只做静态分析，不运行用户代码</small>
             </button>
           </div>
         </section>
@@ -134,7 +143,8 @@
           </div>
         </form>
         <p class="privacy-note">
-          会话凭据保存在 HttpOnly Cookie；完整对话仅存在于当前页面内存，不写入数据库。
+          会话凭据保存在 HttpOnly Cookie；完整对话和粘贴的代码仅存在于当前页面内存，
+          学习画像按账号写入本机 SQLite，并可随时删除。
         </p>
       </footer>
     </div>

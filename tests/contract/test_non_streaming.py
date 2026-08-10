@@ -48,16 +48,10 @@ def test_non_streaming_accepts_missing_model_and_stream(
     assert body["object"] == "chat.completion"
     assert isinstance(body["created"], int)
     assert body["model"] == "coursepilot-probe"
-    assert body["choices"] == [
-        {
-            "index": 0,
-            "message": {
-                "role": "assistant",
-                "content": "接入测试成功。收到用户消息：最后一条",
-            },
-            "finish_reason": "stop",
-        }
-    ]
+    assert body["choices"][0]["index"] == 0
+    assert body["choices"][0]["message"]["role"] == "assistant"
+    assert "画像" in body["choices"][0]["message"]["content"]
+    assert body["choices"][0]["finish_reason"] == "stop"
     assert body["usage"] == {
         "prompt_tokens": 0,
         "completion_tokens": 0,

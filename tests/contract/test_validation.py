@@ -63,15 +63,22 @@ def test_invalid_json_returns_422(
     assert response.status_code == 422
 
 
-def test_optional_openai_user_remains_backward_compatible() -> None:
-    request = ChatCompletionRequest.model_validate(
+def test_optional_openai_user_field_is_backward_compatible() -> None:
+    without_user = ChatCompletionRequest.model_validate(
+        {"messages": [{"role": "user", "content": "hello"}]}
+    )
+    with_user = ChatCompletionRequest.model_validate(
         {
             "messages": [{"role": "user", "content": "hello"}],
-            "user": "legacy-client-user",
+            "user": "local-anonymous-user",
         }
     )
-    assert request.user == "legacy-client-user"
 
+    assert without_user.user is None
+    assert with_user.user == "local-anonymous-user"
+
+
+def test_user_identifier_has_a_bounded_length() -> None:
     with pytest.raises(ValidationError):
         ChatCompletionRequest.model_validate(
             {

@@ -65,9 +65,10 @@ def test_v1_profile_database_is_migrated_to_legacy_namespace(tmp_path) -> None:
 
     assert row["user_id"] == "legacy:old-user"
     assert spoofed["user_id"] == "legacy:account:spoofed"
-    assert SQLiteProfileRepository(database).get_profile("legacy:old-user") == {
-        "background": ["Python"]
-    }
+    migrated_profile = SQLiteProfileRepository(database).get_profile("legacy:old-user")
+    assert [
+        fact.value for fact in migrated_profile.confirmed("background")
+    ] == ["Python"]
     assert version == SCHEMA_VERSION
 
 

@@ -149,3 +149,29 @@ CSRF、同源校验、限流和账号画像隔离，同时保留原有 API Key �
 进入聊天、刷新恢复会话、画像写入/读取、用户名展示和注销返回登录页；最终浏览器
 控制台无 error。首次交互测试发现异步 submit 后使用失效 `event.currentTarget` 的
 前端问题，已改为稳定表单引用并增加静态回归断言。
+
+## 8. 2026-08-10 账号与在线 Agent 合并验证
+
+本节追加记录账号分支与在线 Agent 分支合并后的兼容性验证，不替代前述历史结果。
+合并后的请求链路先由 API 层校验 API Key 或 Cookie 会话与 CSRF，再把
+`account:<uuid>` 或 `legacy:<user>` 可信 subject 交给 Agent；Agent 执行意图路由、
+主动画像和静态代码辅导。账号请求体中的 `user` 仍被忽略。
+
+执行结果：
+
+```text
+.venv/bin/pytest -q --ignore=tests/integration/test_local_http.py
+206 passed
+
+.venv/bin/pytest -q tests/integration/test_local_http.py
+4 passed
+```
+
+合计 `210 passed`。新增合并验证确认：
+
+- SQLite Schema v2 同时由账号、会话和增强画像事实使用，不再存在独立 schema version 竞争；
+- Cookie 账号、不同账号和 API Key legacy 用户的画像保持隔离；
+- OpenAI `user`、模型 ID、非流式 envelope、usage 与 SSE role/content/stop/`[DONE]` 顺序保持兼容；
+- 登录后的 Web UI 保留画像查看/删除、意图路由和 Python 静态代码辅导入口，不保存匿名 ID 或 API Key；
+- 未配置 DeepSeek 时仍可使用规则路由、明确画像识别和 Python AST 诊断；
+- 4 项真实 HTTP/SSE 测试在 `127.0.0.1` 临时端口全部通过。

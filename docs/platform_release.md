@@ -1,6 +1,6 @@
 # 平台发布记录
 
-> 更新日期：2026-08-09
+> 更新日期：2026-08-10
 >
 > 发布状态：多用户本地候选版本已验证，生产发布待执行
 
@@ -12,7 +12,11 @@
 - 账号和 legacy API Key 双命名空间的最小学习画像；
 - SQLite Schema v1→v2 事务迁移；
 - 不在服务器保存完整对话或代码；
-- 163 项自动化测试通过，其中 4 项为独立 Uvicorn/loopback HTTP 测试。
+- 标准错误响应和流式错误收尾；
+- 规则优先的意图路由、主动学习画像和静态代码辅导；
+- Lecture 2/8 已审核黄金 StudyKit 只读上下文；
+- 带登录、画像管理和代码辅导入口的本地聊天界面；
+- 210 项自动化测试通过，其中 4 项为独立 Uvicorn/loopback HTTP 测试。
 
 ## 本地启动
 
@@ -36,7 +40,8 @@ uvicorn app.main:app --host 127.0.0.1 --port 8000
 | `COURSEPILOT_COOKIE_SECURE` | 生产必须 | HTTPS 环境设为 `true` |
 | `COURSEPILOT_ALLOWED_ORIGINS` | 生产必须 | 逗号分隔的完整 Origin，例如 `https://coursepilot.example.com` |
 | `COURSEPILOT_TEST_MODE` | 否 | 生产保持 `false` |
-| `DEEPSEEK_API_KEY` | 按需 | 仅离线生成流程使用 |
+| `DEEPSEEK_API_KEY` | 否 | 启用低置信路由、画像候选和语义代码建议；未设置时透明降级 |
+| `DEEPSEEK_BASE_URL` / `DEEPSEEK_MODEL` | 否 | 复用离线生成器的模型适配配置 |
 
 禁止记录或提交 API Key、密码、Cookie、CSRF token、Argon2 hash 和数据库内容。
 
@@ -70,6 +75,29 @@ credential: <COURSEPILOT_API_KEY>
 ```
 
 其请求体 `user` 只进入 legacy 命名空间。清小搭是否提供可验证账号身份仍需平台实测，不能把该字段映射为本地账号 UUID。
+
+不得把 `/chat/completions` 重复附加到 `baseUrl`。
+
+## 当前限制
+
+- 当前只执行画像、代码辅导和澄清；其余意图只识别并透明降级；
+- 尚未接入正式 Catalog、MaterialSet、SourceChunk 检索或 RAG；
+- 课程上下文仅覆盖 Lecture 2/8 人工批准的黄金 StudyKit；
+- 代码只做静态分析，始终 `ran_code=false`；
+- API Key 请求的 `user` 是客户端提供的逻辑标识，只进入 legacy 命名空间，不是生产授权凭据；
+- 尚未完成清小搭生产探测；
+- 尚未实测 `file.url`；
+- 本地测试不能证明云端代理不会缓冲 SSE；
+- 本地测试不能证明云端冷启动满足清小搭超时要求。
+
+## 降级方案
+
+- 流式代理不稳定：保留非流式 JSON；
+- 文件输入不可用：使用公开链接、文本粘贴或预上传样板资料；
+- 长期状态不可用：输出可复制状态卡；
+- DeepSeek 不可用：保留规则路由、显式画像识别和 Python AST 诊断；
+- 画像数据库不可用：继续本轮临时画像和代码辅导，并提示未保存；
+- 云端候选版本异常：回退到最近一个完整测试通过的提交。
 
 ## 发布后检查
 

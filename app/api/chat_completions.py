@@ -8,10 +8,11 @@ import uuid
 from fastapi import APIRouter, Depends, Header, HTTPException
 from fastapi.responses import JSONResponse, StreamingResponse
 
+from app.agent.orchestrator import CoursePilotAgent
+from app.agent.runtime import get_coursepilot_agent
+from app.auth.service import AuthService, get_auth_service
 from app.protocol.schemas import ChatCompletionRequest
 from app.protocol.streaming import completion_stream, should_inject_stream_error
-from app.auth.service import AuthService, get_auth_service
-from app.profile.service import ProfileService, get_profile_service
 from app.security import SecurityPrincipal, require_csrf, require_principal
 
 router = APIRouter()
@@ -26,7 +27,7 @@ async def create_chat_completion(
     principal: SecurityPrincipal = Depends(require_principal),
     csrf_token: str | None = Header(default=None, alias="X-CSRF-Token"),
     auth: AuthService = Depends(get_auth_service),
-    profiles: ProfileService = Depends(get_profile_service),
+    agent: CoursePilotAgent = Depends(get_coursepilot_agent),
 ) -> JSONResponse | StreamingResponse:
     require_csrf(principal, csrf_token, auth)
     user_messages = [
@@ -37,10 +38,8 @@ async def create_chat_completion(
 
     user_message = user_messages[-1]
     profile_user_id = principal.profile_user_id(request.user)
-    profile_result = profiles.handle(user_id=profile_user_id, text=user_message)
-    answer = profile_result.answer or f"接入测试成功。收到用户消息：{user_message}"
-    if profile_result.added_fields:
-        answer += "\n\n画像更新：已保存你明确提供的学习方向、时间或基础。"
+    reply = await agent.handle(messages=request.messages, user_id=profile_user_id)
+    answer = reply.answer
     completion_id = f"chatcmpl-{uuid.uuid4().hex}"
     created = int(time.time())
 
@@ -58,11 +57,7 @@ async def create_chat_completion(
                         "finish_reason": "stop",
                     }
                 ],
-                "usage": {
-                    "prompt_tokens": 0,
-                    "completion_tokens": 0,
-                    "total_tokens": 0,
-                },
+                "usage": reply.usage,
             }
         )
 
@@ -71,6 +66,7 @@ async def create_chat_completion(
             completion_id,
             created,
             answer,
+            usage=reply.usage,
             inject_error=should_inject_stream_error(user_message),
         ),
         media_type="text/event-stream",

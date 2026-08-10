@@ -3,9 +3,13 @@
 from __future__ import annotations
 
 import os
+import dotenv
 
 
 def load_api_key() -> str:
+    """Load the CoursePilot API key from environment variables."""
+    if os.getenv("COURSEPILOT_TEST_MODE", "").strip().lower() != "true":
+        dotenv.load_dotenv()
     api_key = os.getenv("COURSEPILOT_API_KEY")
     if api_key is None:
         raise RuntimeError("COURSEPILOT_API_KEY is required")
