@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import ast
 import json
 import re
 from typing import Any
@@ -14,11 +13,11 @@ from app.agent.model_support import normalized_usage
 from app.catalog.studykits import StudyKitStore
 from app.code_tutor.contracts import (
     CodeTutorContext,
-    StaticDiagnostic,
     TutorCitation,
     TutorDraft,
     TutorResult,
 )
+from app.code_tutor.static_analysis import StaticAnalysis, analyze_static_code
 from app.generation.model import ModelError, StructuredModel
 from app.profile.contracts import FactStatus, LearnerProfile
 
@@ -53,7 +52,10 @@ class CodeTutorService:
         del user_id, conversation_id  # Reserved for future CodeArtifact persistence.
         if not code.strip():
             return TutorResult(
-                answer="请粘贴最小相关代码，并用 Markdown 代码围栏标出；若有报错，也请附上完整 traceback。",
+                answer=(
+                    "请粘贴最小相关代码，并在 Markdown 代码围栏中标明语言；"
+                    "若有报错，也请附上完整的编译器、解释器或工具链错误输出。"
+                ),
                 next_checks=["保留能复现问题的最小输入、期望行为和实际行为。"],
                 next_attempt="提供最小代码、输入、期望行为和实际行为。",
                 ran_code=False,
@@ -61,7 +63,8 @@ class CodeTutorService:
                 usage=normalized_usage(),
             )
 
-        diagnostics = self._static_diagnostics(code, language)
+        analysis = analyze_static_code(code, language)
+        diagnostics = analysis.diagnostics
         if ACADEMIC_CONTEXT.search(question) and FULL_SOLUTION.search(question):
             return TutorResult(
                 answer=(
@@ -82,12 +85,12 @@ class CodeTutorService:
         context = self._build_context(
             course_context=course_context,
             code=code,
-            language=language,
+            analysis=analysis,
             error_text=error_text,
             question=question,
             profile=profile,
         )
-        deterministic_checks = self._deterministic_checks(diagnostics, error_text)
+        deterministic_checks = self._deterministic_checks(analysis, error_text)
         fallback_hypotheses = [item.message for item in diagnostics]
         draft: TutorDraft | None = None
         usage = normalized_usage()
@@ -97,6 +100,7 @@ class CodeTutorService:
                 response = await self.model.generate_json(
                     system_prompt=(
                         "你是 CoursePilot Code Coach。只做静态分析，不得声称运行了代码。"
+                        "必须按照 context.language 分析对应语言，不得把非 Python 代码当作 Python。"
                         "按观察、诊断假设、验证步骤和下一次尝试提供分层提示。"
                         "只能引用 allowed_citations 中的 citation_id，不得输出完整作业解答。"
                         "只输出 JSON object。"
@@ -137,7 +141,10 @@ class CodeTutorService:
                 "当前未配置或未成功调用辅导模型，因此没有补充语义推断。"
             )
             hypotheses = fallback_hypotheses or [
-                "语法可以被 Python AST 解析；仍需结合输入、期望行为和错误输出缩小问题范围。"
+                (
+                    f"{analysis.display_name} 解析器未定位到结构性语法错误；"
+                    "这不等价于通过编译，仍需结合输入、期望行为和工具链错误输出缩小范围。"
+                )
             ]
             next_checks = deterministic_checks
             next_attempt = "按验证步骤缩小到第一个与期望不一致的中间状态。"
@@ -204,7 +211,7 @@ class CodeTutorService:
         *,
         course_context: CourseContext | None,
         code: str,
-        language: str | None,
+        analysis: StaticAnalysis,
         error_text: str | None,
         question: str,
         profile: LearnerProfile,
@@ -275,7 +282,9 @@ class CodeTutorService:
 
         return CodeTutorContext(
             course_context=course_context,
-            language=language,
+            language=analysis.normalized_language,
+            language_display_name=analysis.display_name,
+            deterministic_parser_used=analysis.deterministic_parser_used,
             code=code,
             error_text=error_text,
             question=question,
@@ -314,75 +323,39 @@ class CodeTutorService:
         return [concept for _, concept in scored[:2]]
 
     @staticmethod
-    def _static_diagnostics(code: str, language: str | None) -> list[StaticDiagnostic]:
-        normalized_language = (language or "python").lower()
-        if normalized_language not in {"py", "python", "python3"}:
-            return [
-                StaticDiagnostic(
-                    code="static_language_only",
-                    message=f"{language or '未知语言'} 未进入确定性语法解析，仅能提供模型静态建议。",
-                )
-            ]
-        try:
-            tree = ast.parse(code)
-        except SyntaxError as exc:
-            return [
-                StaticDiagnostic(
-                    code="python_syntax_error",
-                    message=exc.msg,
-                    line=exc.lineno,
-                    column=exc.offset,
-                )
-            ]
-
-        diagnostics: list[StaticDiagnostic] = []
-        for node in ast.walk(tree):
-            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                defaults = [*node.args.defaults, *[item for item in node.args.kw_defaults if item]]
-                if any(isinstance(item, (ast.List, ast.Dict, ast.Set)) for item in defaults):
-                    diagnostics.append(
-                        StaticDiagnostic(
-                            code="mutable_default",
-                            message="函数使用了可变默认参数，多个调用可能共享同一对象。",
-                            line=node.lineno,
-                            column=node.col_offset + 1,
-                        )
-                    )
-            if isinstance(node, ast.ExceptHandler) and node.type is None:
-                diagnostics.append(
-                    StaticDiagnostic(
-                        code="bare_except",
-                        message="裸 except 会吞掉与预期无关的异常，建议缩小异常类型。",
-                        line=node.lineno,
-                        column=node.col_offset + 1,
-                    )
-                )
-            if isinstance(node, ast.Compare) and any(
-                isinstance(operator, (ast.Eq, ast.NotEq)) for operator in node.ops
-            ) and any(isinstance(item, ast.Constant) and item.value is None for item in [node.left, *node.comparators]):
-                diagnostics.append(
-                    StaticDiagnostic(
-                        code="none_identity",
-                        message="与 None 比较应优先使用 is / is not。",
-                        line=node.lineno,
-                        column=node.col_offset + 1,
-                    )
-                )
-        return diagnostics
-
-    @staticmethod
     def _deterministic_checks(
-        diagnostics: list[StaticDiagnostic], error_text: str | None
+        analysis: StaticAnalysis, error_text: str | None
     ) -> list[str]:
         checks: list[str] = []
-        syntax = next((item for item in diagnostics if item.code == "python_syntax_error"), None)
+        diagnostics = analysis.diagnostics
+        language_required = next(
+            (item for item in diagnostics if item.code == "language_required"), None
+        )
+        parser_unavailable = next(
+            (item for item in diagnostics if item.code == "static_parser_unavailable"),
+            None,
+        )
+        syntax = next(
+            (
+                item
+                for item in diagnostics
+                if item.code in {"python_syntax_error", "syntax_error"}
+            ),
+            None,
+        )
+        if language_required:
+            checks.append("给代码围栏补充准确的语言标签后重新提交。")
+        elif parser_unavailable:
+            checks.append("附上该语言编译器、解释器或课程工具链的原始错误输出。")
         if syntax:
-            checks.append(f"先修复第 {syntax.line or '?'} 行附近的语法错误，再重新做静态检查。")
-        else:
+            checks.append(
+                f"先修复第 {syntax.line or '?'} 行附近的语法错误，再重新做静态检查。"
+            )
+        elif not language_required and not parser_unavailable:
             checks.append("构造一个最小输入，分别写下期望输出与实际输出。")
             checks.append("在关键边界打印或断言类型、shape 和索引范围。")
         if error_text:
-            checks.append("从 traceback 最后一行开始定位异常类型，再回看首个属于用户代码的栈帧。")
+            checks.append("从原始错误输出的首个根因位置开始，回看对应的用户代码行。")
         return checks
 
     @staticmethod
@@ -393,7 +366,12 @@ class CodeTutorService:
 def render_tutor_result(result: TutorResult) -> str:
     lines = ["### 观察", result.answer]
     if result.diagnostics:
-        lines.extend(["", "### 确定性静态诊断"])
+        deterministic = any(
+            item.code not in {"language_required", "static_parser_unavailable"}
+            for item in result.diagnostics
+        )
+        heading = "### 确定性静态诊断" if deterministic else "### 静态分析说明"
+        lines.extend(["", heading])
         for item in result.diagnostics:
             location = f"（第 {item.line} 行" if item.line is not None else ""
             if location and item.column is not None:

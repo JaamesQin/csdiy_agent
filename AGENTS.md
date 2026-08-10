@@ -31,6 +31,8 @@
 
 - Explicit user statements may be confirmed. Model inferences remain expiring candidates until the user confirms them. Users must be able to inspect, correct, and delete profile data.
 - Code tutoring is static-only in the current runtime. Keep `ran_code=false`; never claim execution or test results.
+- `app/code_tutor/languages.py` is the source of truth for supported language aliases and parser strategies. Never default an unlabelled fence to Python, invoke a compiler/interpreter, or add runtime grammar downloads.
+- `app/agent/capabilities.py` is the source of truth for learner-visible capability status and help. General help lists only available capabilities and must return before profile observation or persistence.
 - Do not expose `expected_evidence`, evaluation rubrics, evidence controls, audit diagnostics, or hidden reasoning to learners.
 - Refuse complete submit-ready coursework solutions while still offering diagnosis, tests, and layered hints.
 

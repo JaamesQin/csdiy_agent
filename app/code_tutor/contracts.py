@@ -24,6 +24,8 @@ class TutorCitation(BaseModel):
 class CodeTutorContext(BaseModel):
     course_context: CourseContext | None = None
     language: str | None = None
+    language_display_name: str | None = None
+    deterministic_parser_used: bool = False
     code: str
     error_text: str | None = None
     question: str

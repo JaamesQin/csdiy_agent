@@ -9,6 +9,8 @@ PyYAML>=6,<7
 httpx==0.28.1
 uvicorn[standard]==0.52.0
 argon2-cffi==25.1.0
+tree-sitter==0.26.0
+tree-sitter-language-pack==0.13.0
 
 # Development and test dependencies.
 pytest==9.1.1

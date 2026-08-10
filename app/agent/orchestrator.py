@@ -6,6 +6,7 @@ import sqlite3
 
 from app.agent.context import build_turn_context
 from app.agent.contracts import AgentReply, CourseContext, Intent
+from app.agent.capabilities import capability_for_intent, render_capability_help
 from app.agent.model_support import add_usage, normalized_usage
 from app.agent.router import IntentRouter
 from app.catalog.studykits import StudyKitStore
@@ -52,6 +53,19 @@ class CoursePilotAgent:
         decision = route.decision
         latest = user_texts[-1]
         usage = route.usage
+
+        if decision.intent is Intent.CAPABILITY_HELP:
+            return AgentReply(
+                answer=render_capability_help(
+                    decision.capability_id,
+                    unknown_topic=(
+                        decision.clarifying_question
+                        if decision.reason == "capability_help_unknown"
+                        else None
+                    ),
+                ),
+                usage=normalized_usage(usage),
+            )
 
         action, _ = self.profiles.management_action(latest)
         if decision.intent is Intent.PROFILE_ANALYSIS and action is not ProfileAction.NONE:
@@ -151,26 +165,22 @@ class CoursePilotAgent:
             if not profile.confirmed("learning_directions") or not profile.confirmed("weekly_minutes"):
                 return (
                     "你好，我是 CoursePilot。我可以先建立学习画像，或对你粘贴的代码做静态辅导。"
-                    "你想学习哪个 CS 方向？每周大约能投入多少时间？"
+                    "输入 /help 可以查看当前功能。你想学习哪个 CS 方向？每周大约能投入多少时间？"
                 )
-            return "你好，我已经读取了你的学习画像。你可以继续让我分析代码或查看画像。"
+            return (
+                "你好，我已经读取了你的学习画像。你可以继续让我分析代码或查看画像；"
+                "输入 /help 可以查看当前功能。"
+            )
         if clarifying_question:
             return f"我可以帮助整理学习画像或静态分析代码。{clarifying_question}"
         return "请说明你希望整理学习画像，还是分析一段代码。"
 
     @staticmethod
     def _unavailable_answer(intent: Intent, clarification: str | None) -> str:
-        labels = {
-            Intent.COURSE_NAVIGATION: "课程导航",
-            Intent.STUDYKIT_LOOKUP: "在线 StudyKit 查询",
-            Intent.MATERIAL_QUESTION: "材料问答",
-            Intent.CONCEPT_EXPLANATION: "课程概念解释",
-            Intent.PRACTICE_SELECTION: "练习选择",
-            Intent.PRACTICE_FEEDBACK: "练习反馈",
-            Intent.LEARNING_REVIEW: "学习复盘",
-            Intent.GENERATION_STATUS: "生成状态查询",
-        }
-        label = labels.get(intent, intent.value)
+        capability = capability_for_intent(intent)
+        if capability is not None:
+            return render_capability_help(capability.capability_id)
+        label = intent.value
         suffix = f"\n\n{clarification}" if clarification else ""
         return (
             f"我识别到你的意图是“{label}”，但该在线能力尚未接入。"

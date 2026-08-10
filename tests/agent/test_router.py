@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from app.agent.contracts import Intent
+from app.agent.contracts import CapabilityId, Intent
 from app.agent.router import IntentRouter
 from app.catalog.studykits import ReviewedFileStudyKitStore
 from app.protocol.schemas import ChatMessage
@@ -27,6 +27,7 @@ def _messages(text: str) -> list[ChatMessage]:
         ("帮我做学习复盘", Intent.LEARNING_REVIEW),
         ("查看生成状态", Intent.GENERATION_STATUS),
         ("运行生成器后台生成", Intent.ADMIN_GENERATE_STUDYKIT),
+        ("/help", Intent.CAPABILITY_HELP),
         ("你好", Intent.FALLBACK_CLARIFICATION),
     ],
 )
@@ -46,6 +47,47 @@ async def test_code_rule_has_priority_over_profile_sidecar_signal() -> None:
     )
 
     assert result.decision.intent is Intent.CODE_TUTORING
+
+
+@pytest.mark.parametrize(
+    ("text", "capability_id"),
+    [
+        ("你目前有哪些功能", None),
+        ("/help code", CapabilityId.CODE_TUTORING),
+        ("代码辅导 --help", CapabilityId.CODE_TUTORING),
+        ("你的代码辅导支持什么语言", CapabilityId.CODE_TUTORING),
+        ("学习画像是什么", CapabilityId.PROFILE_ANALYSIS),
+        ("课程导航是什么", CapabilityId.COURSE_NAVIGATION),
+    ],
+)
+async def test_help_routes_before_capability_rules(
+    text: str, capability_id: CapabilityId | None
+) -> None:
+    router = IntentRouter(ReviewedFileStudyKitStore())
+
+    result = await router.route(_messages(text))
+
+    assert result.decision.intent is Intent.CAPABILITY_HELP
+    assert result.decision.capability_id is capability_id
+
+
+async def test_unknown_help_topic_stays_in_help() -> None:
+    router = IntentRouter(ReviewedFileStudyKitStore())
+
+    result = await router.route(_messages("/help warp-drive"))
+
+    assert result.decision.intent is Intent.CAPABILITY_HELP
+    assert result.decision.capability_id is None
+    assert result.decision.reason == "capability_help_unknown"
+    assert result.decision.clarifying_question == "warp-drive"
+
+
+async def test_programming_concept_question_is_not_capability_help() -> None:
+    router = IntentRouter(ReviewedFileStudyKitStore())
+
+    result = await router.route(_messages("C++ 中什么是 virtual"))
+
+    assert result.decision.intent is Intent.CONCEPT_EXPLANATION
 
 
 async def test_low_confidence_model_route_becomes_clarification() -> None:

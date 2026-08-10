@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from app.agent.orchestrator import CoursePilotAgent
 from app.agent.router import IntentRouter
 from app.catalog.studykits import ReviewedFileStudyKitStore
@@ -63,6 +65,55 @@ async def test_chat_cannot_run_admin_generator(tmp_path) -> None:
     )
 
     assert "不能触发" in reply.answer
+
+
+async def test_help_lists_only_available_capabilities_and_skips_observation(
+    tmp_path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    agent = _agent(tmp_path)
+
+    async def fail_observation(**_: object) -> object:
+        raise AssertionError("help must not observe or persist profile facts")
+
+    monkeypatch.setattr(agent.profiles, "observe", fail_observation)
+
+    reply = await agent.handle(
+        messages=[ChatMessage(role="user", content="你目前有哪些功能")],
+        user_id="stable-user",
+    )
+
+    assert "1. **学习画像**" in reply.answer
+    assert "2. **多语言静态代码辅导**" in reply.answer
+    assert "3. **" not in reply.answer
+    assert "/help code" in reply.answer
+
+
+async def test_specific_code_help_lists_languages(tmp_path) -> None:
+    agent = _agent(tmp_path)
+
+    reply = await agent.handle(
+        messages=[ChatMessage(role="user", content="代码辅导支持什么语言")],
+        user_id=None,
+    )
+
+    assert "## 多语言静态代码辅导" in reply.answer
+    assert "C++" in reply.answer
+    assert "CUDA" in reply.answer
+    assert "ISPC" in reply.answer
+    assert "LaTeX" in reply.answer
+    assert "ran_code 始终为 false" in reply.answer
+
+
+async def test_unavailable_capability_help_reports_status(tmp_path) -> None:
+    agent = _agent(tmp_path)
+
+    reply = await agent.handle(
+        messages=[ChatMessage(role="user", content="课程导航是什么")],
+        user_id=None,
+    )
+
+    assert "## 课程导航" in reply.answer
+    assert "尚未接入在线能力" in reply.answer
 
 
 async def test_database_failure_degrades_to_transient_profile(tmp_path) -> None:

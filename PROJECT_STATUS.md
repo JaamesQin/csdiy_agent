@@ -10,7 +10,7 @@
 
 CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生成内核，
 并已落地本地账号注册/登录、Cookie 会话和可信 subject 画像隔离，同时将意图路由、
-主动学习画像和静态代码辅导接入 OpenAI 兼容对话 API；资料权限、SourceChunk
+能力帮助、主动学习画像和多语言静态代码辅导接入 OpenAI 兼容对话 API；资料权限、SourceChunk
 检索、材料答疑、练习反馈和学习复盘仍未接成完整闭环。
 
 当前最成熟的链路是：
@@ -96,17 +96,21 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
   OpenAI JSON、SSE、Bearer 和 `coursepilot-probe` 模型 ID 保持兼容。
 - 意图路由采用确定性规则优先、DeepSeek 结构化分类兜底；低置信请求先澄清，
   普通对话不能触发后台 StudyKit 生成。
+- 能力目录集中维护已上线和未上线能力；`/help` 只展示学习画像与多语言代码辅导，
+  `/help code`、`/help profile` 和对应自然语言询问返回具体用法，Help 不触发画像观察。
 - Cookie 会话只向 Agent 传入 `account:<uuid>`；API Key 请求的可选 `user` 只映射为
   `legacy:<user>`。画像支持查看、纠正、单项删除和全部删除。
-- 代码辅导使用 Python AST 确定性诊断和可选模型建议，始终返回
-  `ran_code=false`；非 Python 语言明确降级，作业代写请求由规则守卫阻断。
+- 代码辅导使用 Python AST 与自包含 Tree-sitter language pack；C/C++、CUDA、
+  ISPC、LaTeX、Java、Go、Rust、OCaml、Verilog、汇编等进入确定性结构解析，
+  课程专用 DSL 明确降级为模型静态建议。所有路径始终返回 `ran_code=false`，
+  作业代写请求由规则守卫阻断。
 - 在线课程上下文只读取 Lecture 2/8 中 Schema 合法且人工批准的黄金 StudyKit；
   模型只能引用允许列表内的真实页码，内部 `expected_evidence` 和 rubric 不进入 Prompt。
 - 未配置 `DEEPSEEK_API_KEY`、模型失败或画像数据库不可用时均透明降级，服务仍能启动和响应。
 
 ### 测试状态
 
-- 当前自动化测试：`210 passed`。
+- 当前自动化测试：`254 passed`（250 项普通测试，4 项 loopback HTTP/SSE 测试）。
 - 测试覆盖阶段 Schema、Evidence controls、确定性 chunk 并集、引用、
   Markdown LaTeX、模型响应重试、恢复、单次 Audit 回修、非 CS 合成单元、
   CLI、质量 profile、数据库迁移、密码/会话安全、CSRF、限流、账号隔离、
@@ -142,6 +146,7 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
 | 共享 SQLite 迁移 | `app/storage/database.py` |
 | 在线 Agent 编排 | `app/agent/orchestrator.py` |
 | 意图路由 | `app/agent/router.py` |
+| 能力目录与 Help | `app/agent/capabilities.py` |
 | 可信 subject SQLite 学习画像 | `app/profile/` |
 | 静态代码辅导 | `app/code_tutor/` |
 | 已审核 StudyKit 读取 | `app/catalog/studykits.py` |
