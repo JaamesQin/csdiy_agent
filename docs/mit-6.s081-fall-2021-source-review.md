@@ -118,4 +118,3 @@ The build index is under:
 ```text
 outputs/mit-6.s081-fall-2021/8905ecd85275372bb2684127ba30a27046650d6b94e3c4d8320c51387ca561db/STUDYKIT_INDEX.md
 ```
-

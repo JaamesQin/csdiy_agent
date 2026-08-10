@@ -434,4 +434,3 @@ At each batch boundary, provide:
 The final handoff must be self-contained and link the global registry/index, all new tracked automation, and the aggregate evaluation. Explicitly distinguish ignored local data from tracked reproducibility metadata, report the pinned upstream commit, and state whether anything was staged or committed.
 
 ---
-

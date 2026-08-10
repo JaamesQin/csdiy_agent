@@ -119,4 +119,3 @@ The local build contains:
 - per-unit stage, audit, review, validation, metrics, and final artifact files.
 
 No root DeepSeek generator or lecture-regression command was run. The repository-local portable skill workflow was used end to end.
-

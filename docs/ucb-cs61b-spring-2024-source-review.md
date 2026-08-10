@@ -145,4 +145,3 @@ The next command would begin model-backed StudyKit authoring and was intentional
 ```
 
 No `01-evidence-plan.json`, StudyKit output, DeepSeek request, staged authoring command, or lecture-regression command was created or run.
-
