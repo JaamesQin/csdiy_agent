@@ -1,6 +1,6 @@
 # CoursePilot 全局进度
 
-更新时间：2026-08-08
+更新时间：2026-08-09
 
 状态口径：
 
@@ -16,8 +16,9 @@
 生成 Content 和 Practice，执行一次独立 Audit，并确定性输出
 StudyKit JSON/YAML/Markdown。
 
-尚未完成的是产品运行时闭环：用户资料接入、MaterialSet 权限、在线检索、
-Agent 意图路由、材料答疑、学习状态、清小搭生产部署和真实用户验收。
+本地账号、会话安全和最小学习画像已经落地。尚未完成的是产品运行时闭环：
+用户资料接入、MaterialSet 权限、在线检索、Agent 意图路由、材料答疑、
+完整 LearnerState、清小搭生产部署和真实用户验收。
 
 ## 二、能力状态矩阵
 
@@ -33,11 +34,13 @@ Agent 意图路由、材料答疑、学习状态、清小搭生产部署和真�
 | CourseManifest | 有 YAML manifest | 正式 Schema、Catalog 和运行时 API |
 | MaterialManifest/MaterialSet | 待完成 | 存储、权限、过期、删除和混合授权 |
 | 检索 | 待完成 | 元数据过滤、关键词检索、可选向量检索 |
-| OpenAI 兼容 API | 有协议服务 | 接入真实课程 Agent 路由 |
+| 本地账号与会话 | 已完成安全 MVP | 邮箱、找回/修改密码和账号删除不在首版 |
+| 最小学习画像 | 已完成 | 演进为带课程目标/练习证据的 LearnerState |
+| OpenAI 兼容 API | 协议与双身份兼容完成 | 接入真实课程 Agent 路由 |
 | 材料答疑/代码辅导 | 有设计和局部组件 | 运行时编排与端到端测试 |
-| LearnerState/复盘 | 待完成 | 最小 Schema、证据更新和删除能力 |
+| LearnerState/复盘 | 有账号隔离的最小画像 | 课程目标、练习证据和复盘状态机 |
 | 清小搭接入 | 本地协议已验证 | 账号级文件、会话、超时和生产实测 |
-| 自动化测试 | 148 项通过 | 端到端、权限、安全和生产测试 |
+| 自动化测试 | 163 项通过 | MaterialSet 权限和生产平台测试 |
 
 ## 三、已经完成的生成闭环
 
@@ -106,7 +109,7 @@ Prompt 固定为 `studykit-staged-v0.8-010`，当前 Pipeline 为
 - 标题优先使用 manifest/unit 的可信标题，内部 `EvidencePlan` 等标签不进入
   学习者文本；外部回归 8 讲均未发现内部标签泄漏。
 
-这些修复已有 148 项自动化测试覆盖，并已通过 v21 新鲜外部全量回归；由于设计
+生成与在线安全链路共有 163 项自动化测试覆盖，并已通过 v21 新鲜外部全量回归；由于设计
 上不进行二次语义 Audit，`repairs_applied_unverified` 结果仍必须人工复核。
 
 仍需关注的语义问题：
@@ -120,7 +123,8 @@ Prompt 固定为 `studykit-staged-v0.8-010`，当前 Pipeline 为
 
 ## 五、下一阶段工作
 
-1. 冻结 Manifest、MaterialSet、LearnerState 和 TaskPlan 的最小接口。
+1. 冻结 Manifest、MaterialSet、完整 LearnerState 和 TaskPlan 的最小接口；
+   复用已经可信的 `account:<uuid>` 身份。
 2. 完成公共课程和私有用户资料的统一解析、存储、授权与删除。
 3. 建立带 owner/session/course/version/unit 过滤的检索层。
 4. 将生成、答疑、练习反馈和代码辅导接入 OpenAI 兼容对话 API。

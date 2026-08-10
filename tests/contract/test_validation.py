@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import pytest
+from pydantic import ValidationError
+
+from app.protocol.schemas import ChatCompletionRequest
 from tests.conftest import ASGITestClient
 
 
@@ -58,3 +61,21 @@ def test_invalid_json_returns_422(
     )
 
     assert response.status_code == 422
+
+
+def test_optional_openai_user_remains_backward_compatible() -> None:
+    request = ChatCompletionRequest.model_validate(
+        {
+            "messages": [{"role": "user", "content": "hello"}],
+            "user": "legacy-client-user",
+        }
+    )
+    assert request.user == "legacy-client-user"
+
+    with pytest.raises(ValidationError):
+        ChatCompletionRequest.model_validate(
+            {
+                "messages": [{"role": "user", "content": "hello"}],
+                "user": "x" * 129,
+            }
+        )

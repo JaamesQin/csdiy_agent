@@ -1,12 +1,25 @@
+sessionStorage.removeItem("coursepilot_api_key");
+sessionStorage.removeItem("coursepilot_api_base");
+localStorage.removeItem("coursepilot_anonymous_user");
+
 const state = {
-  apiBase: sessionStorage.getItem("coursepilot_api_base") || "",
-  apiKey: sessionStorage.getItem("coursepilot_api_key") || "",
+  user: null,
+  csrfToken: "",
   messages: [],
   controller: null,
   busy: false,
 };
 
 const elements = {
+  authShell: document.querySelector("#authShell"),
+  appShell: document.querySelector("#appShell"),
+  loginTab: document.querySelector("#loginTab"),
+  registerTab: document.querySelector("#registerTab"),
+  loginForm: document.querySelector("#loginForm"),
+  registerForm: document.querySelector("#registerForm"),
+  authError: document.querySelector("#authError"),
+  currentUsername: document.querySelector("#currentUsername"),
+  logoutButton: document.querySelector("#logoutButton"),
   chatForm: document.querySelector("#chatForm"),
   messageInput: document.querySelector("#messageInput"),
   sendButton: document.querySelector("#sendButton"),
@@ -15,25 +28,132 @@ const elements = {
   conversation: document.querySelector("#conversation"),
   intro: document.querySelector("#intro"),
   clearButton: document.querySelector("#clearButton"),
-  settingsButton: document.querySelector("#settingsButton"),
-  settingsDialog: document.querySelector("#settingsDialog"),
-  settingsForm: document.querySelector("#settingsForm"),
-  apiBaseInput: document.querySelector("#apiBaseInput"),
-  apiKeyInput: document.querySelector("#apiKeyInput"),
-  settingsError: document.querySelector("#settingsError"),
   connectionStatus: document.querySelector("#connectionStatus"),
   inputHint: document.querySelector("#inputHint"),
 };
 
-function apiUrl(path) {
-  const base = state.apiBase.replace(/\/+$/, "");
-  return `${base}${path}`;
+async function errorMessage(response) {
+  try {
+    const body = await response.json();
+    return body?.error?.message || `HTTP ${response.status}`;
+  } catch {
+    return `HTTP ${response.status}`;
+  }
 }
 
-function setConnection(status, text) {
-  elements.connectionStatus.className = `connection ${status}`;
-  elements.connectionStatus.lastChild.textContent = text;
-  elements.inputHint.textContent = text;
+function setAuthMode(mode) {
+  const login = mode === "login";
+  elements.loginForm.hidden = !login;
+  elements.registerForm.hidden = login;
+  elements.loginTab.classList.toggle("active", login);
+  elements.registerTab.classList.toggle("active", !login);
+  elements.loginTab.setAttribute("aria-selected", String(login));
+  elements.registerTab.setAttribute("aria-selected", String(!login));
+  elements.authError.textContent = "";
+}
+
+function showAuth(message = "") {
+  state.user = null;
+  state.csrfToken = "";
+  clearConversation(false);
+  elements.appShell.hidden = true;
+  elements.authShell.hidden = false;
+  elements.authError.textContent = message;
+  window.setTimeout(() => document.querySelector("#loginUsername").focus(), 0);
+}
+
+function showApp(session) {
+  state.user = session.user;
+  state.csrfToken = session.csrf_token;
+  elements.currentUsername.textContent = session.user.username;
+  elements.authShell.hidden = true;
+  elements.appShell.hidden = false;
+  elements.connectionStatus.className = "connection online";
+  elements.connectionStatus.lastChild.textContent = " 已安全登录";
+  document.title = "CoursePilot · 我的学习空间";
+  window.setTimeout(() => elements.messageInput.focus(), 0);
+}
+
+async function authenticate(path, username, password) {
+  const response = await fetch(path, {
+    method: "POST",
+    credentials: "same-origin",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password }),
+  });
+  if (!response.ok) throw new Error(await errorMessage(response));
+  return response.json();
+}
+
+async function restoreSession() {
+  try {
+    const response = await fetch("/auth/me", {
+      credentials: "same-origin",
+      cache: "no-store",
+    });
+    if (!response.ok) {
+      showAuth();
+      return;
+    }
+    showApp(await response.json());
+  } catch {
+    showAuth("无法连接本地服务，请稍后重试。");
+  }
+}
+
+async function submitLogin(event) {
+  event.preventDefault();
+  elements.authError.textContent = "正在登录…";
+  try {
+    const session = await authenticate(
+      "/auth/login",
+      document.querySelector("#loginUsername").value,
+      document.querySelector("#loginPassword").value,
+    );
+    elements.loginForm.reset();
+    showApp(session);
+  } catch (error) {
+    elements.authError.textContent = error.message;
+  }
+}
+
+async function submitRegistration(event) {
+  event.preventDefault();
+  const password = document.querySelector("#registerPassword").value;
+  const confirmation = document.querySelector("#registerPasswordConfirm").value;
+  if (password !== confirmation) {
+    elements.authError.textContent = "两次输入的密码不一致。";
+    return;
+  }
+  elements.authError.textContent = "正在创建账号…";
+  try {
+    const session = await authenticate(
+      "/auth/register",
+      document.querySelector("#registerUsername").value,
+      password,
+    );
+    elements.registerForm.reset();
+    showApp(session);
+  } catch (error) {
+    elements.authError.textContent = error.message;
+  }
+}
+
+async function logout() {
+  if (state.busy) state.controller?.abort();
+  try {
+    const response = await fetch("/auth/logout", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "X-CSRF-Token": state.csrfToken },
+    });
+    if (!response.ok && response.status !== 401) {
+      throw new Error(await errorMessage(response));
+    }
+    showAuth();
+  } catch (error) {
+    elements.inputHint.textContent = `退出失败：${error.message}`;
+  }
 }
 
 function setBusy(busy) {
@@ -50,83 +170,24 @@ function resizeInput() {
 
 function createMessage(role, content = "", extraClass = "") {
   elements.intro.hidden = true;
-
   const article = document.createElement("article");
   article.className = `message ${role} ${extraClass}`.trim();
-
   const avatar = document.createElement("div");
   avatar.className = "avatar";
   avatar.textContent = role === "user" ? "你" : "C";
-
   const body = document.createElement("div");
   body.className = "message-content";
-
   const meta = document.createElement("p");
   meta.className = "message-meta";
   meta.textContent = role === "user" ? "你" : "CoursePilot";
-
   const text = document.createElement("p");
   text.className = "message-text";
   text.textContent = content;
-
   body.append(meta, text);
   article.append(avatar, body);
   elements.conversation.append(article);
   article.scrollIntoView({ behavior: "smooth", block: "end" });
   return text;
-}
-
-function showError(message) {
-  const text = createMessage("assistant", "", "error");
-  text.textContent = `请求失败：${message}`;
-}
-
-async function validateConnection(apiKey, apiBase) {
-  const base = apiBase.replace(/\/+$/, "");
-  const response = await fetch(`${base}/v1/models`, {
-    headers: { Authorization: `Bearer ${apiKey}` },
-  });
-  if (!response.ok) {
-    let message = `HTTP ${response.status}`;
-    try {
-      const body = await response.json();
-      message = body?.error?.message || message;
-    } catch {
-      // The status code is enough when the response is not JSON.
-    }
-    throw new Error(message);
-  }
-}
-
-async function saveSettings(event) {
-  event.preventDefault();
-  const submitter = event.submitter;
-  if (submitter?.value === "cancel") {
-    elements.settingsDialog.close();
-    return;
-  }
-
-  const apiKey = elements.apiKeyInput.value.trim();
-  const apiBase = elements.apiBaseInput.value.trim();
-  if (!apiKey) {
-    elements.settingsError.textContent = "请输入 Bearer 密钥。";
-    return;
-  }
-
-  elements.settingsError.textContent = "正在验证连接…";
-  try {
-    await validateConnection(apiKey, apiBase);
-    state.apiKey = apiKey;
-    state.apiBase = apiBase;
-    sessionStorage.setItem("coursepilot_api_key", apiKey);
-    sessionStorage.setItem("coursepilot_api_base", apiBase);
-    setConnection("online", "本地服务已连接");
-    elements.settingsDialog.close();
-    elements.messageInput.focus();
-  } catch (error) {
-    elements.settingsError.textContent = `验证失败：${error.message}`;
-    setConnection("error", "连接验证失败");
-  }
 }
 
 function parseSseBlock(block) {
@@ -145,57 +206,46 @@ async function readStream(response, output) {
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
-
   while (true) {
     const { value, done } = await reader.read();
     buffer += decoder.decode(value || new Uint8Array(), { stream: !done });
     const blocks = buffer.split(/\r?\n\r?\n/);
     buffer = blocks.pop() || "";
-
     for (const block of blocks) {
       const event = parseSseBlock(block);
       if (!event) continue;
       if (event === "[DONE]") return;
       if (event.error) throw new Error(event.error.message || "流式响应中断");
-
       const delta = event.choices?.[0]?.delta;
       if (typeof delta?.content === "string") {
         output.textContent += delta.content;
         output.scrollIntoView({ behavior: "smooth", block: "end" });
       }
     }
-
     if (done) break;
   }
-
   throw new Error("响应流未以 [DONE] 正常结束。");
 }
 
 async function sendMessage(rawMessage) {
   const message = rawMessage.trim();
-  if (!message || state.busy) return;
-  if (!state.apiKey) {
-    openSettings();
-    return;
-  }
-
+  if (!message || state.busy || !state.user) return;
   state.messages.push({ role: "user", content: message });
   createMessage("user", message);
   elements.messageInput.value = "";
   resizeInput();
-
   const output = createMessage("assistant");
   output.classList.add("streaming");
   setBusy(true);
   state.controller = new AbortController();
-
   try {
     const stream = elements.streamToggle.checked;
-    const response = await fetch(apiUrl("/v1/chat/completions"), {
+    const response = await fetch("/v1/chat/completions", {
       method: "POST",
+      credentials: "same-origin",
       headers: {
-        Authorization: `Bearer ${state.apiKey}`,
         "Content-Type": "application/json",
+        "X-CSRF-Token": state.csrfToken,
       },
       body: JSON.stringify({
         model: "coursepilot-probe",
@@ -204,67 +254,55 @@ async function sendMessage(rawMessage) {
       }),
       signal: state.controller.signal,
     });
-
-    if (!response.ok) {
-      let message = `HTTP ${response.status}`;
-      try {
-        const body = await response.json();
-        message = body?.error?.message || message;
-      } catch {
-        // Preserve the status-based message for non-JSON errors.
-      }
-      throw new Error(message);
+    if (response.status === 401) {
+      showAuth("登录已过期，请重新登录。");
+      return;
     }
-
+    if (!response.ok) throw new Error(await errorMessage(response));
     if (stream) {
       await readStream(response, output);
     } else {
       const body = await response.json();
       output.textContent = body.choices?.[0]?.message?.content || "";
     }
-
-    if (!output.textContent) {
-      throw new Error("服务返回了空回复。");
-    }
+    if (!output.textContent) throw new Error("服务返回了空回复。");
     state.messages.push({ role: "assistant", content: output.textContent });
-    setConnection("online", "本地服务已连接");
+    elements.inputHint.textContent = "画像按账号隔离";
   } catch (error) {
     if (error.name === "AbortError") {
       output.textContent ||= "生成已停止。";
     } else {
       output.textContent = `请求失败：${error.message}`;
       output.closest(".message").classList.add("error");
-      setConnection("error", "最近一次请求失败");
+      elements.inputHint.textContent = "最近一次请求失败";
     }
   } finally {
     output.classList.remove("streaming");
     state.controller = null;
     setBusy(false);
-    elements.messageInput.focus();
+    if (state.user) elements.messageInput.focus();
   }
 }
 
-function clearConversation() {
+function clearConversation(focus = true) {
   if (state.busy) state.controller?.abort();
   state.messages = [];
   elements.conversation.replaceChildren();
   elements.intro.hidden = false;
-  elements.messageInput.focus();
+  if (focus && state.user) elements.messageInput.focus();
 }
 
-function openSettings() {
-  elements.apiBaseInput.value = state.apiBase;
-  elements.apiKeyInput.value = state.apiKey;
-  elements.settingsError.textContent = "";
-  elements.settingsDialog.showModal();
-  window.setTimeout(() => elements.apiKeyInput.focus(), 0);
-}
-
+elements.loginTab.addEventListener("click", () => setAuthMode("login"));
+elements.registerTab.addEventListener("click", () => setAuthMode("register"));
+elements.loginForm.addEventListener("submit", submitLogin);
+elements.registerForm.addEventListener("submit", submitRegistration);
+elements.logoutButton.addEventListener("click", logout);
+elements.clearButton.addEventListener("click", () => clearConversation());
+elements.stopButton.addEventListener("click", () => state.controller?.abort());
 elements.chatForm.addEventListener("submit", (event) => {
   event.preventDefault();
   sendMessage(elements.messageInput.value);
 });
-
 elements.messageInput.addEventListener("input", resizeInput);
 elements.messageInput.addEventListener("keydown", (event) => {
   if (event.key === "Enter" && !event.shiftKey) {
@@ -272,12 +310,6 @@ elements.messageInput.addEventListener("keydown", (event) => {
     elements.chatForm.requestSubmit();
   }
 });
-
-elements.stopButton.addEventListener("click", () => state.controller?.abort());
-elements.clearButton.addEventListener("click", clearConversation);
-elements.settingsButton.addEventListener("click", openSettings);
-elements.settingsForm.addEventListener("submit", saveSettings);
-
 document.querySelectorAll(".starter").forEach((button) => {
   button.addEventListener("click", () => {
     elements.messageInput.value = button.dataset.prompt || "";
@@ -286,10 +318,4 @@ document.querySelectorAll(".starter").forEach((button) => {
   });
 });
 
-if (state.apiKey) {
-  validateConnection(state.apiKey, state.apiBase)
-    .then(() => setConnection("online", "本地服务已连接"))
-    .catch(() => setConnection("error", "请重新验证密钥"));
-} else {
-  window.setTimeout(openSettings, 250);
-}
+restoreSession();

@@ -21,3 +21,4 @@ class ChatCompletionRequest(BaseModel):
     model: str | None = None
     stream: StrictBool = False
     max_tokens: int | None = Field(default=None, ge=1)
+    user: str | None = Field(default=None, max_length=128)

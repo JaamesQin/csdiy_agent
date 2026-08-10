@@ -25,12 +25,15 @@ def _free_port() -> int:
 
 
 @pytest.fixture(scope="module")
-def live_server_url() -> Iterator[str]:
+def live_server_url(tmp_path_factory: pytest.TempPathFactory) -> Iterator[str]:
     port = _free_port()
     url = f"http://127.0.0.1:{port}"
     env = os.environ.copy()
     env["COURSEPILOT_API_KEY"] = TEST_API_KEY
     env["COURSEPILOT_TEST_MODE"] = "true"
+    env["COURSEPILOT_DB_PATH"] = str(
+        tmp_path_factory.mktemp("live-auth") / "coursepilot.sqlite3"
+    )
 
     process = subprocess.Popen(
         [
@@ -105,6 +108,43 @@ def test_live_auth_and_non_streaming(live_server_url: str) -> None:
         response.json()["choices"][0]["message"]["content"]
         == "接入测试成功。收到用户消息：本地黑盒测试"
     )
+
+
+def test_live_account_session_and_profile(live_server_url: str) -> None:
+    with httpx.Client(base_url=live_server_url) as client:
+        registered = client.post(
+            "/auth/register",
+            headers={"Origin": live_server_url},
+            json={
+                "username": "LiveUser",
+                "password": "correct-horse-battery",
+            },
+        )
+        assert registered.status_code == 201
+        csrf = registered.json()["csrf_token"]
+
+        saved = client.post(
+            "/v1/chat/completions",
+            headers={"X-CSRF-Token": csrf},
+            json={
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": "我想学习算法方向，每周 3 小时，而且有 Python 基础。",
+                    }
+                ]
+            },
+        )
+        assert saved.status_code == 200
+        assert "画像更新" in saved.json()["choices"][0]["message"]["content"]
+
+        profile = client.post(
+            "/v1/chat/completions",
+            headers={"X-CSRF-Token": csrf},
+            json={"messages": [{"role": "user", "content": "查看我的学习画像"}]},
+        )
+        assert profile.status_code == 200
+        assert "180" in profile.json()["choices"][0]["message"]["content"]
 
 
 def test_live_sse_headers_order_and_timing(live_server_url: str) -> None:

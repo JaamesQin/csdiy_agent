@@ -1,6 +1,6 @@
 # CoursePilot Developers Guide
 
-更新时间：2026-08-08
+更新时间：2026-08-09
 
 本文说明下一阶段如何在现有 StudyKit 生成内核之上开发用户画像、代码辅导、资料检索、意图路由、清小搭多轮 Agent，以及 generator skill。本文的核心约束是：
 
@@ -20,7 +20,12 @@
 
 最新外部回归为 Lecture 1–8、concurrency=8、8/8 成功，平均人工质量分 91/100。所有结果通过确定性验证，但修复后的语义没有二次 Audit；因此数据库必须保存 `review_status`，不能把“生成成功”直接当成“已发布”。
 
-当前在线 API 仍是清小搭协议探针：`app/api/chat_completions.py` 返回固定回显，并未接入真实课程、检索或 StudyKit。接下来的工作应在协议适配层之后增加 Agent 编排，不应把慢速 generator 直接塞进 `/v1/chat/completions` 请求处理函数。
+当前在线 API 已在协议探针上增加本地账号、Cookie 会话和最小学习画像；普通消息仍返回固定回显，尚未接入真实课程、检索或 StudyKit。接下来的工作应在协议适配层之后增加 Agent 编排，不应把慢速 generator 直接塞进 `/v1/chat/completions` 请求处理函数。
+
+账号是当前唯一可信的本地用户身份。Cookie 会话解析为 `account:<uuid>`；旧的
+API Key 客户端继续把 OpenAI `user` 映射到 `legacy:<user>`。请求体 `user`
+不能覆盖账号身份。完整认证、CSRF 和数据库迁移契约见
+[账号认证与画像隔离](account_authentication.md)。
 
 当前本地生成器仍有明确边界：一个生成请求使用一个 `material_set_id`、一个课程单位、一个 source，并要求整数页码 anchor。多来源课程、网页标题 anchor、混合公共/私有资料需要先在 ingestion 层拆成可生成的 unit 或扩展生成器，不能由在线 Agent 临时拼接后绕过 Evidence 校验。
 
@@ -271,6 +276,11 @@ last_error
 - 当 StudyKit 版本变化时，保留旧画像证据，并执行 objective ID 映射；不能静默覆盖历史记录。
 - 画像不能改变原始 StudyKit、课程身份或用户权限。
 
+当前实现位于 `app/profile/`，只保存用户明确提供的学习方向、每周分钟数和技术
+基础，支持“查看我的学习画像”和“删除我的画像”。这是 LearnerState 的安全最小
+切片，不保存完整消息、代码或推断型掌握度；后续扩展必须继续使用认证层提供的
+trusted subject，不能重新信任客户端 `user`。
+
 ## 6. 第一批能力：代码辅导
 
 ### 6.1 目标与边界
@@ -438,6 +448,11 @@ fallback_clarification
 - `stream=true` 的 SSE：role → content → stop → `data: [DONE]`；
 - 正确的 `finish_reason`、`usage` 和 HTTP 错误。
 
+本地网页还支持 `/auth/register`、`/auth/login`、`/auth/me` 和 `/auth/logout`。
+`/v1/*` 同时接受 API Key Bearer 和账号 Cookie；Cookie 写请求必须带
+`X-CSRF-Token`，API Key 客户端不受该要求影响。协议层只把可信 subject 交给
+画像/检索模块，不允许能力模块自行解析用户名、Cookie 或请求体 `user`。
+
 协议适配层不能依赖清小搭一定提供持久会话。每轮请求应能从 `messages` 恢复最小上下文；如果平台提供稳定会话 ID，再把它作为数据库索引，而不是唯一事实来源。
 
 ### 9.2 多层上下文
@@ -542,6 +557,7 @@ generation policy（draft/strict）
 ```text
 app/
   api/                 # 清小搭/OpenAI 兼容协议
+  auth/                # 密码、账号、会话、CSRF 与限流
   agent/               # context、intent、router、orchestration
   catalog/             # Course、Unit、MaterialSet、StudyKitBuild
   profile/             # LearnerProfile 与证据更新
@@ -549,7 +565,7 @@ app/
   retrieval/           # parser、index、search、citation
   generation/          # StudyKitGenerator 与模型适配
   jobs/                # 离线生成、索引和重试队列
-  storage/             # 数据库、对象存储、权限
+  storage/             # 共享 SQLite 迁移、后续对象存储与权限
 skills/
   studykit-generator/  # 开发者/后台离线生成 skill
 ```

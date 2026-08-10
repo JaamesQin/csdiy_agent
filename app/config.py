@@ -15,3 +15,33 @@ def load_api_key() -> str:
 
 
 API_KEY = load_api_key()
+
+
+def _load_bool(name: str, default: bool = False) -> bool:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _load_positive_int(name: str, default: int) -> int:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    try:
+        parsed = int(value)
+    except ValueError as exc:
+        raise RuntimeError(f"{name} must be an integer") from exc
+    if parsed <= 0:
+        raise RuntimeError(f"{name} must be positive")
+    return parsed
+
+
+COOKIE_SECURE = _load_bool("COURSEPILOT_COOKIE_SECURE", default=False)
+SESSION_TTL_HOURS = _load_positive_int("COURSEPILOT_SESSION_TTL_HOURS", 12)
+SESSION_COOKIE_NAME = "coursepilot_session"
+ALLOWED_ORIGINS = {
+    origin.strip().rstrip("/")
+    for origin in os.getenv("COURSEPILOT_ALLOWED_ORIGINS", "").split(",")
+    if origin.strip()
+}

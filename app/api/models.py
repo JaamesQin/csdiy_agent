@@ -4,13 +4,15 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends
 
-from app.security import require_bearer_token
+from app.security import SecurityPrincipal, require_principal
 
 router = APIRouter()
 
 
-@router.get("/v1/models", dependencies=[Depends(require_bearer_token)])
-async def list_models() -> dict[str, object]:
+@router.get("/v1/models")
+async def list_models(
+    _principal: SecurityPrincipal = Depends(require_principal),
+) -> dict[str, object]:
     return {
         "object": "list",
         "data": [

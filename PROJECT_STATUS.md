@@ -1,6 +1,6 @@
 # CoursePilot 项目状态
 
-更新时间：2026-08-08
+更新时间：2026-08-09
 
 这份文档是新开发者的快速入口。更完整的状态矩阵见
 [docs/project_status.md](docs/project_status.md)，生成管线说明见
@@ -9,8 +9,8 @@
 ## 一句话概括
 
 CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生成内核，
-但尚未把资料权限、检索、生成、答疑、练习反馈和学习复盘接成面向用户的
-端到端课程 Agent。
+并已落地本地账号注册/登录、Cookie 会话和最小学习画像隔离；尚未把资料权限、
+检索、生成、答疑、练习反馈和学习复盘接成面向用户的端到端课程 Agent。
 
 当前最成熟的链路是：
 
@@ -72,12 +72,26 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
 - Practice 的 Prompt 仍要求 5–8 题；验证器允许合理超出，以避免模型偶发
   数量偏差导致整讲失败。`simple` 题数量不设上限，但禁止复杂数值链。
 
+### 多用户账号与学习画像
+
+- 本地网页提供开放式用户名注册、密码登录、会话恢复和注销；密码使用
+  Argon2id，数据库只保存会话令牌的 SHA-256 摘要。
+- Cookie 使用 HttpOnly、SameSite=Strict；Cookie 认证的写请求需要会话绑定
+  CSRF token，并校验浏览器 Origin。
+- 账号画像 subject 固定为 `account:<uuid>`；旧 API Key 的 OpenAI `user`
+  映射到 `legacy:<user>`，两个命名空间不能互访。
+- SQLite Schema v2 保留历史画像并将其迁移到 legacy 命名空间；未知数据库
+  版本拒绝服务启动。
+- 当前只保存用户明确提供的学习方向、每周时间和技术基础；不保存完整对话、
+  代码、traceback 或模型推理。
+
 ### 测试状态
 
-- 当前自动化测试：`148 passed`。
+- 当前自动化测试：`163 passed`。
 - 测试覆盖阶段 Schema、Evidence controls、确定性 chunk 并集、引用、
   Markdown LaTeX、模型响应重试、恢复、单次 Audit 回修、非 CS 合成单元、
-  CLI 和质量 profile。
+  CLI、质量 profile、数据库迁移、密码/会话安全、CSRF、限流、账号隔离和
+  API Key 兼容。
 - 最新一次全新 Lecture 1–8 外部并发回归（concurrency=8）结果为 `8/8`：
   8 讲均生成 JSON/YAML/Markdown，均通过确定性验证，未解决 blocker 为 0。
   详细结果见 `data/regression/studykit-v21-lectures-01-08/regression-summary.json`。
@@ -104,6 +118,9 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
 | PDF 解析 | `app/retrieval/parser.py` |
 | 引用校验与渲染 | `app/retrieval/citations.py`、`app/retrieval/render.py` |
 | 生成器测试 | `tests/generation/` |
+| 账号与会话 | `app/auth/`、`app/api/auth.py` |
+| 共享 SQLite 迁移 | `app/storage/database.py` |
+| 最小学习画像 | `app/profile/` |
 
 运行全部测试：
 
@@ -113,8 +130,8 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
 
 ## 尚未完成
 
-1. 冻结并实现 CourseManifest、MaterialManifest、MaterialSet、LearnerState
-   和 TaskPlan 的运行时接口。
+1. 冻结并实现 CourseManifest、MaterialManifest、MaterialSet、完整 LearnerState
+   和 TaskPlan 的运行时接口；账号与最小画像事实表已完成。
 2. 完成公共课程与用户私有资料的统一解析、存储、授权过滤、过期和删除。
 3. 建立按用户、会话、课程、版本和讲次过滤的检索层；先关键词检索，
    再按需要增加向量检索和重排。
@@ -135,7 +152,7 @@ MaterialSet/权限与检索必须先提供稳定接口，Agent 编排随后接�
 
 - 引用页码存在不代表主张必然被来源支持，语义忠实性仍需模型审核和人工抽检。
 - PDF 文本层会损坏公式、图形和阅读顺序，必要视觉结构不能完全自动恢复。
-- 公共资料、用户私有资料和学习状态尚未形成完整运行时隔离。
+- 账号画像已经隔离；公共资料和用户私有 MaterialSet 尚未形成完整运行时授权链。
 - 清小搭文件输入、稳定会话标识和文件保留能力仍需账号级实测。
 - v21 已完成新鲜模型全量回归并达到 8/8，但修复后未进行二次语义 Audit；
   外部模型结果仍需人工复核后才适合作为最终教材。
