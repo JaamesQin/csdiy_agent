@@ -1,0 +1,5 @@
+{
+  "verdict": "pass",
+  "summary": "独立 standard-mode 语义审核通过。单元身份与官方 Fall 2021 日程链接的 2020 ext3 文本讲义一致；候选的 source_id、转换后 PDF SHA-256、URL、本地路径和 resource_vintage 与准备清单完全匹配。五页证据准确覆盖 WAL 提交点/home 安装/释放规则、异步更新、fsync、批处理、写吸收、并发事务阶段、循环日志起点/序列号/最后有效 commit/重复 replay、缓存快照边界、journaled 与 ordered data、块重用/revoke、日志预留和设备重排/校验和。逐页核对后，候选没有把 ext4 的日志校验和误写成 ext3 已具备功能，也没有把历史案例描述为现代 Linux 完整规范。第 3 页仅有一行去重警告，剩余上下文连续且所有相关主张可核对；49 个引用出现均有效。五项练习从崩溃边界追踪推进到性能语义、循环扫描、模式比较和一致性评审，总时长 180 分钟、非计分且不要求实现。候选符合 portable schema，无公式、顺序、持久化边界、版权或引用问题。actual_reviewed_pages 为空，本 verdict 不授权 finalization。",
+  "issues": []
+}

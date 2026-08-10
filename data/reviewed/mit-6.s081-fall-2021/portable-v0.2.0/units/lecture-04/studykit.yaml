@@ -1,0 +1,694 @@
+studykit_version: '0.1'
+status: draft
+course_id: mit-6.s081-fall-2021
+course_version: fall-2021
+unit_id: lecture-04
+title: MIT 6.S081 第 4 讲：页表
+language: zh-CN
+scope:
+  included_sources:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    title: Page tables lecture slides
+    type: pdf
+    sha256: 34d933608f8c2bc99278d0cc9f45202358768a46ab9aa2e49936679388c60acd
+    official_url: https://pdos.csail.mit.edu/6.828/2021/slides/6s081-lec-vm.pdf
+    local_path: data/raw/mit-6.s081/fall-2021/prepared/lecture-04-page-tables.pdf
+    resource_vintage: fall-2021
+  citation_anchor_types:
+  - page
+learning_objectives:
+- id: obj-1
+  objective: 解释虚拟地址到物理地址的间接层如何支持进程与内核隔离。
+  requirement_ids:
+  - req-01
+- id: obj-2
+  objective: 描述 RISC-V Sv39 地址划分、PTE 权限和三级页表的基本结构。
+  requirement_ids:
+  - req-02
+- id: obj-3
+  objective: 说明 satp、硬件页表遍历、TLB 缓存与失效处理的关系。
+  requirement_ids:
+  - req-03
+- id: obj-4
+  objective: 分析 xv6 进程页表、trampoline 映射和按需内存调整的设计问题。
+  requirement_ids:
+  - req-04
+prerequisites:
+- topic: 二进制地址与位字段
+  required_level: 能把地址理解为若干索引字段和页内偏移，不要求手算具体页表地址。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 9
+- topic: 用户态与内核态
+  required_level: 理解用户代码不能直接配置 MMU，内核负责保护边界。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 6
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 7
+outline:
+- order: 1
+  topic: 虚拟内存的隔离间接层
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 6
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 7
+  purpose: 连接保护目标、MMU 和页表。
+- order: 2
+  topic: Sv39 三级页表
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 8
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 9
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 10
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 13
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 14
+  purpose: 理解地址、页和 PTE 如何组织为稀疏树。
+- order: 3
+  topic: satp、页表遍历与 TLB
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 16
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 17
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 18
+  purpose: 区分页表真值、硬件遍历和翻译缓存。
+- order: 4
+  topic: xv6 地址空间实践
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 20
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 21
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 23
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 25
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 26
+  purpose: 把通用机制映射到内核页表、trampoline 与进程堆。
+core_concepts:
+- id: concept-01
+  term: 虚拟内存的隔离间接层
+  claim_type: source_summary
+  explanation: 每个进程使用自己的虚拟地址空间；软件访问虚拟地址，MMU 按内核配置的页表转换为物理地址，并利用权限限制用户访问内核或其他进程内存。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 6
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 7
+- id: concept-02
+  term: Sv39 三级页表
+  claim_type: source_summary
+  explanation: 课程使用 Sv39：虚拟地址按页内偏移和虚拟页号划分，三级页表逐层使用索引查找 PTE。PTE 包含物理页号及有效、用户、读写执行等权限信息；多级结构避免为未使用的地址范围预留完整平面数组。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 8
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 9
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 10
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 13
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 14
+- id: concept-03
+  term: satp、页表遍历与 TLB
+  claim_type: source_summary
+  explanation: satp 指向当前页表根，硬件在需要时遍历页表，TLB 缓存近期翻译。PTE 被移除、权限变化或切换页表根后，旧 TLB 项可能失效，软件必须按架构规则使缓存翻译失效。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 16
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 17
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 18
+- id: concept-04
+  term: xv6 地址空间实践
+  claim_type: source_summary
+  explanation: xv6 为每个进程维护页表，并在进程切换时更换页表根；trampoline 在各页表的同一位置映射且必须可执行、不可写。分页还为写时复制、惰性分配和进程堆调整提供基础。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 20
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 21
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 23
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 25
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 26
+glossary:
+- term: MMU
+  definition: 按页表把虚拟地址转换为物理地址并检查权限的硬件单元。
+  pages:
+  - 7
+  citations:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 7
+- term: PTE
+  definition: 页表项；保存物理页号以及有效、用户、读写执行等标志。
+  pages:
+  - 10
+  citations:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 10
+- term: TLB
+  definition: 缓存近期地址翻译的处理器结构。
+  pages:
+  - 16
+  citations:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 16
+- term: satp
+  definition: 在本讲中指向当前页表根的 RISC-V 寄存器。
+  pages:
+  - 8
+  - 16
+  citations:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 8
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 16
+common_misconceptions:
+- misconception: 虚拟地址就是物理 RAM 中的同一个数值位置。
+  correction: MMU 通过页表把虚拟地址映射到物理地址，二者之间存在受控间接层。
+  pages:
+  - 7
+  citations:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 7
+- misconception: 修改 PTE 后 TLB 一定会自动立即更新。
+  correction: TLB 可能保留旧翻译，材料要求软件处理失效条目。
+  pages:
+  - 18
+  citations:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 18
+- misconception: trampoline 既要执行就也必须可写。
+  correction: 页面给出的结论是必须可执行但不可写。
+  pages:
+  - 25
+  citations:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 25
+learning_sequence:
+- step: 1
+  activity: 核对前置知识、材料年代与本讲证据边界。
+  duration_minutes: 15
+  objective_ids:
+  - obj-1
+  practice_ids: []
+  citations:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 6
+- step: 2
+  activity: 精读“虚拟内存的隔离间接层”与“Sv39 三级页表”，按来源页整理因果链。
+  duration_minutes: 35
+  objective_ids:
+  - obj-1
+  - obj-2
+  practice_ids: []
+  citations:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 6
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 7
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 8
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 9
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 10
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 13
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 14
+- step: 3
+  activity: 比较“satp、页表遍历与 TLB”与“xv6 地址空间实践”，画出状态或控制流。
+  duration_minutes: 35
+  objective_ids:
+  - obj-3
+  - obj-4
+  practice_ids: []
+  citations:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 16
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 17
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 18
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 20
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 21
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 23
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 25
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 26
+- step: 4
+  activity: 完成基础辨析与逐步追踪练习，并逐项回查页码。
+  duration_minutes: 35
+  objective_ids:
+  - obj-1
+  - obj-2
+  practice_ids:
+  - practice-01
+  - practice-02
+  citations:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 6
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 7
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 9
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 13
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 14
+- step: 5
+  activity: 完成机制分析与设计取舍练习，明确不变量和失败条件。
+  duration_minutes: 40
+  objective_ids:
+  - obj-2
+  - obj-3
+  - obj-4
+  practice_ids:
+  - practice-03
+  - practice-04
+  citations:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 16
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 17
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 18
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 23
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 25
+- step: 6
+  activity: 完成综合解释，使用来源页自检术语、边界和证据。
+  duration_minutes: 20
+  objective_ids:
+  - obj-1
+  - obj-2
+  - obj-3
+  - obj-4
+  practice_ids:
+  - practice-05
+  citations:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 7
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 10
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 16
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 17
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 23
+practice:
+- id: practice-01
+  level: recall
+  objective_ids:
+  - obj-1
+  question: 用三句话分别说明 CPU、MMU、页表在一次用户内存访问中的职责。
+  hint: 从“软件只读写虚拟内存”和“只有内核配置 MMU”出发。
+  deliverable: 三角色职责表。
+  expected_evidence:
+  - MMU 执行转换与权限检查
+  - 页表由内核配置
+  evaluation:
+    full_credit: 三者职责和隔离目标均准确。
+    partial_credit: 能说明地址转换，但混淆页表与 TLB。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 6
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 7
+- id: practice-02
+  level: trace
+  objective_ids:
+  - obj-2
+  question: 不做数值计算，按顺序描述 Sv39 三级页表查找：地址字段、逐级索引、最终 PTE 与页内偏移如何参与。
+  hint: 用页面中的三级树与 9 位索引描述。
+  deliverable: 5–7 步的查找流程。
+  expected_evidence:
+  - 三级索引顺序清楚
+  - 最终 PTE 和偏移职责分开
+  evaluation:
+    full_credit: 流程完整且没有把每一级都说成最终物理页。
+    partial_credit: 知道三级结构但缺少偏移或 PTE。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 9
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 13
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 14
+- id: practice-03
+  level: analysis
+  objective_ids:
+  - obj-3
+  question: 分析三种事件为何可能产生陈旧 TLB 项：删除 PTE、改变权限、切换页表根；分别写出若继续使用旧项的风险。
+  hint: 风险可从错误映射或错误权限思考。
+  deliverable: 三行事件—风险表。
+  expected_evidence:
+  - 三种事件均关联缓存状态
+  - 权限变化风险被单独解释
+  evaluation:
+    full_credit: 每个事件都有准确风险，且指出需要按架构规则失效翻译。
+    partial_credit: 能解释两个事件或只笼统说缓存过期。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 16
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 17
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 18
+- id: practice-04
+  level: design
+  objective_ids:
+  - obj-4
+  question: 为 trampoline 映射做权限评审：根据材料判断执行与写权限，并解释为何相同虚拟位置对进程切换有用。
+  hint: 不要扩展到材料未提供的完整 trap 实现。
+  deliverable: 权限结论和两条设计理由。
+  expected_evidence:
+  - 可执行不可写
+  - 联系每进程页表中的共同映射
+  evaluation:
+    full_credit: 权限和共同位置的作用均有页码依据。
+    partial_credit: 权限正确但未解释共同映射。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 23
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 25
+- id: practice-05
+  level: synthesis
+  objective_ids:
+  - obj-1
+  - obj-2
+  - obj-3
+  - obj-4
+  question: 画出一个“进程访问—页表查找—TLB 命中/未命中—权限检查—可能页故障”的概念流程，并标出 xv6 切换进程时需改变的状态。
+  hint: 只画概念组件，不写内核代码。
+  deliverable: 流程图和 150 字说明。
+  expected_evidence:
+  - 覆盖页表根、TLB、PTE 权限
+  - 联系进程页表和隔离
+  evaluation:
+    full_credit: 流程完整且能解释缓存与隔离边界。
+    partial_credit: 主要组件齐全，但缺少权限或进程切换。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 7
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 10
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 16
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 17
+  - source_id: mit-6.s081-f21-lecture-04-material
+    anchor:
+      type: page
+      value: 23
+citations:
+- citation_id: cite-01
+  source_id: mit-6.s081-f21-lecture-04-material
+  anchor:
+    type: page
+    value: 6
+  supports: 进程隔离目标
+- citation_id: cite-02
+  source_id: mit-6.s081-f21-lecture-04-material
+  anchor:
+    type: page
+    value: 7
+  supports: MMU 和页表间接层
+- citation_id: cite-03
+  source_id: mit-6.s081-f21-lecture-04-material
+  anchor:
+    type: page
+    value: 8
+  supports: Sv39、satp 与页表更新
+- citation_id: cite-04
+  source_id: mit-6.s081-f21-lecture-04-material
+  anchor:
+    type: page
+    value: 9
+  supports: Sv39 地址划分
+- citation_id: cite-05
+  source_id: mit-6.s081-f21-lecture-04-material
+  anchor:
+    type: page
+    value: 10
+  supports: PTE 字段与权限
+- citation_id: cite-06
+  source_id: mit-6.s081-f21-lecture-04-material
+  anchor:
+    type: page
+    value: 13
+  supports: 三级地址索引
+- citation_id: cite-07
+  source_id: mit-6.s081-f21-lecture-04-material
+  anchor:
+    type: page
+    value: 14
+  supports: 三级页表树
+- citation_id: cite-08
+  source_id: mit-6.s081-f21-lecture-04-material
+  anchor:
+    type: page
+    value: 16
+  supports: satp、遍历和 TLB
+- citation_id: cite-09
+  source_id: mit-6.s081-f21-lecture-04-material
+  anchor:
+    type: page
+    value: 17
+  supports: 权限违规与页故障
+- citation_id: cite-10
+  source_id: mit-6.s081-f21-lecture-04-material
+  anchor:
+    type: page
+    value: 18
+  supports: TLB 陈旧项
+- citation_id: cite-11
+  source_id: mit-6.s081-f21-lecture-04-material
+  anchor:
+    type: page
+    value: 20
+  supports: 内核使用虚拟内存的理由
+- citation_id: cite-12
+  source_id: mit-6.s081-f21-lecture-04-material
+  anchor:
+    type: page
+    value: 21
+  supports: 分页应用
+- citation_id: cite-13
+  source_id: mit-6.s081-f21-lecture-04-material
+  anchor:
+    type: page
+    value: 23
+  supports: xv6 每进程页表与 trampoline
+- citation_id: cite-14
+  source_id: mit-6.s081-f21-lecture-04-material
+  anchor:
+    type: page
+    value: 25
+  supports: trampoline 权限
+- citation_id: cite-15
+  source_id: mit-6.s081-f21-lecture-04-material
+  anchor:
+    type: page
+    value: 26
+  supports: sbrk 与进程堆
+review:
+  generator_review_status: pending_independent_audit
+  audit_findings: []
+limitations:
+- 本单元只使用课程页表幻灯片，不包含 xv6 源码或页表实验答案。
+- 第 22、24 页文本提取过少，不能单独支撑内核布局或 trampoline 主张；相关结论使用相邻的非空页面。
+- 地址图的精确视觉布局仍需在独立审阅中核对；本候选不创建结构化公式字段。

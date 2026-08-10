@@ -104,6 +104,13 @@ Lecture 01–21、23、24 共 23 讲。23/23 均通过 portable schema、引用�
 `data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/`；它尚未接入在线 Catalog，
 也不能直接混入采用另一 Schema 的 `data/golden/`。
 
+同日从协作者离线快照恢复并复核 MIT 6.S081 Fall 2021 的完整 v0.2 构建。
+Lecture 01–24 共 24/24 讲重新通过 artifact、review 与输出一致性校验，随机抽查
+Lecture 07、15、17 的来源页、主张、练习和限制也通过。紧凑包本地位于
+`data/reviewed/mit-6.s081-fall-2021/portable-v0.2.0/`。用户已确认派生 StudyKit
+可以上传，因此该紧凑包进入 reviewed 目录；raw、chunks、页图和完整作者化 build
+继续留在 Git 外。
+
 本轮完成的流程改进包括：
 
 - 所有 blocker 先按字段所有权归一化和规范位置去重，再路由到 Evidence、

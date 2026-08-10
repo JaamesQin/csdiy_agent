@@ -1,0 +1,352 @@
+studykit_version: '0.1'
+status: draft
+course_id: mit-6.s081-fall-2021
+course_version: fall-2021
+unit_id: lecture-15
+title: 崩溃恢复与 xv6 预写日志
+language: zh-CN
+scope:
+  included_sources:
+  - source_id: mit-6.s081-f21-lecture-15-material
+    title: Crash recovery
+    type: pdf
+    sha256: 70d1888cd20db72f07ecf9891f4198300b6dbc0d9faa25e5e632af19d3c6c9e6
+    official_url: https://pdos.csail.mit.edu/6.828/2021/lec/l-crash.txt
+    local_path: data/raw/mit-6.s081/fall-2021/prepared/lecture-15-crash-recovery.pdf
+    resource_vintage: 2020_resource_linked_by_fall_2021_schedule
+  citation_anchor_types:
+  - page
+learning_objectives:
+- id: obj-01
+  objective: 识别多块文件系统更新中的危险崩溃窗口。
+  requirement_ids:
+  - req-01
+- id: obj-02
+  objective: 解释事务、提交点和预写日志的持久化顺序。
+  requirement_ids:
+  - req-02
+- id: obj-03
+  objective: 推导各崩溃时点的恢复动作。
+  requirement_ids:
+  - req-03
+- id: obj-04
+  objective: 解释缓存钉住与 WAL 正确性的关系。
+  requirement_ids:
+  - req-04
+- id: obj-05
+  objective: 分析有限日志的容量、并发和性能折中。
+  requirement_ids:
+  - req-05
+prerequisites:
+- topic: xv6 文件系统元数据
+  required_level: 知道 inode、目录项、位图和数据块之间有引用不变量。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 1
+- topic: 缓存与磁盘持久化
+  required_level: 区分内存缓存修改与磁盘写完成。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 2
+- topic: 系统调用并发
+  required_level: 知道多个系统调用可能同时产生文件系统更新。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 4
+outline:
+- order: 1
+  topic: 崩溃与不变量
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 1
+  purpose: 从不安全写入次序建立恢复问题。
+- order: 2
+  topic: 事务与 WAL
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 2
+  purpose: 建立全有或全无与预写规则。
+- order: 3
+  topic: 日志布局与提交点
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 2
+  purpose: 把协议映射到 xv6 日志头和块。
+- order: 4
+  topic: 崩溃分类与恢复
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 3
+  purpose: 依据提交状态决定忽略或重放。
+- order: 5
+  topic: 实现挑战与折中
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 4
+  purpose: 连接钉住、容量、并发和性能。
+core_concepts:
+- id: cc-01
+  term: 崩溃一致性
+  claim_type: source_summary
+  explanation: 恢复后的文件系统应保持内部不变量、保留较早操作并避免顺序异常。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 1
+- id: cc-02
+  term: 事务
+  claim_type: source_summary
+  explanation: 一次系统调用的多个磁盘写被组织为崩溃意义上的全有或全无单元。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 2
+- id: cc-03
+  term: 预写日志
+  claim_type: source_summary
+  explanation: 任何主页安装前，全部更新必须先写入日志并具有持久提交标记。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 2
+- id: cc-04
+  term: 提交点与重放
+  claim_type: source_summary
+  explanation: 非零日志头 n 表示提交；恢复重放已提交事务。重复重放结论限于讲义的 fail-stop 磁盘模型。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 2
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 3
+- id: cc-05
+  term: 缓存块钉住
+  claim_type: source_summary
+  explanation: 提交前钉住脏缓存块，防止驱逐把未提交数据提前写回主页。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 3
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 4
+- id: cc-06
+  term: 日志容量与批处理
+  claim_type: source_summary
+  explanation: xv6 用上界、拆分、并发批处理和写吸收管理有限日志；大 write 拆分后仅保证正确前缀。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 4
+glossary:
+- term_en: Commit
+  term_zh: 提交
+  definition: 使完整日志事务成为恢复时必须重放对象的持久事件。
+- term_en: Install
+  term_zh: 安装
+  definition: 把已提交日志块复制到主页位置。
+- term_en: Replay
+  term_zh: 重放
+  definition: 恢复时再次安装已提交日志。
+- term_en: Pinning
+  term_zh: 钉住
+  definition: 暂时禁止缓存块被驱逐。
+common_misconceptions:
+- misconception: 一部分日志已写就能开始安装。
+  correction: 全部日志写和提交标记都必须先持久化。
+- misconception: 缓存驱逐只影响性能。
+  correction: 未提交脏块写回会破坏 WAL 原子性。
+- misconception: 大 write 总是一个事务。
+  correction: xv6 可拆分它，崩溃后只保证正确前缀。
+learning_sequence:
+- step: 1
+  activity: 复习元数据引用和缓存/磁盘差异。
+  duration_minutes: 15
+  citations:
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 1
+- step: 2
+  activity: 阅读崩溃窗口并完成后果分类。
+  duration_minutes: 45
+  citations:
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 1
+- step: 3
+  activity: 建立 WAL、提交点和恢复路径。
+  duration_minutes: 65
+  citations:
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 2
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 3
+- step: 4
+  activity: 分析钉住、容量、并发和写吸收。
+  duration_minutes: 45
+  citations:
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 4
+- step: 5
+  activity: 汇总提交协议、故障模型与语义边界。
+  duration_minutes: 10
+  citations:
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 3
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 4
+practice:
+- id: prac-01
+  level: 入门
+  question: 分类 create 的 inode 泄漏与目录项指向空闲 inode 两种崩溃状态。
+  hint: 检查谁引用谁。
+  deliverable: 两行分类表。
+  expected_evidence:
+  - 泄漏未被引用。
+  - 空闲 inode 被目录项引用会破坏不变量。
+  evaluation:
+    full_credit: 类别与原因均准确。
+    partial_credit: 只判断危险程度。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 1
+- id: prac-02
+  level: 理解
+  question: 排列日志块、提交头、主页安装和清空日志头。
+  hint: 主页安装必须晚于完整提交。
+  deliverable: 四步时序。
+  expected_evidence:
+  - 日志块→提交头→安装→清空。
+  evaluation:
+    full_credit: 顺序与理由完整。
+    partial_credit: 只有顺序。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 2
+- id: prac-03
+  level: 应用
+  question: 填写提交前、安装中和恢复中再次崩溃的恢复动作。
+  hint: 依据持久日志头。
+  deliverable: 三行表。
+  expected_evidence:
+  - 未提交忽略。
+  - 已提交重放。
+  - 恢复再崩溃可再次重放并注明磁盘假设。
+  evaluation:
+    full_credit: 三种情况与限定完整。
+    partial_credit: 动作正确但无限定。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 2
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 3
+- id: prac-04
+  level: 分析
+  question: 诊断提交前驱逐脏 inode 到主页的错误并修复。
+  hint: 这是提前安装。
+  deliverable: 错误/修复时间线。
+  expected_evidence:
+  - 指出 WAL 违规。
+  - 提交和安装前钉住缓存块。
+  evaluation:
+    full_credit: 错误点和钉住生命周期准确。
+    partial_credit: 只提出扩大缓存。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 4
+- id: prac-05
+  level: 迁移
+  question: 比较拆分大 write、并发批处理和写吸收的收益与边界。
+  hint: 观察原子粒度和写次数。
+  deliverable: 三策略表。
+  expected_evidence:
+  - 拆分只保证正确前缀。
+  - outstanding 归零后提交。
+  - 重复块写被吸收。
+  evaluation:
+    full_credit: 三项权衡完整。
+    partial_credit: 遗漏大 write 边界。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-15-material
+    anchor:
+      type: page
+      value: 4
+citations:
+- citation_id: cite-p1
+  source_id: mit-6.s081-f21-lecture-15-material
+  anchor:
+    type: page
+    value: 1
+  supports: 崩溃窗口、文件系统不变量与恢复目标。
+- citation_id: cite-p2
+  source_id: mit-6.s081-f21-lecture-15-material
+  anchor:
+    type: page
+    value: 2
+  supports: 事务、WAL、日志布局与提交点。
+- citation_id: cite-p3
+  source_id: mit-6.s081-f21-lecture-15-material
+  anchor:
+    type: page
+    value: 3
+  supports: xv6 提交流程、恢复重放与磁盘模型。
+- citation_id: cite-p4
+  source_id: mit-6.s081-f21-lecture-15-material
+  anchor:
+    type: page
+    value: 4
+  supports: 缓存钉住、容量、并发、写吸收与性能边界。
+review:
+  generator_review_status: pending_independent_audit
+  audit_findings: []
+limitations:
+- 唯一证据是官方 Fall 2021 日程链接的 2020 文本讲义经分页 PDF 转换后的材料。
+- 第 3、4 页转换去除了少量重复行。
+- 恢复结论依赖讲义的 fail-stop、扇区写原子磁盘模型；大 write 只保证正确前缀。

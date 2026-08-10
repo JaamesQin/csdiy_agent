@@ -1,0 +1,21 @@
+{
+  "verdict": "pass",
+  "summary": "独立 standard-mode 语义审核通过，且 review-plan 覆盖警告已按 resolution 记录一次性修复。单元身份、Fall 2021 locks 幻灯片、source_id、SHA-256、URL、本地路径和年代均匹配准备清单。证据计划及候选准确解释哈希表丢失更新、临界区与跨字段不变量、rename 循环等待与全局加锁顺序、粗细粒度、原子读改写、获取/释放顺序、spin lock 与阻塞/少共享替代；逐页核对第 4–5、7–20、22–29、31–33 页后，未见把锁描述为自动绑定数据或把性能取舍绝对化。第 3、30 页低文本页未被候选引用；第 10 页只含 Big lock 图示文字，但所有使用均与第 11、22、23 页共同支撑，不单独承载机制结论。候选 146 个引用出现均有效。五项练习由交错追踪推进到不变量、等待图、锁粒度设计和 spin-lock 机制链，总时长 180 分钟且不提供实验源码。候选符合 portable schema，无公式或未证实数值。审计发现第 5 页候选前置引用及第 11 页 EvidencePlan/候选练习引用原未完整进入 review-plan；现已在一次 review-plan 修复中加入两页并分别记录 candidate_citation/evidence_plan 原因。actual_reviewed_pages 仍为空，本 verdict 不授权 finalization。",
+  "issues": [
+    {
+      "id": "audit-review-plan-coverage-p005-p011",
+      "severity": "warning",
+      "category": "coverage_gap",
+      "target_stage": "assembly",
+      "location": "review-plan.json.selected_pages",
+      "description": "原 review-plan 遗漏候选前置知识引用的第 5 页，以及 EvidencePlan 与候选练习/序列引用的第 11 页。",
+      "evidence_chunk_ids": ["mit-6.s081-f21-lecture-10-material-p005", "mit-6.s081-f21-lecture-10-material-p011"],
+      "observed": "原 selected_pages 未包含第 5、11 页，尽管下游候选或 EvidencePlan 使用它们。",
+      "expected": "标准模式复核计划应覆盖所有 EvidencePlan 页和候选引用页，并记录准确选择原因。",
+      "repair_instruction": "在一次 review-plan 修复中加入第 5、11 页；第 5 页标记 candidate_citation，第 11 页标记 evidence_plan 与 candidate_citation；actual_reviewed_pages 保持为空。",
+      "impact": "pipeline_integrity",
+      "severity_rationale": "引用与学习内容正确，缺口仅影响视觉复核排程，可通过确定性元数据同步修复。",
+      "affected_learner_outcome_ids": ["obj-1", "obj-4"]
+    }
+  ]
+}

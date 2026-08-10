@@ -1,0 +1,39 @@
+{
+  "status": "succeeded",
+  "reviewed_at": "2026-08-10",
+  "course_id": "mit-6.s081-fall-2021",
+  "build_id": "8905ecd85275372bb2684127ba30a27046650d6b94e3c4d8320c51387ca561db",
+  "delivery_policy": "draft",
+  "requested_unit_count": 24,
+  "succeeded_unit_count": 24,
+  "artifact_validation": {
+    "succeeded": 24,
+    "failed": 0,
+    "issue_count": 0
+  },
+  "review_validation": {
+    "succeeded": 24,
+    "failed": 0,
+    "issue_count": 0
+  },
+  "output_consistency": {
+    "succeeded": 24,
+    "failed": 0,
+    "issue_count": 0
+  },
+  "semantic_visual_sample": [
+    "lecture-07",
+    "lecture-15",
+    "lecture-17"
+  ],
+  "catalog_source_gap_units": [
+    "lecture-25"
+  ],
+  "non_blocking_source_findings": {
+    "parser_warning_page_count": 61,
+    "low_text_page_count": 30,
+    "empty_chunk_count": 1,
+    "structured_formula_count": 0
+  },
+  "next_action": "database_import_with_draft_limitations_preserved"
+}

@@ -1,0 +1,2003 @@
+{
+  "studykit_version": "0.1",
+  "status": "draft",
+  "course_id": "mit-6.s081-fall-2021",
+  "course_version": "fall-2021",
+  "unit_id": "lecture-20",
+  "title": "Kernels and high-level languages",
+  "language": "zh-CN",
+  "scope": {
+    "included_sources": [
+      {
+        "source_id": "mit-6.s081-f21-lecture-20-material",
+        "title": "Kernels and high-level languages",
+        "type": "pdf",
+        "sha256": "f0c11f6c25e4e48e6ff7112b2af661bb136fcf6a14a3820dc8e283da0c13492b",
+        "official_urls": [
+          "https://pdos.csail.mit.edu/6.828/2021/lec/l-biscuit-slides.pdf"
+        ],
+        "local_path": "data/raw/mit-6.s081/fall-2021/prepared/lecture-20-kernels-and-high-level-languages.pdf",
+        "resource_vintage": "2020_resource_linked_by_fall_2021_schedule",
+        "license_status": "unknown_artifact_scope",
+        "redistribution_allowed": false
+      }
+    ],
+    "citation_anchor_types": [
+      "page"
+    ]
+  },
+  "learning_objectives": [
+    {
+      "id": "o1",
+      "objective": "能够把 C 与 HLL 的内核开发优势和成本分解为安全、控制、性能、内存和可编程性维度。",
+      "evidence_required": "能够以页级来源解释或应用该目标。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 7
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        }
+      ]
+    },
+    {
+      "id": "o2",
+      "objective": "能够解释 Biscuit 为何需要系统调用级堆预留以及静态分析如何支持它。",
+      "evidence_required": "能够以页级来源解释或应用该目标。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 20
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 25
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 26
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 27
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 28
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 29
+          }
+        }
+      ]
+    },
+    {
+      "id": "o3",
+      "objective": "能够区分“漏洞不再可执行恶意代码”“变为 panic”和“逻辑错误仍存在”等安全结果。",
+      "evidence_required": "能够以页级来源解释或应用该目标。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 42
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 43
+          }
+        }
+      ]
+    },
+    {
+      "id": "o4",
+      "objective": "能够审查内核语言性能实验的工作负载、基线、成本分解和外推限制。",
+      "evidence_required": "能够以页级来源解释或应用该目标。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 44
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 45
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 46
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 50
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 51
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 60
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 62
+          }
+        }
+      ]
+    },
+    {
+      "id": "o5",
+      "objective": "能够根据安全、延迟、吞吐和内存约束给出条件化的内核语言选择。",
+      "evidence_required": "能够以页级来源解释或应用该目标。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 54
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 58
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 62
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 65
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 66
+          }
+        }
+      ]
+    }
+  ],
+  "prerequisites": [
+    {
+      "topic": "C 内存管理",
+      "required_level": "理解手工分配、释放和内存安全错误。"
+    },
+    {
+      "topic": "垃圾回收",
+      "required_level": "理解 live data、heap headroom、并发 GC 与暂停。"
+    },
+    {
+      "topic": "操作系统内核路径",
+      "required_level": "理解系统调用、上下文切换、文件系统和网络栈是内核密集工作。"
+    },
+    {
+      "topic": "性能实验",
+      "required_level": "能区分吞吐、延迟、CPU profile 和扩展性。"
+    }
+  ],
+  "outline": [
+    {
+      "order": 1,
+      "topic": "C 与高级语言的内核权衡",
+      "purpose": "比较 C 的资源控制优势、内存安全风险，以及 HLL 的安全、GC、并发和抽象能力。",
+      "anchors": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 7
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        }
+      ]
+    },
+    {
+      "order": 2,
+      "topic": "Biscuit 方法与系统范围",
+      "purpose": "理解同一应用/POSIX/单体架构的比较方法，以及 Biscuit 的系统调用、汇编与内核功能范围。",
+      "anchors": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 14
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 15
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 16
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 17
+          }
+        }
+      ]
+    },
+    {
+      "order": 3,
+      "topic": "裸机运行时与堆耗尽",
+      "purpose": "说明隐式分配为何让普通失败检查不可行，以及按系统调用预留内存和静态分析边界的方案。",
+      "anchors": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 20
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 25
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 26
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 27
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 28
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 29
+          }
+        }
+      ]
+    },
+    {
+      "order": 4,
+      "topic": "HLL 的可编程性与安全收益",
+      "purpose": "用 GC、并发共享、RCU 对照和漏洞分类理解 HLL 能消除或缓和哪些错误。",
+      "anchors": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 36
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 37
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 38
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 39
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 41
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 42
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 43
+          }
+        }
+      ]
+    },
+    {
+      "order": 5,
+      "topic": "性能评估方法",
+      "purpose": "区分生产内核可比性、应用工作负载、HLL tax 分解和非完全 apples-to-apples 的限制。",
+      "anchors": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 44
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 45
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 46
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 50
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 51
+          }
+        }
+      ]
+    },
+    {
+      "order": 6,
+      "topic": "GC 内存与暂停成本",
+      "purpose": "解释 live/free heap 比例、GC 频率、并发 GC 和请求级暂停分布。",
+      "anchors": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 52
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 53
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 54
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 56
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 57
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 58
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 59
+          }
+        }
+      ]
+    },
+    {
+      "order": 7,
+      "topic": "代码路径成本、扩展性与结论",
+      "purpose": "评价同功能路径的 Go/C 差距、多核扩展结果，以及选择语言时安全、性能和内存预算的条件。",
+      "anchors": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 60
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 61
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 62
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 63
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 64
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 65
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 66
+          }
+        }
+      ]
+    }
+  ],
+  "core_concepts": [
+    {
+      "id": "c1",
+      "term": "语言权衡而非单一胜负",
+      "claim_type": "source_summary",
+      "explanation": "C 提供直接内存控制和少量隐式代码，但内存安全难；HLL 提供类型/内存安全和抽象，同时引入检查、GC 与运行时约束。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 7
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "term": "Biscuit",
+      "claim_type": "source_summary",
+      "explanation": "Biscuit 是使用 Go 与少量汇编实现的单体 UNIX 内核，提供多核、线程、日志文件系统、虚拟内存、网络和驱动等功能。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 14
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 15
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 16
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 17
+          }
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "term": "堆耗尽预留",
+      "claim_type": "source_summary",
+      "explanation": "Go 可能隐式分配且不暴露普通分配失败；Biscuit 在执行系统调用前预留其最坏内存需求以避免中途死锁或失败处理。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 20
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 25
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 26
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 27
+          }
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "term": "静态内存边界分析",
+      "claim_type": "source_summary",
+      "explanation": "工具借助 Go 静态分析和逃逸分析估计每个系统调用的最大内存需求，困难路径用标注补充。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 28
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 29
+          }
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "term": "HLL 安全结果分类",
+      "claim_type": "source_summary",
+      "explanation": "内存安全可让部分越界或 use-after-free 漏洞消失或转为 panic，但未知逻辑错误不自动消失。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 42
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 43
+          }
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "term": "HLL tax",
+      "claim_type": "source_summary",
+      "explanation": "评估把成本拆分为 GC、函数 prologue、写屏障和安全检查，避免把所有差异笼统归因于垃圾回收。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 50
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 51
+          }
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "term": "GC 内存-时间权衡",
+      "claim_type": "source_summary",
+      "explanation": "live data 相对空闲 heap 越多，GC 越频繁或每轮成本越高；增加 headroom 可降低 GC 占比但增加内存预算。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 52
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 53
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 54
+          }
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "term": "条件化工程结论",
+      "claim_type": "source_summary",
+      "explanation": "材料的结论是按约束选择：极致性能或最小内存倾向 C，安全优先且可接受成本时 HLL 更有吸引力。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 62
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 65
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 66
+          }
+        }
+      ]
+    }
+  ],
+  "glossary": [
+    {
+      "term": "HLL tax",
+      "definition": "由高级语言运行时、检查与代码生成带来的额外 CPU/内存成本分解。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 50
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 51
+          }
+        }
+      ]
+    },
+    {
+      "term": "heap reservation",
+      "definition": "在系统调用开始前保留最坏情况下所需堆内存的机制。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 27
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 28
+          }
+        }
+      ]
+    },
+    {
+      "term": "write barrier",
+      "definition": "在指针写入等操作上协助 GC 保持追踪不变量的运行时操作。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 50
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 51
+          }
+        }
+      ]
+    },
+    {
+      "term": "tail latency",
+      "definition": "请求延迟分布尾部的高分位或极端延迟。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 57
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 58
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 59
+          }
+        }
+      ]
+    }
+  ],
+  "common_misconceptions": [
+    {
+      "misconception": "使用 HLL 会自动消除所有内核漏洞。",
+      "correction": "内存安全漏洞可消失或降级，但逻辑错误和未知类别仍可能保留。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 42
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 43
+          }
+        }
+      ]
+    },
+    {
+      "misconception": "内核 HLL 的全部成本就是 GC。",
+      "correction": "测量还分出 prologue、写屏障和安全检查成本。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 50
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 51
+          }
+        }
+      ]
+    },
+    {
+      "misconception": "更多 heap 永远是免费优化。",
+      "correction": "更多空闲 heap 可降低 GC 成本，但提高内存预算。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 52
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 54
+          }
+        }
+      ]
+    },
+    {
+      "misconception": "Biscuit 与 Linux 的一次基准即可证明所有内核场景表现相同。",
+      "correction": "系统功能、硬件、应用和配置并非完全一致，结论必须限定在实验范围。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 44
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 45
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 46
+          }
+        }
+      ]
+    }
+  ],
+  "learning_sequence": [
+    {
+      "step": 1,
+      "activity": "复习 C 内存安全、GC 和内核性能指标。",
+      "duration_minutes": 20,
+      "objective_ids": [
+        "o1",
+        "o2",
+        "o3",
+        "o4",
+        "o5"
+      ],
+      "practice_ids": [],
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 7
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        }
+      ]
+    },
+    {
+      "step": 2,
+      "activity": "理解 Biscuit 的目标、方法和系统范围。",
+      "duration_minutes": 30,
+      "objective_ids": [
+        "o1",
+        "o2",
+        "o3",
+        "o4",
+        "o5"
+      ],
+      "practice_ids": [],
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 14
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 15
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 16
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 17
+          }
+        }
+      ]
+    },
+    {
+      "step": 3,
+      "activity": "分析裸机 Go 的堆耗尽、预留和静态分析方案。",
+      "duration_minutes": 35,
+      "objective_ids": [
+        "o1",
+        "o2",
+        "o3",
+        "o4",
+        "o5"
+      ],
+      "practice_ids": [],
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 20
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 25
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 26
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 27
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 28
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 29
+          }
+        }
+      ]
+    },
+    {
+      "step": 4,
+      "activity": "评估 HLL 的可编程性和漏洞结果。",
+      "duration_minutes": 30,
+      "objective_ids": [
+        "o1",
+        "o2",
+        "o3",
+        "o4",
+        "o5"
+      ],
+      "practice_ids": [],
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 36
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 37
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 38
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 39
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 41
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 42
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 43
+          }
+        }
+      ]
+    },
+    {
+      "step": 5,
+      "activity": "解读 HLL tax、GC 内存/暂停和代码路径实验。",
+      "duration_minutes": 35,
+      "objective_ids": [
+        "o1",
+        "o2",
+        "o3",
+        "o4",
+        "o5"
+      ],
+      "practice_ids": [],
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 44
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 50
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 51
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 52
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 54
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 58
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 60
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 62
+          }
+        }
+      ]
+    },
+    {
+      "step": 6,
+      "activity": "完成多核扩展与语言选择综合决策。",
+      "duration_minutes": 30,
+      "objective_ids": [
+        "o1",
+        "o2",
+        "o3",
+        "o4",
+        "o5"
+      ],
+      "practice_ids": [
+        "p1",
+        "p2",
+        "p3",
+        "p4",
+        "p5",
+        "p6"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 63
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 64
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 65
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 66
+          }
+        }
+      ]
+    }
+  ],
+  "practice": [
+    {
+      "id": "p1",
+      "level": "基础",
+      "question": "建立 C 与 HLL 内核开发的五维对照表：内存控制、安全、并发、隐式运行时和依赖。",
+      "hint": "每个维度都写收益和代价。",
+      "deliverable": "五维权衡表。",
+      "expected_evidence": [
+        "不把任何一方描述为无条件更优",
+        "每项有来源支持"
+      ],
+      "evaluation": {
+        "full_credit": "交付物覆盖全部预期证据，推理与页级来源一致，且清楚声明假设。",
+        "partial_credit": "主要方向正确，但遗漏一个关键不变量、权衡或来源支撑。"
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 7
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        }
+      ],
+      "academic_integrity": "独立设计的形成性练习；不要求提交课程实验代码或复现被评答案。"
+    },
+    {
+      "id": "p2",
+      "level": "设计",
+      "question": "某系统调用可能在执行中隐式分配。比较 panic、在分配器等待、逐次检查失败和预先预留四种策略，解释死锁/可实现性问题。",
+      "hint": "关注“已经持有资源后再等待内存”这一风险。",
+      "deliverable": "策略比较与推荐。",
+      "expected_evidence": [
+        "指出 Go 隐式分配限制",
+        "解释预留发生在调用前"
+      ],
+      "evaluation": {
+        "full_credit": "交付物覆盖全部预期证据，推理与页级来源一致，且清楚声明假设。",
+        "partial_credit": "主要方向正确，但遗漏一个关键不变量、权衡或来源支撑。"
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 20
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 25
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 26
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 27
+          }
+        }
+      ],
+      "academic_integrity": "独立设计的形成性练习；不要求提交课程实验代码或复现被评答案。"
+    },
+    {
+      "id": "p3",
+      "level": "安全分析",
+      "question": "把四个假想内核缺陷分类为越界、use-after-free、逻辑错误或未知，并预测在内存安全语言中是消失、panic 还是仍可能存在。",
+      "hint": "不要把 panic 等同于正确执行。",
+      "deliverable": "分类矩阵与理由。",
+      "expected_evidence": [
+        "结果分类有条件",
+        "逻辑错误未被自动消除"
+      ],
+      "evaluation": {
+        "full_credit": "交付物覆盖全部预期证据，推理与页级来源一致，且清楚声明假设。",
+        "partial_credit": "主要方向正确，但遗漏一个关键不变量、权衡或来源支撑。"
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 42
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 43
+          }
+        }
+      ],
+      "academic_integrity": "独立设计的形成性练习；不要求提交课程实验代码或复现被评答案。"
+    },
+    {
+      "id": "p4",
+      "level": "数据解读",
+      "question": "根据 live/free heap 与 GC 占比的表格，解释为何增加 headroom 会降低 GC 比例，并列出无法从三行数据推出的结论。",
+      "hint": "区分相关的观察与跨工作负载因果外推。",
+      "deliverable": "趋势解释和外推限制清单。",
+      "expected_evidence": [
+        "说明内存换时间",
+        "不宣称普遍阈值"
+      ],
+      "evaluation": {
+        "full_credit": "交付物覆盖全部预期证据，推理与页级来源一致，且清楚声明假设。",
+        "partial_credit": "主要方向正确，但遗漏一个关键不变量、权衡或来源支撑。"
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 52
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 53
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 54
+          }
+        }
+      ],
+      "academic_integrity": "独立设计的形成性练习；不要求提交课程实验代码或复现被评答案。"
+    },
+    {
+      "id": "p5",
+      "level": "实验审查",
+      "question": "为“Go 内核和 C 内核性能差异”设计复现实验清单，涵盖功能对齐、硬件、工作负载、吞吐、延迟、profile 和多核扩展。",
+      "hint": "先保证比较对象做相同工作。",
+      "deliverable": "复现实验协议。",
+      "expected_evidence": [
+        "包含基线可比性",
+        "至少两类性能指标",
+        "记录系统功能差异"
+      ],
+      "evaluation": {
+        "full_credit": "交付物覆盖全部预期证据，推理与页级来源一致，且清楚声明假设。",
+        "partial_credit": "主要方向正确，但遗漏一个关键不变量、权衡或来源支撑。"
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 44
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 45
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 46
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 50
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 60
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 63
+          }
+        }
+      ],
+      "academic_integrity": "独立设计的形成性练习；不要求提交课程实验代码或复现被评答案。"
+    },
+    {
+      "id": "p6",
+      "level": "综合决策",
+      "question": "为安全关键控制器、内存极小设备和通用服务内核三个场景分别选择 C/HLL/混合方案，并明确会改变结论的假设。",
+      "hint": "使用材料最后的条件化结论，而非一次基准排名。",
+      "deliverable": "三份简短决策记录。",
+      "expected_evidence": [
+        "权衡安全、性能、内存和暂停",
+        "每个结论列出反转条件"
+      ],
+      "evaluation": {
+        "full_credit": "交付物覆盖全部预期证据，推理与页级来源一致，且清楚声明假设。",
+        "partial_credit": "主要方向正确，但遗漏一个关键不变量、权衡或来源支撑。"
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 58
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 62
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 65
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-20-material",
+          "anchor": {
+            "type": "page",
+            "value": 66
+          }
+        }
+      ],
+      "academic_integrity": "独立设计的形成性练习；不要求提交课程实验代码或复现被评答案。"
+    }
+  ],
+  "citations": [
+    {
+      "citation_id": "cite-p001",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 1
+      },
+      "supports": "单元身份、边界或学习流程支撑"
+    },
+    {
+      "citation_id": "cite-p004",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 4
+      },
+      "supports": "C 与高级语言的内核权衡"
+    },
+    {
+      "citation_id": "cite-p005",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 5
+      },
+      "supports": "C 与高级语言的内核权衡"
+    },
+    {
+      "citation_id": "cite-p007",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 7
+      },
+      "supports": "C 与高级语言的内核权衡"
+    },
+    {
+      "citation_id": "cite-p008",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 8
+      },
+      "supports": "C 与高级语言的内核权衡"
+    },
+    {
+      "citation_id": "cite-p009",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 9
+      },
+      "supports": "Biscuit 方法与系统范围"
+    },
+    {
+      "citation_id": "cite-p014",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 14
+      },
+      "supports": "Biscuit 方法与系统范围"
+    },
+    {
+      "citation_id": "cite-p015",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 15
+      },
+      "supports": "Biscuit 方法与系统范围"
+    },
+    {
+      "citation_id": "cite-p016",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 16
+      },
+      "supports": "Biscuit 方法与系统范围"
+    },
+    {
+      "citation_id": "cite-p017",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 17
+      },
+      "supports": "Biscuit 方法与系统范围"
+    },
+    {
+      "citation_id": "cite-p020",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 20
+      },
+      "supports": "裸机运行时与堆耗尽"
+    },
+    {
+      "citation_id": "cite-p025",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 25
+      },
+      "supports": "裸机运行时与堆耗尽"
+    },
+    {
+      "citation_id": "cite-p026",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 26
+      },
+      "supports": "裸机运行时与堆耗尽"
+    },
+    {
+      "citation_id": "cite-p027",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 27
+      },
+      "supports": "裸机运行时与堆耗尽"
+    },
+    {
+      "citation_id": "cite-p028",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 28
+      },
+      "supports": "裸机运行时与堆耗尽"
+    },
+    {
+      "citation_id": "cite-p029",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 29
+      },
+      "supports": "裸机运行时与堆耗尽"
+    },
+    {
+      "citation_id": "cite-p036",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 36
+      },
+      "supports": "HLL 的可编程性与安全收益"
+    },
+    {
+      "citation_id": "cite-p037",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 37
+      },
+      "supports": "HLL 的可编程性与安全收益"
+    },
+    {
+      "citation_id": "cite-p038",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 38
+      },
+      "supports": "HLL 的可编程性与安全收益"
+    },
+    {
+      "citation_id": "cite-p039",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 39
+      },
+      "supports": "HLL 的可编程性与安全收益"
+    },
+    {
+      "citation_id": "cite-p041",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 41
+      },
+      "supports": "HLL 的可编程性与安全收益"
+    },
+    {
+      "citation_id": "cite-p042",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 42
+      },
+      "supports": "HLL 的可编程性与安全收益"
+    },
+    {
+      "citation_id": "cite-p043",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 43
+      },
+      "supports": "HLL 的可编程性与安全收益"
+    },
+    {
+      "citation_id": "cite-p044",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 44
+      },
+      "supports": "性能评估方法"
+    },
+    {
+      "citation_id": "cite-p045",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 45
+      },
+      "supports": "性能评估方法"
+    },
+    {
+      "citation_id": "cite-p046",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 46
+      },
+      "supports": "性能评估方法"
+    },
+    {
+      "citation_id": "cite-p050",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 50
+      },
+      "supports": "性能评估方法"
+    },
+    {
+      "citation_id": "cite-p051",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 51
+      },
+      "supports": "性能评估方法"
+    },
+    {
+      "citation_id": "cite-p052",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 52
+      },
+      "supports": "GC 内存与暂停成本"
+    },
+    {
+      "citation_id": "cite-p053",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 53
+      },
+      "supports": "GC 内存与暂停成本"
+    },
+    {
+      "citation_id": "cite-p054",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 54
+      },
+      "supports": "GC 内存与暂停成本"
+    },
+    {
+      "citation_id": "cite-p056",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 56
+      },
+      "supports": "GC 内存与暂停成本"
+    },
+    {
+      "citation_id": "cite-p057",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 57
+      },
+      "supports": "GC 内存与暂停成本"
+    },
+    {
+      "citation_id": "cite-p058",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 58
+      },
+      "supports": "GC 内存与暂停成本"
+    },
+    {
+      "citation_id": "cite-p059",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 59
+      },
+      "supports": "GC 内存与暂停成本"
+    },
+    {
+      "citation_id": "cite-p060",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 60
+      },
+      "supports": "代码路径成本、扩展性与结论"
+    },
+    {
+      "citation_id": "cite-p061",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 61
+      },
+      "supports": "代码路径成本、扩展性与结论"
+    },
+    {
+      "citation_id": "cite-p062",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 62
+      },
+      "supports": "代码路径成本、扩展性与结论"
+    },
+    {
+      "citation_id": "cite-p063",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 63
+      },
+      "supports": "代码路径成本、扩展性与结论"
+    },
+    {
+      "citation_id": "cite-p064",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 64
+      },
+      "supports": "代码路径成本、扩展性与结论"
+    },
+    {
+      "citation_id": "cite-p065",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 65
+      },
+      "supports": "代码路径成本、扩展性与结论"
+    },
+    {
+      "citation_id": "cite-p066",
+      "source_id": "mit-6.s081-f21-lecture-20-material",
+      "anchor": {
+        "type": "page",
+        "value": 66
+      },
+      "supports": "代码路径成本、扩展性与结论"
+    }
+  ],
+  "review": {
+    "generator_review_status": "pending_independent_audit",
+    "audit_findings": [],
+    "quality_mode": "standard",
+    "delivery_policy": "draft"
+  },
+  "limitations": [
+    "材料是官方 2021 日程链接的 2020 Biscuit 幻灯片，研究结论应保留其系统、硬件、应用与时间背景。",
+    "Biscuit 与 Linux 的功能和配置不是完全 apples-to-apples；本包将实验结果作为有条件证据而非普遍排名。",
+    "第 49 页比率抽取不完整，未用于任何精确数值结论；第 21–24 页低文本动画也未用于主张。",
+    "百分比、比率与复杂度均作为文字证据保留，未创建结构化公式。"
+  ]
+}

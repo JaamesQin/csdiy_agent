@@ -31,6 +31,15 @@ Build ID: `8905ecd85275372bb2684127ba30a27046650d6b94e3c4d8320c51387ca561db`
 
 The course catalog language is English; the generated learner artifacts use `zh-CN`. Each unit has a 180-minute learning sequence. Delivery is `draft`, so the artifacts are complete and validated but deliberately do not claim assessed or instructor-approved status.
 
+On 2026-08-10 the archived build was restored and independently revalidated
+against the repository's v0.2 scripts. All 24 units again passed artifact,
+review-plan, candidate/final/YAML consistency, and learner-Markdown leakage
+checks with zero reported issues. Lecture 07, 15, and 17 also passed a fresh
+semantic and visual spot check. A 2.0 MiB compact package is retained locally at
+`data/reviewed/mit-6.s081-fall-2021/portable-v0.2.0/`. The user approved upload
+of the derived StudyKits, so this compact reviewed package is tracked; raw
+materials, chunks, page images, and the complete authoring build remain local.
+
 ## Per-unit result
 
 | Unit | Official title | Source vintage | Pages | Warning | Low text | Reviewed | Objectives | Practice | Status |

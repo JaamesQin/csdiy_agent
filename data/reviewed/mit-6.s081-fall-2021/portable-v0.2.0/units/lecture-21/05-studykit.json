@@ -1,0 +1,636 @@
+{
+  "studykit_version": "0.1",
+  "status": "draft",
+  "course_id": "mit-6.s081-fall-2021",
+  "course_version": "fall-2021",
+  "unit_id": "lecture-21",
+  "title": "网络分层、内核数据路径与接收活锁",
+  "language": "zh-CN",
+  "scope": {
+    "included_sources": [
+      {
+        "source_id": "mit-6.s081-f21-lecture-21-material",
+        "title": "Networking",
+        "type": "pdf",
+        "sha256": "db39f780aaa108064c2e50462cc96d6a58326f1f19a1f427229bbf17d3070fe0",
+        "official_url": "https://pdos.csail.mit.edu/6.828/2021/lec/l-net.txt",
+        "local_path": "data/raw/mit-6.s081/fall-2021/prepared/lecture-21-networking.pdf",
+        "resource_vintage": "2020_resource_linked_by_fall_2021_schedule"
+      }
+    ],
+    "citation_anchor_types": [
+      "page"
+    ]
+  },
+  "learning_objectives": [
+    {
+      "id": "obj-01",
+      "objective": "解释网络分层封装中的地址与分派职责。",
+      "requirement_ids": [
+        "req-01"
+      ]
+    },
+    {
+      "id": "obj-02",
+      "objective": "追踪内核网络栈、队列与 DMA ring。",
+      "requirement_ids": [
+        "req-02"
+      ]
+    },
+    {
+      "id": "obj-03",
+      "objective": "解释接收活锁的资源反馈环。",
+      "requirement_ids": [
+        "req-03"
+      ]
+    },
+    {
+      "id": "obj-04",
+      "objective": "模拟中断转轮询的负载自适应控制。",
+      "requirement_ids": [
+        "req-04"
+      ]
+    },
+    {
+      "id": "obj-05",
+      "objective": "比较配额与反馈，并迁移接近容量时的调度原则。",
+      "requirement_ids": [
+        "req-05"
+      ]
+    }
+  ],
+  "prerequisites": [
+    {
+      "topic": "中断与设备驱动",
+      "required_level": "知道 NIC 可用中断通知 CPU 且驱动管理设备缓冲。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 2
+          }
+        }
+      ]
+    },
+    {
+      "topic": "队列与生产者—消费者",
+      "required_level": "知道队列能吸收突发但也会把阶段解耦。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 2
+          }
+        }
+      ]
+    },
+    {
+      "topic": "网络基本寻址",
+      "required_level": "知道主机、链路和应用需要不同层次的标识。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 1
+          }
+        }
+      ]
+    }
+  ],
+  "outline": [
+    {
+      "order": 1,
+      "topic": "Ethernet、ARP 与封装",
+      "anchors": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 1
+          }
+        }
+      ],
+      "purpose": "区分局域网寻址与地址解析。"
+    },
+    {
+      "order": 2,
+      "topic": "IP 与传输层分派",
+      "anchors": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 1
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 2
+          }
+        }
+      ],
+      "purpose": "连接路由、协议号、端口和应用。"
+    },
+    {
+      "order": 3,
+      "topic": "内核栈、队列与 DMA",
+      "anchors": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 2
+          }
+        }
+      ],
+      "purpose": "建立包在多个执行主体间的路径。"
+    },
+    {
+      "order": 4,
+      "topic": "接收活锁",
+      "anchors": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 2
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 3
+          }
+        }
+      ],
+      "purpose": "解释过载时完成吞吐为何下降。"
+    },
+    {
+      "order": 5,
+      "topic": "轮询控制与反馈",
+      "anchors": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 3
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        }
+      ],
+      "purpose": "比较负载自适应策略并限定迁移。"
+    }
+  ],
+  "core_concepts": [
+    {
+      "id": "cc-01",
+      "term": "分层封装",
+      "claim_type": "source_summary",
+      "explanation": "Ethernet、IP 和 UDP/TCP 分别承担局域网交付、路由/协议分派和应用端口分派；高层头部嵌入低层载荷。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 1
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "cc-02",
+      "term": "ARP",
+      "claim_type": "source_summary",
+      "explanation": "ARP 广播目标 IP 查询，由拥有该 IP 的主机返回 Ethernet 地址。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "cc-03",
+      "term": "内核网络栈路径",
+      "claim_type": "source_summary",
+      "explanation": "入站解析验证并剥头，出站加头；队列解耦 NIC、网络线程与应用。这是典型而非唯一安排。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "cc-04",
+      "term": "DMA 描述符环",
+      "claim_type": "source_summary",
+      "explanation": "驱动准备循环缓冲指针，NIC DMA 包到主存，使传输与 CPU 计算可并行。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "cc-05",
+      "term": "接收活锁",
+      "claim_type": "source_summary",
+      "explanation": "在论文场景中，持续接收和部分处理饿死完成路径，CPU 很忙但完成包变少。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 2
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "cc-06",
+      "term": "中断转轮询控制",
+      "claim_type": "source_summary",
+      "explanation": "低负载用中断唤醒，高负载在线程中轮询；配额或下游反馈为完成工作保留资源。通用原则不是任意系统的充分条件。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 3
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        }
+      ]
+    }
+  ],
+  "glossary": [
+    {
+      "term_en": "Encapsulation",
+      "term_zh": "封装",
+      "definition": "高层包作为低层载荷传输。"
+    },
+    {
+      "term_en": "DMA ring",
+      "term_zh": "DMA 环",
+      "definition": "NIC 与驱动共享的循环缓冲描述符集合。"
+    },
+    {
+      "term_en": "Livelock",
+      "term_zh": "活锁",
+      "definition": "系统持续执行却无法完成有用进展。"
+    },
+    {
+      "term_en": "Backpressure",
+      "term_zh": "背压",
+      "definition": "下游接近满时通知上游减速或暂停。"
+    }
+  ],
+  "common_misconceptions": [
+    {
+      "misconception": "IP 地址直接选择应用。",
+      "correction": "端口才把传输层数据分派给应用。"
+    },
+    {
+      "misconception": "更大队列能解决持续过载。",
+      "correction": "队列只吸收短突发，不能消除长期速率失配。"
+    },
+    {
+      "misconception": "CPU 忙说明完成吞吐高。",
+      "correction": "活锁中 CPU 忙于最终被丢弃的部分工作。"
+    }
+  ],
+  "learning_sequence": [
+    {
+      "step": 1,
+      "activity": "复习中断、队列和基本网络寻址。",
+      "duration_minutes": 15,
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 1
+          }
+        }
+      ]
+    },
+    {
+      "step": 2,
+      "activity": "学习封装与分派并完成包头职责表。",
+      "duration_minutes": 45,
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 1
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 2
+          }
+        }
+      ]
+    },
+    {
+      "step": 3,
+      "activity": "追踪内核/DMA 路径并解释活锁。",
+      "duration_minutes": 65,
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 2
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 3
+          }
+        }
+      ]
+    },
+    {
+      "step": 4,
+      "activity": "模拟中断—轮询并比较配额与反馈。",
+      "duration_minutes": 50,
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 3
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        }
+      ]
+    },
+    {
+      "step": 5,
+      "activity": "总结包路径、资源路径和控制信号。",
+      "duration_minutes": 5,
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        }
+      ]
+    }
+  ],
+  "practice": [
+    {
+      "id": "prac-01",
+      "level": "入门",
+      "question": "标注 Ethernet/IP/UDP 包各地址和 ARP 的职责。",
+      "hint": "链路、跨网、协议、应用。",
+      "deliverable": "五行表。",
+      "expected_evidence": [
+        "Ethernet 选局域网目标。",
+        "IP 路由到主机。",
+        "协议号与端口继续分派。",
+        "ARP 解析链路地址。"
+      ],
+      "evaluation": {
+        "full_credit": "层次准确。",
+        "partial_credit": "混淆 IP 与端口。"
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 1
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "prac-02",
+      "level": "理解",
+      "question": "画出 NIC DMA ring 到 socket 队列和应用的入站路径。",
+      "hint": "标注执行主体与缓冲目的。",
+      "deliverable": "路径图。",
+      "expected_evidence": [
+        "DMA ring。",
+        "逐层解析剥头。",
+        "socket 队列解耦应用。",
+        "注明典型结构。"
+      ],
+      "evaluation": {
+        "full_credit": "路径和范围完整。",
+        "partial_credit": "缺少缓冲角色。"
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "prac-03",
+      "level": "应用",
+      "question": "解释过载时为什么接收工作增加却完成吞吐下降。",
+      "hint": "观察最终被丢弃的部分处理。",
+      "deliverable": "五节点因果链。",
+      "expected_evidence": [
+        "输入饿死完成路径。",
+        "部分工作被丢弃。",
+        "CPU 忙但进展下降。"
+      ],
+      "evaluation": {
+        "full_credit": "反馈环完整且限于论文场景。",
+        "partial_credit": "只说中断多。"
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 2
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "prac-04",
+      "level": "分析",
+      "question": "模拟稀疏与持续到包时的中断—轮询状态轨迹。",
+      "hint": "无待处理包才重开中断。",
+      "deliverable": "两条状态轨迹。",
+      "expected_evidence": [
+        "中断唤醒并关闭。",
+        "线程轮询完整处理。",
+        "无包时重开并睡眠。"
+      ],
+      "evaluation": {
+        "full_credit": "两种负载顺序正确。",
+        "partial_credit": "重开时机错误。"
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "prac-05",
+      "level": "迁移",
+      "question": "比较配额与队列反馈，并有条件迁移到多阶段系统。",
+      "hint": "预算与下游状态是不同信号。",
+      "deliverable": "对照表加迁移例。",
+      "expected_evidence": [
+        "配额限制输入批次。",
+        "反馈随队列容量减速。",
+        "复杂拓扑会传播阻塞。",
+        "原则非充分条件。"
+      ],
+      "evaluation": {
+        "full_credit": "机制和边界完整。",
+        "partial_credit": "只推荐一种。"
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 3
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-21-material",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        }
+      ]
+    }
+  ],
+  "citations": [
+    {
+      "citation_id": "cite-p1",
+      "source_id": "mit-6.s081-f21-lecture-21-material",
+      "anchor": {
+        "type": "page",
+        "value": 1
+      },
+      "supports": "Ethernet、ARP、IP、UDP 与封装。"
+    },
+    {
+      "citation_id": "cite-p2",
+      "source_id": "mit-6.s081-f21-lecture-21-material",
+      "anchor": {
+        "type": "page",
+        "value": 2
+      },
+      "supports": "TCP、内核栈、队列、DMA 与原始活锁问题。"
+    },
+    {
+      "citation_id": "cite-p3",
+      "source_id": "mit-6.s081-f21-lecture-21-material",
+      "anchor": {
+        "type": "page",
+        "value": 3
+      },
+      "supports": "中断—轮询、配额、反馈与过载原则。"
+    },
+    {
+      "citation_id": "cite-p4",
+      "source_id": "mit-6.s081-f21-lecture-21-material",
+      "anchor": {
+        "type": "page",
+        "value": 4
+      },
+      "supports": "接近容量的跨系统调度教训。"
+    }
+  ],
+  "review": {
+    "generator_review_status": "pending_independent_audit",
+    "audit_findings": []
+  },
+  "limitations": [
+    "证据为官方 Fall 2021 日程链接的 2020 文本讲义转换稿。",
+    "活锁分析主要属于讲义讨论的中断驱动转发论文场景。",
+    "典型网络栈并非唯一结构；通用过载原则不是任意系统的充分条件。"
+  ]
+}

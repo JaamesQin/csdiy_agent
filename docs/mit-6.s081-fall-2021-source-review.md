@@ -32,9 +32,13 @@ data/raw/mit-6.s081/fall-2021/site/...
 data/raw/mit-6.s081/fall-2021/prepared/lecture-NN-*.pdf
 data/sources/mit-6.s081-fall-2021/lecture-NN/chunks.jsonl
 outputs/mit-6.s081-fall-2021/<build-id>/...
+data/reviewed/mit-6.s081-fall-2021/portable-v0.2.0/...
 ```
 
-The catalog manifest and this review are tracked. Raw files, derived page chunks, rendered review pages, and StudyKit outputs remain reproducible local artifacts excluded by `.gitignore`.
+The catalog manifest, this review, and the compact reviewed StudyKit package are
+tracked. The user approved upload of the derived StudyKits on 2026-08-10. Raw
+files, derived page chunks, rendered review pages, and the full authoring build
+remain local artifacts excluded by `.gitignore`.
 
 Two broken links in the archived site were preserved and corrected transparently:
 
@@ -69,7 +73,11 @@ The generated exercises are new, formative tasks; they do not provide submission
 
 The course-site footer declares CC BY 3.0 US for the HTML site. The scope of that notice over individual lecture PDFs, notes, and derived artifacts is not explicit. Lecture artifacts therefore use `license_status: unknown_artifact_scope` and `redistribution_allowed: false`.
 
-Raw lecture material, chunks, page images, and StudyKits remain local and untracked. The repository records only metadata, checksums, review notes, and the catalog manifest.
+Raw lecture material, chunks, and page images remain local and untracked. The
+compact derived StudyKit package was approved by the user for upload on
+2026-08-10. It is suitable for future database import but remains a reviewed
+draft, not a `data/golden` artifact. Raw source redistribution is outside this
+approval.
 
 ## Parsing and visual review
 
