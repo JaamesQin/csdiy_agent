@@ -102,7 +102,7 @@ class CoursePilotAgent:
             answer = self._unavailable_answer(decision.intent, decision.clarifying_question)
 
         notices: list[str] = []
-        if observation.notice and decision.intent is not Intent.PROFILE_ANALYSIS:
+        if observation.notice:
             notices.append(f"画像更新：{observation.notice}")
         if profile_error:
             notices.append("画像存储当前不可用；本轮仍可继续，但画像没有持久保存。")
@@ -154,7 +154,9 @@ class CoursePilotAgent:
                     "你想学习哪个 CS 方向？每周大约能投入多少时间？"
                 )
             return "你好，我已经读取了你的学习画像。你可以继续让我分析代码或查看画像。"
-        return clarifying_question or "请说明你希望整理学习画像，还是分析一段代码。"
+        if clarifying_question:
+            return f"我可以帮助整理学习画像或静态分析代码。{clarifying_question}"
+        return "请说明你希望整理学习画像，还是分析一段代码。"
 
     @staticmethod
     def _unavailable_answer(intent: Intent, clarification: str | None) -> str:

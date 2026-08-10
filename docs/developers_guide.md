@@ -1,6 +1,6 @@
 # CoursePilot Developers Guide
 
-更新时间：2026-08-09
+更新时间：2026-08-10
 
 本文说明下一阶段如何在现有 StudyKit 生成内核之上开发用户画像、代码辅导、资料检索、意图路由、清小搭多轮 Agent，以及 generator skill。本文的核心约束是：
 
@@ -31,7 +31,12 @@
 黄金 StudyKit。完整 Catalog、SourceChunk 检索、材料答疑、练习反馈和复盘仍未接入。
 慢速 generator 继续与 `/v1/chat/completions` 严格隔离。
 
-当前自动化测试基线为 `187 passed`。在线模型通过现有 `DeepSeekModel` 惰性加载；
+账号是当前唯一可信的本地用户身份。Cookie 会话解析为 `account:<uuid>`；旧的
+API Key 客户端继续把 OpenAI `user` 映射到 `legacy:<user>`。请求体 `user`
+不能覆盖账号身份。完整认证、CSRF 和数据库迁移契约见
+[账号认证与画像隔离](account_authentication.md)。
+
+当前自动化测试基线为 `210 passed`。在线模型通过现有 `DeepSeekModel` 惰性加载；
 未配置 `DEEPSEEK_API_KEY` 时规则路由、显式画像抽取和 Python AST 诊断仍可用。
 
 当前本地生成器仍有明确边界：一个生成请求使用一个 `material_set_id`、一个课程单位、一个 source，并要求整数页码 anchor。多来源课程、网页标题 anchor、混合公共/私有资料需要先在 ingestion 层拆成可生成的 unit 或扩展生成器，不能由在线 Agent 临时拼接后绕过 Evidence 校验。
@@ -281,14 +286,16 @@ SSE/JSON 响应和错误契约；画像、路由和代码辅导位于应用层�
 
 输出应包含“依据、置信度、建议下一步”，而不是只输出人格化标签。用户可以查看、修正和删除画像字段。
 
-当前实现位于 `app/profile/`，采用追加事实表而不是覆盖整份 JSON。请求可提供可选
-OpenAI `user` 字段；有 `user` 时默认保存到 `storage/coursepilot.sqlite3`，也可通过
-`COURSEPILOT_DB_PATH` 指定路径。没有 `user` 时只从本轮 `messages` 建立临时画像。
+当前实现位于 `app/profile/`，采用追加事实表而不是覆盖整份 JSON。网页登录使用
+`account:<uuid>`，API Key 请求的可选 OpenAI `user` 映射为 `legacy:<user>`；有可信
+subject 时默认保存到 `storage/coursepilot.sqlite3`，也可通过 `COURSEPILOT_DB_PATH`
+指定路径。没有逻辑用户标识的 API Key 请求只从本轮 `messages` 建立临时画像。
 明确陈述直接为 `confirmed`；模型推断为 7 天过期的 `inferred` 候选，确认前不参与
 正式建议。画像不保存完整对话、代码或 traceback。
 
-这里的 `user` 只是客户端提供的匿名逻辑标识，不是授权凭据。清小搭稳定用户身份
-尚未完成账号级验证，因此持久画像当前只适用于本地或受信网关。
+API Key 请求中的 `user` 只是客户端提供的逻辑标识，不是授权凭据，不能访问
+`account:` 命名空间。清小搭稳定用户身份尚未完成账号级验证，因此 legacy 持久画像
+只适用于受信网关；本地网页使用服务端验证的账号会话。
 
 ### 5.3 画像与 StudyKit 的连接
 
@@ -297,6 +304,11 @@ OpenAI `user` 字段；有 `user` 时默认保存到 `storage/coursepilot.sqlite
 - 用 `learning_sequence` 生成下一步建议，但不把完成阅读自动视为掌握。
 - 当 StudyKit 版本变化时，保留旧画像证据，并执行 objective ID 映射；不能静默覆盖历史记录。
 - 画像不能改变原始 StudyKit、课程身份或用户权限。
+
+当前实现位于 `app/profile/`，保存用户明确提供的学习方向、目标、每周分钟数、技术
+基础和讲解偏好，支持查看、纠正、单项删除、拒绝记录和全部删除；模型推断只作为
+7 天待确认候选。这是 LearnerState 的安全最小切片，不保存完整消息、代码或推断型
+掌握度；后续扩展必须继续使用认证层提供的 trusted subject，不能重新信任客户端 `user`。
 
 ## 6. 第一批能力：代码辅导
 
@@ -476,6 +488,11 @@ fallback_clarification
 - `stream=true` 的 SSE：role → content → stop → `data: [DONE]`；
 - 正确的 `finish_reason`、`usage` 和 HTTP 错误。
 
+本地网页还支持 `/auth/register`、`/auth/login`、`/auth/me` 和 `/auth/logout`。
+`/v1/*` 同时接受 API Key Bearer 和账号 Cookie；Cookie 写请求必须带
+`X-CSRF-Token`，API Key 客户端不受该要求影响。协议层只把可信 subject 交给
+画像/检索模块，不允许能力模块自行解析用户名、Cookie 或请求体 `user`。
+
 协议适配层不能依赖清小搭一定提供持久会话。每轮请求应能从 `messages` 恢复最小上下文；如果平台提供稳定会话 ID，再把它作为数据库索引，而不是唯一事实来源。
 
 当前实现保持 `coursepilot-probe` 模型 ID 兼容，并将可选 `user` 透传到画像层。
@@ -586,6 +603,7 @@ delivery policy（draft/publish，默认 draft）
 ```text
 app/
   api/                 # 清小搭/OpenAI 兼容协议
+  auth/                # 密码、账号、会话、CSRF 与限流
   agent/               # context、intent、router、orchestration
   catalog/             # Course、Unit、MaterialSet、StudyKitBuild
   profile/             # LearnerProfile 与证据更新
@@ -593,7 +611,7 @@ app/
   retrieval/           # parser、index、search、citation
   generation/          # StudyKitGenerator 与模型适配
   jobs/                # 离线生成、索引和重试队列
-  storage/             # 数据库、对象存储、权限
+  storage/             # 共享 SQLite 迁移、后续对象存储与权限
 skills/
   studykit-generator/  # 开发者/后台离线生成 skill
 ```

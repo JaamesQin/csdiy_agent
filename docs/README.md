@@ -13,6 +13,7 @@
 
 - [本地与平台验证记录](platform_validation.md)
 - [发布配置与检查清单](platform_release.md)
+- [账号认证、会话安全与画像隔离](account_authentication.md)
 
 ## 阶段 2：模板课程
 

@@ -1,6 +1,6 @@
 # CoursePilot 全局进度
 
-更新时间：2026-08-08
+更新时间：2026-08-10
 
 状态口径：
 
@@ -16,9 +16,9 @@
 生成 Content 和 Practice，执行一次独立 Audit，并确定性输出
 StudyKit JSON/YAML/Markdown。
 
-产品运行时已经加入意图路由、主动学习画像和静态代码辅导。尚未完成的是
-用户资料接入、MaterialSet 权限、在线 SourceChunk 检索、材料答疑、完整学习状态、
-清小搭生产部署和真实用户验收。
+本地账号、会话安全和可信 subject 学习画像已经落地，产品运行时也已加入意图路由、
+主动学习画像和静态代码辅导。尚未完成的是用户资料接入、MaterialSet 权限、
+在线 SourceChunk 检索、材料答疑、完整 LearnerState、清小搭生产部署和真实用户验收。
 
 ## 二、能力状态矩阵
 
@@ -34,13 +34,14 @@ StudyKit JSON/YAML/Markdown。
 | CourseManifest | 有 YAML manifest | 正式 Schema、Catalog 和运行时 API |
 | MaterialManifest/MaterialSet | 待完成 | 存储、权限、过期、删除和混合授权 |
 | 检索 | 待完成 | 元数据过滤、关键词检索、可选向量检索 |
-| OpenAI 兼容 API | 已接入首批 Agent 路由 | 扩展检索、答疑、练习与复盘 handler |
-| 主动学习画像 | 已完成本地 SQLite MVP | 验证清小搭稳定身份并演进完整 LearnerState |
+| 本地账号与会话 | 已完成安全 MVP | 邮箱、找回/修改密码和账号删除不在首版 |
+| OpenAI 兼容 API | 双身份兼容且已接入首批 Agent 路由 | 扩展检索、答疑、练习与复盘 handler |
+| 主动学习画像 | 已完成账号/legacy 隔离的 SQLite MVP | 验证清小搭稳定身份并演进完整 LearnerState |
 | 代码辅导 | 已完成 Python 静态优先 MVP | 接入 SourceChunk 检索；沙箱执行不属于当前范围 |
 | 材料答疑 | 待完成 | 权限过滤、检索、引用和端到端测试 |
-| LearnerState/复盘 | 有画像事实基础 | 练习/代码证据更新、目标映射和复盘状态机 |
+| LearnerState/复盘 | 有账号隔离的画像事实基础 | 练习/代码证据更新、目标映射和复盘状态机 |
 | 清小搭接入 | 本地协议已验证 | 账号级文件、会话、超时和生产实测 |
-| 自动化测试 | 187 项通过 | MaterialSet 权限、检索和生产测试 |
+| 自动化测试 | 210 项通过 | MaterialSet 权限、检索和生产测试 |
 
 ## 三、已经完成的生成闭环
 
@@ -109,7 +110,7 @@ Prompt 固定为 `studykit-staged-v0.8-010`，当前 Pipeline 为
 - 标题优先使用 manifest/unit 的可信标题，内部 `EvidencePlan` 等标签不进入
   学习者文本；外部回归 8 讲均未发现内部标签泄漏。
 
-这些修复及新增在线运行时已有 187 项自动化测试覆盖，并已通过 v21 新鲜外部全量回归；由于设计
+这些修复、账号安全链路及新增在线运行时已有 210 项自动化测试覆盖，并已通过 v21 新鲜外部全量回归；由于设计
 上不进行二次语义 Audit，`repairs_applied_unverified` 结果仍必须人工复核。
 
 仍需关注的语义问题：
@@ -123,7 +124,8 @@ Prompt 固定为 `studykit-staged-v0.8-010`，当前 Pipeline 为
 
 ## 五、下一阶段工作
 
-1. 冻结 Manifest、MaterialSet、完整 LearnerState 和 TaskPlan 的最小接口。
+1. 冻结 Manifest、MaterialSet、完整 LearnerState 和 TaskPlan 的最小接口；
+   复用已经可信的 `account:<uuid>` 身份。
 2. 完成公共课程和私有用户资料的统一解析、存储、授权与删除。
 3. 建立带 owner/session/course/version/unit 过滤的检索层。
 4. 在已完成的画像、路由和代码辅导上接入 StudyKit 查询、材料答疑、
@@ -146,9 +148,10 @@ Prompt 固定为 `studykit-staged-v0.8-010`，当前 Pipeline 为
 MaterialSet 与检索接口是 Agent 编排的主要前置依赖；端到端和平台验收必须在
 各工作流集成后串行关闭。
 
-当前在线 Agent 的约束：StudyKitGenerator 只在离线流程运行；`user` 只是客户端
-提供的匿名逻辑标识，不能替代生产授权；代码辅导始终为静态分析并返回
-`ran_code=false`；课程页码只来自 Lecture 2/8 人工批准的黄金 StudyKit。
+当前在线 Agent 的约束：StudyKitGenerator 只在离线流程运行；Cookie 会话只使用
+服务端验证的 `account:<uuid>`，API Key 请求的 `user` 只映射为 `legacy:<user>`、
+不能替代生产授权；代码辅导始终为静态分析并返回 `ran_code=false`；课程页码只来自
+Lecture 2/8 人工批准的黄金 StudyKit。
 
 ## 七、下一阶段完成定义
 

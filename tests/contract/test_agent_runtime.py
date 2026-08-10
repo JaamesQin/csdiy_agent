@@ -56,7 +56,7 @@ def test_optional_user_reaches_agent_without_changing_envelope(
     )
 
     assert response.status_code == 200
-    assert override_agent.user_id == "opaque-local-user"
+    assert override_agent.user_id == "legacy:opaque-local-user"
     assert response.json()["choices"][0]["message"]["content"] == "测试 Agent 回复"
     assert response.json()["usage"]["total_tokens"] == 10
 

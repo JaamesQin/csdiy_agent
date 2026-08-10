@@ -1,6 +1,6 @@
 # CoursePilot 项目状态
 
-更新时间：2026-08-08
+更新时间：2026-08-10
 
 这份文档是新开发者的快速入口。更完整的状态矩阵见
 [docs/project_status.md](docs/project_status.md)，生成管线说明见
@@ -8,9 +8,10 @@
 
 ## 一句话概括
 
-CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生成内核，并将
-意图路由、主动学习画像和静态代码辅导接入 OpenAI 兼容对话 API；资料权限、
-SourceChunk 检索、材料答疑、练习反馈和学习复盘仍未接成完整闭环。
+CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生成内核，
+并已落地本地账号注册/登录、Cookie 会话和可信 subject 画像隔离，同时将意图路由、
+主动学习画像和静态代码辅导接入 OpenAI 兼容对话 API；资料权限、SourceChunk
+检索、材料答疑、练习反馈和学习复盘仍未接成完整闭环。
 
 当前最成熟的链路是：
 
@@ -72,14 +73,27 @@ SourceChunk 检索、材料答疑、练习反馈和学习复盘仍未接成完�
 - Practice 的 Prompt 仍要求 5–8 题；验证器允许合理超出，以避免模型偶发
   数量偏差导致整讲失败。`simple` 题数量不设上限，但禁止复杂数值链。
 
+### 多用户账号与学习画像
+
+- 本地网页提供开放式用户名注册、密码登录、会话恢复和注销；密码使用
+  Argon2id，数据库只保存会话令牌的 SHA-256 摘要。
+- Cookie 使用 HttpOnly、SameSite=Strict；Cookie 认证的写请求需要会话绑定
+  CSRF token，并校验浏览器 Origin。
+- 账号画像 subject 固定为 `account:<uuid>`；旧 API Key 的 OpenAI `user`
+  映射到 `legacy:<user>`，两个命名空间不能互访。
+- SQLite Schema v2 保留历史画像并将其迁移到 legacy 命名空间；未知数据库
+  版本拒绝服务启动。
+- 当前保存用户明确提供的学习方向、目标、每周时间、技术基础和讲解偏好；
+  模型推断只作为 7 天待确认候选，不保存完整对话、代码、traceback 或模型推理。
+
 ### 在线 Agent 运行时
 
 - `/v1/chat/completions` 已从固定回显切换为协议层之后的独立 Agent 编排层；
   OpenAI JSON、SSE、Bearer 和 `coursepilot-probe` 模型 ID 保持兼容。
 - 意图路由采用确定性规则优先、DeepSeek 结构化分类兜底；低置信请求先澄清，
   普通对话不能触发后台 StudyKit 生成。
-- 可选 `user` 字段用于本地 SQLite 画像逻辑隔离。明确陈述直接记录，模型推断
-  仅作为 7 天待确认候选；画像支持查看、纠正、单项删除和全部删除。
+- Cookie 会话只向 Agent 传入 `account:<uuid>`；API Key 请求的可选 `user` 只映射为
+  `legacy:<user>`。画像支持查看、纠正、单项删除和全部删除。
 - 代码辅导使用 Python AST 确定性诊断和可选模型建议，始终返回
   `ran_code=false`；非 Python 语言明确降级，作业代写请求由规则守卫阻断。
 - 在线课程上下文只读取 Lecture 2/8 中 Schema 合法且人工批准的黄金 StudyKit；
@@ -88,10 +102,11 @@ SourceChunk 检索、材料答疑、练习反馈和学习复盘仍未接成完�
 
 ### 测试状态
 
-- 当前自动化测试：`187 passed`。
+- 当前自动化测试：`210 passed`。
 - 测试覆盖阶段 Schema、Evidence controls、确定性 chunk 并集、引用、
   Markdown LaTeX、模型响应重试、恢复、单次 Audit 回修、非 CS 合成单元、
-  CLI、质量 profile、意图路由、画像生命周期、SQLite 并发、代码静态分析、
+  CLI、质量 profile、数据库迁移、密码/会话安全、CSRF、限流、账号隔离、
+  API Key 兼容、意图路由、画像生命周期、SQLite 并发、代码静态分析、
   学术诚信、引用白名单以及真实 HTTP/SSE。
 - 最新一次全新 Lecture 1–8 外部并发回归（concurrency=8）结果为 `8/8`：
   8 讲均生成 JSON/YAML/Markdown，均通过确定性验证，未解决 blocker 为 0。
@@ -119,9 +134,11 @@ SourceChunk 检索、材料答疑、练习反馈和学习复盘仍未接成完�
 | PDF 解析 | `app/retrieval/parser.py` |
 | 引用校验与渲染 | `app/retrieval/citations.py`、`app/retrieval/render.py` |
 | 生成器测试 | `tests/generation/` |
+| 账号与会话 | `app/auth/`、`app/api/auth.py` |
+| 共享 SQLite 迁移 | `app/storage/database.py` |
 | 在线 Agent 编排 | `app/agent/orchestrator.py` |
 | 意图路由 | `app/agent/router.py` |
-| SQLite 学习画像 | `app/profile/` |
+| 可信 subject SQLite 学习画像 | `app/profile/` |
 | 静态代码辅导 | `app/code_tutor/` |
 | 已审核 StudyKit 读取 | `app/catalog/studykits.py` |
 
@@ -134,7 +151,7 @@ SourceChunk 检索、材料答疑、练习反馈和学习复盘仍未接成完�
 ## 尚未完成
 
 1. 冻结并实现 CourseManifest、MaterialManifest、MaterialSet 和 TaskPlan 的
-   正式运行时接口；将当前画像事实表演进为完整 LearnerState。
+   正式运行时接口；账号与画像事实表已完成，后续演进为完整 LearnerState。
 2. 完成公共课程与用户私有资料的统一解析、存储、授权过滤、过期和删除。
 3. 建立按用户、会话、课程、版本和讲次过滤的检索层；先关键词检索，
    再按需要增加向量检索和重排。
@@ -155,10 +172,10 @@ MaterialSet/权限与检索必须先提供稳定接口，Agent 编排随后接�
 
 - 引用页码存在不代表主张必然被来源支持，语义忠实性仍需模型审核和人工抽检。
 - PDF 文本层会损坏公式、图形和阅读顺序，必要视觉结构不能完全自动恢复。
-- 公共资料、用户私有资料和学习状态尚未形成完整运行时隔离。
+- 账号画像已经隔离；公共资料和用户私有 MaterialSet 尚未形成完整运行时授权链。
 - 清小搭文件输入、稳定会话标识和文件保留能力仍需账号级实测。
-- 当前 `user` 是客户端提供的匿名逻辑标识，不是授权凭据；在清小搭稳定身份
-  完成实测前，SQLite 持久画像只适用于本地或受信网关。
+- 本地网页登录已使用服务端验证的账号身份；API Key 请求的 `user` 仍只是逻辑标识，
+  不是授权凭据，在清小搭稳定身份完成实测前只适用于受信网关。
 - 在线代码辅导当前不执行代码；课程引用仅来自两份人工批准的黄金 StudyKit，
   尚未接入原始 SourceChunk 检索。
 - v21 已完成新鲜模型全量回归并达到 8/8，但修复后未进行二次语义 Audit；

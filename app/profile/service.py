@@ -8,6 +8,7 @@ import sqlite3
 import uuid
 from datetime import UTC, datetime, timedelta
 from enum import Enum
+from functools import lru_cache
 from typing import Iterable
 
 from pydantic import ValidationError
@@ -25,6 +26,7 @@ from app.profile.contracts import (
     ProfileObservation,
 )
 from app.profile.repository import SQLiteProfileRepository
+from app.storage.database import get_database
 
 INFERENCE_TTL_DAYS = 7
 PROFILE_SIGNAL = re.compile(
@@ -277,7 +279,7 @@ class ProfileService:
         if not confirmed and not inferred:
             persistence = "提供 `user` 标识后可以跨会话保存。" if not profile.persisted else ""
             return (
-                "目前还没有足够的学习画像。请告诉我你想学习的 CS 方向、已有基础，"
+                "当前没有足够的学习画像。请告诉我你想学习的 CS 方向、已有基础，"
                 f"以及每周可投入的时间。{persistence}"
             )
         lines = ["### 当前学习画像"]
@@ -640,8 +642,8 @@ class ProfileService:
         if isinstance(value, int):
             hours, minutes = divmod(value, 60)
             if hours and minutes:
-                return f"{hours} 小时 {minutes} 分钟"
-            return f"{hours} 小时" if hours else f"{minutes} 分钟"
+                return f"{hours} 小时 {minutes} 分钟（{value} 分钟）"
+            return f"{hours} 小时（{value} 分钟）" if hours else f"{minutes} 分钟"
         if isinstance(value, list):
             return "、".join(str(item) for item in value)
         if field_name == "learning_directions":
@@ -667,3 +669,8 @@ class ProfileService:
     def _mentions_course(text: str) -> bool:
         lowered = text.lower()
         return bool(re.search(r"6\.7960|lecture\s*[- ]?\d+|第\s*\d+\s*讲", lowered))
+
+
+@lru_cache(maxsize=1)
+def get_profile_service() -> ProfileService:
+    return ProfileService(SQLiteProfileRepository(get_database()))

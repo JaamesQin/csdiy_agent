@@ -42,6 +42,98 @@ button {
   color: inherit;
 }
 
+[hidden] {
+  display: none !important;
+}
+
+.auth-shell {
+  min-height: 100vh;
+  padding: clamp(28px, 6vw, 72px) 20px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 30px;
+}
+
+.auth-brand {
+  justify-self: center;
+}
+
+.auth-card {
+  width: min(480px, 100%);
+  padding: clamp(28px, 6vw, 46px);
+  border: 1px solid rgba(207, 218, 212, 0.9);
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow);
+}
+
+.auth-card h1 {
+  margin: 0;
+  font-family: Georgia, "Noto Serif SC", serif;
+  font-size: clamp(32px, 7vw, 44px);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+}
+
+.auth-copy {
+  margin: 18px 0 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.auth-tabs {
+  margin-top: 28px;
+  padding: 4px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-radius: 12px;
+  background: var(--paper);
+}
+
+.auth-tab {
+  min-height: 40px;
+  border: 0;
+  border-radius: 9px;
+  cursor: pointer;
+  color: var(--muted);
+  background: transparent;
+  font-weight: 700;
+}
+
+.auth-tab.active {
+  color: var(--green-dark);
+  background: var(--surface);
+  box-shadow: 0 3px 12px rgba(20, 42, 32, 0.08);
+}
+
+.auth-submit {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 24px;
+}
+
+.auth-error {
+  min-height: 20px;
+  margin: 14px 0 0;
+  color: #a94232;
+  font-size: 13px;
+}
+
+.user-chip {
+  max-width: 180px;
+  padding: 8px 11px;
+  overflow: hidden;
+  border-radius: 10px;
+  color: var(--green-dark);
+  background: var(--green-soft);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 750;
+}
+
 .page-shell {
   min-height: 100vh;
   display: grid;
@@ -213,7 +305,7 @@ code {
 .starter-grid {
   margin-top: 38px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
 }
 
@@ -628,6 +720,20 @@ code {
 
   .stream-toggle {
     flex: 1;
+  }
+
+  .auth-shell {
+    align-content: start;
+  }
+
+  .auth-card {
+    padding: 26px 22px;
+    border-radius: 20px;
+  }
+
+  .user-chip,
+  #connectionStatus {
+    display: none;
   }
 }
 

@@ -3,59 +3,112 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="CoursePilot 本地 OpenAI 兼容协议对话测试界面"
-    />
-    <title>CoursePilot · 本地对话</title>
+    <meta name="description" content="CoursePilot 多用户学习 Agent" />
+    <title>CoursePilot · 登录</title>
     <link rel="icon" href="/static/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/static/styles.css" />
   </head>
   <body>
-    <div class="page-shell">
+    <section class="auth-shell" id="authShell" aria-labelledby="authTitle">
+      <a class="brand auth-brand" href="/" aria-label="CoursePilot 首页">
+        <span class="brand-mark" aria-hidden="true">C</span>
+        <span>
+          <strong>CoursePilot</strong>
+          <small>循证学习 Agent</small>
+        </span>
+      </a>
+
+      <div class="auth-card">
+        <p class="eyebrow">YOUR LEARNING SPACE</p>
+        <h1 id="authTitle">登录后继续你的学习。</h1>
+        <p class="auth-copy">
+          每个账号拥有独立的学习画像。CoursePilot 不保存完整对话或你粘贴的代码。
+        </p>
+
+        <div class="auth-tabs" role="tablist" aria-label="账号操作">
+          <button class="auth-tab active" id="loginTab" type="button" role="tab" aria-selected="true">
+            登录
+          </button>
+          <button class="auth-tab" id="registerTab" type="button" role="tab" aria-selected="false">
+            注册
+          </button>
+        </div>
+
+        <form class="auth-form" id="loginForm">
+          <label class="field">
+            <span>用户名</span>
+            <input id="loginUsername" name="username" autocomplete="username" minlength="3" maxlength="32" required />
+          </label>
+          <label class="field">
+            <span>密码</span>
+            <input id="loginPassword" name="password" type="password" autocomplete="current-password" minlength="12" maxlength="128" required />
+          </label>
+          <button class="button primary auth-submit" type="submit">登录</button>
+        </form>
+
+        <form class="auth-form" id="registerForm" hidden>
+          <label class="field">
+            <span>用户名</span>
+            <input id="registerUsername" name="username" autocomplete="username" minlength="3" maxlength="32" pattern="[A-Za-z0-9][A-Za-z0-9._-]{2,31}" required />
+            <small>3–32 位字母、数字、点、下划线或连字符。</small>
+          </label>
+          <label class="field">
+            <span>密码</span>
+            <input id="registerPassword" name="password" type="password" autocomplete="new-password" minlength="12" maxlength="128" required />
+            <small>至少 12 个字符。</small>
+          </label>
+          <label class="field">
+            <span>确认密码</span>
+            <input id="registerPasswordConfirm" type="password" autocomplete="new-password" minlength="12" maxlength="128" required />
+          </label>
+          <button class="button primary auth-submit" type="submit">创建账号</button>
+        </form>
+
+        <p class="auth-error" id="authError" role="alert"></p>
+      </div>
+    </section>
+
+    <div class="page-shell" id="appShell" hidden>
       <header class="topbar">
         <a class="brand" href="/" aria-label="CoursePilot 首页">
           <span class="brand-mark" aria-hidden="true">C</span>
           <span>
             <strong>CoursePilot</strong>
-            <small>本地 Agent 实验室</small>
+            <small>个人 Agent 学习空间</small>
           </span>
         </a>
 
         <div class="topbar-actions">
-          <span class="connection" id="connectionStatus">
+          <span class="connection online" id="connectionStatus">
             <i aria-hidden="true"></i>
-            等待验证
+            已安全登录
           </span>
-          <button class="button ghost" id="settingsButton" type="button">
-            接入设置
-          </button>
-          <button class="button ghost" id="clearButton" type="button">
-            清空对话
-          </button>
+          <span class="user-chip" id="currentUsername"></span>
+          <button class="button ghost" id="clearButton" type="button">清空对话</button>
+          <button class="button ghost" id="logoutButton" type="button">退出登录</button>
         </div>
       </header>
 
       <main class="workspace">
         <section class="intro" id="intro">
-          <p class="eyebrow">OPENAI-COMPATIBLE CHAT</p>
-          <h1>从一次真实对话开始验证。</h1>
+          <p class="eyebrow">PRIVATE LEARNING PROFILE</p>
+          <h1>从一次真实对话开始。</h1>
           <p>
-            页面直接调用本机的 <code>/v1/chat/completions</code>，可体验主动学习画像、
-            意图路由、Python 静态代码辅导和 SSE 流式输出。
+            页面通过账号会话调用本机的 <code>/v1/chat/completions</code>；学习画像只属于当前账号，
+            并可体验意图路由、Python 静态代码辅导和 SSE 流式输出。
           </p>
           <div class="starter-grid">
             <button class="starter" type="button" data-prompt="我想学习系统方向，每周可以投入 6 小时，而且有 Python 基础。">
               <span>建立学习画像</span>
-              <small>记录方向、时间与已有基础</small>
+              <small>保存明确提供的方向、时间和基础</small>
             </button>
-            <button
-              class="starter"
-              type="button"
-              data-prompt="查看我的学习画像"
-            >
+            <button class="starter" type="button" data-prompt="查看我的学习画像">
               <span>查看与纠正画像</span>
-              <small>画像可跨本地会话读取和删除</small>
+              <small>检查当前账号保存的最小事实</small>
+            </button>
+            <button class="starter" type="button" data-prompt="删除我的画像">
+              <span>删除学习画像</span>
+              <small>清除当前账号的服务器端画像</small>
             </button>
             <button
               class="starter"
@@ -68,86 +121,33 @@
           </div>
         </section>
 
-        <section
-          class="conversation"
-          id="conversation"
-          aria-live="polite"
-          aria-label="对话记录"
-        ></section>
+        <section class="conversation" id="conversation" aria-live="polite" aria-label="对话记录"></section>
       </main>
 
       <footer class="composer-wrap">
         <form class="composer" id="chatForm">
           <label class="sr-only" for="messageInput">输入消息</label>
-          <textarea
-            id="messageInput"
-            rows="1"
-            maxlength="10000"
-            placeholder="输入消息，Enter 发送，Shift + Enter 换行"
-          ></textarea>
+          <textarea id="messageInput" rows="1" maxlength="10000" placeholder="输入消息，Enter 发送，Shift + Enter 换行"></textarea>
           <div class="composer-footer">
             <label class="stream-toggle">
               <input id="streamToggle" type="checkbox" checked />
               <span aria-hidden="true"></span>
               流式输出
             </label>
-            <span class="hint" id="inputHint">尚未配置接入密钥</span>
+            <span class="hint" id="inputHint">画像按账号隔离</span>
             <button class="send-button" id="sendButton" type="submit">
               <span>发送</span>
-              <svg viewBox="0 0 20 20" aria-hidden="true">
-                <path d="M3 10h13M11 5l5 5-5 5" />
-              </svg>
+              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5" /></svg>
             </button>
-            <button class="stop-button" id="stopButton" type="button" hidden>
-              停止
-            </button>
+            <button class="stop-button" id="stopButton" type="button" hidden>停止</button>
           </div>
         </form>
         <p class="privacy-note">
-          密钥仅保存在当前浏览器会话；匿名用户 ID 保存在本地浏览器，学习画像写入本机 SQLite。
-          可发送“删除我的画像”清除服务器侧画像。
+          会话凭据保存在 HttpOnly Cookie；完整对话和粘贴的代码仅存在于当前页面内存，
+          学习画像按账号写入本机 SQLite，并可随时删除。
         </p>
       </footer>
     </div>
-
-    <dialog class="settings-dialog" id="settingsDialog">
-      <form method="dialog" id="settingsForm">
-        <div class="dialog-heading">
-          <div>
-            <p class="eyebrow">LOCAL CONNECTION</p>
-            <h2>接入设置</h2>
-          </div>
-          <button class="icon-button" value="cancel" aria-label="关闭" type="submit">
-            ×
-          </button>
-        </div>
-
-        <label class="field">
-          <span>API 地址</span>
-          <input id="apiBaseInput" type="url" value="" placeholder="默认使用当前地址" />
-          <small>本地使用时留空即可，页面将访问当前 FastAPI 服务。</small>
-        </label>
-
-        <label class="field">
-          <span>Bearer 密钥</span>
-          <input
-            id="apiKeyInput"
-            type="password"
-            autocomplete="off"
-            placeholder="输入 COURSEPILOT_API_KEY"
-            required
-          />
-        </label>
-
-        <p class="dialog-error" id="settingsError" role="alert"></p>
-        <div class="dialog-actions">
-          <button class="button ghost" value="cancel" type="submit">取消</button>
-          <button class="button primary" id="saveSettingsButton" value="default" type="submit">
-            验证并保存
-          </button>
-        </div>
-      </form>
-    </dialog>
 
     <script src="/static/app.js" defer></script>
   </body>
