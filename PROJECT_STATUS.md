@@ -1,6 +1,6 @@
 # CoursePilot 项目状态
 
-更新时间：2026-08-10
+更新时间：2026-08-13
 
 这份文档是新开发者的快速入口。更完整的状态矩阵见
 [docs/project_status.md](docs/project_status.md)，生成管线说明见
@@ -12,6 +12,12 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
 并已落地本地账号注册/登录、Cookie 会话和可信 subject 画像隔离，同时将意图路由、
 能力帮助、主动学习画像和多语言静态代码辅导接入 OpenAI 兼容对话 API；资料权限、SourceChunk
 检索、材料答疑、练习反馈和学习复盘仍未接成完整闭环。
+
+2026-08-12 已将 `outputs/` 中每个课程版本的最新有效成果归档为
+`data/archive/studykits.sqlite3`：12 builds、286 个 StudyKit、12,008 个文本 checkpoint/
+审计工件，完整性复核为零问题。2026-08-13 又将 `data/` 迁移为私有
+`JaamesQin/csdiy_agent-data` submodule，并用 Git LFS 管理 SQLite 与 anchored chunks。
+数据库记录均为 `validated_draft`，未冒充人工批准或在线发布。
 
 当前最成熟的链路是：
 
@@ -50,6 +56,14 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
   和 opportunity ID；新增或删除身份字段会被确定性拒绝或恢复。
 - Audit 发现下游需要边界外的有效来源块时，会先修 EvidencePlan，
   再修对应 Content 或 Practice。
+- 现已补充内容对齐的练习质量合同：每道练习必须有材料支持的具体设置、可观察结果、
+  一致的提示/证据要求和相关锚点；同一单元的独立审计者必须逐题复核。该合同通过
+  author prompt 与审计实现，不引入领域专用硬编码语义验证器。
+- 已加入 offline-only selective repair：新 build 保存直接父快照，rich audit 绑定当前
+  build 与 repair plan，并要求当前 practice ID 的逐题精确覆盖，不得缺失、重复或沿用
+  stale ID。任一覆盖或绑定不匹配均阻止完成/false-complete；确定性 Schema 通过不是语义放行。
+  六课 repair 已完成 161/161 validated、161/161 audited，六个最终 build 均为 `succeeded`；
+  其中五课尚未关闭 course-level visual review，所以 catalog 仍不能标记全局 complete。
 - 最终 StudyKit 由代码确定性组装，并校验 Schema、引用、顺序、唯一 ID、
   Markdown 可渲染性和内部字段泄漏。
 
@@ -66,6 +80,9 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
 ### Schema、工具与课程资料
 
 - 已新增 EvidencePlan、LearningContent、PracticeFlow、QualityAudit 四个 Schema。
+- 私有 `data` submodule 的精简远端保留 catalog、manifests、golden、anchored chunks、
+  source/preparation provenance 和最新 SQLite；raw PDF、站点镜像、页图、reviewed 重复包及
+  regression 仅可作为 ignored 本地数据。初始化命令见 `docs/private-data-submodule.md`。
 - 已提供生成 CLI、质量 profile 评估脚本和 Lecture 并发回归调度器。
 - MIT 6.7960 Fall 2024 manifest 已覆盖官方可用的 23 讲：Lecture 01–21、23、24；
   官方缺失的 Lecture 22、25 未创建占位单元。

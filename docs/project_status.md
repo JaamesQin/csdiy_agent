@@ -1,6 +1,6 @@
 # CoursePilot 全局进度
 
-更新时间：2026-08-10
+更新时间：2026-08-13
 
 状态口径：
 
@@ -20,6 +20,12 @@ StudyKit JSON/YAML/Markdown。
 能力帮助、主动学习画像和多语言静态代码辅导。尚未完成的是用户资料接入、MaterialSet 权限、
 在线 SourceChunk 检索、材料答疑、完整 LearnerState、清小搭生产部署和真实用户验收。
 
+离线成果现有独立 SQLite 归档层：2026-08-12 的整理保留 12 个最新 build、286 个
+StudyKit 和 12,008 个文本审计工件，并删除约 4.27 GiB 的重复 `outputs/` checkpoint/
+图片缓存。2026-08-13 已把 `data/` 迁移为私有 Git submodule；Git LFS 管理
+`archive/studykits.sqlite3` 与 anchored JSONL chunks。归档状态是 `validated_draft`，
+在线运行时仍只读取人工批准的 golden 数据。
+
 ## 二、能力状态矩阵
 
 | 能力 | 当前状态 | 发布前缺口 |
@@ -33,6 +39,7 @@ StudyKit JSON/YAML/Markdown。
 | Schema/引用/渲染 | 已完成 | 加入在线权限与检索边界检查 |
 | CourseManifest | 有 YAML manifest | 正式 Schema、Catalog 和运行时 API |
 | MaterialManifest/MaterialSet | 待完成 | 存储、权限、过期、删除和混合授权 |
+| 私有检索数据归档 | 已完成精简快照 | 接入 permission-filtered 在线读取；当前仍为 `validated_draft` |
 | 检索 | 待完成 | 元数据过滤、关键词检索、可选向量检索 |
 | 本地账号与会话 | 已完成安全 MVP | 邮箱、找回/修改密码和账号删除不在首版 |
 | OpenAI 兼容 API | 双身份兼容且已接入首批 Agent 路由 | 扩展检索、答疑、练习与复盘 handler |
@@ -74,8 +81,21 @@ GenerationRequest + SourceChunks
   擅自新增或删除身份字段时由代码恢复或拒绝，保留有效字段修改。
 - PracticeFlow/StudyKit 的学习顺序强制使用 `practice_ids`，所有练习至少出现
   一次；非 practice 步骤使用空数组，review 可以重复引用。
+- 新增内容对齐的练习 checkpoint 合同：练习必须从 EvidencePlan/Content 的具体
+  requirement、concept 或 opportunity 派生，给出可求解设置、可观察结果和相关引用；
+  独立审计必须逐题检查。六课最终 repair builds 已按此合同完成逐题审计。
+- selective repair 仅离线可用：每个新 build 保留直接父 snapshot，rich independent audit
+  必须绑定当前 build+repair plan，并对当前 practice IDs 做无缺失、无重复、无 stale ID 的
+  精确逐题覆盖。任何 mismatch 都阻止 completion/false-complete；deterministic Schema pass
+  不能替代语义审查。六课 repair 已达到 161/161 validated、161/161 audited 和
+  6/6 build succeeded；五课未关闭课程级视觉复核，故 catalog 仍非全局 complete。
 
 ## 四、生成质量与回归状态
+
+2026-08-12 六课集中 practice repair 已闭环 161 个 source-supported units，当前
+residual gate units、failed 和 pending 均为 0。最终 build IDs 与逐题审计口径见
+`evaluations/csdiy-six-course-practice-repair-round2-progress.md`。这表示 practice repair
+build 成功，不替代尚未完成的课程级 visual-review gate。
 
 Prompt 固定为 `studykit-staged-v0.8-010`，当前 Pipeline 为
 `studykit-pipeline-v0.11-019`，运行版本为 `21`。

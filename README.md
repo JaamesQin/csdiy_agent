@@ -12,6 +12,17 @@ CoursePilot 是一个面向中文计算机科学自学者的循证学习 Agent�
 - 在线 Agent 已接入规则优先的意图路由、`/help` 能力目录、主动学习画像、多语言静态代码辅导和透明降级。
 - 在线课程上下文只读取 Schema 合法、人工批准的 Lecture 2/8 黄金 StudyKit，不暴露内部评分字段。
 - 分阶段 StudyKit 生成器执行 Evidence → Content → Practice → Audit → 确定性组装，并输出 JSON/YAML/Markdown。
+- standard authoring 要求每道练习从 EvidencePlan/课程内容派生出具体、可求解的设置和可观察结果；
+  独立审计者逐题复核内容关联、证据锚点和形成性质量。该语义门禁仍只在线下执行。
+- selective practice repair 只在线下运行：从直接父 build 快照创建新的 fingerprinted build，
+  rich audit 必须绑定当前 build+repair plan，并逐题精确覆盖当前 practice IDs（无缺失、重复或
+  过期 ID）；任一不匹配都阻止完成和 false-complete，Schema 通过本身不足以放行。六课修复
+  已达到 161/161 validated、161/161 audited 和 6/6 build succeeded；其中五课仍等待课程级
+  visual-review closure，因此尚不能宣称 catalog 全局 complete。
+- 已提供独立的 SQLite StudyKit 归档：`scripts/archive_studykit_builds.py` 原子保存每门课唯一的最新 build、最终 StudyKit、阶段 checkpoint 和验证/审计文本工件；课程归档与账号数据库隔离，`validated_draft` 不会自动上线。
+- `data/` 已迁移为私有 Git submodule，并由 Git LFS 管理 SQLite 与 anchored chunks。当前精简
+  快照包含 12 builds、286 个 StudyKit 和 12,008 个审计/阶段工件；原始 PDF、站点镜像、页面图
+  和 reviewed 重复包不上传。
 
 课程导航、SourceChunk 检索、材料答疑、练习反馈和学习复盘尚未接入在线编排；代码辅导当前只做静态分析，不执行用户代码。
 
@@ -72,7 +83,7 @@ Agent 编排：意图路由、主动画像、静态代码辅导、安全校验
 
 ## 当前阶段
 
-截至 2026-08-10，项目处于“离线 StudyKit 生成内核完成、账号系统与首批在线 Agent 能力已接入、等待检索和清小搭生产验证”阶段：
+截至 2026-08-13，项目处于“离线 StudyKit 生成与私有检索数据归档完成、账号系统与首批在线 Agent 能力已接入、等待在线检索和清小搭生产验证”阶段：
 
 | 项目 | 状态 |
 | --- | --- |
@@ -93,6 +104,8 @@ Agent 编排：意图路由、主动画像、静态代码辅导、安全校验
 | 全课程 portable StudyKit 包 | Lecture 01–21、23、24 共 23 讲已验证并批准待入库；暂存于 `data/reviewed/`，尚未接入在线 Catalog |
 | SourceChunk Schema 与 PDF 页级解析 | 已完成；Lecture 2、8 的 chunks 已在本地生成并通过校验，未随公开仓库上传 |
 | 黄金 StudyKit 在线读取 | 已完成：Lecture 2、8，只读人工批准版本 |
+| 私有检索数据归档 | 已完成精简快照：12 builds、286 documents、12,008 artifacts；全部为 `validated_draft` |
+| 六课 practice repair | 161/161 validated、161/161 audited、6/6 build succeeded；五课仍需关闭课程级视觉复核 |
 | 线上 SourceChunk 检索与 RAG | 尚未开始 |
 | 清小搭接入探测与试聊 | 尚未开始 |
 | 端到端 Demo、评测和用户试用 | 尚未开始 |
@@ -106,6 +119,16 @@ Agent 编排：意图路由、主动画像、静态代码辅导、安全校验
 5. 将通过测试的后端部署到生产环境并完成端到端评测。
 
 ## 本地运行
+
+先初始化私有数据 submodule 和 Git LFS 对象（需要该私有仓库的访问权限）：
+
+```bash
+git submodule update --init --recursive
+git -C data lfs pull
+```
+
+StudyKit 检索归档位于 `data/archive/studykits.sqlite3`。完整边界见
+[私有数据 submodule 说明](docs/private-data-submodule.md)。
 
 ```bash
 python3 -m venv .venv
