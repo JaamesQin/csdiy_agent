@@ -47,11 +47,11 @@ Read `run.json`, recompute the input/version fingerprint, validate every complet
 ```bash
 python scripts/validate_artifacts.py \
   --chunks build/ingestion/chunks.jsonl \
-  --studykit build/courses/course/units/unit-01/05-studykit.json \
-  --report build/courses/course/units/unit-01/validation.json
+  --studykit build/courses/course/units/unit-01/05-studykit.candidate.json \
+  --report build/courses/course/units/unit-01/validation.candidate.json
 ```
 
-Exit zero means the schemas and citation anchors validate. Semantic and formula audit still remains required before publication.
+Exit zero means the candidate schemas and citation anchors validate. Finalize it, write `review-validation.json` with `validate_review.py`, and run `verify_unit_outputs.py`; semantic and formula audit still remains required before publication.
 
 ## 6. Plan fast parallel authoring
 
@@ -64,7 +64,33 @@ python scripts/plan_execution.py \
   --write build/execution-plan.json
 ```
 
-This produces three isolated worker groups (one of four slots remains with the coordinator). It does not invoke a model. Populate each unit's `review-plan.json` before visual review and `metrics.json` as stages checkpoint.
+This produces isolated worker groups for one build coordinator (one of four
+slots remains with that coordinator). It does not invoke a model. Populate
+each unit's `review-plan.json` before visual review and `metrics.json` as stages
+checkpoint.
+
+## 9. Run isolated build coordinators in one session
+
+Use distinct build roots and coordinator IDs when processing independent
+courses. The global session budget is divided before launch; no coordinator
+may write another coordinator's manifest, output root, source namespace, or
+registry state:
+
+```bash
+python scripts/plan_execution.py \
+  --unit lecture-10 --unit lecture-11 --unit lecture-12 \
+  --output-dir outputs/cmu-15-213/build-a/courses/cmu-15-213/units \
+  --coordinator-id cmu-15-213-build-a \
+  --coordinator-count 3 --session-slots 16 \
+  --parallel-units auto --write outputs/cmu-15-213/build-a/execution-plan.json
+```
+
+With three coordinators and a 16-slot session, the deterministic allocation is
+five slots per coordinator: four unit workers and one coordinator, with one
+slot reserved for the global coordinator. Run the same command for the other
+two disjoint build roots using unique IDs. Merge only validated handoff
+records after all unit-level checks; never use the registry as a mutable work
+queue.
 
 ## 7. Use the evaluated default
 

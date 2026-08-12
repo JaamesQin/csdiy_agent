@@ -29,6 +29,16 @@ def test_builtin_offline_decision_selects_standard() -> None:
     assert options["quality_mode_source"] == "offline-noninferiority-decision"
 
 
+def test_release_versions_are_consistent() -> None:
+    import yaml
+
+    manifest = yaml.safe_load((SKILL / "assets/templates/manifest.yaml").read_text(encoding="utf-8"))
+    skill_text = (SKILL / "SKILL.md").read_text(encoding="utf-8")
+    assert policy.PIPELINE_VERSION == "0.2.1"
+    assert manifest["pipeline_version"] == policy.PIPELINE_VERSION
+    assert 'version: "0.2.1"' in skill_text
+
+
 def test_review_page_sets_and_deterministic_sampling() -> None:
     candidates = [{"page": page, "needs_host_vision": True} for page in range(1, 31)]
     candidates[10]["warnings"] = ["hidden_text"]
@@ -42,11 +52,52 @@ def test_review_page_sets_and_deterministic_sampling() -> None:
     assert strict["selected_pages"] == list(range(1, 31)) + [40]
 
 
+def test_review_selector_catches_production_low_text_and_empty_warnings() -> None:
+    candidates = [
+        {"page": 7, "content": "text", "parse_warnings": ["low_extracted_text"]},
+        {"page": 8, "content": "text", "parse_warnings": ["empty_or_unstructured_text"]},
+        {"page": 9, "content": "text", "parse_warnings": ["removed_duplicate_lines:2"]},
+        {"page": 10, "content": "This page discusses an empty page marker."},
+    ]
+    selected = policy.select_review_pages("fast", candidates, source_hash="b" * 64)
+    assert selected["selected_pages"] == [7, 8]
+    assert selected["selection_reasons"] == {"7": ["risk"], "8": ["risk"]}
+
+
+def test_review_selector_does_not_treat_normal_content_as_a_warning() -> None:
+    candidate = {"page": 10, "content": "This page discusses replacement values and empty pages."}
+    selected = policy.select_review_pages("fast", [candidate], source_hash="c" * 64)
+    assert selected["selected_pages"] == []
+
+
+def test_review_selector_catches_invalid_unicode_warning() -> None:
+    candidate = {"page": 11, "content": "text", "parse_warnings": ["replaced_invalid_unicode_surrogates:2"]}
+    selected = policy.select_review_pages("fast", [candidate], source_hash="d" * 64)
+    assert selected["selected_pages"] == [11]
+
+
 def test_fingerprint_includes_mode_not_concurrency() -> None:
     fast = policy.build_fingerprint(["x"], "fast", schema="1")
     strict = policy.build_fingerprint(["x"], "strict", schema="1")
     assert fast != strict
     assert "parallel" not in policy.build_fingerprint.__code__.co_varnames
+
+
+def test_standard_checkpoints_are_ordered_and_json(tmp_path: Path) -> None:
+    for stage in policy.STAGE_ORDER[:2]:
+        (tmp_path / f"{stage}.json").write_text("{}", encoding="utf-8")
+    issues = policy.validate_stage_checkpoints(tmp_path, "standard")
+    assert {issue["code"] for issue in issues} == {"checkpoint_missing"}
+    (tmp_path / "03-practice-flow.json").write_text("[]", encoding="utf-8")
+    issues = policy.validate_stage_checkpoints(tmp_path, "standard")
+    assert {issue["code"] for issue in issues} >= {"checkpoint_not_object", "checkpoint_missing"}
+
+
+def test_non_standard_modes_keep_the_same_stage_order(tmp_path: Path) -> None:
+    for stage in policy.STAGE_ORDER:
+        (tmp_path / f"{stage}.json").write_text("{}", encoding="utf-8")
+    assert policy.validate_stage_checkpoints(tmp_path, "fast") == []
+    assert policy.validate_stage_checkpoints(tmp_path, "strict") == []
 
 
 def test_worker_capacity_and_batch_failure_isolation() -> None:
@@ -60,6 +111,26 @@ def test_worker_capacity_and_batch_failure_isolation() -> None:
     ], "auto", 2)
     assert summary["status"] == "partial"
     assert summary["succeeded_units"] == ["u1"]
+
+
+def test_isolated_coordinator_slot_budget_supports_sixteen_slot_session() -> None:
+    assert policy.coordinator_slot_budget(16, 3) == 5
+    assert policy.worker_count(20, "auto", available_slots=5) == 4
+    assert policy.coordinator_slot_budget(16, 4) == 3
+
+
+def test_execution_plan_records_isolated_coordinator_allocation(tmp_path: Path) -> None:
+    result = subprocess.run([
+        sys.executable, str(SKILL / "scripts/plan_execution.py"),
+        "--unit", "u1", "--unit", "u2", "--unit", "u3", "--unit", "u4", "--unit", "u5", "--output-dir", str(tmp_path / "build-a"),
+        "--coordinator-id", "build-a", "--coordinator-count", "3", "--session-slots", "16",
+        "--quality-mode", "fast",
+    ], text=True, capture_output=True, check=True)
+    plan = json.loads(result.stdout)
+    assert plan["worker_count"] == 4
+    assert plan["coordinator"]["id"] == "build-a"
+    assert plan["coordinator"]["slot_budget"] == 5
+    assert plan["coordinator"]["isolated"] is True
 
 
 def test_execution_plan_rejects_duplicate_units(tmp_path: Path) -> None:

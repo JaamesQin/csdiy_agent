@@ -15,6 +15,12 @@
   "common_misconceptions": [],
   "learning_sequence": [],
   "practice": [],
+  "practice_feedback_policy": {
+    "scope": "current_answer_only",
+    "persistence": "none",
+    "aggregate_accuracy": "disabled",
+    "aggregate_mastery": "disabled"
+  },
   "citations": [],
   "review": {"generator_review_status": "pending", "audit_findings": []},
   "limitations": []
