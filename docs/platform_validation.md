@@ -1,6 +1,6 @@
 # 清小搭平台与本地协议验证记录
 
-> 更新日期：2026-08-10
+> 更新日期：2026-08-13
 > 当前结论：本地协议验证通过，清小搭生产平台验证待执行
 
 ## 1. 验证范围
@@ -22,6 +22,12 @@
 - 独立 Uvicorn 进程上的真实 HTTP、SSE 和轻量并发请求。
 
 本轮没有验证清小搭账号侧能力、生产网络、文件 URL 或长期状态。
+
+2026-08-12 另完成离线 StudyKit 归档验证：12 builds、286 documents、12,008 text
+artifacts；SQLite `quick_check` 和内容/工件 SHA-256 回读均通过，重复课程版本为 0，
+online-ready 文档为 0（全部保持 `validated_draft`）。记录见
+`evaluations/studykit-archive-import-20260812.json` 与
+`evaluations/studykit-outputs-prune-20260812.json`。
 
 ## 2. 本地环境
 
@@ -199,3 +205,37 @@ Python/Triton AST、解析器失败降级和未标语言边界。
 - 所有保证的 grammar 从安装包离线加载，测试过程不需要外部模型或网络；
 - 未标语言不会默认按 Python 解析，课程专用 DSL 和解析器异常会透明降级；
 - 所有代码辅导路径仍为 `ran_code=false`，OpenAI JSON/SSE 顺序和真实 loopback HTTP 保持兼容。
+
+## 10. 2026-08-11 StudyKit 语义质量校准准备
+
+本节记录离线 StudyKit 批量生成的质量门禁准备，不代表新的课程样本已经生成或通过校准。
+standard authoring 现在要求每道练习绑定到 EvidencePlan/Content 的具体内容，给出学习者
+可以直接求解的设置和可观察结果；独立审计者必须逐题核对内容关联、提示、预期证据、评价
+标准和 source anchor。Schema、引用格式或渲染通过本身不能替代该语义审查。
+
+代表性样本随后按照 [StudyKit 质量校准协议](studykit-quality-calibration-protocol.md)
+与 CMU 15-213、UCB CS61B 产物及 `data/golden/` 人审样例比较，并演进为六课逐题 repair
+循环。最终状态记录在 `evaluations/csdiy-six-course-practice-repair-round2-progress.md`；
+本节保留最初校准门禁的形成过程，不再作为当前进度判断。
+
+Selective repair 仅允许作为离线、fingerprinted build 执行：保存 direct-parent snapshot，
+并把 rich independent audit 绑定到当前 `build_id` 与 repair-plan digest。审计必须对当前
+candidate 的 practice IDs 做 exact coverage（无 missing、duplicate 或 stale IDs）；任一
+mismatch 都阻止 completion/false-complete。portable/deterministic Schema pass 不能替代
+逐题语义审计。后续六课循环已完成 161/161 validated、161/161 audited 和 6/6 build
+`succeeded`；五课仍有课程级 visual-review gate，因此 catalog 全局 release gate 仍未关闭。
+
+## 11. 2026-08-13 私有数据 submodule 验证
+
+- 私有仓库 `JaamesQin/csdiy_agent-data` 的 `main` 固定到 `f4b25bb`，GitHub 属性为 private；
+- 主仓库 `data` gitlink 固定到同一提交，迁移提交为 `f7cab57`；
+- SQLite 为 130,453,504 字节，SHA-256 为
+  `76daa4534257434b9e0e005ce20c03c06abed655ff9c4c061d96e30fc752107a`，
+  `PRAGMA quick_check = ok`；
+- 归档计数为 12 builds、286 documents、12,008 artifacts，review status 全部为
+  `validated_draft`；
+- 424 个本地 Git LFS 对象通过 `git lfs fsck`，submodule tracked worktree clean；
+- `tests/retrieval`、`tests/catalog/test_studykit_archive.py` 与
+  `tests/generation/test_quality_profile.py` 合计 34 项通过；
+- 原始 PDF、reviewed 重复包等恢复为 submodule 内 ignored 本地数据，迁移前快照暂存于
+  ignored `storage/data-before-private-submodule/`，本轮未删除。

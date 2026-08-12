@@ -4,8 +4,21 @@
 
 - `app/api/` and `app/protocol/` adapt OpenAI-compatible HTTP/JSON/SSE only. Domain logic belongs in `app/agent/` and capability modules.
 - `StudyKitGenerator` is a slow offline authoring pipeline. Never call it from `/v1/chat/completions`.
+- StudyKit practice quality is established by content-grounded author prompts plus a separate
+  independent audit of every practice item; do not replace this semantic contract with a
+  domain-specific hard-coded validator. Keep this review offline and source-anchored.
+- Selective practice repair is offline-only: create a new fingerprinted build from the direct
+  parent snapshot, bind the rich audit to the current build and repair plan, and require exact
+  per-practice coverage with no missing, duplicate, or stale IDs. Any mismatch blocks completion
+  and false-complete; deterministic Schema validation alone is insufficient. Do not claim the
+  six-course repair is globally complete without every gate passing.
 - Online course facts must come from a validated `StudyKitStore` or future permission-filtered retrieval. Do not let a router or model invent course/version/unit identity.
 - The current file store may read only Schema-valid, human-approved golden StudyKits. Do not mutate golden artifacts from online code.
+- `data/` is the private `JaamesQin/csdiy_agent-data` submodule. Git LFS stores
+  `data/archive/studykits.sqlite3` and anchored JSONL chunks; initialize it before running
+  data-dependent tests. The archive remains separate from the account/profile SQLite database.
+  Imports retain an explicit review status; `validated_draft` records are not online-ready, and
+  only `approved` records may satisfy a future online store.
 
 ## Identity and persistence
 
@@ -42,5 +55,8 @@
 - Tests must not require external model credentials or network access. Real HTTP tests bind loopback only.
 - Use `.venv/bin/python` and `.venv/bin/pytest -q`.
 - Inject a fake `StructuredModel` for route/profile/tutor model paths.
-- Keep generated/private data under ignored paths such as `storage/`, `data/private/`, `data/sources/`, and `data/regression/`.
+- Keep account/profile databases and temporary backups under ignored `storage/`. Within the
+  private data submodule, raw binaries, reviewed-package duplicates, regression data, rendered
+  pages, and other excluded local checkpoints must remain ignored; do not add them merely because
+  the submodule is private.
 - When capability status changes, update `README.md`, `PROJECT_STATUS.md`, `docs/project_status.md`, `docs/developers_guide.md`, release/validation docs, and this memory together.
