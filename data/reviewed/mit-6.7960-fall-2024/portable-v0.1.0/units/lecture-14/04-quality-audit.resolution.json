@@ -1,3 +1,0 @@
-{
-  "stage":"quality_audit_resolution","unit_id":"lecture-14","status":"resolved","resolutions":[{"finding_id":"qa-14-1","action":"候选件、引文与练习均不使用第 49–50 页；练习为重新设计的概念活动，不复现或解答课程作业。","verified":true}],"ready_for_candidate":true,"ready_for_finalize":false
-}

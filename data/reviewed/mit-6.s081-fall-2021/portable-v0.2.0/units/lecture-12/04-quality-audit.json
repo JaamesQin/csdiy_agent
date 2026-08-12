@@ -1,5 +1,0 @@
-{
-  "verdict": "pass",
-  "summary": "独立 standard-mode 语义审核通过。01 证据计划准确覆盖跨 swtch 保持 p->lock 的特殊交接、sched 不允许携带其他自旋锁的边界、阻塞协调、sleep/wakeup 的频道与条件锁协议、lost wakeup 形成条件，以及 kill/exit/wait 的延迟终止语义；第 13、14、25 页低文本页面没有被用作核心主张证据。02 内容把线程切换的不变量、sleep 原子释放与唤醒检查、条件循环重检、进程回收顺序组织成可追溯讲解，没有把特殊的 p->lock 规则泛化为普通锁规则。03 的五项全新练习从锁交接与 sched 约束，推进到阻塞方案、lost-wakeup 时序诊断及终止协议，总时长恰为 180 分钟，不含实验实现答案或受评作业复现。候选 JSON 符合 portable schema，93 个引用出现全部解析到当前唯一来源的非空、非隐藏页；来源 ID、SHA-256、Fall 2021 vintage 与限制一致。未发现公式、错误并发边界、引用遗漏或需修复问题。人工页面视觉复核仍未完成，因此本 verdict 不授权 finalization。",
-  "issues": []
-}
