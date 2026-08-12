@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any, Protocol
 
 from app.agent.contracts import CourseContext
+from app.catalog.contracts import ReadyStudyKitSummary
 from app.retrieval.schema_validation import validate_yaml
 
 
@@ -22,6 +23,14 @@ class StudyKitStore(Protocol):
         self, course_id: str, course_version: str, unit_id: str
     ) -> dict[str, Any] | None:
         """Return one reviewed StudyKit, or ``None`` when it is unavailable."""
+
+    def list_ready(
+        self,
+        *,
+        course_id: str | None = None,
+        course_version: str | None = None,
+    ) -> list[ReadyStudyKitSummary]:
+        """List public summaries for reviewed StudyKits matching the filters."""
 
     def resolve_context(
         self,
@@ -74,6 +83,48 @@ class ReviewedFileStudyKitStore:
         self, course_id: str, course_version: str, unit_id: str
     ) -> dict[str, Any] | None:
         return self._load().get((course_id, course_version, unit_id))
+
+    def list_ready(
+        self,
+        *,
+        course_id: str | None = None,
+        course_version: str | None = None,
+    ) -> list[ReadyStudyKitSummary]:
+        summaries: list[ReadyStudyKitSummary] = []
+        for (known_course, known_version, known_unit), document in self._load().items():
+            if course_id is not None and course_id != known_course:
+                continue
+            if course_version is not None and course_version != known_version:
+                continue
+            source = next(
+                (
+                    item
+                    for item in document.get("scope", {}).get("included_sources", [])
+                    if isinstance(item, dict)
+                ),
+                None,
+            )
+            estimated = document.get("estimated_study_time_minutes")
+            summaries.append(
+                ReadyStudyKitSummary(
+                    course_id=known_course,
+                    course_version=known_version,
+                    unit_id=known_unit,
+                    title=str(document["title"]),
+                    estimated_study_time_minutes=(
+                        int(estimated) if isinstance(estimated, int) and estimated > 0 else None
+                    ),
+                    official_url=(
+                        str(source["official_url"])
+                        if source and source.get("official_url")
+                        else None
+                    ),
+                )
+            )
+        return sorted(
+            summaries,
+            key=lambda item: (item.course_id, item.course_version, item.unit_id),
+        )
 
     def resolve_context(
         self,
@@ -130,12 +181,14 @@ class ReviewedFileStudyKitStore:
                 course_id = "mit-6.7960-fall-2024"
             unit_matches = list(
                 re.finditer(
-                    r"(?:lecture\s*[- ]?|第\s*)(0?[0-9]{1,2})(?:\s*讲)?",
+                    r"(?:lecture\s*[- ]?(0?[0-9]{1,2})|第\s*(0?[0-9]{1,2})\s*讲)",
                     lowered,
                 )
             )
             if unit_matches:
-                unit_id = f"lecture-{int(unit_matches[-1].group(1)):02d}"
+                match = unit_matches[-1]
+                number = match.group(1) or match.group(2)
+                unit_id = f"lecture-{int(number):02d}"
 
         if course_id is None and unit_id is None:
             return None
@@ -144,7 +197,10 @@ class ReviewedFileStudyKitStore:
     @staticmethod
     def _normalize_unit(value: str) -> str:
         lowered = value.strip().lower()
-        match = re.fullmatch(r"(?:lecture\s*[- ]?|第\s*)0?([0-9]{1,2})(?:\s*讲)?", lowered)
+        match = re.fullmatch(
+            r"(?:lecture\s*[- ]?0?([0-9]{1,2})|第\s*0?([0-9]{1,2})\s*讲)",
+            lowered,
+        )
         if match:
-            return f"lecture-{int(match.group(1)):02d}"
+            return f"lecture-{int(match.group(1) or match.group(2)):02d}"
         return lowered

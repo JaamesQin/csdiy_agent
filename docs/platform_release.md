@@ -1,6 +1,6 @@
 # 平台发布记录
 
-> 更新日期：2026-08-10
+> 更新日期：2026-08-12
 >
 > 发布状态：多用户本地候选版本已验证，生产发布待执行
 
@@ -13,10 +13,11 @@
 - SQLite Schema v1→v2 事务迁移；
 - 不在服务器保存完整对话或代码；
 - 标准错误响应和流式错误收尾；
-- 规则优先的意图路由、`/help` 能力目录、主动学习画像和多语言静态代码辅导；
-- Lecture 2/8 已审核黄金 StudyKit 只读上下文；
-- 带登录、功能总览、画像管理和代码辅导入口的本地聊天界面；
-- 254 项自动化测试通过，其中 4 项为独立 Uvicorn/loopback HTTP 测试。
+- 规则优先的意图路由、八项可用能力的 `/help`、主动学习画像和多语言静态代码辅导；
+- 118 个课程目标的失败关闭 Catalog 校验、确定性导航和三类状态展示；
+- Lecture 2/8 已审核黄金 StudyKit 查询、材料/概念、练习选择和当前答案反馈；
+- 带登录、功能总览、画像、课程、StudyKit、练习和代码辅导入口的本地聊天界面；
+- 294 项自动化测试通过，其中 4 项为独立 Uvicorn/loopback HTTP 测试。
 
 ## 本地启动
 
@@ -35,12 +36,12 @@ uvicorn app.main:app --host 127.0.0.1 --port 8000
 | 名称 | 必须 | 说明 |
 | --- | --- | --- |
 | `COURSEPILOT_API_KEY` | 是 | 至少 16 个随机字符，通过 Secret 注入；同时用于 legacy API 和 CSRF HMAC |
-| `COURSEPILOT_DB_PATH` | 建议显式设置 | 挂载在受限权限的持久卷中 |
+| `COURSEPILOT_DB_PATH` | 建议显式设置 | 挂载在受限权限的持久卷中；当前仅存账号、会话和画像 |
 | `COURSEPILOT_SESSION_TTL_HOURS` | 否 | 默认 12 小时 |
 | `COURSEPILOT_COOKIE_SECURE` | 生产必须 | HTTPS 环境设为 `true` |
 | `COURSEPILOT_ALLOWED_ORIGINS` | 生产必须 | 逗号分隔的完整 Origin，例如 `https://coursepilot.example.com` |
 | `COURSEPILOT_TEST_MODE` | 否 | 生产保持 `false` |
-| `DEEPSEEK_API_KEY` | 否 | 启用低置信路由、画像候选和语义代码建议；未设置时透明降级 |
+| `DEEPSEEK_API_KEY` | 否 | 启用低置信路由、画像候选、材料问答、练习反馈和语义代码建议；未设置时透明降级 |
 | `DEEPSEEK_BASE_URL` / `DEEPSEEK_MODEL` | 否 | 复用离线生成器的模型适配配置 |
 
 禁止记录或提交 API Key、密码、Cookie、CSRF token、Argon2 hash 和数据库内容。
@@ -80,8 +81,8 @@ credential: <COURSEPILOT_API_KEY>
 
 ## 当前限制
 
-- 当前执行功能帮助、画像、代码辅导和澄清；其余意图只识别并透明降级；
-- 尚未接入正式 Catalog、MaterialSet、SourceChunk 检索或 RAG；
+- 当前执行功能帮助、画像、课程导航、StudyKit 查询、材料/概念、练习选择/反馈、代码辅导和澄清；学习复盘和生成状态仍降级；
+- Catalog 仍读取 tracked registry/Manifest，StudyKit 仍读取 golden 文件；尚未接入数据库 MaterialSet、SourceChunk 检索或 RAG；
 - 课程上下文仅覆盖 Lecture 2/8 人工批准的黄金 StudyKit；
 - 代码只做 AST/Tree-sitter 静态分析，始终 `ran_code=false`；课程专用 DSL 可能只获得模型静态建议；
 - API Key 请求的 `user` 是客户端提供的逻辑标识，只进入 legacy 命名空间，不是生产授权凭据；
@@ -95,7 +96,7 @@ credential: <COURSEPILOT_API_KEY>
 - 流式代理不稳定：保留非流式 JSON；
 - 文件输入不可用：使用公开链接、文本粘贴或预上传样板资料；
 - 长期状态不可用：输出可复制状态卡；
-- DeepSeek 不可用：保留规则路由、功能帮助、显式画像识别、Python AST 与 Tree-sitter 多语言语法诊断；
+- DeepSeek 不可用：保留规则路由、功能帮助、课程导航、StudyKit 查询、概念解释、练习选择、显式画像识别和多语言静态诊断；材料问答返回已审核摘要，练习反馈不判分；
 - 画像数据库不可用：继续本轮临时画像和代码辅导，并提示未保存；
 - 云端候选版本异常：回退到最近一个完整测试通过的提交。
 
@@ -109,6 +110,9 @@ credential: <COURSEPILOT_API_KEY>
 - [ ] API Key legacy 用户不能访问账号画像；
 - [ ] 正确/错误 API Key 分别返回 200/401；
 - [ ] 非流式 JSON 与 SSE role/content/stop/`[DONE]` 正常；
+- [ ] 课程导航将目录/authoring/在线 StudyKit 状态分开，且不输出未审核 candidate offering；
+- [ ] Lecture 2/8 的查询、材料/概念、练习和反馈正常，未知页码不产生猜测；
+- [ ] 无 DeepSeek 时练习反馈透明降级，不输出隐藏 rubric、分数或掌握度；
 - [ ] 数据库版本为 2，备份和恢复演练通过；
 - [ ] 反向代理限流、日志脱敏和 HTTPS 验证通过；
 - [ ] 清小搭协议探测和真实试聊通过。

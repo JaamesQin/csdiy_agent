@@ -1,6 +1,6 @@
 # CoursePilot 项目状态
 
-更新时间：2026-08-10
+更新时间：2026-08-12
 
 这份文档是新开发者的快速入口。更完整的状态矩阵见
 [docs/project_status.md](docs/project_status.md)，生成管线说明见
@@ -10,8 +10,9 @@
 
 CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生成内核，
 并已落地本地账号注册/登录、Cookie 会话和可信 subject 画像隔离，同时将意图路由、
-能力帮助、主动学习画像和多语言静态代码辅导接入 OpenAI 兼容对话 API；资料权限、SourceChunk
-检索、材料答疑、练习反馈和学习复盘仍未接成完整闭环。
+能力帮助、主动学习画像、CSDIY 课程导航、golden StudyKit 查询/材料/概念/练习能力和
+多语言静态代码辅导接入 OpenAI 兼容对话 API；资料权限、SourceChunk 检索、私有材料和
+学习复盘仍未接成完整闭环。
 
 当前最成熟的链路是：
 
@@ -100,8 +101,8 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
   OpenAI JSON、SSE、Bearer 和 `coursepilot-probe` 模型 ID 保持兼容。
 - 意图路由采用确定性规则优先、DeepSeek 结构化分类兜底；低置信请求先澄清，
   普通对话不能触发后台 StudyKit 生成。
-- 能力目录集中维护已上线和未上线能力；`/help` 只展示学习画像与多语言代码辅导，
-  `/help code`、`/help profile` 和对应自然语言询问返回具体用法，Help 不触发画像观察。
+- 能力目录集中维护已上线和未上线能力；`/help` 当前展示画像、代码辅导、课程导航、
+  StudyKit 查询、材料问答、概念解释、练习选择和练习反馈，Help 不触发画像观察。
 - Cookie 会话只向 Agent 传入 `account:<uuid>`；API Key 请求的可选 `user` 只映射为
   `legacy:<user>`。画像支持查看、纠正、单项删除和全部删除。
 - 代码辅导使用 Python AST 与自包含 Tree-sitter language pack；C/C++、CUDA、
@@ -109,17 +110,23 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
   课程专用 DSL 明确降级为模型静态建议。所有路径始终返回 `ran_code=false`，
   作业代写请求由规则守卫阻断。
 - 在线课程上下文只读取 Lecture 2/8 中 Schema 合法且人工批准的黄金 StudyKit；
-  模型只能引用允许列表内的真实页码，内部 `expected_evidence` 和 rubric 不进入 Prompt。
+  材料模型只能引用允许列表内的真实页码，学习者输出不含 `expected_evidence`、
+  evaluation、rubric、审计字段或本地路径。
+- `CourseCatalogStore` 校验 118 个 CSDIY 课程目标、唯一身份、导航 provenance 和受控
+  Manifest；课程导航明确区分目录分类、离线 authoring 和在线 StudyKit 状态。
+- `StudyKitLookupService` 已实现查询、材料问答、概念解释、练习选择和当前答案反馈；
+  未配置模型时材料问答返回已审核摘要，练习反馈不做粗略判分。练习答案和历史均不持久化。
 - 未配置 `DEEPSEEK_API_KEY`、模型失败或画像数据库不可用时均透明降级，服务仍能启动和响应。
 
 ### 测试状态
 
-- 当前自动化测试：`254 passed`（250 项普通测试，4 项 loopback HTTP/SSE 测试）。
+- 当前自动化测试：`294 passed`（290 项普通测试，4 项 loopback HTTP/SSE 测试）。
 - 测试覆盖阶段 Schema、Evidence controls、确定性 chunk 并集、引用、
   Markdown LaTeX、模型响应重试、恢复、单次 Audit 回修、非 CS 合成单元、
   CLI、质量 profile、数据库迁移、密码/会话安全、CSRF、限流、账号隔离、
-  API Key 兼容、意图路由、画像生命周期、SQLite 并发、代码静态分析、
-  学术诚信、引用白名单以及真实 HTTP/SSE。
+  API Key 兼容、意图路由、画像生命周期、SQLite 并发、课程目录失败关闭、
+  StudyKit 安全投影、材料/概念引用白名单、练习反馈降级、代码静态分析、
+  学术诚信以及真实 HTTP/SSE。
 - 最新一次全新 Lecture 1–8 外部并发回归（concurrency=8）结果为 `8/8`：
   8 讲均生成 JSON/YAML/Markdown，均通过确定性验证，未解决 blocker 为 0。
   详细结果见 `data/regression/studykit-v21-lectures-01-08/regression-summary.json`。
@@ -151,6 +158,8 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
 | 在线 Agent 编排 | `app/agent/orchestrator.py` |
 | 意图路由 | `app/agent/router.py` |
 | 能力目录与 Help | `app/agent/capabilities.py` |
+| CSDIY 课程目录与导航 | `app/catalog/courses.py`、`app/course_navigation/` |
+| StudyKit 查询、材料/概念、练习 | `app/learning/` |
 | 可信 subject SQLite 学习画像 | `app/profile/` |
 | 静态代码辅导 | `app/code_tutor/` |
 | 已审核 StudyKit 读取 | `app/catalog/studykits.py` |
@@ -163,13 +172,14 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
 
 ## 尚未完成
 
-1. 冻结并实现 CourseManifest、MaterialManifest、MaterialSet 和 TaskPlan 的
-   正式运行时接口；账号与画像事实表已完成，后续演进为完整 LearnerState。
+1. 将当前类型化、只读的 Catalog/StudyKit 接口演进为数据库 `StudyKitBuild`、
+   `StudyKitDocument`、MaterialManifest、MaterialSet 和 TaskPlan；账号与画像事实表
+   已完成，后续演进为完整 LearnerState。
 2. 完成公共课程与用户私有资料的统一解析、存储、授权过滤、过期和删除。
 3. 建立按用户、会话、课程、版本和讲次过滤的检索层；先关键词检索，
    再按需要增加向量检索和重排。
-4. 在现有路由和代码辅导之上接入材料答疑、练习反馈、学习复盘、
-   ready StudyKit 查询和后台生成状态。
+4. 将当前 golden-only 材料答疑和练习反馈接到权限过滤的 SourceChunk；继续接入
+   学习复盘和后台生成状态。
 5. 修复 Lecture 2 的离线 profile 对齐问题，核对 Lecture 8 的 LayerNorm 表述，
    并为 `repairs_applied_unverified` 结果安排人工语义复核。
 6. 实现最小学习闭环，记录用户确认的学习证据，并输出概念、实现、
@@ -177,9 +187,9 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
 7. 完成清小搭账号级能力实测、生产部署、日志脱敏、失败诊断和安全测试。
 8. 验收模板课程与未知私有资料两条端到端流程，再进行用户试用和 Demo 打磨。
 
-这些工作可以在核心数据接口冻结后并行开发；真正的串行依赖是：
-MaterialSet/权限与检索必须先提供稳定接口，Agent 编排随后接入，最后进行
-平台端到端和用户验收。
+这些工作可以在当前只读接口基础上并行开发；真正的串行依赖是：数据库导入和
+MaterialSet/权限必须先提供稳定接口，SourceChunk 检索随后替换 golden-only 降级，
+最后进行平台端到端和用户验收。
 
 ## 主要风险
 

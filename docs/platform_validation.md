@@ -1,6 +1,6 @@
 # 清小搭平台与本地协议验证记录
 
-> 更新日期：2026-08-10
+> 更新日期：2026-08-12
 > 当前结论：本地协议验证通过，清小搭生产平台验证待执行
 
 ## 1. 验证范围
@@ -199,3 +199,40 @@ Python/Triton AST、解析器失败降级和未标语言边界。
 - 所有保证的 grammar 从安装包离线加载，测试过程不需要外部模型或网络；
 - 未标语言不会默认按 Python 解析，课程专用 DSL 和解析器异常会透明降级；
 - 所有代码辅导路径仍为 `ran_code=false`，OpenAI JSON/SSE 顺序和真实 loopback HTTP 保持兼容。
+
+## 10. 2026-08-12 课程导航与 StudyKit 学习能力验证
+
+本节记录课程导航、StudyKit 查询、材料问答、概念解释、练习选择和练习反馈接入后的
+最新候选版本；前述 254 项结果保留为历史基线。
+
+```text
+.venv/bin/pytest -q --ignore=tests/integration/test_local_http.py
+290 passed
+
+.venv/bin/pytest -q tests/integration/test_local_http.py
+4 passed
+```
+
+合计 `294 passed`。新增验证确认：
+
+- CSDIY registry 的 118 个课程目标通过类型、唯一 ID、导航 provenance、状态和
+  Manifest 路径校验；损坏或重复数据失败关闭，不交给模型补全；
+- 课程导航的精确匹配、方向推荐和稳定排序分别限制为 5/3 个结果，并把目录分类、
+  离线 authoring 和在线 StudyKit 三种状态分开；
+- 当前仅 MIT 6.7960 Lecture 2/8 标记为在线 ready；MIT 6.S081 的离线 `complete`
+  不会被误报为在线 StudyKit 可用；
+- `第 8 页` 不再被解析为 `lecture-08`，不完整身份只有在 Store 中唯一时才采用；
+- StudyKit 学习者投影不包含 `expected_evidence`、evaluation/rubric、审计字段、
+  `local_path` 或 `data/raw` 路径；
+- 材料模型只能返回引用白名单 ID；未知引用、未知页码、模型失败和未配置模型均进入
+  有证据的确定性降级；
+- 概念解释只使用带页码的已审核概念；练习首次不泄漏 hint/rubric，并在当前 messages
+  中避免重复；
+- 练习反馈要求 practice ID 和当前答案，只允许白名单页码，不保存答案、不累计分数或
+  掌握度；模型不可用或返回非法页码时不做关键词粗评；
+- 六项能力的真实 `/v1/chat/completions` 非流式 envelope 和课程概念 SSE
+  role/content/单 stop/`[DONE]` 顺序保持兼容。
+
+本轮未升级 SQLite Schema；`COURSEPILOT_DB_PATH` 仍只保存账号、会话和画像事实。
+`data/reviewed` portable 包未自动导入，SourceChunk、私有 MaterialSet 和跨会话练习状态
+仍未上线。

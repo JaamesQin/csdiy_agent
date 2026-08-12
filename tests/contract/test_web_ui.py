@@ -34,6 +34,10 @@ def test_chat_assets_are_available(client: ASGITestClient) -> None:
     assert 'localStorage.setItem("coursepilot_anonymous_user"' not in script.text
     page = client.get("/").text
     assert "多语言静态代码辅导" in page
+    assert "课程导航" in page
+    assert "查看 StudyKit" in page
+    assert "课程概念解释" in page
+    assert "练习选择" in page
     assert 'data-prompt="/help"' in page
     assert favicon.status_code == 200
     assert favicon.headers["content-type"].startswith("image/svg+xml")
