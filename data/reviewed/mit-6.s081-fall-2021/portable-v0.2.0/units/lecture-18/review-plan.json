@@ -1,0 +1,47 @@
+{
+  "quality_mode": "standard",
+  "page_selector_version": "review-pages-v1",
+  "source_hash": "2d8be38f8386f5feece55edcce464db45badd34ec34dbaaec2c58e9b51d76ec4",
+  "selected_pages": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "selection_reasons": {
+    "1": [
+      "initial_selector",
+      "evidence_plan"
+    ],
+    "2": [
+      "initial_selector",
+      "evidence_plan"
+    ],
+    "3": [
+      "evidence_plan"
+    ],
+    "4": [
+      "initial_selector",
+      "evidence_plan"
+    ],
+    "5": [
+      "initial_selector",
+      "evidence_plan"
+    ]
+  },
+  "sampled_pages": [
+    4
+  ],
+  "required_final_formula_pages": [],
+  "actual_reviewed_pages": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "independent_audit": true,
+  "blockers_after_reaudit": [],
+  "review_outcome": "passed"
+}

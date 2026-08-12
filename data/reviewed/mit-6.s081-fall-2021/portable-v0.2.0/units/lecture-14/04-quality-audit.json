@@ -1,0 +1,5 @@
+{
+  "verdict": "pass",
+  "summary": "独立 standard-mode 语义审核通过，并对这份四页密集文本材料逐页完成了语义核对。01 证据计划从 UNIX open/link/unlink 语义推导 inode、nlink 与打开引用，再覆盖 xv6 磁盘布局、创建/写入/删除的块更新、块缓存唯一副本和两级锁、并发 pathname lookup；它明确不把讲义仅列出的 log 层扩写为下一讲的崩溃恢复算法。02 对 inode 身份、最后链接与最后打开引用后的延迟回收、superblock/inode/bitmap/内容块布局、缓存唯一副本以及“引用先于锁”的说明均可在第 1–4 页直接找到支持；第 3 页的重复行清理警告未损害可见调用链和块更新证据。03 的五项原创形成性练习由 API 状态表和布局定位推进到块写账本、并发 ialloc 不变量与 lookup/unlink 交错，总时长恰为 180 分钟，不要求课程 lab 或作业答案。候选 JSON 符合 portable schema，43 个引用出现全部解析到当前唯一来源；来源 ID、确定性分页 PDF 的实际 SHA-256、官方 Fall 2021 日程所链接的 2020 vintage 和 review-plan 四页全选保持一致。EvidencePlan 公式清单为空，候选无公式/LaTeX 字段，被引用页不存在 hidden-overlay 证据。学习包使用原创中文归纳与新练习，没有大段复制原讲义或越过来源的版权/再分发边界。未发现需要修复的问题；四页人工视觉复核仍未完成，因此本 verdict 不授权 finalization。",
+  "issues": []
+}

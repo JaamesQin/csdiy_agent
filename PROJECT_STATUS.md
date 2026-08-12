@@ -72,6 +72,10 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
 - 23 讲 portable StudyKit 已完成结构、引用与渲染验证，并经用户批准待未来数据库导入；
   紧凑包保存在 `data/reviewed/`，统一 SourceChunks 保存在本地 `data/sources/`，
   当前在线 Catalog 仍只读取既有 golden 文件。
+- MIT 6.S081 Fall 2021 的 24 个有实质来源讲次也已完成 v0.2 artifact、review 和
+  输出一致性复核，并经 Lecture 07、15、17 随机语义/视觉抽查。紧凑包仅本地保存在
+  `data/reviewed/mit-6.s081-fall-2021/portable-v0.2.0/`；用户已确认派生 StudyKit
+  可以上传，因此紧凑包进入 reviewed 目录，raw、chunks、页图和完整 build 仍留在 Git 外。
 - Outline 页码只要求存在于本讲输入 SourceChunks，不要求每页都进入
   Content 的最小证据并集。
 - Practice 的 Prompt 仍要求 5–8 题；验证器允许合理超出，以避免模型偶发

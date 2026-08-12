@@ -1,0 +1,679 @@
+studykit_version: '0.1'
+status: draft
+course_id: mit-6.s081-fall-2021
+course_version: fall-2021
+unit_id: lecture-09
+title: 中断、设备并发与轮询
+language: zh-CN
+scope:
+  included_sources:
+  - source_id: mit-6.s081-f21-lecture-09-material
+    title: Interrupts
+    type: pdf
+    sha256: 1c38577e83c40fb01dcc4d95a259274edeb4b5cf60800a53f27a1bbd3296b76b
+    official_url: https://pdos.csail.mit.edu/6.828/2021/slides/6s081-lec-interrupts.pdf
+    local_path: data/raw/mit-6.s081/fall-2021/prepared/lecture-09-interrupts.pdf
+    resource_vintage: fall-2021
+  citation_anchor_types:
+  - page
+learning_objectives:
+- id: obj-01
+  objective: 构建中断来源、控制器与 CPU 控制状态的分层模型。
+  requirement_ids:
+  - req-01
+- id: obj-02
+  objective: 追踪一次控制台字符输出与 UART 完成中断。
+  requirement_ids:
+  - req-02
+- id: obj-03
+  objective: 用生产者—消费者模型解释环形缓冲区。
+  requirement_ids:
+  - req-03
+- id: obj-04
+  objective: 识别中断竞态并选择范围正确的同步手段。
+  requirement_ids:
+  - req-04
+- id: obj-05
+  objective: 比较中断与轮询在不同事件频率下的成本。
+  requirement_ids:
+  - req-05
+prerequisites:
+- topic: 系统调用与陷阱入口
+  required_level: 知道用户或内核执行可被统一陷阱机制打断。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 7
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 8
+- topic: 基本并发
+  required_level: 能理解两段代码交错访问共享状态会产生不同结果。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 19
+- topic: 缓冲区与队列
+  required_level: 知道生产者和消费者可通过有限缓冲解耦速度。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 15
+outline:
+- order: 1
+  topic: 异步中断与设备来源
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 2
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 3
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 4
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 5
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 6
+  purpose: 从外设异步请求出发，区分 PLIC、核心本地控制器、UART 和 IRQ 编号。
+- order: 2
+  topic: RISC-V 中断状态配置
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 7
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 8
+  purpose: 解释 sie、sstatus、sip、scause、stvec 以及 xv6 开关中断的接口。
+- order: 3
+  topic: 控制台输出与硬件交付
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 9
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 10
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 11
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 12
+  purpose: 追踪 shell 输出从 write 到 UART，并按 CPU 的交付动作进入陷阱处理。
+- order: 4
+  topic: 中断暴露的并发
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 13
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 15
+  purpose: 连接多核分发、设备/CPU 并发和环形缓冲区的生产者—消费者角色。
+- order: 5
+  topic: 竞态与本地原子性
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 17
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 18
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 19
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 20
+  purpose: 用指令间中断和共享变量示例说明竞态，并限定关中断的保护范围。
+- order: 6
+  topic: 中断与轮询的负载取舍
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 21
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 22
+  purpose: 比较逐事件中断、批量硬件完成和主动轮询在不同事件频率下的成本。
+core_concepts:
+- id: cc-01
+  term: 异步中断
+  term_en: Asynchronous interrupt
+  claim_type: source_summary
+  explanation: 设备、计时器或其他核心可以在软件运行期间请求处理；UART 以中断通知内核收发进展。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 2
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 4
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 6
+- id: cc-02
+  term: PLIC 与核心本地中断控制器
+  term_en: PLIC and core-local interrupt controller
+  claim_type: source_summary
+  explanation: PLIC 接收外部设备中断并分发到核心；核心本地控制器处理每核计时器和核间相关事件。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 3
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 6
+- id: cc-03
+  term: 中断控制状态
+  term_en: Interrupt control state
+  claim_type: source_summary
+  explanation: sie 选择中断类型，sstatus.SIE 总体开关监管态中断，sip 表示等待类型，scause 记录原因，stvec 指向处理入口。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 7
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 8
+- id: cc-04
+  term: UART 中断路径
+  term_en: UART interrupt path
+  claim_type: source_summary
+  explanation: shell 的 write 经 sys_write、filewrite、uartputc 和 uartstart 把字符交给 UART；设备完成后经
+    PLIC 触发 CPU 保存状态并跳到 stvec。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 9
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 10
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 11
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 12
+- id: cc-05
+  term: 生产者—消费者环形缓冲区
+  term_en: Producer-consumer ring buffer
+  claim_type: source_summary
+  explanation: shell 产生字符、UART 消费字符；环形缓冲区吸收速度差，底半部中断处理唤醒等待空间的上半部。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 15
+- id: cc-06
+  term: 中断竞态与本地原子性
+  term_en: Interrupt race and local atomicity
+  claim_type: source_summary
+  explanation: 中断可发生在相邻指令之间。intr_off 可让当前核心的一段代码不被中断，但另一核心仍可能并发访问，所以跨核共享数据需要锁。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 17
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 18
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 19
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 20
+- id: cc-07
+  term: 中断与轮询
+  term_en: Interrupts and polling
+  claim_type: source_summary
+  explanation: 事件稀少时轮询浪费周期；事件高频时每次中断的固定开销可能过大，现代系统常结合中断、批量工作和轮询。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 21
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 22
+glossary:
+- term_en: IRQ
+  term_zh: 中断请求号
+  definition: 由硬件平台分配、标识中断来源的编号。
+- term_en: PLIC
+  term_zh: 平台级中断控制器
+  definition: 汇集外部设备中断并分发到处理器核心的控制器。
+- term_en: Top half / bottom half
+  term_zh: 上半部 / 下半部
+  definition: 调用进程中的生产工作与中断处理中的消费/唤醒工作。
+- term_en: Polling
+  term_zh: 轮询
+  definition: 处理器主动反复检查设备是否需要服务。
+common_misconceptions:
+- misconception: 只要执行 intr_off，所有核心上的共享访问都会停止。
+  correction: 它只阻止当前核心接收中断；另一核心仍可运行，跨核同步需要锁。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 20
+- misconception: 中断只会发生在函数调用边界。
+  correction: 示例说明中断可以发生在相邻汇编指令之间。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 17
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 18
+- misconception: 轮询总是比中断浪费。
+  correction: 低频事件下轮询浪费明显，但高频事件下轮询可避免每事件中断开销。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 21
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 22
+learning_sequence:
+- step: 1
+  activity: 完成并发与陷阱入口前置检查。
+  duration_minutes: 15
+  citations: []
+- step: 2
+  activity: 阅读第 2–8 页，画出中断来源、控制器和寄存器层次。
+  duration_minutes: 25
+  citations:
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 2
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 3
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 4
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 5
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 6
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 7
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 8
+- step: 3
+  activity: 完成来源—控制—入口链。
+  duration_minutes: 15
+  citations: []
+- step: 4
+  activity: 阅读第 9–15 页，追踪“$”输出和生产者—消费者缓冲。
+  duration_minutes: 30
+  citations:
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 9
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 10
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 11
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 12
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 13
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 15
+- step: 5
+  activity: 完成三泳道时序图和缓冲角色表。
+  duration_minutes: 30
+  citations: []
+- step: 6
+  activity: 阅读第 17–22 页，分析竞态、原子区和轮询取舍。
+  duration_minutes: 25
+  citations:
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 17
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 18
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 19
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 20
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 21
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 22
+- step: 7
+  activity: 完成竞态调试与两种负载决策题。
+  duration_minutes: 25
+  citations: []
+- step: 8
+  activity: 闭卷复述从 UART 事件到处理完成的全链，并回查每个同步边界。
+  duration_minutes: 15
+  citations: []
+practice:
+- id: prac-01
+  level: 入门
+  objective_ids:
+  - obj-01
+  question: 把 UART 外部中断、PLIC、sie/sstatus、scause 和 stvec 排成“来源→允许→原因→入口”链。
+  hint: PLIC 是设备与核心之间的分发层。
+  deliverable: 一条带箭头的五节点链。
+  expected_evidence:
+  - UART 产生外部中断并由 PLIC 分发。
+  - sie/sstatus 控制是否允许。
+  - scause 记录原因，stvec 给出入口。
+  evaluation:
+    full_credit: 节点角色与方向全部正确。
+    partial_credit: 有主要节点但混淆原因与入口。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 3
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 4
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 6
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 7
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 8
+- id: prac-02
+  level: 理解
+  objective_ids:
+  - obj-02
+  question: 从 printf 输出“$”开始，排序到 CPU 跳入 stvec 的关键动作，并标出用户、内核、设备三方。
+  hint: 先走 write 路径，再让 UART 并发完成发送。
+  deliverable: 三泳道时序图。
+  expected_evidence:
+  - 用户调用 write。
+  - 内核经 sys_write/filewrite/uartputc/uartstart 交给 UART。
+  - 设备完成后经 PLIC 请求中断。
+  - CPU 按第 12 页顺序保存状态并跳到 stvec。
+  evaluation:
+    full_credit: 三方和硬件交付顺序完整。
+    partial_credit: 主路径正确但缺少一方或一个保存动作。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 9
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 10
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 11
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 12
+- id: prac-03
+  level: 应用
+  objective_ids:
+  - obj-03
+  question: 在控制台输出环形缓冲区中标注生产者、消费者、缓冲区满时等待者以及唤醒者。
+  hint: 上半部运行在调用进程上下文；下半部由中断触发。
+  deliverable: 角色表和一条唤醒关系。
+  expected_evidence:
+  - shell/写入路径是生产者。
+  - UART 是消费者。
+  - 上半部在无空间时等待，底半部完成发送后唤醒。
+  evaluation:
+    full_credit: 角色、等待与唤醒均正确，并未把关中断扩展为跨核锁。
+    partial_credit: 生产者消费者正确但缺少等待/唤醒。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 15
+- id: prac-04
+  level: 分析
+  objective_ids:
+  - obj-04
+  question: 共享变量 x 的普通代码先判断 x==0 再调用 f，中断代码把 x 设为 1。指出竞态窗口，并分别说明单核中断与另一核心并发时该用什么保护。
+  hint: “检查”和“使用”之间可以被打断。
+  deliverable: 竞态说明加两种保护选择。
+  expected_evidence:
+  - 窗口位于检查与调用之间。
+  - 同核中断可用本地关中断形成原子区。
+  - 跨核访问必须使用锁，关本核中断不够。
+  evaluation:
+    full_credit: 窗口和两种范围都准确。
+    partial_credit: 找到窗口但保护范围错误。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 17
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 18
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 19
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 20
+- id: prac-05
+  level: 迁移
+  objective_ids:
+  - obj-05
+  question: 为“每秒偶发一次的键盘事件”和“每微秒可产生一次事件的高速设备”分别选择以中断或轮询为主，并说明固定开销。
+  hint: 比较空闲时是否白白检查，以及每次事件是否都承担陷阱成本。
+  deliverable: 两个场景各三句决策说明。
+  expected_evidence:
+  - 低频事件倾向中断以避免空转。
+  - 高频事件可倾向轮询/批量处理以减少每事件中断成本。
+  - 承认现代内核可能组合两者。
+  evaluation:
+    full_credit: 两种选择与来源中的频率—成本关系一致。
+    partial_credit: 只给选择没有解释成本。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 21
+  - source_id: mit-6.s081-f21-lecture-09-material
+    anchor:
+      type: page
+      value: 22
+citations:
+- citation_id: cite-1-1
+  source_id: mit-6.s081-f21-lecture-09-material
+  anchor:
+    type: page
+    value: 2
+  supports: 异步中断与设备来源
+- citation_id: cite-1-2
+  source_id: mit-6.s081-f21-lecture-09-material
+  anchor:
+    type: page
+    value: 6
+  supports: 异步中断与设备来源
+- citation_id: cite-2-1
+  source_id: mit-6.s081-f21-lecture-09-material
+  anchor:
+    type: page
+    value: 7
+  supports: RISC-V 中断状态配置
+- citation_id: cite-2-2
+  source_id: mit-6.s081-f21-lecture-09-material
+  anchor:
+    type: page
+    value: 8
+  supports: RISC-V 中断状态配置
+- citation_id: cite-3-1
+  source_id: mit-6.s081-f21-lecture-09-material
+  anchor:
+    type: page
+    value: 9
+  supports: 控制台输出与硬件交付
+- citation_id: cite-3-2
+  source_id: mit-6.s081-f21-lecture-09-material
+  anchor:
+    type: page
+    value: 12
+  supports: 控制台输出与硬件交付
+- citation_id: cite-4-1
+  source_id: mit-6.s081-f21-lecture-09-material
+  anchor:
+    type: page
+    value: 13
+  supports: 中断暴露的并发
+- citation_id: cite-4-2
+  source_id: mit-6.s081-f21-lecture-09-material
+  anchor:
+    type: page
+    value: 15
+  supports: 中断暴露的并发
+- citation_id: cite-5-1
+  source_id: mit-6.s081-f21-lecture-09-material
+  anchor:
+    type: page
+    value: 17
+  supports: 竞态与本地原子性
+- citation_id: cite-5-2
+  source_id: mit-6.s081-f21-lecture-09-material
+  anchor:
+    type: page
+    value: 20
+  supports: 竞态与本地原子性
+- citation_id: cite-6-1
+  source_id: mit-6.s081-f21-lecture-09-material
+  anchor:
+    type: page
+    value: 21
+  supports: 中断与轮询的负载取舍
+- citation_id: cite-6-2
+  source_id: mit-6.s081-f21-lecture-09-material
+  anchor:
+    type: page
+    value: 22
+  supports: 中断与轮询的负载取舍
+review:
+  generator_review_status: pending_independent_audit
+  audit_findings: []
+limitations:
+- 本学习包仅依据本讲公开幻灯片，不包括视频、读物、实验或作业。
+- 第 16 页文本提取量低，未用于学习者事实、概念或练习。
+- 这是模型生成的初稿，尚待独立语义审核和人工视觉复核，不替代原始资料。

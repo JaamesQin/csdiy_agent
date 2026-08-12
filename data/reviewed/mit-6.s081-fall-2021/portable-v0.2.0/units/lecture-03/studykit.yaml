@@ -1,0 +1,727 @@
+studykit_version: '0.1'
+status: draft
+course_id: mit-6.s081-fall-2021
+course_version: fall-2021
+unit_id: lecture-03
+title: 操作系统组织、隔离与系统调用
+language: zh-CN
+scope:
+  included_sources:
+  - source_id: mit-6.s081-f21-lecture-03-material
+    title: OS organization and system calls
+    type: pdf
+    sha256: b412846f3bfc64d730b158e7e8e60f70fddf9a4666ffd9810d51e3ce960549fc
+    official_url: https://pdos.csail.mit.edu/6.828/2021/slides/6s081-lec-osorg.pdf
+    local_path: data/raw/mit-6.s081/fall-2021/prepared/lecture-03-os-organization-and-system-calls.pdf
+    resource_vintage: fall-2021
+  citation_anchor_types:
+  - page
+learning_objectives:
+- id: obj-01
+  objective: 辨认弱协作式资源共享方案的调度与内存隔离失败点。
+  requirement_ids:
+  - req-01
+- id: obj-02
+  objective: 用资源映射解释 UNIX 的进程、内存、文件和管道抽象。
+  requirement_ids:
+  - req-02
+- id: obj-03
+  objective: 按职责区分特权级、页表、ecall 与内核参数验证。
+  requirement_ids:
+  - req-03
+- id: obj-04
+  objective: 比较单体内核与微内核的结构性取舍。
+  requirement_ids:
+  - req-04
+- id: obj-05
+  objective: 描述 xv6 在 RISC-V/QEMU 教学平台中的位置。
+  requirement_ids:
+  - req-05
+prerequisites:
+- topic: C 程序与函数调用
+  required_level: 能读懂函数调用和进程使用系统调用的基本例子。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 4
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 6
+- topic: CPU、内存与设备
+  required_level: 能区分处理器、物理内存和外设的作用。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 8
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 10
+- topic: UNIX 基础接口
+  required_level: 见过 fork、exec、open、read、write 或 pipe 中的若干接口。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 11
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 14
+outline:
+- order: 1
+  topic: 从资源共享到操作系统职责
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 2
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 3
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 4
+  purpose: 从多应用共享 CPU、内存与设备的需求出发，界定多路复用与隔离这两个同时存在的目标。
+- order: 2
+  topic: 直接使用硬件的失败方案
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 5
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 6
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 7
+  purpose: 分析把操作系统降为库并依赖协作式让出资源时出现的调度与内存隔离缺陷。
+- order: 3
+  topic: UNIX 抽象与受控资源
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 8
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 9
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 10
+  purpose: 以进程、私有内存、文件和管道说明内核如何用抽象替代裸硬件资源。
+- order: 4
+  topic: 硬件隔离与系统调用
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 11
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 12
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 13
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 15
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 16
+  purpose: 串联用户态/内核态、虚拟内存、ecall、系统调用路径和可信计算基。
+- order: 5
+  topic: 单体内核与微内核
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 17
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 18
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 19
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 20
+  purpose: 比较单体内核和微内核的边界、协作、性能及故障隔离取舍。
+- order: 6
+  topic: xv6、RISC-V 与 QEMU
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 21
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 22
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 23
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 24
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 25
+  purpose: 把 xv6 源码组织、构建流程、模拟硬件和指令仿真联系起来。
+core_concepts:
+- id: cc-01
+  term: 多路复用
+  term_en: Multiplexing
+  claim_type: source_summary
+  explanation: 操作系统要让多个应用共享处理器、内存和设备；仅要求应用主动让出硬件既无法强制进度，也无法防止内存覆盖。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 4
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 6
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 7
+- id: cc-02
+  term: UNIX 接口抽象
+  term_en: UNIX interface abstractions
+  claim_type: source_summary
+  explanation: 进程替代直接占有核心，私有内存替代共享物理内存，文件替代磁盘块，管道替代共享物理内存通信；这些接口让内核负责分配、隔离和节流。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 8
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 9
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 10
+- id: cc-03
+  term: 硬件隔离
+  term_en: Hardware isolation
+  claim_type: source_summary
+  explanation: CPU 特权级限制用户程序执行特权指令，页表限制其可访问的物理内存。本讲的 xv6 路径使用用户态与监管态，并明确不使用 M-mode。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 11
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 12
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 13
+- id: cc-04
+  term: 系统调用
+  term_en: System call
+  claim_type: source_summary
+  explanation: 应用以 ecall 进入预先约定的内核入口；内核再执行服务并验证来自不可信用户程序的参数。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 15
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 16
+- id: cc-05
+  term: 可信计算基
+  term_en: Trusted computing base
+  claim_type: source_summary
+  explanation: 内核和模式切换路径必须正确，因为其错误可能破坏应用之间以及应用与内核之间的隔离。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 16
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 17
+- id: cc-06
+  term: 单体内核与微内核
+  term_en: Monolithic kernel and microkernel
+  claim_type: source_summary
+  explanation: 单体内核让文件系统、驱动和内存管理等服务在同一高权限程序内协作；微内核仅保留最小机制，把服务移到用户空间，以更多 IPC 和边界换取故障隔离。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 18
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 19
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 20
+- id: cc-07
+  term: xv6 教学平台
+  term_en: xv6 platform
+  claim_type: source_summary
+  explanation: xv6 是结构可读的单体 UNIX 内核，运行在课程采用的简化 RISC-V 机器模型上；QEMU 通过执行取指、译码和状态更新来仿真该处理器。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 21
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 23
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 24
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 25
+glossary:
+- term_en: Privilege mode
+  term_zh: 特权级
+  definition: CPU 对可执行指令和可访问控制状态施加权限的运行模式。
+- term_en: Page table
+  term_zh: 页表
+  definition: 把虚拟地址映射到物理地址并定义可访问内存范围的数据结构。
+- term_en: System call
+  term_zh: 系统调用
+  definition: 用户程序进入内核服务的受控接口。
+- term_en: IPC
+  term_zh: 进程间通信
+  definition: 微内核中用户空间服务和应用交换消息的机制。
+- term_en: Emulation
+  term_zh: 仿真
+  definition: 软件忠实执行另一处理器或机器模型的行为。
+common_misconceptions:
+- misconception: 只要规定应用定期让出 CPU，就能获得强隔离。
+  correction: 规定属于协作约定；失控或恶意应用可以不让出，而且共享物理内存仍可相互覆盖。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 6
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 7
+- misconception: ecall 自动完成保存全部状态、换页表和执行具体系统调用。
+  correction: 本页只把 ecall 描述为受控进入内核入口的指令；其余工作由内核路径完成。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 15
+- misconception: 微内核等于把所有操作系统服务删除。
+  correction: 服务被移到普通用户进程，通过最小内核提供的进程、内存和 IPC 机制协作。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 19
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 20
+learning_sequence:
+- step: 1
+  activity: 完成两个前置检查，复习 CPU、物理内存、设备与 UNIX 接口的层次。
+  duration_minutes: 15
+  citations: []
+- step: 2
+  activity: 阅读第 2–10 页，整理“共享目标—失败方案—UNIX 抽象”的因果链。
+  duration_minutes: 25
+  citations:
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 2
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 3
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 4
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 5
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 6
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 7
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 8
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 9
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 10
+- step: 3
+  activity: 完成失败方案比较与抽象映射，互相检查每项是否对应来源中的具体资源。
+  duration_minutes: 20
+  citations: []
+- step: 4
+  activity: 阅读第 11–16 页，按“特权级—页表—ecall—内核验证”制作系统调用进入路径。
+  duration_minutes: 30
+  citations:
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 11
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 12
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 13
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 15
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 16
+- step: 5
+  activity: 用 write 场景复述受控进入路径，并检查没有越出本讲采用的特权模式范围。
+  duration_minutes: 25
+  citations: []
+- step: 6
+  activity: 阅读第 17–25 页，比较内核架构，并标出 xv6、模拟机器和 QEMU 的位置。
+  duration_minutes: 25
+  citations:
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 17
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 18
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 19
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 20
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 21
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 22
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 23
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 24
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 25
+- step: 7
+  activity: 完成架构比较矩阵和平台关系图，使用来源中的优缺点而不扩大结论。
+  duration_minutes: 25
+  citations: []
+- step: 8
+  activity: 闭卷画出从裸硬件共享到 xv6 系统调用边界的总图，再回查页码修正遗漏。
+  duration_minutes: 15
+  citations: []
+practice:
+- id: prac-01
+  level: 入门
+  objective_ids:
+  - obj-01
+  question: 比较“应用直接使用硬件、操作系统只是库”的方案与由内核强制管理资源的方案。分别指出一个调度失败点和一个内存失败点。
+  hint: 观察应用是否必须主动让出 CPU，以及谁能阻止它写入别人的内存。
+  deliverable: 两行对照表，每行包含机制、失败场景和所需的内核能力。
+  expected_evidence:
+  - 协作式调度无法强制失控应用让出处理器。
+  - 共享物理内存允许应用覆盖其他应用或操作系统库。
+  evaluation:
+    full_credit: 同时准确说明调度与内存两个独立失败点，并把它们关联到强制多路复用和隔离。
+    partial_credit: 只说明其中一个失败点，或仅笼统说方案不安全。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 5
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 6
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 7
+- id: prac-02
+  level: 理解
+  objective_ids:
+  - obj-02
+  question: 为进程、私有内存、文件和管道各写出它替代的裸资源，以及内核因此获得的一项管理能力。
+  hint: 按第 8–10 页的“instead of”关系整理。
+  deliverable: 四行映射表：抽象 → 裸资源 → 内核职责。
+  expected_evidence:
+  - 进程对应核心并允许内核调度。
+  - 私有内存对应物理内存并允许隔离。
+  - 文件对应磁盘块并提供命名与共享。
+  - 管道对应共享物理内存通信并提供缓冲与背压。
+  evaluation:
+    full_credit: 四项映射均与来源一致，且职责具体。
+    partial_credit: 至少两项正确，但遗漏资源或内核职责。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 8
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 9
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 10
+- id: prac-03
+  level: 应用
+  objective_ids:
+  - obj-03
+  question: 某用户程序要执行 write。按顺序说明页表、用户态/监管态、ecall 和内核参数验证分别解决什么问题；不要引入本讲未使用的 M-mode。
+  hint: 先分清“限制能做什么”“限制能访问什么”“怎样进入内核”“进入后怎样防御”。
+  deliverable: 四步路径，每步一句职责说明。
+  expected_evidence:
+  - 用户态限制特权指令。
+  - 页表限制可访问物理内存。
+  - ecall 跳到预定内核入口并改变到监管态。
+  - 内核将应用视为不可信并验证系统调用参数。
+  evaluation:
+    full_credit: 顺序和四种职责都正确，并明确本讲范围不使用 M-mode。
+    partial_credit: 能描述受控进入，但混淆页表与特权级，或遗漏验证。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 11
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 12
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 13
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 16
+- id: prac-04
+  level: 分析
+  objective_ids:
+  - obj-04
+  question: 从服务部署位置、内部隔离、跨子系统协作和性能风险四个维度比较单体内核与微内核。
+  hint: 不要把“更多隔离”误写成“没有操作系统服务”。
+  deliverable: 四维比较矩阵，并用一句话概括核心取舍。
+  expected_evidence:
+  - 单体内核将服务放在内核空间，协作直接但内部无隔离。
+  - 微内核把服务放到用户空间，经 IPC 交互，隔离更强但性能和复杂度更难处理。
+  evaluation:
+    full_credit: 四个维度都有双边比较，且结论保持来源中的优缺点范围。
+    partial_credit: 只罗列一种架构，或把服务迁移误写为删除。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 18
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 19
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 20
+- id: prac-05
+  level: 迁移
+  objective_ids:
+  - obj-05
+  question: 向同伴解释为什么课程既需要 xv6 源码、RISC-V 机器模型，又需要 QEMU。请把三者画成有方向的关系图。
+  hint: 区分“操作系统实现”“被假定的硬件”“运行该硬件模型的软件”。
+  deliverable: 三节点关系图，加三句边说明。
+  expected_evidence:
+  - xv6 是运行在 RISC-V 机器上的单体内核实现。
+  - 课程机器模型包含处理器、内存和若干设备。
+  - QEMU 仿真该机器并更新处理器状态，使开发无需真实硬件。
+  evaluation:
+    full_credit: 三层角色和方向全部正确，且没有把 QEMU 当成 xv6 的内核模块。
+    partial_credit: 列出三者但关系或层次不清。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 21
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 23
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 24
+  - source_id: mit-6.s081-f21-lecture-03-material
+    anchor:
+      type: page
+      value: 25
+citations:
+- citation_id: cite-01-1
+  source_id: mit-6.s081-f21-lecture-03-material
+  anchor:
+    type: page
+    value: 2
+  supports: 从资源共享到操作系统职责
+- citation_id: cite-01-2
+  source_id: mit-6.s081-f21-lecture-03-material
+  anchor:
+    type: page
+    value: 4
+  supports: 从资源共享到操作系统职责
+- citation_id: cite-02-1
+  source_id: mit-6.s081-f21-lecture-03-material
+  anchor:
+    type: page
+    value: 5
+  supports: 直接使用硬件的失败方案
+- citation_id: cite-02-2
+  source_id: mit-6.s081-f21-lecture-03-material
+  anchor:
+    type: page
+    value: 7
+  supports: 直接使用硬件的失败方案
+- citation_id: cite-03-1
+  source_id: mit-6.s081-f21-lecture-03-material
+  anchor:
+    type: page
+    value: 8
+  supports: UNIX 抽象与受控资源
+- citation_id: cite-03-2
+  source_id: mit-6.s081-f21-lecture-03-material
+  anchor:
+    type: page
+    value: 10
+  supports: UNIX 抽象与受控资源
+- citation_id: cite-04-1
+  source_id: mit-6.s081-f21-lecture-03-material
+  anchor:
+    type: page
+    value: 11
+  supports: 硬件隔离与系统调用
+- citation_id: cite-04-2
+  source_id: mit-6.s081-f21-lecture-03-material
+  anchor:
+    type: page
+    value: 16
+  supports: 硬件隔离与系统调用
+- citation_id: cite-05-1
+  source_id: mit-6.s081-f21-lecture-03-material
+  anchor:
+    type: page
+    value: 17
+  supports: 单体内核与微内核
+- citation_id: cite-05-2
+  source_id: mit-6.s081-f21-lecture-03-material
+  anchor:
+    type: page
+    value: 20
+  supports: 单体内核与微内核
+- citation_id: cite-06-1
+  source_id: mit-6.s081-f21-lecture-03-material
+  anchor:
+    type: page
+    value: 21
+  supports: xv6、RISC-V 与 QEMU
+- citation_id: cite-06-2
+  source_id: mit-6.s081-f21-lecture-03-material
+  anchor:
+    type: page
+    value: 25
+  supports: xv6、RISC-V 与 QEMU
+review:
+  generator_review_status: pending_independent_audit
+  audit_findings: []
+limitations:
+- 本学习包仅依据本讲公开幻灯片，不包括视频、读物、实验或作业。
+- 这是模型生成的初稿，尚待独立语义审核和人工视觉复核，不替代原始资料。

@@ -1,0 +1,1068 @@
+{
+  "studykit_version": "0.1",
+  "status": "draft",
+  "course_id": "mit-6.s081-fall-2021",
+  "course_version": "fall-2021",
+  "unit_id": "lecture-12",
+  "title": "调度协调、丢失唤醒与安全终止",
+  "language": "zh-CN",
+  "scope": {
+    "included_sources": [
+      {
+        "source_id": "mit-6.s081-f21-lecture-12-material",
+        "title": "Scheduling II",
+        "type": "pdf",
+        "sha256": "e0daf48d78ac4e82422005f3a5d7f5b4b1d529edadcc87b4f3dea28cf329da8a",
+        "official_url": "https://pdos.csail.mit.edu/6.828/2021/slides/6s081-lec-threads2.pdf",
+        "local_path": "data/raw/mit-6.s081/fall-2021/prepared/lecture-12-scheduling-ii.pdf",
+        "resource_vintage": "fall-2021"
+      }
+    ],
+    "citation_anchor_types": [
+      "page"
+    ]
+  },
+  "learning_objectives": [
+    {
+      "id": "obj-01",
+      "objective": "解释 p->lock 为何跨 swtch 持有并由调度器释放。",
+      "requirement_ids": [
+        "req-01"
+      ]
+    },
+    {
+      "id": "obj-02",
+      "objective": "诊断持有普通自旋锁时重调度造成的死锁。",
+      "requirement_ids": [
+        "req-02"
+      ]
+    },
+    {
+      "id": "obj-03",
+      "objective": "比较忙等、阻塞和 channel 唤醒。",
+      "requirement_ids": [
+        "req-03"
+      ]
+    },
+    {
+      "id": "obj-04",
+      "objective": "定位并修复丢失唤醒窗口。",
+      "requirement_ids": [
+        "req-04"
+      ]
+    },
+    {
+      "id": "obj-05",
+      "objective": "解释 xv6 延迟终止和资源回收协议。",
+      "requirement_ids": [
+        "req-05"
+      ]
+    }
+  ],
+  "prerequisites": [
+    {
+      "topic": "xv6 调度与 swtch",
+      "required_level": "知道进程状态、内核线程栈和调度器栈会在切换时交接。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 3
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        }
+      ]
+    },
+    {
+      "topic": "锁与竞态",
+      "required_level": "理解检查条件和改变状态之间可被其他执行流插入。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 20
+          }
+        }
+      ]
+    },
+    {
+      "topic": "进程生命周期",
+      "required_level": "知道运行进程占用栈、上下文和退出状态。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 23
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 24
+          }
+        }
+      ]
+    }
+  ],
+  "outline": [
+    {
+      "order": 1,
+      "topic": "调度切换中的 p->lock",
+      "anchors": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 2
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 3
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 6
+          }
+        }
+      ],
+      "purpose": "解释为何 p->lock 跨 swtch 持有，以及带其他自旋锁重调度如何死锁。"
+    },
+    {
+      "order": 2,
+      "topic": "从忙等到阻塞协调",
+      "anchors": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 7
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 10
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 11
+          }
+        }
+      ],
+      "purpose": "从事件等待需求出发，比较忙等和阻塞，并介绍 xv6 的 sleep/wakeup/channel 接口。"
+    },
+    {
+      "order": 3,
+      "topic": "UART 与丢失唤醒",
+      "anchors": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 12
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 15
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 16
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 17
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 19
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 20
+          }
+        }
+      ],
+      "purpose": "用 UART 的 done 条件定位检查条件与真正睡眠之间的竞态窗口，并引出条件锁。"
+    },
+    {
+      "order": 4,
+      "topic": "sleep/wakeup 规则边界",
+      "anchors": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 21
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 22
+          }
+        }
+      ],
+      "purpose": "说明 sleep 不理解条件语义，调用者必须提供保护条件的锁。"
+    },
+    {
+      "order": 5,
+      "topic": "线程终止与资源回收",
+      "anchors": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 23
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 24
+          }
+        }
+      ],
+      "purpose": "分析外部终止的资源风险以及 kill、exit、ZOMBIE、wait 的分工。"
+    },
+    {
+      "order": 6,
+      "topic": "协调与终止总结",
+      "anchors": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 26
+          }
+        }
+      ],
+      "purpose": "回顾条件等待、丢失唤醒和线程终止的核心困难。"
+    }
+  ],
+  "core_concepts": [
+    {
+      "id": "cc-01",
+      "term": "跨 swtch 的 p->lock",
+      "term_en": "p->lock across swtch",
+      "claim_type": "source_summary",
+      "explanation": "内核线程设置 RUNNABLE 后仍需保存上下文并离开自己的栈，所以 p->lock 跨 swtch 保持，直到调度器栈一侧释放。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 3
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "cc-02",
+      "term": "重调度时不得持有其他自旋锁",
+      "term_en": "No other spinlock across sched",
+      "claim_type": "source_summary",
+      "explanation": "若线程持有普通锁进入 sched，之后运行的线程可能等待该锁，而原线程已无法继续释放它，形成死锁。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 6
+          }
+        }
+      ]
+    },
+    {
+      "id": "cc-03",
+      "term": "阻塞式协调",
+      "term_en": "Blocking coordination",
+      "claim_type": "source_summary",
+      "explanation": "等待磁盘、管道、超时或子进程等事件时，阻塞进入调度器可让 CPU 处理其他工作，优于持续空转。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 7
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 10
+          }
+        }
+      ]
+    },
+    {
+      "id": "cc-04",
+      "term": "sleep/wakeup 通道",
+      "term_en": "sleep/wakeup channel",
+      "claim_type": "source_summary",
+      "explanation": "sleep 在不透明 channel 上阻塞并接收保护条件的锁；wakeup 唤醒同 channel 的等待者，可能一次唤醒多个线程。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 11
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 16
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 21
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 22
+          }
+        }
+      ]
+    },
+    {
+      "id": "cc-05",
+      "term": "丢失唤醒",
+      "term_en": "Lost wakeup",
+      "claim_type": "source_summary",
+      "explanation": "若事件在等待者检查条件之后、标记 SLEEPING 之前发生，wakeup 看不到睡眠者。条件锁必须覆盖该窗口，sleep 内部原子地释放锁并睡眠，返回时再重获。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 17
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 19
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 20
+          }
+        }
+      ]
+    },
+    {
+      "id": "cc-06",
+      "term": "协作式进程终止",
+      "term_en": "Cooperative process termination",
+      "claim_type": "source_summary",
+      "explanation": "kill 先设置标志，让目标在安全点自行停止；exit 留下 ZOMBIE 和退出状态，wait 读取状态后才释放 proc 资源。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 23
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 24
+          }
+        }
+      ]
+    }
+  ],
+  "glossary": [
+    {
+      "term_en": "Channel",
+      "term_zh": "通道",
+      "definition": "sleep/wakeup 用来标识某个等待条件的不透明数值或指针。"
+    },
+    {
+      "term_en": "Lost wakeup",
+      "term_zh": "丢失唤醒",
+      "definition": "唤醒发生在等待登记之前，导致等待者永久错过事件。"
+    },
+    {
+      "term_en": "ZOMBIE",
+      "term_zh": "僵尸状态",
+      "definition": "进程已退出但仍保留退出状态和必要资源，等待父进程 wait。"
+    },
+    {
+      "term_en": "swtch",
+      "term_zh": "上下文切换",
+      "definition": "保存当前内核线程寄存器并切换到另一上下文的操作。"
+    }
+  ],
+  "common_misconceptions": [
+    {
+      "misconception": "锁必须由获得它的同一线程释放，所以 p->lock 跨 swtch 是错误。",
+      "correction": "本讲明确使用跨线程交接：内核线程持锁进入 swtch，调度器线程在安全边界后释放。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 3
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        }
+      ]
+    },
+    {
+      "misconception": "只要 wakeup 最终执行，就不会丢失事件。",
+      "correction": "若 wakeup 发生时线程尚未标记为 SLEEPING，它不会被找到；条件锁用于关闭该窗口。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 19
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 20
+          }
+        }
+      ]
+    },
+    {
+      "misconception": "kill 可以立即在另一核心上销毁目标进程。",
+      "correction": "直接销毁可能碰到目标仍执行或持锁；xv6 设置标志并让目标在安全点自行退出。",
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 23
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 24
+          }
+        }
+      ]
+    }
+  ],
+  "learning_sequence": [
+    {
+      "step": 1,
+      "activity": "复习调度上下文、锁和进程生命周期。",
+      "duration_minutes": 15,
+      "citations": []
+    },
+    {
+      "step": 2,
+      "activity": "阅读第 2–6 页，画出 p->lock 交接和持锁重调度死锁。",
+      "duration_minutes": 25,
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 2
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 3
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 6
+          }
+        }
+      ]
+    },
+    {
+      "step": 3,
+      "activity": "完成锁交接图和死锁调试题。",
+      "duration_minutes": 25,
+      "citations": []
+    },
+    {
+      "step": 4,
+      "activity": "阅读第 7–12、15–22 页，建立 sleep/wakeup 和条件锁协议。",
+      "duration_minutes": 35,
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 7
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 10
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 11
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 12
+          }
+        }
+      ]
+    },
+    {
+      "step": 5,
+      "activity": "比较忙等与阻塞，并调试 UART 丢失唤醒。",
+      "duration_minutes": 35,
+      "citations": []
+    },
+    {
+      "step": 6,
+      "activity": "阅读第 23–24、26 页，整理延迟终止和回收。",
+      "duration_minutes": 15,
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 23
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 24
+          }
+        }
+      ]
+    },
+    {
+      "step": 7,
+      "activity": "完成跨核目标的终止时间线。",
+      "duration_minutes": 15,
+      "citations": []
+    },
+    {
+      "step": 8,
+      "activity": "闭卷复述两条不变量：切换锁交接与条件锁防丢失唤醒，再核对终止顺序。",
+      "duration_minutes": 15,
+      "citations": []
+    }
+  ],
+  "practice": [
+    {
+      "id": "prac-01",
+      "level": "入门",
+      "objective_ids": [
+        "obj-01"
+      ],
+      "question": "在“内核线程→swtch→调度器线程”图上标出 p->lock 的获得、持续持有和释放位置，并写出每段保护的对象。",
+      "hint": "RUNNABLE 状态先改变，但上下文和栈交接尚未结束。",
+      "deliverable": "三节点时序图。",
+      "expected_evidence": [
+        "内核线程获得锁并设置 RUNNABLE。",
+        "锁跨 swtch 保持。",
+        "调度器在线程已离开其栈且上下文保存后释放。"
+      ],
+      "evaluation": {
+        "full_credit": "位置、顺序和保护原因都准确。",
+        "partial_credit": "顺序正确但缺少保护对象。"
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 3
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "prac-02",
+      "level": "理解",
+      "objective_ids": [
+        "obj-02"
+      ],
+      "question": "P1 获得锁 l 后调用 sched，P2 随后尝试获得 l。写出系统为什么挂起，并给出来源中的修复规则。",
+      "hint": "谁还能释放 l？",
+      "deliverable": "三步死锁链和一条规则。",
+      "expected_evidence": [
+        "P1 持锁后停止运行。",
+        "P2 等待同一锁无法前进。",
+        "规则是重调度时不持有其他自旋锁。"
+      ],
+      "evaluation": {
+        "full_credit": "完整闭环和规则均正确。",
+        "partial_credit": "说出死锁但未解释闭环。"
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 6
+          }
+        }
+      ]
+    },
+    {
+      "id": "prac-03",
+      "level": "应用",
+      "objective_ids": [
+        "obj-03"
+      ],
+      "question": "比较管道为空时忙等与 sleep(chan, lock)：CPU 是否可做其他工作、事件如何标识、谁负责唤醒？",
+      "hint": "channel 只标识条件，不解释条件。",
+      "deliverable": "三维对照表。",
+      "expected_evidence": [
+        "忙等持续占 CPU。",
+        "sleep 进入调度器。",
+        "channel 标识条件，事件方调用 wakeup。"
+      ],
+      "evaluation": {
+        "full_credit": "三个维度均准确。",
+        "partial_credit": "只说明 CPU 利用差异。"
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 7
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 10
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 11
+          }
+        }
+      ]
+    },
+    {
+      "id": "prac-04",
+      "level": "分析",
+      "objective_ids": [
+        "obj-04"
+      ],
+      "question": "在 UART done 示例中指出中断触发会造成永久睡眠的精确窗口，并重写成使用条件锁的步骤顺序。",
+      "hint": "窗口在 while 检查之后、p->state=SLEEPING 之前。",
+      "deliverable": "错误交错和修复交错各一条。",
+      "expected_evidence": [
+        "wakeup 在等待者登记前发生会丢失。",
+        "检查 done 与进入 sleep 由同一锁保护。",
+        "sleep 内部释放并在返回前重获锁，唤醒方持同一锁改变条件。"
+      ],
+      "evaluation": {
+        "full_credit": "错误窗口和双方锁顺序都正确。",
+        "partial_credit": "找到窗口但只给“加锁”而无原子顺序。"
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 16
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 17
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 19
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 20
+          }
+        }
+      ]
+    },
+    {
+      "id": "prac-05",
+      "level": "迁移",
+      "objective_ids": [
+        "obj-05"
+      ],
+      "question": "目标进程可能在另一核心运行并持锁。设计一个只使用本讲机制的终止时间线，说明何时能读退出状态和释放 proc。",
+      "hint": "外部请求、目标自停、父进程回收是三个阶段。",
+      "deliverable": "三阶段时间线。",
+      "expected_evidence": [
+        "kill 仅设置请求标志。",
+        "目标在安全点调用 exit 并进入 ZOMBIE。",
+        "wait 先复制退出状态再回收 proc。"
+      ],
+      "evaluation": {
+        "full_credit": "三阶段职责和资源时机都正确。",
+        "partial_credit": "知道延迟终止但遗漏 ZOMBIE 或 wait。"
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 23
+          }
+        },
+        {
+          "source_id": "mit-6.s081-f21-lecture-12-material",
+          "anchor": {
+            "type": "page",
+            "value": 24
+          }
+        }
+      ]
+    }
+  ],
+  "citations": [
+    {
+      "citation_id": "cite-1-1",
+      "source_id": "mit-6.s081-f21-lecture-12-material",
+      "anchor": {
+        "type": "page",
+        "value": 2
+      },
+      "supports": "调度切换中的 p->lock"
+    },
+    {
+      "citation_id": "cite-1-2",
+      "source_id": "mit-6.s081-f21-lecture-12-material",
+      "anchor": {
+        "type": "page",
+        "value": 6
+      },
+      "supports": "调度切换中的 p->lock"
+    },
+    {
+      "citation_id": "cite-2-1",
+      "source_id": "mit-6.s081-f21-lecture-12-material",
+      "anchor": {
+        "type": "page",
+        "value": 7
+      },
+      "supports": "从忙等到阻塞协调"
+    },
+    {
+      "citation_id": "cite-2-2",
+      "source_id": "mit-6.s081-f21-lecture-12-material",
+      "anchor": {
+        "type": "page",
+        "value": 11
+      },
+      "supports": "从忙等到阻塞协调"
+    },
+    {
+      "citation_id": "cite-3-1",
+      "source_id": "mit-6.s081-f21-lecture-12-material",
+      "anchor": {
+        "type": "page",
+        "value": 12
+      },
+      "supports": "UART 与丢失唤醒"
+    },
+    {
+      "citation_id": "cite-3-2",
+      "source_id": "mit-6.s081-f21-lecture-12-material",
+      "anchor": {
+        "type": "page",
+        "value": 20
+      },
+      "supports": "UART 与丢失唤醒"
+    },
+    {
+      "citation_id": "cite-4-1",
+      "source_id": "mit-6.s081-f21-lecture-12-material",
+      "anchor": {
+        "type": "page",
+        "value": 21
+      },
+      "supports": "sleep/wakeup 规则边界"
+    },
+    {
+      "citation_id": "cite-4-2",
+      "source_id": "mit-6.s081-f21-lecture-12-material",
+      "anchor": {
+        "type": "page",
+        "value": 22
+      },
+      "supports": "sleep/wakeup 规则边界"
+    },
+    {
+      "citation_id": "cite-5-1",
+      "source_id": "mit-6.s081-f21-lecture-12-material",
+      "anchor": {
+        "type": "page",
+        "value": 23
+      },
+      "supports": "线程终止与资源回收"
+    },
+    {
+      "citation_id": "cite-5-2",
+      "source_id": "mit-6.s081-f21-lecture-12-material",
+      "anchor": {
+        "type": "page",
+        "value": 24
+      },
+      "supports": "线程终止与资源回收"
+    },
+    {
+      "citation_id": "cite-6-1",
+      "source_id": "mit-6.s081-f21-lecture-12-material",
+      "anchor": {
+        "type": "page",
+        "value": 26
+      },
+      "supports": "协调与终止总结"
+    }
+  ],
+  "review": {
+    "generator_review_status": "pending_independent_audit",
+    "audit_findings": []
+  },
+  "limitations": [
+    "本学习包仅依据本讲公开幻灯片，不包括视频、读物、实验或作业。",
+    "第 13、14、25 页文本提取量低，未用于学习者事实、概念或练习。",
+    "这是模型生成的初稿，尚待独立语义审核和人工视觉复核，不替代原始资料。"
+  ]
+}

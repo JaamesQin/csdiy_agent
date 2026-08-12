@@ -1,0 +1,21 @@
+{
+  "verdict": "pass",
+  "summary": "独立 standard-mode 语义审核通过，且一个 review-plan 覆盖警告已按 resolution 记录确定性修复。单元身份、Fall 2021 页故障材料、唯一 source_id、SHA-256、URL、本地路径与准备清单一致。证据计划把 STVAL 故障地址、SCAUSE 访问类型、保存的指令位置/特权级，惰性分配及地址边界，零页、guard page、COW、需求分页/换页、mmap 和 TLB 管理分层清楚；逐页核对第 4–8、10、12–17、19、21–23 页后，各解释保留了“可以/当工作集适合”等来源边界，没有补写 COW、mmap 或栈增长的可提交实现。第 9、11 页低文本图/演示标题不被候选引用；99 个引用出现均落到当前来源的非空、非隐藏页面。五项练习从故障诊断卡推进到首次访问追踪、零页/COW 比较、guard page 规则和完整 PTE 状态链，总时长 180 分钟、非计分且答案可由讲义作答。候选 portable schema 验证通过，无公式、事实或学术诚信问题。审计发现候选前置知识引用的第 4 页原未进入 review-plan；现已一次性加入并标记 candidate_citation，修复后复核范围完整。actual_reviewed_pages 仍为空，本 verdict 不授权 finalization。",
+  "issues": [
+    {
+      "id": "audit-review-plan-coverage-p004",
+      "severity": "warning",
+      "category": "coverage_gap",
+      "target_stage": "assembly",
+      "location": "review-plan.json.selected_pages",
+      "description": "候选前置知识引用第 4 页，但原 review-plan 未选择该页。",
+      "evidence_chunk_ids": ["mit-6.s081-f21-lecture-07-material-p004"],
+      "observed": "原 selected_pages 从第 1 页跳到第 5 页。",
+      "expected": "标准模式复核计划应包含候选引用的第 4 页，并准确记录 candidate_citation 原因。",
+      "repair_instruction": "在 review-plan 中加入第 4 页和 candidate_citation 选择原因，保持 actual_reviewed_pages 为空。",
+      "impact": "pipeline_integrity",
+      "severity_rationale": "学习内容和引用本身正确；缺口只影响后续视觉复核范围，因此为可确定性修复的 warning。",
+      "affected_learner_outcome_ids": ["obj-1", "obj-2", "obj-3", "obj-4"]
+    }
+  ]
+}

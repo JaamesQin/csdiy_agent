@@ -1,0 +1,473 @@
+studykit_version: '0.1'
+status: draft
+course_id: mit-6.s081-fall-2021
+course_version: fall-2021
+unit_id: lecture-22
+title: MIT 6.S081 第 22 讲：Meltdown 与微架构侧信道
+language: zh-CN
+scope:
+  included_sources:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    title: Meltdown lecture notes
+    type: pdf
+    sha256: c6946a008e1bcbe9eaa94410fb3ad26564fba73330947a61ab430460c8b9b231
+    official_url: https://pdos.csail.mit.edu/6.828/2021/lec/l-meltdown.txt
+    local_path: data/raw/mit-6.s081/fall-2021/prepared/lecture-22-meltdown.pdf
+    resource_vintage: 2020_resource_linked_by_fall_2021_schedule
+  citation_anchor_types:
+  - page
+learning_objectives:
+- id: obj-1
+  objective: 区分体系结构状态与微架构状态，并解释推测执行如何在退休前产生可撤销结果。
+  requirement_ids:
+  - req-01
+- id: obj-2
+  objective: 说明缓存命中时间如何成为 Flush+Reload 风格的可观察侧信道。
+  requirement_ids:
+  - req-02
+- id: obj-3
+  objective: 追踪 Meltdown 中非法推测加载、缓存编码、故障与计时观察之间的因果链。
+  requirement_ids:
+  - req-03
+- id: obj-4
+  objective: 比较 KPTI/KAISER 与硬件权限检查两类防御及其性能边界。
+  requirement_ids:
+  - req-04
+prerequisites:
+- topic: 用户/内核页表权限
+  required_level: 理解 PTE_U 清除意味着用户态不能在体系结构上读取该映射。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 1
+- topic: CPU 缓存与异常
+  required_level: 知道缓存命中通常比 RAM 访问快，异常会阻止故障指令正常提交。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 2
+outline:
+- order: 1
+  topic: 体系结构与微架构状态
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 1
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 2
+  purpose: 理解为什么撤销寄存器结果仍可能留下可测影响。
+- order: 2
+  topic: 缓存计时侧信道
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 2
+  purpose: 连接缓存状态与观察者可测的加载延迟。
+- order: 3
+  topic: Meltdown 因果链
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 1
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 2
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 3
+  purpose: 用状态机解释权限检查、推测窗口和缓存编码的组合缺陷。
+- order: 4
+  topic: 隔离恢复：KPTI 与硬件修复
+  anchors:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 3
+  purpose: 比较消除敏感映射与阻止非法推测数据两种防线。
+core_concepts:
+- id: concept-01
+  term: 体系结构与微架构状态
+  claim_type: source_summary
+  explanation: 体系结构状态是程序员可见、由指令规范定义的结果；推测执行和缓存属于微架构实现。分支误预测或异常会撤销尚未退休指令对寄存器的结果，但缓存填充等微架构变化可能没有被同步撤销，因此“规范上不可见”不等于“时间上不可测”。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 1
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 2
+- id: concept-02
+  term: 缓存计时侧信道
+  claim_type: source_summary
+  explanation: Flush+Reload 思路先让目标缓存行不在缓存，再运行被观察的计算，最后比较重新加载的时间。若加载明显更快，观察者可推断该地址在中间被访问。该方法读取的不是受保护数据本身，而是数据影响的缓存状态。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 2
+- id: concept-03
+  term: Meltdown 因果链
+  claim_type: source_summary
+  explanation: 历史 Meltdown 场景假设用户页表仍映射内核但清除用户权限。处理器在异常退休前暂时让后续推测指令使用非法加载结果，并据其选择访问不同缓存行；异常最终阻止体系结构提交，但缓存差异可由计时恢复少量信息。成功条件并不稳定，笔记强调重试与缓存驻留会影响结果。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 1
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 2
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 3
+- id: concept-04
+  term: 隔离恢复：KPTI 与硬件修复
+  claim_type: source_summary
+  explanation: 软件防御 KPTI/KAISER 在用户页表中不映射内核，系统调用出入时切换页表，代价可能包括额外切换与 TLB 影响。硬件防御在权限不允许的推测加载中不返回真实数据，从源头阻断编码。两者分别收紧地址空间暴露和微架构权限语义。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 3
+glossary:
+- term: speculative execution（推测执行）
+  definition: CPU 在条件尚未确定时预测并提前执行后续指令，以重叠延迟。
+  pages:
+  - 1
+  citations:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 1
+- term: retirement（退休）
+  definition: 指令结果按顺序成为体系结构可见状态的阶段。
+  pages:
+  - 2
+  citations:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 2
+- term: micro-architectural state（微架构状态）
+  definition: 缓存等实现细节状态，通常不在指令语义中直接暴露，但可影响时间。
+  pages:
+  - 2
+  citations:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 2
+- term: KPTI
+  definition: 从用户页表移除内核映射、在内核出入时切换页表的软件隔离措施。
+  pages:
+  - 3
+  citations:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 3
+common_misconceptions:
+- misconception: 误推测被撤销后，CPU 的所有内部状态都会恢复到完全相同。
+  correction: 寄存器等体系结构结果会撤销，但缓存状态等微架构影响可能保留并可通过时间观察。
+  pages:
+  - 1
+  - 2
+  citations:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 1
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 2
+- misconception: Flush+Reload 直接绕过页表读取受保护地址。
+  correction: 它观察缓存加载时间；Meltdown 的泄漏链先让秘密影响缓存选择，再从时间差推断。
+  pages:
+  - 2
+  - 3
+  citations:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 2
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 3
+- misconception: 部署一种历史缓解措施就能证明系统不存在任何微架构侧信道。
+  correction: 笔记把 Meltdown 视为一类令人担忧的例子，并不提供对其他攻击的普遍保证。
+  pages:
+  - 3
+  citations:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 3
+learning_sequence:
+- step: 1
+  activity: 核对前置知识、材料年代与本讲证据边界。
+  duration_minutes: 15
+  objective_ids:
+  - obj-1
+  practice_ids: []
+  citations:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 1
+- step: 2
+  activity: 精读“体系结构与微架构状态”与“缓存计时侧信道”，按来源页整理因果链。
+  duration_minutes: 35
+  objective_ids:
+  - obj-1
+  - obj-2
+  practice_ids: []
+  citations:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 1
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 2
+- step: 3
+  activity: 比较“Meltdown 因果链”与“隔离恢复：KPTI 与硬件修复”，画出状态或控制流。
+  duration_minutes: 35
+  objective_ids:
+  - obj-3
+  - obj-4
+  practice_ids: []
+  citations:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 1
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 2
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 3
+- step: 4
+  activity: 完成基础辨析与逐步追踪练习，并逐项回查页码。
+  duration_minutes: 35
+  objective_ids:
+  - obj-1
+  - obj-2
+  practice_ids:
+  - practice-01
+  - practice-02
+  citations:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 1
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 2
+- step: 5
+  activity: 完成机制分析与设计取舍练习，明确不变量和失败条件。
+  duration_minutes: 40
+  objective_ids:
+  - obj-2
+  - obj-3
+  - obj-4
+  practice_ids:
+  - practice-03
+  - practice-04
+  citations:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 1
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 2
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 3
+- step: 6
+  activity: 完成综合解释，使用来源页自检术语、边界和证据。
+  duration_minutes: 20
+  objective_ids:
+  - obj-1
+  - obj-2
+  - obj-3
+  - obj-4
+  practice_ids:
+  - practice-05
+  citations:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 1
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 2
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 3
+practice:
+- id: practice-01
+  level: classification
+  objective_ids:
+  - obj-1
+  question: 把寄存器值、程序计数器、分支结果、L1 缓存行、TLB 项和加载延迟分成体系结构状态、微架构状态或可观察效应，并解释两项容易混淆的分类。
+  hint: 以“是否属于程序规范结果”和“是否影响时间”为标准。
+  deliverable: 六项分类表和两条解释。
+  expected_evidence:
+  - 寄存器/PC 与缓存/TLB 区分
+  - 加载延迟作为观察效应处理
+  evaluation:
+    full_credit: 六项分类合理且解释了撤销与残留的差异。
+    partial_credit: 主要分类正确但混淆一到两项。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 1
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 2
+- id: practice-02
+  level: trace
+  objective_ids:
+  - obj-2
+  question: 在不写代码的前提下，追踪一次缓存计时实验的抽象阶段：清除、被观察计算、重新加载、比较时间、形成推断。每一步写出可观察量和不能直接得出的结论。
+  hint: 强调侧信道给出推断而非直接数据读。
+  deliverable: 五阶段表。
+  expected_evidence:
+  - 阶段顺序正确
+  - 区分缓存命中推断与直接内容
+  evaluation:
+    full_credit: 每阶段的状态与认识边界均清楚。
+    partial_credit: 顺序正确但把计时误说成直接读取秘密。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 2
+- id: practice-03
+  level: causal-analysis
+  objective_ids:
+  - obj-3
+  question: 用“权限检查—非法推测加载—秘密控制缓存选择—异常退休—缓存计时”五个节点画 Meltdown 因果图，并指出若移除任一节点会怎样中断链条。
+  hint: 保持为概念因果图，不填写真实地址、代码或参数。
+  deliverable: 五节点图和五条阻断说明。
+  expected_evidence:
+  - 异常阻止体系结构提交但不清除缓存影响
+  - 缓存选择承载信息
+  evaluation:
+    full_credit: 五节点关系及阻断条件完整准确。
+    partial_credit: 主链正确但缺少一个阻断解释。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 1
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 2
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 3
+- id: practice-04
+  level: comparison
+  objective_ids:
+  - obj-4
+  question: 比较 KPTI 与硬件权限修复：它们分别移除哪个必要条件、性能成本来自哪里、对本讲攻击链的阻断位置是什么？
+  hint: 不要把任何一项扩展成对所有侧信道的保证。
+  deliverable: 三维对照表。
+  expected_evidence:
+  - KPTI 移除用户页表中的内核映射
+  - 硬件不向非法推测加载返回真实数据
+  - 说明页表/TLB 与硬件检查取舍
+  evaluation:
+    full_credit: 机制、成本和阻断点均准确且保留范围限制。
+    partial_credit: 能说明两种防御，但成本或阻断点不完整。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 3
+- id: practice-05
+  level: synthesis
+  objective_ids:
+  - obj-1
+  - obj-2
+  - obj-3
+  - obj-4
+  question: 为一次 CPU 隔离设计评审写威胁模型：保护资产、攻击者能力、可观察微架构状态、攻击成功假设、软件/硬件防线、剩余未知各一项。
+  hint: 仅作防御性评审，不设计可执行攻击。
+  deliverable: 六项威胁模型和页码。
+  expected_evidence:
+  - 区分权限模型与侧信道观察
+  - 明确历史材料与剩余未知
+  evaluation:
+    full_credit: 六项完整且没有把缓解措施写成普遍证明。
+    partial_credit: 覆盖四到五项，但范围或假设不够明确。
+  citations:
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 1
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 2
+  - source_id: mit-6.s081-f21-lecture-22-material
+    anchor:
+      type: page
+      value: 3
+citations:
+- citation_id: cite-01
+  source_id: mit-6.s081-f21-lecture-22-material
+  anchor:
+    type: page
+    value: 1
+  supports: 推测执行和历史攻击前提
+- citation_id: cite-02
+  source_id: mit-6.s081-f21-lecture-22-material
+  anchor:
+    type: page
+    value: 2
+  supports: 退休、缓存与 Flush+Reload 概念
+- citation_id: cite-03
+  source_id: mit-6.s081-f21-lecture-22-material
+  anchor:
+    type: page
+    value: 3
+  supports: 缓存编码、可靠性限制与缓解措施
+review:
+  generator_review_status: pending_independent_audit
+  audit_findings: []
+limitations:
+- 来源是 Fall 2021 官方课表显式链接的 2020 文本讲义，经确定性分页生成 PDF；页码是派生页码。
+- 这是 Meltdown 的历史课程解释，不是 2026 年处理器、操作系统或云平台的当前漏洞/缓解状态指南。
+- 学习活动保持防御性和非操作化，不提供可执行攻击代码、真实目标选择或参数调优。
+- 笔记指出攻击成功条件和可靠性并不清楚；候选不会把实验性观察表述为确定保证。

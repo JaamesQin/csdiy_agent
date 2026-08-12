@@ -1,0 +1,18 @@
+{
+  "quality_mode": "standard",
+  "parallel_units": "auto",
+  "worker_count": 3,
+  "semantic_passes": 3,
+  "stage_duration_seconds": {
+    "01-evidence-plan": 0,
+    "02-learning-content": 0,
+    "03-practice-flow": 0,
+    "05-candidate-assembly": 0
+  },
+  "retries": [],
+  "repairs": [],
+  "reviewed_page_count": 22,
+  "input_tokens": null,
+  "output_tokens": null,
+  "authoring_status": "independent_audit_and_visual_review_complete"
+}
