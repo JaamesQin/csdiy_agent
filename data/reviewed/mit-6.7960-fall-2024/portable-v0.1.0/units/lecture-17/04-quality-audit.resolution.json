@@ -1,8 +1,0 @@
-{
-  "unit_id": "lecture-17",
-  "resolution": "accepted_with_documented_limitations",
-  "resolved": ["对抗优化只解释方向、可行集和内外层角色", "迁移图改写为所示实验中的非一致趋势", "DRO 保留邻域条件"],
-  "unresolved_warnings": ["扰动集合与分布距离的选择依赖应用", "发布前需人工检查公式与实验图语义"],
-  "candidate_ready": true,
-  "finalize": false
-}

@@ -1,1 +1,0 @@
-{"stage":"quality_audit_resolution","unit_id":"lecture-21","status":"resolved","resolutions":[{"finding_id":"qa-21-1","action":"候选件把第 84–91 页标为奖励优化入口；不描述未出现的完整 RLHF/DPO 算法。","verified_pages":[84,89,91]}],"ready_for_candidate":true,"ready_for_finalize":false}

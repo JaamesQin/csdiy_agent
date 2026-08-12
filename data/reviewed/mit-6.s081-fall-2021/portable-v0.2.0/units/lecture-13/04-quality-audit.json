@@ -1,5 +1,0 @@
-{
-  "verdict": "pass",
-  "summary": "独立 standard-mode 语义审核通过。单元正确识别为 Fall 2021 Lab Q&A #2 的 COW 材料，source_id、SHA-256、URL、本地路径和年代与准备清单一致。证据链覆盖 fork→exec 的复制浪费、只读共享到写故障私有副本、PTE 标志与故障证据、uvmcopy/usertrap/引用计数/copyout 四类责任，以及 Linux vmarea 与全机 page 数组的高层区别；逐页核对第 2–7、9–10、12 页后，候选没有把高层职责扩展为完整 xv6 或 Linux 内存实现。第 8 页明确标为 solution walkthrough 且低文本，已从学习主张和候选引用中排除；第 11 页低文本 vmarea 图也不支撑主张。82 个引用出现全部有效。五项练习只要求解释、状态追踪、风险分析、数据结构比较和非代码检查清单，恰为 180 分钟，未泄露 uvmcopy、usertrap、kalloc 或 copyout 的可提交解答。候选 portable schema 验证通过，无公式、隐藏证据、学术诚信、引用或事实问题。actual_reviewed_pages 为空，本 verdict 不授权 finalization。",
-  "issues": []
-}
