@@ -41,7 +41,7 @@ def _render(studykit: dict[str, Any]) -> str:
     lines.extend(["", "## 练习", ""])
     for item in studykit["practice"]:
         refs = ", ".join(_citation(value) for value in item["citations"])
-        lines.extend([f"### {item['id']} · {item['level']}", "", item["question"], "", f"提示：{item['hint']}", "", f"提交：{item['deliverable']}", "", f"来源：{refs}", ""])
+        lines.extend([f"### {item['id']} · {item['level']}", "", item["question"], "", f"提交：{item['deliverable']}", "", f"来源：{refs}", ""])
     if studykit["limitations"]:
         lines.extend(["## 限制", ""])
         lines.extend(f"- {item}" for item in studykit["limitations"])

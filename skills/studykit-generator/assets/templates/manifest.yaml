@@ -1,9 +1,12 @@
 manifest_version: "0.1"
-pipeline_version: "0.2.0"
+pipeline_version: "0.2.1"
 quality_mode: ""
 page_selector_version: review-pages-v1
 delivery_policy: draft
 parallel_units: auto
+coordinator_id: coordinator-1
+coordinator_scope: single-build
+global_merge_owner: global-coordinator
 course_id: null
 course_version: null
 title: ""

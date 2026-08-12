@@ -4,9 +4,15 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 from typing import Any, Iterable
+
+
+def _json_fingerprint(value: Any) -> str:
+    canonical = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
 def _formulas(node: Any) -> Iterable[dict[str, Any]]:
@@ -52,12 +58,16 @@ def main() -> int:
     parser.add_argument("--delivery-policy", choices=("draft", "publish"), default="draft")
     parser.add_argument("--report", type=Path)
     args = parser.parse_args()
-    issues = validate(
-        json.loads(args.studykit.read_text(encoding="utf-8")),
-        json.loads(args.review_plan.read_text(encoding="utf-8")),
-        args.delivery_policy,
-    )
-    result = {"status": "succeeded" if not issues else "failed", "issues": issues}
+    studykit = json.loads(args.studykit.read_text(encoding="utf-8"))
+    review_plan = json.loads(args.review_plan.read_text(encoding="utf-8"))
+    issues = validate(studykit, review_plan, args.delivery_policy)
+    result = {
+        "status": "succeeded" if not issues else "failed",
+        "studykit_fingerprint": _json_fingerprint(studykit),
+        "review_plan_fingerprint": _json_fingerprint(review_plan),
+        "delivery_policy": args.delivery_policy,
+        "issues": issues,
+    }
     rendered = json.dumps(result, ensure_ascii=False, indent=2) + "\n"
     if args.report:
         args.report.write_text(rendered, encoding="utf-8")
