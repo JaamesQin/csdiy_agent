@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -12,6 +13,31 @@ from typing import Any, Iterable
 
 
 ROOT = Path(__file__).resolve().parents[1]
+_PLACEHOLDER_RE = re.compile(
+    r"(?:\b(?:todo|tbd|placeholder|lorem ipsum|your answer here|fill in)\b|"
+    r"\{\{[^{}]+\}\}|(?:待填写|待补充|尚未填写|这里填写))",
+    re.IGNORECASE,
+)
+_STRUCTURAL_CONCEPT_RE = re.compile(
+    r"^(?:第\s*[0-9一二三四五六七八九十百]+\s*页|页码\s*[：:]?\s*[0-9一二三四五六七八九十百]+|"
+    r"(?:page|slide|figure|fig|section|chapter)\s*[#：:\-]?\s*[0-9]+|"
+    r"(?:title|标题|untitled|未命名))$",
+    re.IGNORECASE,
+)
+_CLAIM_FIELDS = ("explanation", "definition", "meaning", "claim", "statement", "description")
+
+
+def _json_fingerprint(value: Any) -> str:
+    canonical = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def _file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
 
 
 def _load_jsonl(path: Path) -> list[dict[str, Any]]:
@@ -40,12 +66,65 @@ def _iter_citations(node: Any, path: str = "") -> Iterable[tuple[str, dict[str, 
             yield from _iter_citations(value, f"{path}[{index}]")
 
 
+def _strings(node: Any, path: str = "") -> Iterable[tuple[str, str]]:
+    if isinstance(node, dict):
+        for key, value in node.items():
+            child = f"{path}.{key}" if path else key
+            if isinstance(value, str):
+                yield child, value
+            else:
+                yield from _strings(value, child)
+    elif isinstance(node, list):
+        for index, value in enumerate(node):
+            yield from _strings(value, f"{path}[{index}]")
+
+
+def _semantic_issues(studykit: dict[str, Any]) -> list[dict[str, str]]:
+    """Apply conservative learner-facing checks after schema validation."""
+    issues: list[dict[str, str]] = []
+    for location, value in _strings(studykit):
+        if _PLACEHOLDER_RE.search(value):
+            issues.append({"location": location, "code": "template_placeholder", "message": "learner-facing placeholder text"})
+
+    for index, concept in enumerate(studykit.get("core_concepts", [])):
+        if not isinstance(concept, dict):
+            continue
+        term = str(concept.get("term", "")).strip()
+        explanation = str(concept.get("explanation", "")).strip()
+        if _STRUCTURAL_CONCEPT_RE.fullmatch(term) or _STRUCTURAL_CONCEPT_RE.fullmatch(explanation):
+            issues.append({
+                "location": f"core_concepts[{index}]",
+                "code": "non_concept_label",
+                "message": "learner-facing concept must describe a concept, not only a page/title label",
+            })
+
+    # Some optional sections are intentionally schema-loose. If they contain
+    # an actual definition/claim, require the same anchored citation contract
+    # as core_concepts, while leaving objectives and activity prose alone.
+    for section in ("glossary", "common_misconceptions", "prerequisites"):
+        for index, item in enumerate(studykit.get(section, [])):
+            if not isinstance(item, dict):
+                continue
+            has_claim = any(isinstance(item.get(field), str) and item[field].strip() for field in _CLAIM_FIELDS)
+            if has_claim and not item.get("citations"):
+                issues.append({
+                    "location": f"{section}[{index}]",
+                    "code": "claim_anchor_missing",
+                    "message": "substantive learner-facing claim requires at least one source citation",
+                })
+    return issues
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--chunks", type=Path, required=True)
     parser.add_argument("--studykit", type=Path, required=True)
     parser.add_argument("--report", type=Path)
+    parser.add_argument("--stage-dir", type=Path, help="unit directory for ordered checkpoint validation")
+    parser.add_argument("--quality-mode", choices=("fast", "standard", "strict"))
     args = parser.parse_args()
+    if bool(args.stage_dir) != bool(args.quality_mode):
+        parser.error("--stage-dir and --quality-mode must be supplied together")
     chunks = _load_jsonl(args.chunks)
     studykit = json.loads(args.studykit.read_text(encoding="utf-8"))
     errors: list[dict[str, str]] = []
@@ -54,6 +133,10 @@ def main() -> int:
             errors.append({"location": f"chunks[{index}]", "code": "schema", "message": message})
     for message in _schema_validate(studykit, ROOT / "assets/schemas/studykit.schema.json"):
         errors.append({"location": "studykit", "code": "schema", "message": message})
+    errors.extend(_semantic_issues(studykit))
+    if args.stage_dir and args.quality_mode:
+        from workflow_policy import validate_stage_checkpoints
+        errors.extend(validate_stage_checkpoints(args.stage_dir, args.quality_mode))
     anchors = {
         (chunk["source_id"], chunk["anchor"]["type"], str(chunk["anchor"]["value"]))
         for chunk in chunks
@@ -71,7 +154,14 @@ def main() -> int:
             errors.append({"location": location, "code": "anchor_not_found", "message": repr(key)})
         elif key in hidden_anchors:
             errors.append({"location": location, "code": "hidden_text_not_evidence", "message": repr(key)})
-    report = {"status": "succeeded" if not errors else "failed", "chunk_count": len(chunks), "citation_count": sum(1 for _ in _iter_citations(studykit)), "issues": errors}
+    report = {
+        "status": "succeeded" if not errors else "failed",
+        "chunk_count": len(chunks),
+        "citation_count": sum(1 for _ in _iter_citations(studykit)),
+        "studykit_fingerprint": _json_fingerprint(studykit),
+        "chunks_sha256": _file_sha256(args.chunks),
+        "issues": errors,
+    }
     text = json.dumps(report, ensure_ascii=False, indent=2) + "\n"
     if args.report:
         args.report.write_text(text, encoding="utf-8")
