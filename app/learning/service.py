@@ -197,18 +197,14 @@ class StudyKitLookupService:
             key=lambda entry: (-entry[0], entry[1]),
         )
         if not ranked or ranked[0][0] <= 0:
-            available = "、".join(str(item.get("term_zh") or item.get("term_en")) for item in concepts[:8])
+            available = "、".join(_concept_label(item) for item in concepts[:8])
             return self._reply(
                 "当前 StudyKit 没有覆盖你询问的概念，不能把通用解释冒充为课程内容。"
                 f"本讲可解释的核心概念包括：{available}。"
             )
         concept = ranked[0][2]
         citations = [
-            item
-            for item in concept.get("citations", [])
-            if isinstance(item, dict)
-            and isinstance(item.get("page"), int)
-            and item.get("source_id")
+            item for item in _normalized_citations(concept) if item.get("source_id")
         ]
         if not citations:
             return self._reply("这个概念在当前 StudyKit 中没有可核查页码，因此暂不提供课程化解释。")
@@ -276,7 +272,7 @@ class StudyKitLookupService:
                 "`practice ID: practice-concept-01`。"
             )
         practice_id = str(problem["id"])
-        answer_text = self._extract_answer(latest, practice_id)
+        answer_text = self._extract_answer(latest, practice_id, document)
         if len(answer_text) < 4:
             return self._reply(f"请补充你对 `{practice_id}` 的当前答案；我不会根据空答案推断掌握度。")
         if _FULL_SOLUTION.search(latest):
@@ -285,13 +281,7 @@ class StudyKitLookupService:
                 "我会指出一个关键遗漏，"
                 "并给出下一层提示和相关讲义页码。"
             )
-        source_pages = sorted(
-            {
-                int(page)
-                for page in problem.get("source_pages", [])
-                if isinstance(page, int) and page > 0
-            }
-        )
+        source_pages = sorted(_pages_for_item(problem))
         if not source_pages:
             return self._reply("这道练习没有可核查的来源页码，因此暂不进行语义反馈。")
 
@@ -438,9 +428,9 @@ class StudyKitLookupService:
         )
         lines.extend(["", "### 核心概念"])
         lines.extend(
-            f"- {item.get('term_zh')}（{item.get('term_en')}）"
+            f"- {_concept_label(item)}"
             for item in document.get("core_concepts", [])
-            if isinstance(item, dict) and item.get("term_zh") and item.get("term_en")
+            if isinstance(item, dict) and _concept_label(item)
         )
         lines.extend(["", "### 练习"])
         lines.extend(
@@ -490,10 +480,8 @@ class StudyKitLookupService:
         for index, concept in enumerate(document.get("core_concepts", []), start=1):
             if not isinstance(concept, dict):
                 continue
-            citations = [item for item in concept.get("citations", []) if isinstance(item, dict)]
-            pages = tuple(
-                sorted({int(item["page"]) for item in citations if isinstance(item.get("page"), int)})
-            )
+            citations = _normalized_citations(concept)
+            pages = tuple(sorted({int(item["page"]) for item in citations}))
             if not pages:
                 continue
             source_id = str(citations[0].get("source_id") or default_source)
@@ -520,15 +508,17 @@ class StudyKitLookupService:
         for index, outline in enumerate(document.get("outline", []), start=1):
             if not isinstance(outline, dict):
                 continue
-            pages = tuple(_expand_pages(str(outline.get("pages", ""))))
+            pages = tuple(sorted(_pages_for_item(outline)))
             if not pages or not outline.get("topic") or not outline.get("purpose"):
                 continue
+            citations = _normalized_citations(outline)
+            source_id = str(citations[0].get("source_id") or default_source) if citations else default_source
             items.append(
                 _EvidenceItem(
                     citation_id=f"outline-{index}",
                     kind="outline",
                     text=f"{outline['topic']}：{outline['purpose']}",
-                    source_id=default_source,
+                    source_id=source_id,
                     pages=pages,
                     search_terms=(str(outline["topic"]),),
                 )
@@ -536,19 +526,18 @@ class StudyKitLookupService:
         for index, misconception in enumerate(document.get("common_misconceptions", []), start=1):
             if not isinstance(misconception, dict):
                 continue
-            support = [item for item in misconception.get("support", []) if isinstance(item, dict)]
-            pages = tuple(
-                sorted({int(item["page"]) for item in support if isinstance(item.get("page"), int)})
-            )
+            citations = _normalized_citations(misconception)
+            pages = tuple(sorted(_pages_for_item(misconception)))
             if not pages or not misconception.get("correction"):
                 continue
             text = f"常见误区：{misconception.get('misconception', '')} 修正：{misconception['correction']}"
+            source_id = str(citations[0].get("source_id") or default_source) if citations else default_source
             items.append(
                 _EvidenceItem(
                     citation_id=f"misconception-{index}",
                     kind="misconception",
                     text=text,
-                    source_id=default_source,
+                    source_id=source_id,
                     pages=pages,
                     search_terms=(str(misconception.get("misconception") or ""),),
                 )
@@ -574,7 +563,7 @@ class StudyKitLookupService:
             source_id="",
             pages=(),
             search_terms=tuple(
-                str(concept.get(key) or "") for key in ("term_en", "term_zh", "id")
+                str(concept.get(key) or "") for key in ("term", "term_en", "term_zh", "id")
             ),
         )
         return StudyKitLookupService._evidence_score(item, question)
@@ -586,7 +575,7 @@ class StudyKitLookupService:
         citations: list[dict[str, Any]],
     ) -> str:
         lines = [
-            f"## {concept.get('term_zh')}（{concept.get('term_en')}）",
+            f"## {_concept_label(concept)}",
             "",
             f"**定义**：{concept.get('explanation')}",
         ]
@@ -599,6 +588,7 @@ class StudyKitLookupService:
         terms = [
             str(concept.get("term_zh") or "").casefold(),
             str(concept.get("term_en") or "").casefold(),
+            str(concept.get("term") or "").casefold(),
         ]
         misconceptions = [
             item
@@ -608,7 +598,7 @@ class StudyKitLookupService:
                 term and term in f"{item.get('misconception', '')} {item.get('correction', '')}".casefold()
                 for term in terms
             )
-            and item.get("support")
+            and _pages_for_item(item)
         ]
         if misconceptions:
             lines.extend(["", "### 常见误区"])
@@ -657,6 +647,7 @@ class StudyKitLookupService:
     @staticmethod
     def _practice_matches(problem: dict[str, Any], requested: str) -> bool:
         level = str(problem.get("level", "")).casefold()
+        practice_type = str(problem.get("practice_type", "")).casefold()
         practice_id = str(problem.get("id", "")).casefold()
         expected = {
             "调试": ("debug",),
@@ -666,18 +657,33 @@ class StudyKitLookupService:
             "实现": ("implementation",),
             "概念": ("concept",),
         }[requested]
-        return any(value == level or value in practice_id for value in expected)
+        return any(
+            value == level or value == practice_type or value in practice_id
+            for value in expected
+        )
 
     @staticmethod
-    def _extract_answer(text: str, practice_id: str) -> str:
+    def _extract_answer(
+        text: str,
+        practice_id: str,
+        document: dict[str, Any],
+    ) -> str:
         cleaned = text.replace(practice_id, " ")
-        cleaned = re.sub(
-            r"(?:mit\s*)?6[.-]7960(?:-fall-2024)?|fall-2024|"
-            r"lecture\s*[- ]?\d+|第\s*\d+\s*讲",
-            " ",
-            cleaned,
-            flags=re.IGNORECASE,
-        )
+        identities = {
+            str(document.get("course_id") or ""),
+            str(document.get("course_version") or ""),
+            str(document.get("unit_id") or ""),
+        }
+        course_id = str(document.get("course_id") or "")
+        course_version = str(document.get("course_version") or "")
+        suffix = f"-{course_version}"
+        if course_version and course_id.casefold().endswith(suffix.casefold()):
+            identities.add(course_id[: -len(suffix)])
+        for identity in sorted((item for item in identities if item), key=len, reverse=True):
+            variants = {identity, identity.replace("-", " "), identity.replace("-", ".")}
+            for variant in sorted(variants, key=len, reverse=True):
+                cleaned = re.sub(re.escape(variant), " ", cleaned, flags=re.IGNORECASE)
+        cleaned = re.sub(r"lecture\s*[- ]?\d+|第\s*\d+\s*讲", " ", cleaned, flags=re.I)
         cleaned = re.sub(
             r"practice\s*id\s*[:：]?|练习(?:反馈|答案)?|请?(?:点评|批改|反馈)|我的答案(?:是)?[:：]?",
             " ",
@@ -752,6 +758,70 @@ def _expand_pages(value: str) -> list[int]:
     if start < 1 or end < start or end - start > 500:
         return []
     return list(range(start, end + 1))
+
+
+def _normalized_citations(item: dict[str, Any]) -> list[dict[str, Any]]:
+    """Return portable citations as the runtime's source/page projection."""
+
+    citations: list[dict[str, Any]] = []
+    for field in ("citations", "page_citations", "source_anchors", "anchors"):
+        values = item.get(field, [])
+        if not isinstance(values, list):
+            continue
+        for value in values:
+            if not isinstance(value, dict):
+                continue
+            page = value.get("page")
+            anchor = value.get("anchor")
+            if not isinstance(page, int) and isinstance(anchor, dict):
+                if anchor.get("type") == "page" and isinstance(anchor.get("value"), int):
+                    page = anchor["value"]
+            if isinstance(page, int) and page > 0:
+                citations.append(
+                    {
+                        "source_id": str(value.get("source_id") or "unknown-source"),
+                        "page": page,
+                    }
+                )
+    seen: set[tuple[str, int]] = set()
+    result: list[dict[str, Any]] = []
+    for citation in citations:
+        identity = (str(citation["source_id"]), int(citation["page"]))
+        if identity not in seen:
+            seen.add(identity)
+            result.append(citation)
+    return result
+
+
+def _pages_for_item(item: dict[str, Any]) -> set[int]:
+    pages = {int(citation["page"]) for citation in _normalized_citations(item)}
+    source_pages = item.get("source_pages", [])
+    if isinstance(source_pages, list):
+        pages.update(
+            int(page) for page in source_pages if isinstance(page, int) and page > 0
+        )
+    outline_pages = item.get("pages")
+    if isinstance(outline_pages, str):
+        pages.update(_expand_pages(outline_pages))
+    support = item.get("support", [])
+    if isinstance(support, list):
+        pages.update(
+            int(entry["page"])
+            for entry in support
+            if isinstance(entry, dict)
+            and isinstance(entry.get("page"), int)
+            and entry["page"] > 0
+        )
+    return pages
+
+
+def _concept_label(concept: dict[str, Any]) -> str:
+    term_zh = str(concept.get("term_zh") or "").strip()
+    term_en = str(concept.get("term_en") or "").strip()
+    term = str(concept.get("term") or "").strip()
+    if term_zh and term_en and term_zh.casefold() != term_en.casefold():
+        return f"{term_zh}（{term_en}）"
+    return term_zh or term_en or term
 
 
 def _format_pages(pages: tuple[int, ...]) -> str:

@@ -11,8 +11,19 @@ CoursePilot 是一个面向中文计算机科学自学者的循证学习 Agent�
 - 画像按服务端账号 UUID 隔离；不保存完整对话、用户代码、traceback 或模型推理。
 - 在线 Agent 已接入规则优先的意图路由、`/help` 能力目录、主动学习画像、课程导航、多语言静态代码辅导和透明降级。
 - 课程导航读取冻结的 CSDIY 课程表，分别展示目录分类、离线 authoring 和在线 StudyKit 三种状态；未审核 candidate offering 不作为官方链接输出。
-- StudyKit 查询、材料问答、课程概念解释、练习选择和当前答案反馈已经上线；在线内容仍只读取 Schema 合法、人工批准的 Lecture 2/8 黄金 StudyKit。
+- StudyKit 查询、材料问答、课程概念解释、练习选择和当前答案反馈已经上线；默认读取层优先使用归档中 build/document 均为 `approved` 的记录，并回退到 Schema 合法、人工批准的 Lecture 2/8 黄金 StudyKit。当前归档没有 approved 记录，因此实际在线范围仍为 Lecture 2/8。
 - 分阶段 StudyKit 生成器执行 Evidence → Content → Practice → Audit → 确定性组装，并输出 JSON/YAML/Markdown。
+- standard authoring 要求每道练习从 EvidencePlan/课程内容派生出具体、可求解的设置和可观察结果；
+  独立审计者逐题复核内容关联、证据锚点和形成性质量。该语义门禁仍只在线下执行。
+- selective practice repair 只在线下运行：从直接父 build 快照创建新的 fingerprinted build，
+  rich audit 必须绑定当前 build+repair plan，并逐题精确覆盖当前 practice IDs（无缺失、重复或
+  过期 ID）；任一不匹配都阻止完成和 false-complete，Schema 通过本身不足以放行。六课修复
+  已达到 161/161 validated、161/161 audited 和 6/6 build succeeded；其中五课仍等待课程级
+  visual-review closure，因此尚不能宣称 catalog 全局 complete。
+- 已提供独立的 SQLite StudyKit 归档，保存每门课唯一的最新 build、最终 StudyKit、阶段 checkpoint 和验证/审计文本工件；课程归档与账号数据库隔离，`validated_draft` 不会自动上线。
+- `data/` 已迁移为私有 Git submodule，并由 Git LFS 管理 SQLite 与 anchored chunks。当前精简
+  快照包含 12 builds、286 个 StudyKit 和 12,008 个审计/阶段工件；原始 PDF、站点镜像、页面图
+  和 reviewed 重复包不上传。
 
 SourceChunk 检索、私有 MaterialSet 和学习复盘尚未接入在线编排；材料问答不能回答 StudyKit 未覆盖的任意原文细节。代码辅导当前只做静态分析，不执行用户代码。
 
@@ -34,7 +45,7 @@ SourceChunk 检索、私有 MaterialSet 和学习复盘尚未接入在线编排�
 
 账号会话会忽略请求体中的 `user`，因此客户端不能通过伪造字段访问其他账号。持有服务器全局 API Key 的旧集成仍可使用 legacy 数据，但不能构造 `account:` 身份。历史 Schema v1 画像在首次启动时事务性迁移到 legacy 命名空间，不会自动认领到新账号。
 
-用户可以检索 118 个现有课程目标；其中多数分类仍待独立审核，只有引用受控 Manifest 的课程才展示官方课程页，只有 Lecture 2/8 两讲能进入在线 StudyKit 学习。未收录私有资料仍是后续能力，不会与公共目录或账号画像混合。
+用户可以检索 119 个现有课程目标；其中多数分类仍待独立审核，只有引用受控 Manifest 的课程才展示官方课程页，当前只有 Lecture 2/8 两讲能进入在线 StudyKit 学习。未收录私有资料仍是后续能力，不会与公共目录或账号画像混合。
 
 ## 核心能力
 
@@ -43,9 +54,9 @@ SourceChunk 检索、私有 MaterialSet 和学习复盘尚未接入在线编排�
 - 课程导航：按课程名、学校、课程号或已确认学习方向检索 CSDIY 课程表；推荐最多 3 门，列表最多 5 门，并明确区分目录、离线和在线状态。
 - StudyKit 学习：查询学习包、按页码白名单回答材料问题、分层解释概念、选择不重复练习，并只对携带 practice ID 的当前答案给反馈。
 - 代码辅导：Python/Triton 使用 Python AST，C/C++、CUDA、ISPC、LaTeX、Java、Go、Rust、函数式语言、Web/SQL、Verilog 和汇编等使用离线 Tree-sitter 语法解析；提供诊断、假设、验证步骤和下一次尝试，不运行用户代码，也不代写可提交作业。
-- 已审核 StudyKit 读取：所有在线课程事实通过 `StudyKitStore` 读取 Lecture 2/8 黄金 StudyKit；不输出 `expected_evidence`、evaluation、rubric、本地路径或审计字段。
+- 已审核 StudyKit 读取：统一 `StudyKitStore` 使用 approved archive 优先、Lecture 2/8 golden 回退；不输出 `expected_evidence`、evaluation、rubric、本地路径或审计字段。
 - 离线 StudyKit 生成：生成包含目标、前置知识、提纲、术语、练习、引用和限制说明的中文学习包。
-- 规划中：数据库 StudyKitStore、MaterialSet 权限、在线 SourceChunk 检索、私有材料和学习复盘。
+- 规划中：MaterialSet 权限、在线 SourceChunk 检索、私有材料和学习复盘。
 
 ## 技术路线
 
@@ -58,7 +69,7 @@ SourceChunk 检索、私有 MaterialSet 和学习复盘尚未接入在线编排�
         ↓
 Agent 编排：意图路由、主动画像、课程导航、StudyKit 学习、静态代码辅导
         ↓
-只读课程表与已审核 StudyKit；后续接入数据库、MaterialSet、RAG 与复盘
+只读课程表与 approved archive/golden StudyKit；后续接入 MaterialSet、RAG 与复盘
 ```
 
 当前已实现的接入契约包括：
@@ -75,7 +86,7 @@ Agent 编排：意图路由、主动画像、课程导航、StudyKit 学习、�
 
 ## 当前阶段
 
-截至 2026-08-12，项目处于“离线生成内核、账号系统、课程导航和首批 StudyKit 学习能力完成，等待 SourceChunk 检索与清小搭生产验证”阶段：
+截至 2026-08-13，项目处于“离线 StudyKit 生成与私有检索数据归档完成、数据库 ready 门禁和首批在线 Agent 能力已接入、等待 SourceChunk 检索与清小搭生产验证”阶段：
 
 | 项目 | 状态 |
 | --- | --- |
@@ -84,33 +95,46 @@ Agent 编排：意图路由、主动画像、课程导航、StudyKit 学习、�
 | 清小搭接入协议调研 | 已完成 |
 | 自研后端架构与仓库结构 | 已完成最小实现 |
 | OpenAI 兼容 API 实现 | 已完成 |
-| Bearer、Cookie 会话、JSON、SSE 和错误契约测试 | 已完成；294 项测试通过 |
+| Bearer、Cookie 会话、JSON、SSE 和错误契约测试 | 已完成；303 项测试通过 |
 | 本地账号、会话、CSRF 与画像隔离 | 已完成安全 MVP |
 | 意图路由、能力帮助、主动画像和多语言静态代码辅导 | 已完成首版 |
 | CSDIY 课程导航 | 已完成全目录分级检索；目录分类仍按 registry 审核状态展示 |
-| StudyKit 查询、材料/概念、练习选择/反馈 | 已完成 golden-only 首版；无 SourceChunk 时严格降级 |
+| StudyKit 查询、材料/概念、练习选择/反馈 | 已完成 approved archive + golden 回退首版；无 SourceChunk 时严格降级 |
 | 本地聊天测试界面 | 已接入账号登录、功能总览、画像、课程、StudyKit、练习和代码辅导入口 |
 | 云端部署方式 | 已确认，等待生产版本部署 |
 | 首个模板课程与核心讲次冻结 | 已完成：MIT 6.7960，Lecture 2 和 8 为核心 Demo |
 | CourseManifest 与来源审核 | 已完成初稿 |
 | Lecture 2 黄金 StudyKit | v0.1 已通过 Schema、引用、术语、公式方向复核和人工批准 |
 | Lecture 8 StudyKit | v0.1 已完成 Schema、引用、术语、公式方向、练习事实性复核和人工批准 |
-| 全课程 portable StudyKit 包 | Lecture 01–21、23、24 共 23 讲已验证并批准待入库；暂存于 `data/reviewed/`，尚未接入在线 Catalog |
+| 全课程 portable StudyKit 包 | Lecture 01–21、23、24 共 23 讲已完成离线验证；正式 archive 中仍为 `validated_draft`，不属于 online-ready |
 | SourceChunk Schema 与 PDF 页级解析 | 已完成；Lecture 2、8 的 chunks 已在本地生成并通过校验，未随公开仓库上传 |
 | 黄金 StudyKit 在线读取 | 已完成：Lecture 2、8，只读人工批准版本；统一 `StudyKitStore` 接口 |
+| 私有检索数据归档 | 已完成精简快照：12 builds、286 documents、12,008 artifacts；全部为 `validated_draft` |
+| 数据库 StudyKitStore | 已完成只读接入：build/document 双 `approved` 门禁，portable v0.1/v0.2.1 兼容，golden 回退 |
+| 六课 practice repair | 161/161 validated、161/161 audited、6/6 build succeeded；五课仍需关闭课程级视觉复核 |
 | 线上 SourceChunk 检索与 RAG | 尚未开始 |
 | 清小搭接入探测与试聊 | 尚未开始 |
 | 端到端 Demo、评测和用户试用 | 尚未开始 |
 
 当前关键路径是：
 
-1. 将当前文件型 `StudyKitStore` 替换为经过迁移和导入验证的数据库实现；
+1. 为归档记录完成独立人工批准流程，并继续保持双 `approved` 在线门禁；
 2. 冻结 MaterialSet/权限接口并建立 owner/session/course/version/unit 过滤的 SourceChunk 检索；
-3. 接入私有材料和基于用户确认证据的学习复盘；
+3. 将现有材料问答与练习反馈接到权限过滤的 SourceChunk，再接入私有材料和学习复盘；
 4. 验证清小搭稳定用户身份、消息历史、文件输入、状态和日志能力；
 5. 将通过测试的后端部署到生产环境并完成端到端评测。
 
 ## 本地运行
+
+先初始化私有数据 submodule 和 Git LFS 对象（需要该私有仓库的访问权限）：
+
+```bash
+git submodule update --init --recursive
+git -C data lfs pull
+```
+
+StudyKit 检索归档位于 `data/archive/studykits.sqlite3`。完整边界见
+[私有数据 submodule 说明](docs/private-data-submodule.md)。
 
 ```bash
 python3 -m venv .venv
@@ -169,7 +193,7 @@ Cookie 认证的 `POST /v1/chat/completions` 同样要求 `X-CSRF-Token`。API K
 .venv/bin/pytest -q
 ```
 
-当前基线为 `294 passed`，其中 4 项真实 HTTP 测试会绑定 `127.0.0.1` 临时端口。覆盖密码和令牌非明文存储、v1→v2 迁移、账号隔离、JSON/SSE 契约、课程目录校验与分级、上下文解析、StudyKit 安全投影、材料引用白名单、概念解释、练习选择/反馈降级、隐藏字段防泄漏、多语言静态诊断、生成管线和真实本地 HTTP/SSE。
+当前基线为 `303 passed`：299 项普通测试和 4 项绑定 `127.0.0.1` 临时端口的真实 HTTP 测试。覆盖密码和令牌非明文存储、v1→v2 迁移、账号隔离、JSON/SSE 契约、课程目录校验与分级、archive 双 review 门禁、portable schema 兼容、上下文解析、StudyKit 安全投影、材料引用白名单、概念解释、练习选择/反馈降级、隐藏字段防泄漏、多语言静态诊断、生成管线和真实本地 HTTP/SSE。
 
 ## 安全与隐私
 

@@ -1,6 +1,6 @@
 # 平台发布记录
 
-> 更新日期：2026-08-12
+> 更新日期：2026-08-13
 >
 > 发布状态：多用户本地候选版本已验证，生产发布待执行
 
@@ -14,10 +14,15 @@
 - 不在服务器保存完整对话或代码；
 - 标准错误响应和流式错误收尾；
 - 规则优先的意图路由、八项可用能力的 `/help`、主动学习画像和多语言静态代码辅导；
-- 118 个课程目标的失败关闭 Catalog 校验、确定性导航和三类状态展示；
+- 119 个课程目标的失败关闭 Catalog 校验、确定性导航和三类状态展示；
 - Lecture 2/8 已审核黄金 StudyKit 查询、材料/概念、练习选择和当前答案反馈；
 - 带登录、功能总览、画像、课程、StudyKit、练习和代码辅导入口的本地聊天界面；
-- 294 项自动化测试通过，其中 4 项为独立 Uvicorn/loopback HTTP 测试。
+- selective practice repair 仅作为离线 fingerprinted build；保留 direct-parent snapshot，
+  rich audit 绑定当前 build+repair plan，并要求逐题 practice ID exact coverage；
+- 独立 StudyKit SQLite 归档已实现，但当前 286 个导入文档均为 `validated_draft`；它们不属于本次在线发布面，人工批准前不得切换 ready 查询。
+- 在线 Store 已接入只读 archive adapter：build/document 双 `approved`、portable v0.1/v0.2.1 兼容、approved archive 优先和 golden 回退；当前在线范围仍为 Lecture 2/8。
+- `data/` 是需要单独授权的私有 submodule；部署/测试主仓库前必须初始化 submodule 与 Git LFS。
+- 303 项自动化测试通过，其中 4 项为独立 Uvicorn/loopback HTTP 测试。
 
 ## 本地启动
 
@@ -45,6 +50,9 @@ uvicorn app.main:app --host 127.0.0.1 --port 8000
 | `DEEPSEEK_BASE_URL` / `DEEPSEEK_MODEL` | 否 | 复用离线生成器的模型适配配置 |
 
 禁止记录或提交 API Key、密码、Cookie、CSRF token、Argon2 hash 和数据库内容。
+账号数据库与 `data/archive/studykits.sqlite3` 必须使用不同文件、权限和备份策略。账号库仍在
+ignored `storage/`；StudyKit 归档在私有 submodule 中由 Git LFS 管理，不能因其可克隆就视为
+online-ready 或绕过 document review status。
 
 ## 数据库升级
 
@@ -87,6 +95,9 @@ credential: <COURSEPILOT_API_KEY>
 - 代码只做 AST/Tree-sitter 静态分析，始终 `ran_code=false`；课程专用 DSL 可能只获得模型静态建议；
 - API Key 请求的 `user` 是客户端提供的逻辑标识，只进入 legacy 命名空间，不是生产授权凭据；
 - 尚未完成清小搭生产探测；
+- selective repair 的任一 build/plan/audit 或 practice-ID coverage mismatch 都阻止 completion；
+  deterministic Schema pass 不能单独放行。六课 repair builds 已 succeeded，但五课的课程级
+  visual-review gate 仍阻止 catalog globally complete；
 - 尚未实测 `file.url`；
 - 本地测试不能证明云端代理不会缓冲 SSE；
 - 本地测试不能证明云端冷启动满足清小搭超时要求。

@@ -63,16 +63,16 @@ def test_course_catalog_separates_catalog_authoring_and_online_status() -> None:
     deep_learning = catalog.get("mit-6-7960")
     operating_systems = catalog.get("mit-6-s081")
 
-    assert len(courses) == 118
+    assert len(courses) == 119
     assert deep_learning is not None
-    assert deep_learning.authoring_status == "sources_inventoried"
+    assert deep_learning.authoring_status == "authoring"
     assert [item.unit_id for item in deep_learning.online_studykits] == [
         "lecture-02",
         "lecture-08",
     ]
     assert deep_learning.official_url and "ocw.mit.edu" in deep_learning.official_url
     assert operating_systems is not None
-    assert operating_systems.authoring_status == "complete"
+    assert operating_systems.authoring_status == "authoring"
     assert operating_systems.online_studykits == []
 
 

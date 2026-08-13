@@ -1,6 +1,6 @@
 # CoursePilot 项目状态
 
-更新时间：2026-08-12
+更新时间：2026-08-13
 
 这份文档是新开发者的快速入口。更完整的状态矩阵见
 [docs/project_status.md](docs/project_status.md)，生成管线说明见
@@ -10,9 +10,17 @@
 
 CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生成内核，
 并已落地本地账号注册/登录、Cookie 会话和可信 subject 画像隔离，同时将意图路由、
-能力帮助、主动学习画像、CSDIY 课程导航、golden StudyKit 查询/材料/概念/练习能力和
+能力帮助、主动学习画像、CSDIY 课程导航、StudyKit 查询/材料/概念/练习能力和
 多语言静态代码辅导接入 OpenAI 兼容对话 API；资料权限、SourceChunk 检索、私有材料和
 学习复盘仍未接成完整闭环。
+
+2026-08-12 已将 `outputs/` 中每个课程版本的最新有效成果归档为
+`data/archive/studykits.sqlite3`：12 builds、286 个 StudyKit、12,008 个文本 checkpoint/
+审计工件，完整性复核为零问题。2026-08-13 又将 `data/` 迁移为私有
+`JaamesQin/csdiy_agent-data` submodule，并用 Git LFS 管理 SQLite 与 anchored chunks。
+数据库记录均为 `validated_draft`，未冒充人工批准或在线发布。
+在线运行时已经接入只读数据库 adapter：只有 build/document 都为 `approved` 的记录才
+可见，并保留 Lecture 2/8 人工批准 golden 回退；当前归档不会扩大在线范围。
 
 当前最成熟的链路是：
 
@@ -51,6 +59,14 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
   和 opportunity ID；新增或删除身份字段会被确定性拒绝或恢复。
 - Audit 发现下游需要边界外的有效来源块时，会先修 EvidencePlan，
   再修对应 Content 或 Practice。
+- 现已补充内容对齐的练习质量合同：每道练习必须有材料支持的具体设置、可观察结果、
+  一致的提示/证据要求和相关锚点；同一单元的独立审计者必须逐题复核。该合同通过
+  author prompt 与审计实现，不引入领域专用硬编码语义验证器。
+- 已加入 offline-only selective repair：新 build 保存直接父快照，rich audit 绑定当前
+  build 与 repair plan，并要求当前 practice ID 的逐题精确覆盖，不得缺失、重复或沿用
+  stale ID。任一覆盖或绑定不匹配均阻止完成/false-complete；确定性 Schema 通过不是语义放行。
+  六课 repair 已完成 161/161 validated、161/161 audited，六个最终 build 均为 `succeeded`；
+  其中五课尚未关闭 course-level visual review，所以 catalog 仍不能标记全局 complete。
 - 最终 StudyKit 由代码确定性组装，并校验 Schema、引用、顺序、唯一 ID、
   Markdown 可渲染性和内部字段泄漏。
 
@@ -67,16 +83,18 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
 ### Schema、工具与课程资料
 
 - 已新增 EvidencePlan、LearningContent、PracticeFlow、QualityAudit 四个 Schema。
+- 私有 `data` submodule 的精简远端保留 catalog、manifests、golden、anchored chunks、
+  source/preparation provenance 和最新 SQLite；raw PDF、站点镜像、页图、reviewed 重复包及
+  regression 仅可作为 ignored 本地数据。初始化命令见 `docs/private-data-submodule.md`。
 - 已提供生成 CLI、质量 profile 评估脚本和 Lecture 并发回归调度器。
 - MIT 6.7960 Fall 2024 manifest 已覆盖官方可用的 23 讲：Lecture 01–21、23、24；
   官方缺失的 Lecture 22、25 未创建占位单元。
-- 23 讲 portable StudyKit 已完成结构、引用与渲染验证，并经用户批准待未来数据库导入；
-  紧凑包保存在 `data/reviewed/`，统一 SourceChunks 保存在本地 `data/sources/`，
-  当前在线 Catalog 仍只读取既有 golden 文件。
+- 23 讲 portable StudyKit 已完成结构、引用与渲染验证；其正式 archive 记录仍为
+  `validated_draft`，不会进入在线查询。被精简 submodule 排除的 reviewed/SourceChunks
+  快照只可作为 ignored 本地数据；在线运行时使用合法 approved archive，并以既有 golden 回退。
 - MIT 6.S081 Fall 2021 的 24 个有实质来源讲次也已完成 v0.2 artifact、review 和
-  输出一致性复核，并经 Lecture 07、15、17 随机语义/视觉抽查。紧凑包仅本地保存在
-  `data/reviewed/mit-6.s081-fall-2021/portable-v0.2.0/`；用户已确认派生 StudyKit
-  可以上传，因此紧凑包进入 reviewed 目录，raw、chunks、页图和完整 build 仍留在 Git 外。
+  输出一致性复核，并经 Lecture 07、15、17 随机语义/视觉抽查；正式 archive 仍以
+  `validated_draft` 保存，raw、chunks、页图、reviewed 重复包和完整 build 不进入精简远端。
 - Outline 页码只要求存在于本讲输入 SourceChunks，不要求每页都进入
   Content 的最小证据并集。
 - Practice 的 Prompt 仍要求 5–8 题；验证器允许合理超出，以避免模型偶发
@@ -112,7 +130,7 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
 - 在线课程上下文只读取 Lecture 2/8 中 Schema 合法且人工批准的黄金 StudyKit；
   材料模型只能引用允许列表内的真实页码，学习者输出不含 `expected_evidence`、
   evaluation、rubric、审计字段或本地路径。
-- `CourseCatalogStore` 校验 118 个 CSDIY 课程目标、唯一身份、导航 provenance 和受控
+- `CourseCatalogStore` 校验 119 个 CSDIY 课程目标、唯一身份、导航 provenance 和受控
   Manifest；课程导航明确区分目录分类、离线 authoring 和在线 StudyKit 状态。
 - `StudyKitLookupService` 已实现查询、材料问答、概念解释、练习选择和当前答案反馈；
   未配置模型时材料问答返回已审核摘要，练习反馈不做粗略判分。练习答案和历史均不持久化。
@@ -120,16 +138,16 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
 
 ### 测试状态
 
-- 当前自动化测试：`294 passed`（290 项普通测试，4 项 loopback HTTP/SSE 测试）。
+- 当前自动化测试：`303 passed`（299 项普通测试，4 项 loopback HTTP/SSE 测试）。
 - 测试覆盖阶段 Schema、Evidence controls、确定性 chunk 并集、引用、
   Markdown LaTeX、模型响应重试、恢复、单次 Audit 回修、非 CS 合成单元、
   CLI、质量 profile、数据库迁移、密码/会话安全、CSRF、限流、账号隔离、
   API Key 兼容、意图路由、画像生命周期、SQLite 并发、课程目录失败关闭、
   StudyKit 安全投影、材料/概念引用白名单、练习反馈降级、代码静态分析、
   学术诚信以及真实 HTTP/SSE。
-- 最新一次全新 Lecture 1–8 外部并发回归（concurrency=8）结果为 `8/8`：
+- 最新一次有记录的 Lecture 1–8 外部并发回归（concurrency=8）结果为 `8/8`：
   8 讲均生成 JSON/YAML/Markdown，均通过确定性验证，未解决 blocker 为 0。
-  详细结果见 `data/regression/studykit-v21-lectures-01-08/regression-summary.json`。
+  详细机器摘要属于未纳入精简 submodule 的历史本地 regression 数据。
 - 回归耗时约 26 分 42 秒；每讲学习时间均为 180 分钟，练习数为 8–9 道。
   共有 8 个 warning，全部由对应阶段模型修复；空响应重试 24 次后全部成功。
 - 8 讲最终质量人工评分平均 `91/100`：Lecture 1 93、Lecture 2 85、
@@ -178,7 +196,7 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
 2. 完成公共课程与用户私有资料的统一解析、存储、授权过滤、过期和删除。
 3. 建立按用户、会话、课程、版本和讲次过滤的检索层；先关键词检索，
    再按需要增加向量检索和重排。
-4. 将当前 golden-only 材料答疑和练习反馈接到权限过滤的 SourceChunk；继续接入
+4. 将当前 approved archive + golden 回退的材料答疑和练习反馈接到权限过滤的 SourceChunk；继续接入
    学习复盘和后台生成状态。
 5. 修复 Lecture 2 的离线 profile 对齐问题，核对 Lecture 8 的 LayerNorm 表述，
    并为 `repairs_applied_unverified` 结果安排人工语义复核。
@@ -188,7 +206,7 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
 8. 验收模板课程与未知私有资料两条端到端流程，再进行用户试用和 Demo 打磨。
 
 这些工作可以在当前只读接口基础上并行开发；真正的串行依赖是：数据库导入和
-MaterialSet/权限必须先提供稳定接口，SourceChunk 检索随后替换 golden-only 降级，
+MaterialSet/权限必须先提供稳定接口，SourceChunk 检索随后增强当前 StudyKit-only 降级，
 最后进行平台端到端和用户验收。
 
 ## 主要风险

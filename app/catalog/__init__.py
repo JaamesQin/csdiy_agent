@@ -6,7 +6,14 @@ from app.catalog.courses import (
     CourseCatalogStore,
     ReviewedCourseCatalogStore,
 )
-from app.catalog.studykits import ReviewedFileStudyKitStore, StudyKitStore
+from app.catalog.studykits import (
+    ArchivedStudyKitStore,
+    CompositeStudyKitStore,
+    ReviewedFileStudyKitStore,
+    StudyKitArchiveError,
+    StudyKitStore,
+    build_default_studykit_store,
+)
 
 __all__ = [
     "CourseCard",
@@ -14,6 +21,10 @@ __all__ = [
     "CourseCatalogStore",
     "ReadyStudyKitSummary",
     "ReviewedCourseCatalogStore",
+    "ArchivedStudyKitStore",
+    "CompositeStudyKitStore",
     "ReviewedFileStudyKitStore",
+    "StudyKitArchiveError",
     "StudyKitStore",
+    "build_default_studykit_store",
 ]

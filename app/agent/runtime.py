@@ -10,7 +10,7 @@ from app.agent.model_support import load_optional_model
 from app.agent.orchestrator import CoursePilotAgent
 from app.agent.router import IntentRouter
 from app.catalog.courses import ReviewedCourseCatalogStore
-from app.catalog.studykits import ReviewedFileStudyKitStore
+from app.catalog.studykits import build_default_studykit_store
 from app.code_tutor.service import CodeTutorService
 from app.course_navigation.service import CourseNavigationService
 from app.learning.service import StudyKitLookupService
@@ -20,7 +20,7 @@ from app.profile.service import ProfileService, get_profile_service
 @lru_cache(maxsize=8)
 def _build_coursepilot_agent(profiles: ProfileService) -> CoursePilotAgent:
     model = load_optional_model()
-    store = ReviewedFileStudyKitStore()
+    store = build_default_studykit_store()
     catalog = ReviewedCourseCatalogStore(store)
     if profiles.model is None:
         profiles.model = model

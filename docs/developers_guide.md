@@ -1,6 +1,6 @@
 # CoursePilot Developers Guide
 
-更新时间：2026-08-12
+更新时间：2026-08-13
 
 本文说明下一阶段如何在现有 StudyKit 生成内核之上开发用户画像、代码辅导、资料检索、意图路由、清小搭多轮 Agent，以及 generator skill。本文的核心约束是：
 
@@ -10,9 +10,9 @@
 
 当前生成内核已经完成以下工作：
 
-- `skills/studykit-generator` v0.2.0 已完成并批准发布；四讲对齐盲评选择 `standard` 为默认质量挡位，调用方仍可显式选择 `fast` 或 `strict`。
+- `skills/studykit-generator` v0.2.1 已扩展隔离 build coordinator 协议；四讲对齐盲评选择 `standard` 为默认质量挡位，调用方仍可显式选择 `fast` 或 `strict`。
 - `quality_mode` 与 `delivery_policy` 已分离；前者控制生成/视觉复核深度，后者控制 unresolved 是否允许交付。
-- unit 可按宿主能力并行，同一 unit 的 01→05 保持顺序；每阶段 checkpoint，并记录 worker 与 coordinator 墙钟时间。
+- 每个隔离 build coordinator 最多运行 4 个 unit worker，同一 unit 的 01→05 保持顺序；多个不重叠的 build coordinator 可在会话槽位预算内并行，每阶段 checkpoint，并记录 worker 与 coordinator 墙钟时间。
 - standard 的后续优化聚焦公式与证据表示：JSON round-trip 后的 LaTeX、逐页 `formula_unresolved`、索引约定，以及可见页面与隐藏叠加文本的明确边界。
 
 - 当前 Pipeline：`studykit-pipeline-v0.11-019`；Prompt：`studykit-staged-v0.8-010`；运行版本：`21`。
@@ -20,17 +20,39 @@
 - Audit 只执行一次；blocker 会按字段所有权归一化、去重，并按 Evidence → Content → Practice 依赖顺序最多回修一次。
 - 回修保护已有 `concept`、`requirement`、`control`、`opportunity` ID；修复后仍标记为 `repairs_applied_unverified`。
 - PracticeFlow/StudyKit 的学习顺序带有必填 `practice_ids`，每道练习必须至少出现一次。
+- 练习质量不能由“有题目/有引用/Schema 通过”推断：standard checkpoint 的作者必须把
+  每题绑定到 EvidencePlan/Content 的具体内容，给出可直接求解的设置和可观察结果；
+  独立审计者逐题复核。这里采用内容约束 prompt 与人工/agent 审计，不新增领域专用的
+  硬编码语义验证器。
+- selective repair 是 offline-only 的新 fingerprinted build 流程：复制 direct parent 到
+  `repair-parent-baseline/`，只修改 repair plan 指定的 checkpoint；rich audit 必须同时绑定
+  当前 `build_id` 与 `repair_plan_sha256`，且 `expected_practice_ids`、审计 IDs 与当前
+  candidate IDs 必须按顺序精确相等（无 missing、duplicate、stale ID）。任一 mismatch 都让
+  unit/build 保持 pending 或 partial，禁止 completion 和 false-complete；确定性 Schema pass
+  不能单独放行。六课 practice repair 已达到 161/161 validated/audited 与 6/6 build
+  succeeded；这不关闭五课仍待完成的 course-level visual-review gate，也不等于 catalog complete。
 - 标题优先取 manifest 的 `official_resource_title > unit.title`；`EvidencePlan` 等内部标签不会进入学习者文本。
 - 生成器会输出 `01-evidence-plan.json`、`02-learning-content.json`、`03-practice-flow.json`、`04-quality-audit.json`、`04-quality-audit.resolution.json`、`05-studykit.json`、`studykit.yaml`、`studykit.md`、`run.json` 和 `validation.json`。
 
 最新外部回归为 Lecture 1–8、concurrency=8、8/8 成功，平均人工质量分 91/100。所有结果通过确定性验证，但修复后的语义没有二次 Audit；因此数据库必须保存 `review_status`，不能把“生成成功”直接当成“已发布”。
 
 2026-08-10 的 host-authored portable 构建已覆盖官方可用的 23 讲并全部通过确定性
-验证；经随机语义抽查后，紧凑包已保存到
-`data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/`，状态为“批准待数据库导入”。
-统一 chunks 保存在忽略版本控制的 `data/sources/.../full-course-v0.1.0/`。
-数据库导入器必须适配 portable `citation.anchor` 结构；在适配完成前，在线运行时
-继续只读现有 golden 文件。
+验证；reviewed 重复包与统一 chunks 只可保存在被忽略的本地工作数据中，正式 archive
+记录仍为 `validated_draft`，不得把历史离线抽查等同于在线批准。
+在线 adapter 已兼容 portable `citation.anchor`、`page_citations` 和直接页码结构，
+但只有 archive build/document 都为 `approved` 时才对在线运行时可见。
+
+2026-08-12 建立了独立于账号数据库的 `data/archive/studykits.sqlite3`，按
+`(course_id, course_version)` 保存 build，归档最终 JSON、学习者 Markdown、阶段 checkpoint、
+audit/validation 与摘要工件；旧 portable v0.1 审核包保留原 Schema 身份，不做伪迁移。
+2026-08-13 的 `app/catalog/studykits.py` 已提供数据库只读 adapter 和组合 store：
+build/document 双 `approved` 才能满足 ready 查询，archive 优先、人工批准 golden 回退。
+
+2026-08-13 起 `data/` 是私有 `JaamesQin/csdiy_agent-data` submodule。新 checkout 必须先运行
+`git submodule update --init --recursive` 和 `git -C data lfs pull`。私有远端只保留检索所需的
+catalog/manifests、golden、anchored chunks、provenance 与 SQLite；不要把本地 raw PDF、页面图、
+reviewed 重复包或 regression 数据加入 submodule。详见
+[`private-data-submodule.md`](private-data-submodule.md)。
 
 当前在线 API 已从固定回显升级为 Agent 运行时：`app/api/chat_completions.py`
 仍只负责 OpenAI 协议，实际编排位于 `app/agent/`。运行时已经执行主动学习画像、
@@ -43,7 +65,7 @@ API Key 客户端继续把 OpenAI `user` 映射到 `legacy:<user>`。请求体 `
 不能覆盖账号身份。完整认证、CSRF 和数据库迁移契约见
 [账号认证与画像隔离](account_authentication.md)。
 
-当前自动化测试基线为 `294 passed`。在线模型通过现有 `DeepSeekModel` 惰性加载；
+当前自动化测试基线为 `303 passed`。在线模型通过现有 `DeepSeekModel` 惰性加载；
 未配置 `DEEPSEEK_API_KEY` 时规则路由、功能帮助、课程导航、StudyKit 查询、概念解释、
 练习选择、显式画像抽取、Python AST 和 Tree-sitter 多语言语法诊断仍可用；材料问答
 只返回已审核摘要，练习反馈透明降级且不判分。
@@ -508,7 +530,7 @@ fallback_clarification
 
 ### 8.3 当前课程学习能力边界
 
-- `course_navigation` 可以展示全部 118 个课程目标，但必须分别输出目录审核状态、
+- `course_navigation` 可以展示全部 119 个课程目标，但必须分别输出目录审核状态、
   authoring 状态和 `online_studykits`；只有受控 Manifest 可以提供“官方课程页”。
 - `studykit_lookup` 是四项学习能力的统一数据门禁。完整课程、版本、讲次必须经
   `StudyKitStore` 验证；课程级上下文只列 Store 中的 ready 讲次。
@@ -641,7 +663,7 @@ delivery policy（draft/publish，默认 draft）
 - 只复用仓库中的 Schema、SourceChunk、manifest 和确定性工具；`scripts/validate_studykit.py` 与 `scripts/render_studykit.py` 可用于本地检查和渲染。需要多 source、heading/slide/paragraph anchor 时，先扩展 Schema/引用适配层，再调用 StudyKit 生成核心。
 - 固定 Pipeline/Prompt/Schema 版本并写入 `run.json`；保留 `validation.json` 和 audit resolution，便于诊断和人工复核。
 - `resume` 只对完全相同的输入和版本指纹开放；版本变化必须新建 build。若上下文中没有旧阶段产物，不要伪造 resume。
-- Skill 允许宿主使用隔离子任务并行处理 unit；同一 unit 内阶段保持顺序，coordinator 独占 ingestion、fingerprint 和批次汇总。provider 客户端与凭证仍不属于 skill。
+- Skill 允许宿主使用隔离子任务并行处理 unit；每个 build coordinator 独占一个 build root、ingestion、fingerprint 和批次汇总，多个 coordinator 之间不得共享可变 namespace；global coordinator 独占 registry 和全局汇总。provider 客户端与凭证仍不属于 skill。
 - Standard authoring 在装配前检查 LaTeX 单层转义、EvidencePlan 公式/索引覆盖、逐页 unresolved 记录和隐藏文本边界；这些检查不扩大为 strict 的全页复核。
 - Skill 不读取或输出 `reasoning_content`，不把内部评估字段暴露给学习者。
 - 交付前运行本地 Schema、引用、学习顺序和 Markdown 检查；出现未解决 blocker 时不输出成功 Markdown。

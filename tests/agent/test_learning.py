@@ -57,7 +57,7 @@ async def test_catalog_only_course_is_not_mistaken_for_online_studykit() -> None
     )
 
     assert "MIT 6.S081" in result.answer
-    assert "离线制作状态为 `complete`" in result.answer
+    assert "离线制作状态为 `authoring`" in result.answer
     assert "当前没有" in result.answer
 
 
