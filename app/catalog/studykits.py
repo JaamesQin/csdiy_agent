@@ -321,9 +321,9 @@ class ArchivedStudyKitStore(_DocumentStudyKitStore):
             return self._documents
         try:
             documents = self._read_archive()
+        except StudyKitArchiveError:
+            raise
         except (OSError, sqlite3.Error, ValueError, TypeError, json.JSONDecodeError) as exc:
-            if isinstance(exc, StudyKitArchiveError):
-                raise
             raise StudyKitArchiveError("StudyKit archive is unreadable or invalid") from exc
         self._documents = documents
         return documents
