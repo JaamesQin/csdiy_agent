@@ -452,6 +452,15 @@ def _validate_runtime_document(document: dict[str, Any]) -> None:
     for field in ("learning_objectives", "core_concepts", "practice"):
         if not isinstance(document.get(field), list) or not document[field]:
             raise StudyKitArchiveError(f"approved StudyKit has no usable {field}")
+
+    practices = document["practice"]
+    for item in practices:
+        if not isinstance(item, dict):
+            raise StudyKitArchiveError("approved StudyKit practice entry is not an object")
+        for key in ("id", "level", "question", "hint", "deliverable"):
+            if not isinstance(item.get(key), str) or not item[key].strip():
+                raise StudyKitArchiveError(f"approved StudyKit practice entry missing {key}")
+
     scope = document.get("scope")
     if not isinstance(scope, dict) or not isinstance(scope.get("included_sources"), list):
         raise StudyKitArchiveError("approved StudyKit has no usable source scope")
