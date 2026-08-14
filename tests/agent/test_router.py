@@ -17,7 +17,10 @@ def _messages(text: str) -> list[ChatMessage]:
     ("text", "intent"),
     [
         ("推荐一门课程", Intent.COURSE_NAVIGATION),
+        ("查看 MIT 6.7960", Intent.COURSE_NAVIGATION),
+        ("查询 UCB CS61B", Intent.COURSE_NAVIGATION),
         ("查看这讲的 StudyKit", Intent.STUDYKIT_LOOKUP),
+        ("查看 MIT 6.7960 第 2 讲", Intent.STUDYKIT_LOOKUP),
         ("讲义里第 8 页说了什么", Intent.MATERIAL_QUESTION),
         ("解释什么是反向传播", Intent.CONCEPT_EXPLANATION),
         ("给我一道练习", Intent.PRACTICE_SELECTION),

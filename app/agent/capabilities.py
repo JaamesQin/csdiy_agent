@@ -89,73 +89,105 @@ CAPABILITIES: tuple[CapabilitySpec, ...] = (
         CapabilityId.COURSE_NAVIGATION,
         Intent.COURSE_NAVIGATION,
         "课程导航",
-        "unavailable",
-        ("课程导航", "课程推荐", "选课", "学习路线"),
-        "根据目标、基础和时间推荐课程与学习顺序。",
-        (),
-        (),
-        ("正式 Catalog 与完整课程覆盖尚未接入在线编排。",),
-        "当前可以先通过学习画像记录方向和时间。",
+        "available",
+        ("课程导航", "课程推荐", "选课", "学习路线", "course"),
+        "检索现有 CSDIY 课程表，并分别标明目录、离线制作和在线 StudyKit 状态。",
+        (
+            "给出学习方向，获取最多 3 门确定性排序的候选课程。",
+            "输入学校名、课程号或课程名进行精确查询。",
+            "输入“有哪些课程”查看最多 5 门目录候选。",
+        ),
+        (
+            "推荐一门操作系统课程。",
+            "查看 MIT 6.7960。",
+        ),
+        (
+            "多数目录课程尚未完成独立分类审核或在线 StudyKit 导入。",
+            "目录收录不代表课程内容已经可以在线问答。",
+        ),
     ),
     CapabilitySpec(
         CapabilityId.STUDYKIT_LOOKUP,
         Intent.STUDYKIT_LOOKUP,
         "StudyKit 查询",
-        "unavailable",
-        ("studykit 查询", "studykit", "学习包", "学习包查询"),
+        "available",
+        ("studykit 查询", "studykit", "学习包", "学习包查询", "studykit lookup"),
         "查询已经审核的课程学习包。",
-        (),
-        (),
-        ("当前黄金 StudyKit 只作为代码辅导的受控上下文读取。",),
-        "可以在关联课程的代码问题中请求基于已审核材料的解释。",
+        (
+            "指定课程、版本和讲次查看学习目标、概念、练习和官方来源。",
+            "只指定课程时会列出当前在线可用讲次。",
+        ),
+        ("查看 MIT 6.7960 第 2 讲的 StudyKit。",),
+        (
+            "当前在线仅覆盖 Lecture 2 和 Lecture 8 两份人工批准的 golden StudyKit。",
+            "离线 reviewed portable 包尚未自动导入。",
+        ),
     ),
     CapabilitySpec(
         CapabilityId.MATERIAL_QUESTION,
         Intent.MATERIAL_QUESTION,
         "材料问答",
-        "unavailable",
-        ("材料问答", "讲义问答", "材料查询"),
-        "基于课程讲义和用户有权使用的材料回答问题并附来源。",
-        (),
-        (),
-        ("权限过滤的 SourceChunk 检索尚未接入。",),
-        "当前不要依赖 CoursePilot 回答尚未进入已审核 StudyKit 的课程事实。",
+        "available",
+        ("材料问答", "讲义问答", "材料查询", "material"),
+        "基于当前已审核 StudyKit 的公开摘要回答问题并附页码依据。",
+        (
+            "先指定在线可用的课程和讲次，再询问材料中的概念或页码。",
+            "回答只使用 StudyKit 中带页码的概念、提纲和误区说明。",
+        ),
+        ("MIT 6.7960 第 2 讲的讲义里，反向传播和梯度下降有什么区别？",),
+        (
+            "SourceChunk 检索尚未上线，不能回答 StudyKit 未覆盖的任意原文细节。",
+            "证据不足时会明确拒绝猜测。",
+        ),
     ),
     CapabilitySpec(
         CapabilityId.CONCEPT_EXPLANATION,
         Intent.CONCEPT_EXPLANATION,
         "课程概念解释",
-        "unavailable",
-        ("课程概念解释", "概念解释"),
+        "available",
+        ("课程概念解释", "概念解释", "concept"),
         "结合课程上下文分层解释概念。",
-        (),
-        (),
-        ("通用概念解释尚未接入在线执行路径。",),
-        "可以把相关代码与具体疑问交给静态代码辅导。",
+        (
+            "指定课程讲次和概念名称。",
+            "结果按定义、直觉、公式或说明、常见误区和来源组织。",
+        ),
+        ("解释 MIT 6.7960 第 2 讲的反向传播。",),
+        ("只解释当前 StudyKit 已覆盖且有可核查页码的概念。",),
     ),
     CapabilitySpec(
         CapabilityId.PRACTICE_SELECTION,
         Intent.PRACTICE_SELECTION,
         "练习选择",
-        "unavailable",
-        ("练习选择", "推荐练习"),
+        "available",
+        ("练习选择", "推荐练习", "practice"),
         "根据目标和当前进度选择已审核练习。",
-        (),
-        (),
-        ("在线练习选择器尚未接入。",),
-        "当前可记录学习目标，等待练习能力接入。",
+        (
+            "指定在线可用课程讲次，并可选择概念、推导、代码阅读、调试或迁移题。",
+            "当前对话默认不重复展示同一道题，也可以用 practice ID 指定重看。",
+        ),
+        ("给我一道 MIT 6.7960 第 2 讲的调试练习。",),
+        (
+            "首次展示不包含提示、预期证据或评分标准。",
+            "练习历史不跨会话保存。",
+        ),
     ),
     CapabilitySpec(
         CapabilityId.PRACTICE_FEEDBACK,
         Intent.PRACTICE_FEEDBACK,
         "练习反馈",
-        "unavailable",
-        ("练习反馈", "答案反馈", "作业反馈"),
+        "available",
+        ("练习反馈", "答案反馈", "作业反馈", "feedback"),
         "评价当前练习回答并提供分层提示。",
-        (),
-        (),
-        ("受控练习评估器尚未接入在线编排。",),
-        "代码类尝试可以使用静态代码辅导，但不会获得完整答案。",
+        (
+            "在请求中携带当前讲次的 practice ID 和这一次答案。",
+            "结果只指出正确点、一个关键遗漏、下一层提示和相关页码。",
+        ),
+        ("点评 practice-concept-01。我的答案是……",),
+        (
+            "不保存答案，不累计分数、正确率或整体掌握度。",
+            "模型不可用时不做粗略判分，只返回原题提示和补充要求。",
+            "不会提供可直接提交的完整作业答案。",
+        ),
     ),
     CapabilitySpec(
         CapabilityId.LEARNING_REVIEW,
@@ -309,7 +341,16 @@ def _render_overview(unknown_topic: str | None) -> str:
         lines.extend([f"没有找到帮助主题 `{safe_topic}`。", ""])
     lines.extend(["## CoursePilot 当前功能", ""])
     for index, item in enumerate(available_capabilities(), start=1):
-        command = "profile" if item.capability_id is CapabilityId.PROFILE_ANALYSIS else "code"
+        command = {
+            CapabilityId.PROFILE_ANALYSIS: "profile",
+            CapabilityId.CODE_TUTORING: "code",
+            CapabilityId.COURSE_NAVIGATION: "course",
+            CapabilityId.STUDYKIT_LOOKUP: "studykit",
+            CapabilityId.MATERIAL_QUESTION: "material",
+            CapabilityId.CONCEPT_EXPLANATION: "concept",
+            CapabilityId.PRACTICE_SELECTION: "practice",
+            CapabilityId.PRACTICE_FEEDBACK: "feedback",
+        }.get(item.capability_id, item.capability_id.value)
         lines.extend(
             [
                 f"{index}. **{item.title}**",
@@ -320,8 +361,8 @@ def _render_overview(unknown_topic: str | None) -> str:
     lines.extend(
         [
             "",
-            "这里只列出已经上线的学习能力。课程导航、材料问答、练习反馈和学习复盘仍在建设中。",
-            "也可以直接问“代码辅导支持什么语言”或“学习画像怎么用”。",
+            "这里只列出已经上线的学习能力。SourceChunk 检索、私有材料和学习复盘仍在建设中。",
+            "也可以直接问“材料问答怎么用”“代码辅导支持什么语言”或“学习画像怎么用”。",
         ]
     )
     return "\n".join(lines)

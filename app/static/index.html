@@ -95,7 +95,7 @@
           <h1>从一次真实对话开始。</h1>
           <p>
             页面通过账号会话调用本机的 <code>/v1/chat/completions</code>；学习画像只属于当前账号，
-            并可体验功能帮助、多语言静态代码辅导和 SSE 流式输出。
+            并可体验课程导航、已审核 StudyKit 学习、多语言静态代码辅导和 SSE 流式输出。
           </p>
           <div class="starter-grid">
             <button class="starter" type="button" data-prompt="/help">
@@ -113,6 +113,22 @@
             <button class="starter" type="button" data-prompt="删除我的画像">
               <span>删除学习画像</span>
               <small>清除当前账号的服务器端画像</small>
+            </button>
+            <button class="starter" type="button" data-prompt="推荐一门深度学习课程，并标明在线 StudyKit 状态。">
+              <span>课程导航</span>
+              <small>检索现有课程表并区分三类就绪状态</small>
+            </button>
+            <button class="starter" type="button" data-prompt="查看 MIT 6.7960 第 2 讲的 StudyKit。">
+              <span>查看 StudyKit</span>
+              <small>只读取 Schema 合法且人工批准的学习包</small>
+            </button>
+            <button class="starter" type="button" data-prompt="解释 MIT 6.7960 第 2 讲的反向传播。">
+              <span>课程概念解释</span>
+              <small>按定义、直觉、误区和来源分层说明</small>
+            </button>
+            <button class="starter" type="button" data-prompt="给我一道 MIT 6.7960 第 2 讲的调试练习。">
+              <span>练习选择</span>
+              <small>练习和反馈不跨会话保存或累计评分</small>
             </button>
             <button
               class="starter"

@@ -11,6 +11,8 @@ from app.agent.model_support import add_usage, normalized_usage
 from app.agent.router import IntentRouter
 from app.catalog.studykits import StudyKitStore
 from app.code_tutor.service import CodeTutorService, render_tutor_result
+from app.course_navigation.service import CourseNavigationService
+from app.learning.service import StudyKitLookupService
 from app.profile.contracts import FactStatus, LearnerProfile
 from app.profile.service import ProfileAction, ProfileService
 from app.protocol.schemas import ChatMessage
@@ -24,11 +26,15 @@ class CoursePilotAgent:
         router: IntentRouter,
         profiles: ProfileService,
         code_tutor: CodeTutorService,
+        course_navigation: CourseNavigationService,
+        studykit_learning: StudyKitLookupService,
     ) -> None:
         self.store = store
         self.router = router
         self.profiles = profiles
         self.code_tutor = code_tutor
+        self.course_navigation = course_navigation
+        self.studykit_learning = studykit_learning
 
     async def handle(
         self,
@@ -91,6 +97,43 @@ class CoursePilotAgent:
 
         if decision.intent is Intent.PROFILE_ANALYSIS:
             answer = self.profiles.render(profile)
+        elif decision.intent is Intent.COURSE_NAVIGATION:
+            answer = self.course_navigation.navigate(text=latest, profile=profile)
+        elif decision.intent is Intent.STUDYKIT_LOOKUP:
+            result = await self.studykit_learning.lookup(
+                messages=messages,
+                course_context=decision.course_context,
+            )
+            answer = result.answer
+            usage = add_usage(usage, result.usage)
+        elif decision.intent is Intent.MATERIAL_QUESTION:
+            result = await self.studykit_learning.material_question(
+                messages=messages,
+                course_context=decision.course_context,
+            )
+            answer = result.answer
+            usage = add_usage(usage, result.usage)
+        elif decision.intent is Intent.CONCEPT_EXPLANATION:
+            result = await self.studykit_learning.concept_explanation(
+                messages=messages,
+                course_context=decision.course_context,
+            )
+            answer = result.answer
+            usage = add_usage(usage, result.usage)
+        elif decision.intent is Intent.PRACTICE_SELECTION:
+            result = await self.studykit_learning.practice_selection(
+                messages=messages,
+                course_context=decision.course_context,
+            )
+            answer = result.answer
+            usage = add_usage(usage, result.usage)
+        elif decision.intent is Intent.PRACTICE_FEEDBACK:
+            result = await self.studykit_learning.practice_feedback(
+                messages=messages,
+                course_context=decision.course_context,
+            )
+            answer = result.answer
+            usage = add_usage(usage, result.usage)
         elif decision.intent is Intent.CODE_TUTORING:
             turn = build_turn_context(messages)
             result = await self.code_tutor.tutor_code(
@@ -164,16 +207,18 @@ class CoursePilotAgent:
         if reason == "greeting":
             if not profile.confirmed("learning_directions") or not profile.confirmed("weekly_minutes"):
                 return (
-                    "你好，我是 CoursePilot。我可以先建立学习画像，或对你粘贴的代码做静态辅导。"
+                    "你好，我是 CoursePilot。我可以导航课程、查询已审核 StudyKit、"
+                    "讲解材料与练习，也可以建立学习画像或静态分析代码。"
                     "输入 /help 可以查看当前功能。你想学习哪个 CS 方向？每周大约能投入多少时间？"
                 )
             return (
-                "你好，我已经读取了你的学习画像。你可以继续让我分析代码或查看画像；"
+                "你好，我已经读取了你的学习画像。你可以继续选课、学习已审核 StudyKit、"
+                "分析代码或查看画像；"
                 "输入 /help 可以查看当前功能。"
             )
         if clarifying_question:
-            return f"我可以帮助整理学习画像或静态分析代码。{clarifying_question}"
-        return "请说明你希望整理学习画像，还是分析一段代码。"
+            return f"我可以帮助课程学习、整理学习画像或静态分析代码。{clarifying_question}"
+        return "请说明你希望选课、学习已审核 StudyKit、整理画像，还是分析代码。"
 
     @staticmethod
     def _unavailable_answer(intent: Intent, clarification: str | None) -> str:
@@ -184,6 +229,6 @@ class CoursePilotAgent:
         suffix = f"\n\n{clarification}" if clarification else ""
         return (
             f"我识别到你的意图是“{label}”，但该在线能力尚未接入。"
-            "当前可用的是学习画像和静态代码辅导；我不会在缺少检索依据时编造课程事实。"
+            "输入 /help 可以查看当前已上线能力；我不会在缺少检索依据时编造课程事实。"
             f"{suffix}"
         )

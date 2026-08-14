@@ -206,7 +206,44 @@ Python/Triton AST、解析器失败降级和未标语言边界。
 - 未标语言不会默认按 Python 解析，课程专用 DSL 和解析器异常会透明降级；
 - 所有代码辅导路径仍为 `ran_code=false`，OpenAI JSON/SSE 顺序和真实 loopback HTTP 保持兼容。
 
-## 10. 2026-08-11 StudyKit 语义质量校准准备
+## 10. 2026-08-12 课程导航与 StudyKit 学习能力验证
+
+本节记录课程导航、StudyKit 查询、材料问答、概念解释、练习选择和练习反馈接入后的
+最新候选版本；前述 254 项结果保留为历史基线。
+
+```text
+.venv/bin/pytest -q --ignore=tests/integration/test_local_http.py
+290 passed
+
+.venv/bin/pytest -q tests/integration/test_local_http.py
+4 passed
+```
+
+合并数据库 adapter 后，普通测试为 `299 passed`，loopback HTTP/SSE 为 `4 passed`，
+合计 `303 passed`。新增验证确认：
+
+- CSDIY registry 的 119 个课程目标通过类型、唯一 ID、导航 provenance、状态和
+  Manifest 路径校验；损坏或重复数据失败关闭，不交给模型补全；
+- 课程导航的精确匹配、方向推荐和稳定排序分别限制为 5/3 个结果，并把目录分类、
+  离线 authoring 和在线 StudyKit 三种状态分开；
+- 当前仅 MIT 6.7960 Lecture 2/8 标记为在线 ready；MIT 6.S081 的离线 `authoring`
+  不会被误报为在线 StudyKit 可用；
+- `第 8 页` 不再被解析为 `lecture-08`，不完整身份只有在 Store 中唯一时才采用；
+- StudyKit 学习者投影不包含 `expected_evidence`、evaluation/rubric、审计字段、
+  `local_path` 或 `data/raw` 路径；
+- 材料模型只能返回引用白名单 ID；未知引用、未知页码、模型失败和未配置模型均进入
+  有证据的确定性降级；
+- 概念解释只使用带页码的已审核概念；练习首次不泄漏 hint/rubric，并在当前 messages
+  中避免重复；
+- 练习反馈要求 practice ID 和当前答案，只允许白名单页码，不保存答案、不累计分数或
+  掌握度；模型不可用或返回非法页码时不做关键词粗评；
+- 六项能力的真实 `/v1/chat/completions` 非流式 envelope 和课程概念 SSE
+  role/content/单 stop/`[DONE]` 顺序保持兼容。
+
+`COURSEPILOT_DB_PATH` 仍只保存账号、会话和画像事实；SourceChunk、私有 MaterialSet 和
+跨会话练习状态仍未上线。
+
+## 11. 2026-08-11 StudyKit 语义质量校准准备
 
 本节记录离线 StudyKit 批量生成的质量门禁准备，不代表新的课程样本已经生成或通过校准。
 standard authoring 现在要求每道练习绑定到 EvidencePlan/Content 的具体内容，给出学习者
@@ -225,7 +262,7 @@ mismatch 都阻止 completion/false-complete。portable/deterministic Schema pas
 逐题语义审计。后续六课循环已完成 161/161 validated、161/161 audited 和 6/6 build
 `succeeded`；五课仍有课程级 visual-review gate，因此 catalog 全局 release gate 仍未关闭。
 
-## 11. 2026-08-13 私有数据 submodule 验证
+## 12. 2026-08-13 私有数据 submodule 与在线 adapter 验证
 
 - 私有仓库 `JaamesQin/csdiy_agent-data` 的 `main` 固定到 `f4b25bb`，GitHub 属性为 private；
 - 主仓库 `data` gitlink 固定到同一提交，迁移提交为 `f7cab57`；
@@ -235,7 +272,7 @@ mismatch 都阻止 completion/false-complete。portable/deterministic Schema pas
 - 归档计数为 12 builds、286 documents、12,008 artifacts，review status 全部为
   `validated_draft`；
 - 424 个本地 Git LFS 对象通过 `git lfs fsck`，submodule tracked worktree clean；
-- `tests/retrieval`、`tests/catalog/test_studykit_archive.py` 与
-  `tests/generation/test_quality_profile.py` 合计 34 项通过；
-- 原始 PDF、reviewed 重复包等恢复为 submodule 内 ignored 本地数据，迁移前快照暂存于
-  ignored `storage/data-before-private-submodule/`，本轮未删除。
+- `tests/catalog/test_studykit_archive.py` 从真实 archive 抽取 portable v0.1/v0.2.1 行，
+  在临时测试库中设为 approved，验证双 review gate、哈希/身份/schema/table 失败关闭、
+  archive 优先、golden 回退以及六项在线能力；正式 archive 未被修改；
+- 当前 catalog 为 119 个课程目标、13 个 manifest 绑定；archive 仍为 0 online-ready。

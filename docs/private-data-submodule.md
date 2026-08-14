@@ -13,8 +13,10 @@ git -C data lfs pull
 
 The retrieval archive is `data/archive/studykits.sqlite3`. Its imported
 records retain their review status: `validated_draft` is not online-ready,
-and only separately approved records may be exposed by a future online
-StudyKit store.
+and the online StudyKit store exposes an archive document only when both its
+build and document review status are `approved`. The current archive has no
+approved records, so the runtime continues to fall back to the human-approved
+golden StudyKits.
 
 The private remote intentionally contains only retrieval-relevant data:
 

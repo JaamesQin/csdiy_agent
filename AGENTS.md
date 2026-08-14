@@ -14,11 +14,13 @@
   six-course repair is globally complete without every gate passing.
 - Online course facts must come from a validated `StudyKitStore` or future permission-filtered retrieval. Do not let a router or model invent course/version/unit identity.
 - The current file store may read only Schema-valid, human-approved golden StudyKits. Do not mutate golden artifacts from online code.
+- `CourseCatalogStore` keeps catalog IDs separate from Manifest/StudyKit identities. Catalog, authoring, and online-ready status must be rendered separately; unreviewed candidate offerings are not official links.
+- Database-backed StudyKit storage must preserve the current `get_ready`, `list_ready`, `resolve_context`, and `match_context` semantics and review gates.
 - `data/` is the private `JaamesQin/csdiy_agent-data` submodule. Git LFS stores
   `data/archive/studykits.sqlite3` and anchored JSONL chunks; initialize it before running
   data-dependent tests. The archive remains separate from the account/profile SQLite database.
   Imports retain an explicit review status; `validated_draft` records are not online-ready, and
-  only `approved` records may satisfy a future online store.
+  only `approved` build and document records may satisfy the online store.
 
 ## Identity and persistence
 
@@ -48,6 +50,8 @@
 - `app/agent/capabilities.py` is the source of truth for learner-visible capability status and help. General help lists only available capabilities and must return before profile observation or persistence.
 - Do not expose `expected_evidence`, evaluation rubrics, evidence controls, audit diagnostics, or hidden reasoning to learners.
 - Refuse complete submit-ready coursework solutions while still offering diagnosis, tests, and layered hints.
+- Material answers and concept explanations may use only ready StudyKit fields with allowed page citations until permission-filtered SourceChunk retrieval exists. An arbitrary page request without evidence must fail transparently.
+- Practice selection and feedback are stateless. Do not persist answers, scores, aggregate accuracy, or mastery; model failure must degrade to the original hint and allowed pages, not keyword grading.
 
 ## Compatibility and tests
 
