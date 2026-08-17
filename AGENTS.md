@@ -52,6 +52,7 @@
 - Refuse complete submit-ready coursework solutions while still offering diagnosis, tests, and layered hints.
 - Material answers and concept explanations may use only ready StudyKit fields with allowed page citations until permission-filtered SourceChunk retrieval exists. An arbitrary page request without evidence must fail transparently.
 - Practice selection and feedback are stateless. Do not persist answers, scores, aggregate accuracy, or mastery; model failure must degrade to the original hint and allowed pages, not keyword grading.
+- TaskPlan model calls are counted separately; each concrete online capability may call the model at most once per request. Do not add online generator→reviewer chains. Practice presentation may use one controlled structured rewrite and must fall back to the approved original on validation failure.
 
 ## Compatibility and tests
 

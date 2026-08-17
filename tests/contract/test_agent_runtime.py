@@ -83,6 +83,49 @@ def test_agent_usage_is_forwarded_to_stream_stop_frame(
     }
 
 
+def test_optional_coursepilot_context_round_trips_only_on_stream_stop_frame(
+    client: ASGITestClient,
+    auth_headers: dict[str, str],
+) -> None:
+    class ContextAgent:
+        supplied: str | None = None
+
+        async def handle(
+            self,
+            *,
+            messages: list[ChatMessage],
+            user_id: str | None,
+            coursepilot_context: str | None = None,
+        ) -> AgentReply:
+            del messages, user_id
+            self.supplied = coursepilot_context
+            return AgentReply(
+                answer="继续练习",
+                coursepilot_context="signed-next-context",
+            )
+
+    agent = ContextAgent()
+    app.dependency_overrides[get_coursepilot_agent] = lambda: agent
+    try:
+        response = client.post(
+            "/v1/chat/completions",
+            headers=auth_headers,
+            json={
+                "messages": [{"role": "user", "content": "下一层提示"}],
+                "coursepilot_context": "signed-current-context",
+                "stream": True,
+            },
+        )
+    finally:
+        app.dependency_overrides.pop(get_coursepilot_agent, None)
+
+    frames = [event for event in parse_sse(response.text) if isinstance(event, dict)]
+    assert agent.supplied == "signed-current-context"
+    assert all("coursepilot_context" not in frame for frame in frames[:-1])
+    assert frames[-1]["choices"][0]["finish_reason"] == "stop"
+    assert frames[-1]["coursepilot_context"] == "signed-next-context"
+
+
 def test_unhandled_agent_error_is_sanitized(
     client: ASGITestClient, auth_headers: dict[str, str]
 ) -> None:

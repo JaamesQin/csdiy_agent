@@ -127,3 +127,14 @@ credential: <COURSEPILOT_API_KEY>
 - [ ] 数据库版本为 2，备份和恢复演练通过；
 - [ ] 反向代理限流、日志脱敏和 HTTPS 验证通过；
 - [ ] 清小搭协议探测和真实试聊通过。
+# Online Agent P0–P2 release note
+
+The optional `coursepilot_context` extension is additive. Existing OpenAI-compatible envelopes and
+the SSE role/content/single-stop/`[DONE]` order remain unchanged. Private retrieval and vector search
+are not included in this release.
+
+Practice selection now automatically performs one controlled structured rewrite and falls back to the
+approved original on any model or validation failure. Context v2 adds only presentation kind/digest
+continuity and accepts v1 tokens. TaskPlan is counted separately; every concrete online capability is
+limited to one model call, with no second online semantic reviewer. Set
+`COURSEPILOT_PRACTICE_REWRITE_ENABLED=false` for an immediate presentation rollback.

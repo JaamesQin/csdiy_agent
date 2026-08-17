@@ -12,11 +12,14 @@ from app.agent.contracts import CourseContext
 from app.agent.model_support import normalized_usage
 from app.catalog.studykits import StudyKitStore
 from app.code_tutor.contracts import (
+    CodeArtifact,
     CodeTutorContext,
     TutorCitation,
     TutorDraft,
     TutorResult,
+    TutorHypothesis,
 )
+from app.code_tutor.error_parsers import parse_toolchain_errors
 from app.code_tutor.static_analysis import StaticAnalysis, analyze_static_code
 from app.generation.model import ModelError, StructuredModel
 from app.profile.contracts import FactStatus, LearnerProfile
@@ -48,6 +51,8 @@ class CodeTutorService:
         error_text: str | None,
         question: str,
         profile: LearnerProfile,
+        filename: str | None = None,
+        previous_artifact: CodeArtifact | None = None,
     ) -> TutorResult:
         del user_id, conversation_id  # Reserved for future CodeArtifact persistence.
         if not code.strip():
@@ -64,7 +69,22 @@ class CodeTutorService:
             )
 
         analysis = analyze_static_code(code, language)
-        diagnostics = analysis.diagnostics
+        artifact = CodeArtifact.create(
+            code,
+            language=analysis.normalized_language,
+            filename=filename,
+            previous=previous_artifact,
+        )
+        diagnostics = [
+            item.model_copy(
+                update={
+                    "artifact_id": artifact.artifact_id,
+                    "end_line": item.end_line or item.line,
+                }
+            )
+            for item in analysis.diagnostics
+        ]
+        diagnostics.extend(parse_toolchain_errors(error_text, artifact=artifact))
         if ACADEMIC_CONTEXT.search(question) and FULL_SOLUTION.search(question):
             return TutorResult(
                 answer=(
@@ -80,6 +100,10 @@ class CodeTutorService:
                 ran_code=False,
                 safety_notes=["学术诚信模式：未生成完整解答。", "代码仅做静态分析，未运行。"],
                 usage=normalized_usage(),
+                artifact=artifact,
+                bound_hypotheses=self._bind_hypotheses(
+                    artifact, diagnostics, [item.message for item in diagnostics]
+                ),
             )
 
         context = self._build_context(
@@ -130,11 +154,12 @@ class CodeTutorService:
                 draft = None
 
         allowed = {citation.citation_id: citation for citation in context.allowed_citations}
-        citations = (
-            [allowed[item] for item in draft.citation_ids if item in allowed]
-            if draft is not None
-            else context.allowed_citations[:2]
-        )
+        if draft is None:
+            citations = context.allowed_citations[:2]
+        else:
+            # Tutor citations are a resource list, not prose claims. Invalid IDs
+            # are removed here; claim partitions use enforce_provenance atomically.
+            citations = [allowed[item] for item in draft.citation_ids if item in allowed]
         if draft is None:
             answer = (
                 "已完成静态检查。优先处理下面的确定性诊断，再用最小输入验证行为；"
@@ -166,7 +191,51 @@ class CodeTutorService:
             ran_code=False,
             safety_notes=safety_notes,
             usage=usage,
+            artifact=artifact,
+            bound_hypotheses=self._bind_hypotheses(
+                artifact, diagnostics, hypotheses, next_checks
+            ),
         )
+
+    @staticmethod
+    def _bind_hypotheses(
+        artifact: CodeArtifact,
+        diagnostics: list,
+        hypotheses: list[str],
+        next_checks: list[str] | None = None,
+    ) -> list[TutorHypothesis]:
+        bound: list[TutorHypothesis] = []
+        checks = next_checks or []
+        for index, text in enumerate(hypotheses[:3]):
+            diagnostic = diagnostics[index] if index < len(diagnostics) else None
+            line = diagnostic.line if diagnostic is not None else None
+            if line is None:
+                line = 1 if artifact.line_count else 1
+            line = max(1, min(line, max(artifact.line_count, 1)))
+            end_line = (
+                diagnostic.end_line
+                if diagnostic is not None and diagnostic.end_line is not None
+                else line
+            )
+            end_line = max(line, min(end_line, max(artifact.line_count, line)))
+            support_id = diagnostic.code if diagnostic is not None else "model_hypothesis"
+            bound.append(
+                TutorHypothesis(
+                    text=text,
+                    artifact_id=artifact.artifact_id,
+                    language=artifact.language,
+                    start_line=line,
+                    end_line=end_line,
+                    support_id=support_id,
+                    verification_step=(
+                        checks[index]
+                        if index < len(checks)
+                        else "用最小输入验证该假设，并比较期望与实际中间状态。"
+                    ),
+                    pending_verification=diagnostic is None,
+                )
+            )
+        return bound
 
     @staticmethod
     def _parse_model_draft(output: dict[str, Any]) -> TutorDraft:
@@ -298,25 +367,25 @@ class CodeTutorService:
     @staticmethod
     def _select_concepts(document: dict[str, Any], text: str) -> list[dict[str, Any]]:
         lowered = text.lower()
-        aliases = {
-            "backward": "backpropagation",
-            ".backward": "backpropagation",
-            "grad": "gradient",
-            "attention": "attention",
-            "softmax": "softmax",
-            "shape": "tensor",
-        }
-        expanded = lowered + " " + " ".join(
-            target for source, target in aliases.items() if source in lowered
-        )
+        query_tokens = set(re.findall(r"[a-z][a-z0-9_]{2,}|[\u4e00-\u9fff]{2,}", lowered))
         scored: list[tuple[int, dict[str, Any]]] = []
         for concept in document.get("core_concepts", []):
-            terms = [
-                str(concept.get("term_en", "")).lower(),
-                str(concept.get("term_zh", "")).lower(),
-                str(concept.get("id", "")).lower().replace("concept-", "").replace("-", " "),
-            ]
-            score = sum(1 for term in terms if term and term in expanded)
+            searchable = " ".join(
+                str(concept.get(key, "")).lower()
+                for key in ("id", "term_en", "term_zh", "explanation", "intuition")
+            )
+            concept_tokens = set(
+                re.findall(r"[a-z][a-z0-9_]{2,}|[\u4e00-\u9fff]{2,}", searchable)
+            )
+            exact = sum(token in searchable for token in query_tokens)
+            prefix = sum(
+                1
+                for query_token in query_tokens
+                for concept_token in concept_tokens
+                if min(len(query_token), len(concept_token)) >= 4
+                and _common_prefix(query_token, concept_token) >= 4
+            )
+            score = exact * 3 + prefix
             if score:
                 scored.append((score, concept))
         scored.sort(key=lambda item: item[0], reverse=True)
@@ -361,6 +430,15 @@ class CodeTutorService:
     @staticmethod
     def _dedupe(items: list[str]) -> list[str]:
         return list(dict.fromkeys(item.strip() for item in items if item.strip()))
+
+
+def _common_prefix(left: str, right: str) -> int:
+    count = 0
+    for left_char, right_char in zip(left, right):
+        if left_char != right_char:
+            break
+        count += 1
+    return count
 
 
 def render_tutor_result(result: TutorResult) -> str:

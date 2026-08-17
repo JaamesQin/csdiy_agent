@@ -276,3 +276,33 @@ mismatch 都阻止 completion/false-complete。portable/deterministic Schema pas
   在临时测试库中设为 approved，验证双 review gate、哈希/身份/schema/table 失败关闭、
   archive 优先、golden 回退以及六项在线能力；正式 archive 未被修改；
 - 当前 catalog 为 119 个课程目标、13 个 manifest 绑定；archive 仍为 0 online-ready。
+# Online Agent P0–P2 validation
+
+Validation covers TaskPlan DAG limits, partial execution, provenance partition degradation, public
+SourceChunk filters and hashes, context tamper/expiry behavior, expired profile confirmation,
+CodeArtifact line binding/toolchain parsing, and fit/readiness separation. All model paths use fakes;
+tests do not execute learner code or require network access.
+
+## Opt-in provider-backed acceptance
+
+`scripts/run_live_agent_acceptance.py` is a manual, credentialed acceptance suite and is intentionally
+excluded from pytest. It sends only synthetic learner text and an invented StudyKit/practice to the
+configured provider; it does not send repository StudyKit content, persist conversations, or print
+model prose or credentials.
+
+```bash
+DEEPSEEK_API_KEY=... .venv/bin/python scripts/run_live_agent_acceptance.py
+```
+
+The current suite also asserts the online call budget: TaskPlan is separate and profile, material,
+practice presentation, practice feedback, general explanation, and code tutoring each use at most one
+model call. Practice presentation checks a non-placeholder structured rewrite, original objective/ID
+retention, hidden-control safety, and transparent original-question fallback. The provider-backed run
+prints only verdict, call-count, usage, presentation kind, and sanitized fallback-code metadata.
+
+The final 2026-08-17 `deepseek-v4-flash` run passed 7/7 checks with 4,310 reported tokens. Planning
+used one successful call; profile, material, general explanation, practice feedback, and code tutoring
+each reported exactly one capability model call. Practice presentation ran three independent requests,
+each used one call, and all 3/3 produced non-fallback `structured_rewrite` results. Check-level latency
+was P50 2,221 ms and P95 9,324 ms (the presentation check includes three sequential samples), with
+zero presentation fallbacks. No provider prose, credentials, learner data, or repository StudyKit

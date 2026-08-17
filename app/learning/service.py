@@ -3,24 +3,33 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import re
 from dataclasses import dataclass
 from typing import Any
 
 from pydantic import ValidationError
 
-from app.agent.contracts import CourseContext
+from app.agent.contracts import AnswerClaim, CourseContext, ProvenanceKind
 from app.agent.model_support import normalized_usage
+from app.agent.provenance import ProvenanceResult, enforce_provenance, render_claims
 from app.catalog.courses import CatalogDataError, CourseCatalogStore
 from app.catalog.studykits import StudyKitStore
 from app.generation.model import ModelError, StructuredModel
 from app.learning.contracts import (
     LearningReply,
     MaterialAnswerDraft,
+    PracticePresentationDraft,
     PracticeFeedbackDraft,
 )
 from app.protocol.schemas import ChatMessage
 from app.retrieval.practice import render_practice_prompt
+from app.retrieval.source_chunks import (
+    AccessScope,
+    SourceChunkRetriever,
+    SourceChunkStore,
+)
+from app.agent.contracts import StudyKitCourseIdentity
 
 
 _FULL_SOLUTION = re.compile(
@@ -61,6 +70,13 @@ class _EvidenceItem:
     search_terms: tuple[str, ...]
 
 
+class _PracticeRewriteError(ValueError):
+    def __init__(self, code: str, usage: dict[str, int] | None = None) -> None:
+        super().__init__(code)
+        self.code = code
+        self.usage = normalized_usage(usage)
+
+
 class StudyKitLookupService:
     """Read-only StudyKit learning features with no answer persistence."""
 
@@ -69,10 +85,14 @@ class StudyKitLookupService:
         store: StudyKitStore,
         model: StructuredModel | None = None,
         catalog: CourseCatalogStore | None = None,
+        source_chunks: SourceChunkStore | None = None,
+        practice_rewrite_enabled: bool = True,
     ) -> None:
         self.store = store
         self.model = model
         self.catalog = catalog
+        self.source_chunks = source_chunks
+        self.practice_rewrite_enabled = practice_rewrite_enabled
 
     async def lookup(
         self,
@@ -111,8 +131,31 @@ class StudyKitLookupService:
         if document is None:
             return self._reply(unavailable)
         question = _latest_user_text(messages)
-        candidates = self._select_evidence(document, question)
         page = self._requested_page(question)
+        candidates: list[_EvidenceItem] = []
+        if self.source_chunks is not None and course_context is not None:
+            # Retrieval is deterministic in the online request path.  The one
+            # capability model call is reserved for the learner-visible answer.
+            hits = await SourceChunkRetriever(self.source_chunks).retrieve(
+                question,
+                AccessScope(),
+                StudyKitCourseIdentity.from_context(course_context),
+                page_filter=page,
+                limit=8,
+            )
+            candidates = [
+                _EvidenceItem(
+                    citation_id=hit.chunk.chunk_id,
+                    kind="source_chunk",
+                    text=hit.chunk.text,
+                    source_id=hit.chunk.source_id,
+                    pages=(hit.chunk.page,) if hit.chunk.page is not None else (),
+                    search_terms=(),
+                )
+                for hit in hits
+            ]
+        if not candidates:
+            candidates = self._select_evidence(document, question)
         if not candidates:
             if page is not None:
                 return self._reply(
@@ -120,6 +163,9 @@ class StudyKitLookupService:
                     "SourceChunk 检索尚未上线，因此我不会猜测该页原文；请回看官方材料，"
                     "或改问 StudyKit 已覆盖的核心概念。"
                 )
+            general = await self._general_explanation(question)
+            if general is not None:
+                return general
             return self._reply(
                 "当前 StudyKit 中没有找到与这个问题直接对应且带页码的已审核内容。"
                 "SourceChunk 检索尚未上线，因此我不会用通用知识补成课程事实。"
@@ -130,8 +176,9 @@ class StudyKitLookupService:
             try:
                 response = await self.model.generate_json(
                     system_prompt=(
-                        "你是 CoursePilot 材料问答器。只能使用 evidence 中的文字，"
-                        "不得补充外部课程事实。每个结论必须由 citation_ids 支持；"
+                        "你是 CoursePilot 材料问答器。课程材料结论只能使用 evidence，"
+                        "且每条 course_material claim 必须由 citation_ids 支持；"
+                        "通用解释必须单列为 general_knowledge、不得声称课程身份或页码且 citations 为空。"
                         "不得引用未提供的 ID。只输出 JSON object。"
                     ),
                     user_prompt=json.dumps(
@@ -148,8 +195,13 @@ class StudyKitLookupService:
                                 for item in candidates
                             ],
                             "output_contract": {
-                                "answer": "answer using only evidence",
-                                "citation_ids": ["one or more allowed ids"],
+                                "claims": [
+                                    {
+                                        "text": "one concise claim",
+                                        "provenance": "course_material or general_knowledge",
+                                        "citation_ids": ["required allowed IDs for course_material; empty for general_knowledge"],
+                                    }
+                                ]
                             },
                         },
                         ensure_ascii=False,
@@ -161,14 +213,32 @@ class StudyKitLookupService:
                 usage = normalized_usage(response.usage)
                 draft = MaterialAnswerDraft.model_validate(_unwrap(response.output))
                 allowed = {item.citation_id: item for item in candidates}
-                if (
-                    any(citation_id not in allowed for citation_id in draft.citation_ids)
-                    or _HIDDEN_OUTPUT.search(draft.answer)
-                ):
-                    raise ValueError("material answer violated its evidence contract")
-                cited = [allowed[citation_id] for citation_id in dict.fromkeys(draft.citation_ids)]
+                claims = [
+                    AnswerClaim(
+                        text=claim.text,
+                        provenance=ProvenanceKind(claim.provenance),
+                        citation_ids=claim.citation_ids,
+                    )
+                    for claim in draft.claims
+                ]
+                if any(_HIDDEN_OUTPUT.search(claim.text) for claim in claims):
+                    raise ValueError("material answer exposed hidden controls")
+                checked = enforce_provenance(
+                    claims, allowed_citation_ids=set(allowed)
+                )
+                cited_ids = list(
+                    dict.fromkeys(
+                        citation_id
+                        for claim in checked.claims
+                        if claim.provenance is ProvenanceKind.COURSE_MATERIAL
+                        for citation_id in claim.citation_ids
+                    )
+                )
+                cited = [allowed[citation_id] for citation_id in cited_ids]
+                if not checked.claims:
+                    raise ValueError("material answer had no valid claims")
                 return LearningReply(
-                    answer=self._render_material_answer(draft.answer, cited),
+                    answer=self._render_material_claims(checked, cited),
                     usage=usage,
                 )
             except (ModelError, ValidationError, ValueError):
@@ -178,16 +248,59 @@ class StudyKitLookupService:
             usage=usage,
         )
 
+    async def _general_explanation(self, question: str) -> LearningReply | None:
+        if _FULL_SOLUTION.search(question):
+            return self._reply(
+                "我不能提供完整标准答案或可直接提交的作业解答；可以根据你的当前尝试"
+                "给出诊断、测试思路和分层提示。"
+            )
+        if self.model is None:
+            return None
+        try:
+            response = await self.model.generate_json(
+                system_prompt=(
+                    "你是通用计算机科学解释器。回答只能是 general_knowledge，"
+                    "不得声称来自当前课程、版本、讲次、页码或原文。不得提供完整作业解答。"
+                    "只输出 JSON object。"
+                ),
+                user_prompt=json.dumps(
+                    {
+                        "question": question[:4000],
+                        "output_contract": {"answer": "concise general explanation"},
+                    },
+                    ensure_ascii=False,
+                ),
+                thinking_enabled=False,
+                max_tokens=1536,
+                timeout_seconds=30,
+            )
+            answer = response.output.get("answer")
+            if not isinstance(answer, str) or not answer.strip() or _HIDDEN_OUTPUT.search(answer):
+                return None
+            return LearningReply(
+                answer=(
+                    "### 通用知识（不代表当前课程材料）\n"
+                    + answer.strip()
+                    + "\n\n当前已审核材料不足以核实课程特有表述、版本、讲次或页码。"
+                ),
+                usage=normalized_usage(response.usage),
+            )
+        except (ModelError, ValueError):
+            return None
+
     async def concept_explanation(
         self,
         *,
         messages: list[ChatMessage],
         course_context: CourseContext | None,
     ) -> LearningReply:
+        question = _latest_user_text(messages)
         document, unavailable = self._require_document(course_context, messages)
         if document is None:
+            general = await self._general_explanation(question)
+            if general is not None:
+                return general
             return self._reply(unavailable)
-        question = _latest_user_text(messages)
         concepts = [item for item in document.get("core_concepts", []) if isinstance(item, dict)]
         ranked = sorted(
             (
@@ -197,6 +310,12 @@ class StudyKitLookupService:
             key=lambda entry: (-entry[0], entry[1]),
         )
         if not ranked or ranked[0][0] <= 0:
+            general = await self._general_explanation(question)
+            if general is not None:
+                general.answer = (
+                    "当前 StudyKit 没有覆盖你询问的概念。\n\n" + general.answer
+                )
+                return general
             available = "、".join(_concept_label(item) for item in concepts[:8])
             return self._reply(
                 "当前 StudyKit 没有覆盖你询问的概念，不能把通用解释冒充为课程内容。"
@@ -245,10 +364,40 @@ class StudyKitLookupService:
                 return self._reply("本讲练习已在当前对话中展示完毕；请指定 practice ID 重新查看。")
             selected = candidates[0]
         practice_id = str(selected["id"])
-        prompt = render_practice_prompt(document, practice_id, include_hint=False)
-        return self._reply(
-            f"{prompt}\n\n作答后请明确写出 `practice ID: {practice_id}` 并附上你的当前答案。"
+        original = render_practice_prompt(document, practice_id, include_hint=False)
+        usage = normalized_usage()
+        rendered = original
+        kind = "original"
+        fallback_notice = ""
+        fallback_reason: str | None = None
+        if self.practice_rewrite_enabled and self.model is not None:
+            try:
+                draft, usage = await self._rewrite_practice(document, selected)
+                rendered = self._render_practice_presentation(draft, selected)
+                kind = draft.transformation_kind
+            except _PracticeRewriteError as exc:
+                usage = exc.usage
+                fallback_reason = exc.code
+                fallback_notice = (
+                    "\n\n题目精确化暂时不可用，以下保留已审核原题，不改变考查目标。"
+                )
+            except (ModelError, ValidationError, ValueError) as exc:
+                fallback_reason = type(exc).__name__
+                fallback_notice = (
+                    "\n\n题目精确化暂时不可用，以下保留已审核原题，不改变考查目标。"
+                )
+        answer = (
+            f"{rendered}{fallback_notice}\n\n"
+            f"作答后请明确写出 `practice ID: {practice_id}` 并附上你的当前答案。"
             "反馈只针对这一次回答，不累计得分或掌握度。"
+        )
+        return LearningReply(
+            answer=answer,
+            usage=usage,
+            active_practice_id=practice_id,
+            presentation_kind=kind,
+            presentation_digest=hashlib.sha256(answer.encode("utf-8")).hexdigest(),
+            presentation_fallback_reason=fallback_reason,
         )
 
     async def practice_feedback(
@@ -256,6 +405,8 @@ class StudyKitLookupService:
         *,
         messages: list[ChatMessage],
         course_context: CourseContext | None,
+        presentation_digest: str | None = None,
+        presentation_kind: str | None = None,
     ) -> LearningReply:
         document, unavailable = self._require_document(course_context, messages)
         if document is None:
@@ -286,23 +437,29 @@ class StudyKitLookupService:
             return self._reply("这道练习没有可核查的来源页码，因此暂不进行语义反馈。")
 
         usage = normalized_usage()
+        presented_question = self._recover_presented_practice(
+            messages, practice_id, presentation_digest
+        )
+        if presentation_kind == "grounded_variant" and presented_question is None:
+            return self._reply(
+                "无法从当前消息历史恢复并校验你实际看到的变式题目。请重新附上完整题面和"
+                f" `practice ID: {practice_id}`，我不会根据原始题目猜测。"
+            )
         if self.model is not None:
             try:
                 response = await self.model.generate_json(
                     system_prompt=(
                         "你是 CoursePilot 练习反馈器。只评价 current_answer，不累计分数或掌握度。"
                         "指出已经正确的点、一个最重要的错误或遗漏、下一层提示；不要给完整标准答案。"
-                        "expected_evidence 和 evaluation 仅用于内部比较，绝不能复述、列出或提及这些字段。"
                         "source_pages 只能选 allowed_source_pages。只输出 JSON object。"
                     ),
                     user_prompt=json.dumps(
                         {
                             "practice": {
                                 "id": practice_id,
-                                "question": problem.get("question"),
+                                "question": presented_question or problem.get("question"),
                                 "deliverable": problem.get("deliverable"),
-                                "expected_evidence": problem.get("expected_evidence", []),
-                                "evaluation": problem.get("evaluation", {}),
+                                "original_hint": problem.get("hint"),
                             },
                             "current_answer": answer_text[:6000],
                             "allowed_source_pages": source_pages,
@@ -337,6 +494,190 @@ class StudyKitLookupService:
             answer=self._render_feedback_fallback(problem, source_pages),
             usage=usage,
         )
+
+    async def _rewrite_practice(
+        self,
+        document: dict[str, Any],
+        problem: dict[str, Any],
+    ) -> tuple[PracticePresentationDraft, dict[str, int]]:
+        objective_ids = [str(item) for item in (problem.get("objective_ids") or [])]
+        requirement_ids = [str(item) for item in (problem.get("requirement_ids") or [])]
+        concept_ids = {str(item) for item in (problem.get("concept_ids") or [])}
+        objectives = [
+            {"id": str(item.get("id") or ""), "objective": str(item.get("objective") or "")}
+            for item in document.get("learning_objectives", [])
+            if isinstance(item, dict) and str(item.get("id") or "") in set(objective_ids)
+        ]
+        concepts = [
+            {
+                "id": str(item.get("id") or ""),
+                "term": _concept_label(item),
+                "explanation": str(item.get("explanation") or "")[:1200],
+            }
+            for item in document.get("core_concepts", [])
+            if isinstance(item, dict) and str(item.get("id") or "") in concept_ids
+        ]
+        allowed_citations = list(
+            dict.fromkeys(
+                f"{item.get('source_id')}:p{item['page']}"
+                for item in _normalized_citations(problem)
+                if item.get("source_id") and isinstance(item.get("page"), int)
+            )
+        )
+        response = await self.model.generate_json(  # type: ignore[union-attr]
+            system_prompt=(
+                "你是 CoursePilot 练习题编辑器。只做 structured_rewrite：让题目的已知条件、"
+                "目标、约束和交付格式更明确，不得改变考查目标、题型、关键条件或答案语义；"
+                "不得生成 grounded_variant，不得输出答案、提示、评分标准或内部字段名称。"
+                "只能使用提供的课程内容和 citation IDs。只输出 JSON object。"
+            ),
+            user_prompt=json.dumps(
+                {
+                    "practice": {
+                        "id": str(problem.get("id") or ""),
+                        "level": problem.get("level"),
+                        "practice_type": problem.get("practice_type"),
+                        "setup": problem.get("setup") or problem.get("setup_code"),
+                        "question": problem.get("question"),
+                        "deliverable": problem.get("deliverable"),
+                    },
+                    "learning_objectives": objectives,
+                    "concepts": concepts,
+                    "expected_evidence_key_points": problem.get("expected_evidence", []),
+                    "objective_ids": objective_ids,
+                    "requirement_ids": requirement_ids,
+                    "allowed_citation_ids": allowed_citations,
+                    "output_contract": {
+                        "practice_id": str(problem.get("id") or ""),
+                        "transformation_kind": "structured_rewrite",
+                        "title": "short learner-facing title",
+                        "scenario": "clarified scenario or null",
+                        "givens": ["explicit given"],
+                        "question": "precise question without an answer",
+                        "constraints": ["explicit constraint"],
+                        "deliverable": "required response format",
+                        "estimated_minutes": "integer 1..240 or null",
+                        "citation_ids": allowed_citations,
+                        "retained_objective_ids": objective_ids,
+                        "retained_requirement_ids": requirement_ids,
+                    },
+                },
+                ensure_ascii=False,
+            ),
+            thinking_enabled=False,
+            max_tokens=2048,
+            timeout_seconds=30,
+        )
+        usage = normalized_usage(response.usage)
+        try:
+            candidate: Any = response.output
+            for wrapper in (
+                "practice_presentation",
+                "presentation",
+                "rewritten_practice",
+                "output_contract",
+                "result",
+                "answer",
+            ):
+                wrapped = candidate.get(wrapper) if isinstance(candidate, dict) else None
+                if isinstance(wrapped, dict):
+                    candidate = wrapped
+                    break
+            draft = PracticePresentationDraft.model_validate(candidate)
+        except ValidationError as exc:
+            details = ",".join(
+                f"{'.'.join(str(item) for item in error['loc'])}:{error['type']}"
+                for error in exc.errors()[:4]
+            )
+            top_keys = (
+                ",".join(sorted(str(key) for key in response.output)[:8])
+                if isinstance(response.output, dict)
+                else "non_object"
+            )
+            raise _PracticeRewriteError(
+                f"schema_invalid:{details};top_keys={top_keys}", usage
+            ) from exc
+        except ValueError as exc:
+            raise _PracticeRewriteError("schema_invalid:object", usage) from exc
+        if draft.practice_id != str(problem.get("id") or ""):
+            raise _PracticeRewriteError("practice_identity_changed", usage)
+        if draft.transformation_kind != "structured_rewrite":
+            raise _PracticeRewriteError("grounded_variant_unavailable", usage)
+        if (
+            draft.retained_objective_ids != objective_ids
+            or draft.retained_requirement_ids != requirement_ids
+        ):
+            raise _PracticeRewriteError("coverage_changed", usage)
+        if any(item not in allowed_citations for item in draft.citation_ids):
+            raise _PracticeRewriteError("citation_invalid", usage)
+        rendered = self._render_practice_presentation(draft, problem)
+        unsafe_reason = self._practice_presentation_unsafe_reason(rendered, problem)
+        if unsafe_reason is not None:
+            raise _PracticeRewriteError(unsafe_reason, usage)
+        return draft, usage
+
+    @staticmethod
+    def _practice_presentation_unsafe_reason(
+        rendered: str, problem: dict[str, Any]
+    ) -> str | None:
+        if _HIDDEN_OUTPUT.search(rendered):
+            return "hidden_control_leak"
+        if _FULL_SOLUTION.search(rendered):
+            return "full_solution_leak"
+        lowered = rendered.casefold()
+        placeholders = (
+            "short learner-facing title",
+            "precise question without an answer",
+            "explicit given",
+            "explicit constraint",
+            "required response format",
+        )
+        if any(item in lowered for item in placeholders):
+            return "schema_placeholder_leak"
+        source_tokens = _query_tokens(
+            f"{problem.get('question', '')} {problem.get('deliverable', '')}"
+        )
+        if source_tokens and not (source_tokens & _query_tokens(rendered)):
+            return "semantic_anchor_missing"
+        normalized_rendered = re.sub(r"\s+", "", rendered).casefold()
+        for hidden in problem.get("expected_evidence") or []:
+            if not isinstance(hidden, str):
+                continue
+            normalized_hidden = re.sub(r"\s+", "", hidden).casefold()
+            if len(normalized_hidden) >= 12 and normalized_hidden in normalized_rendered:
+                return "expected_evidence_copy"
+        return None
+
+    @staticmethod
+    def _render_practice_presentation(
+        draft: PracticePresentationDraft, problem: dict[str, Any]
+    ) -> str:
+        lines = [f"### {draft.practice_id} · {draft.title}", f"类型：{problem.get('level')}"]
+        if draft.scenario:
+            lines.extend(["", draft.scenario])
+        if draft.givens:
+            lines.extend(["", "**已知条件**", *[f"- {item}" for item in draft.givens]])
+        lines.extend(["", "**问题**", draft.question])
+        if draft.constraints:
+            lines.extend(["", "**约束**", *[f"- {item}" for item in draft.constraints]])
+        lines.extend(["", f"**作答要求**：{draft.deliverable}"])
+        if draft.estimated_minutes is not None:
+            lines.append(f"**预计用时**：约 {draft.estimated_minutes} 分钟")
+        lines.append("**呈现状态**：模型精确化（原始 practice ID 与考查目标保持不变）")
+        return "\n".join(lines)
+
+    @staticmethod
+    def _recover_presented_practice(
+        messages: list[ChatMessage], practice_id: str, expected_digest: str | None
+    ) -> str | None:
+        if expected_digest is None:
+            return None
+        for message in reversed(messages):
+            if message.role != "assistant" or practice_id not in message.content:
+                continue
+            digest = hashlib.sha256(message.content.encode("utf-8")).hexdigest()
+            return message.content if digest == expected_digest else None
+        return None
 
     def _require_document(
         self,
@@ -613,8 +954,13 @@ class StudyKitLookupService:
         return "\n".join(lines)
 
     @staticmethod
-    def _render_material_answer(answer: str, cited: list[_EvidenceItem]) -> str:
-        lines = [answer.strip(), "", "### 依据"]
+    def _render_material_claims(
+        checked: ProvenanceResult, cited: list[_EvidenceItem]
+    ) -> str:
+        rendered = render_claims(checked)
+        if not cited:
+            return rendered
+        lines = [rendered, "", "### 依据"]
         lines.extend(
             f"- `{item.source_id}`，第 {_format_pages(item.pages)} 页（{item.kind}）"
             for item in cited

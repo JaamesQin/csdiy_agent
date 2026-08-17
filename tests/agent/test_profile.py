@@ -280,3 +280,51 @@ def test_profile_repository_serializes_concurrent_writes(tmp_path) -> None:
         list(executor.map(write, range(20)))
 
     assert len(repository.get_profile("concurrent-user").facts) == 20
+
+
+def test_expired_inferred_fact_cannot_be_confirmed(tmp_path) -> None:
+    repository = SQLiteProfileRepository(tmp_path / "profiles.sqlite3")
+    repository.add_fact(
+        user_id="user-a",
+        field_name="goals",
+        value="expired goal",
+        status=FactStatus.INFERRED,
+        confidence=0.6,
+        evidence_excerpt="maybe",
+        expires_at=datetime.now(UTC) - timedelta(seconds=1),
+    )
+
+    assert repository.confirm_inferred("user-a") == 0
+    assert repository.get_profile("user-a").facts == []
+
+
+async def test_profile_uses_one_model_call_and_reports_usage(tmp_path) -> None:
+    extractor = FakeStructuredModel(
+        {
+            "candidates": [
+                {
+                    "field_name": "background",
+                    "value": "Rust",
+                    "status": "confirmed",
+                    "confidence": 0.95,
+                    "evidence_quote": "我熟悉 Rust",
+                    "course_id": None,
+                    "course_version": None,
+                    "unit_id": None,
+                }
+            ]
+        }
+    )
+    service = ProfileService(
+        SQLiteProfileRepository(tmp_path / "profiles.sqlite3"),
+        model=extractor,
+    )
+
+    result = await service.observe(
+        user_id=None,
+        text="我熟悉 Rust，并有项目经验。",
+        current=LearnerProfile(),
+    )
+
+    assert result.usage["total_tokens"] == 15
+    assert len(extractor.calls) == 1

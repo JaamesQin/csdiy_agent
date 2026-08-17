@@ -199,3 +199,13 @@ Manifest，课程页码只来自 Lecture 2/8 人工批准的黄金 StudyKit。�
 - v0.11-019/v21 完成新鲜 Lecture 1–8 回归并达到 8/8，记录每讲修复轨迹和质量评分；
 - 模板课程与未知私有资料各完成一次端到端验收；
 - 清小搭生产能力、安全边界和资料删除策略有实测记录。
+# Online Agent P0–P2 status (2026-08-17)
+
+See [`online-agent-p0-p2.md`](online-agent-p0-p2.md) for the enabled contracts and explicit deferred
+boundaries. This status does not claim private retrieval, vector retrieval, or globally complete
+StudyKit repair.
+
+Online practice selection now automatically clarifies approved questions with one model call and
+falls back to the original on any contract violation. TaskPlan is separate; concrete capabilities are
+limited to one online model call, while independent semantic review remains an offline authoring gate.
+Context-token v2 adds only a presentation kind/digest and continues to accept v1.

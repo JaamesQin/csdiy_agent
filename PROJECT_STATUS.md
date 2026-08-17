@@ -234,3 +234,14 @@ MaterialSet/权限必须先提供稳定接口，SourceChunk 检索随后增强�
 - 资料不足、身份未知、解析失败和模型失败都有透明降级；
 - 清小搭生产入口、日志、安全和删除策略完成实测；
 - 有固定离线评测、失败记录和真实用户试用结果。
+# Online Agent P0–P2 status (2026-08-17)
+
+Bounded multi-task planning, dependency-aware partial execution, source-partitioned provenance,
+public FTS5 SourceChunk retrieval, optional signed conversation context, approved course-advice
+sidecars, and artifact-bound static tutoring are implemented. Private MaterialSet authorization,
+cross-system identity, per-candidate profile UI/schema, and reviewed vector retrieval remain deferred.
+
+Online practice presentation now performs an automatic, single-call `structured_rewrite` without
+mutating approved StudyKits. TaskPlan is budgeted separately; each concrete capability may call the
+model once, and online profile/material second-pass reviewers were removed. Signed context v2 binds
+only the active presentation kind/digest and remains backward compatible with v1.

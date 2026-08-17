@@ -246,3 +246,14 @@ Cookie 认证的 `POST /v1/chat/completions` 同样要求 `X-CSRF-Token`。API K
 ## 开发状态说明
 
 仓库已经包含账号注册/登录与安全会话、OpenAI 兼容服务、规则优先的意图路由与能力目录、可信 subject 学习画像、CSDIY 课程导航、只读黄金 StudyKit 查询/材料/概念/练习能力、多语言静态代码辅导，以及完整的分阶段生成内核。Lecture 2/8 的原始 PDF 和抽取 chunks 仅保留在本地；线上 SourceChunk 检索、未收录私有资料、跨会话练习状态和学习复盘仍属于后续阶段。
+# Online Agent P0–P2
+
+The online runtime's current planning, provenance, public retrieval, continuity-token, course-advice,
+and static tutoring contracts are documented in
+[`docs/online-agent-p0-p2.md`](docs/online-agent-p0-p2.md). Private MaterialSet access, cross-system
+identity, and vector retrieval remain deferred.
+
+Online model-call policy: TaskPlan is separate; each concrete capability uses at most one model call.
+Practice selection automatically clarifies the selected approved question into explicit givens,
+constraints, and deliverables, while invalid/model-unavailable output falls back to the original.
+Disable this presentation layer with `COURSEPILOT_PRACTICE_REWRITE_ENABLED=false`.

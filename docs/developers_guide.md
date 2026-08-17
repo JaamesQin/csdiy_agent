@@ -750,3 +750,15 @@ Lecture 2/8 黄金 StudyKit 时成立。通用代码问题会明确没有课程�
 6. 最后把稳定的离线入口包装成 `studykit-generator` skill，并加入批量任务与人工复核队列。
 
 生成器是课程 authoring 基础设施，不是在线聊天中的即时工具；只要坚持离线优先、StudyKit 优先、原始 SourceChunk 可追溯、公共/私有资料隔离，后续五项工作可以逐步接入而不会被单次长模型调用绑死。
+# Online Agent implementation note
+
+Online capability code must preserve the task/provenance/context contracts summarized in
+[`online-agent-p0-p2.md`](online-agent-p0-p2.md). In particular, `coursepilot_context` is continuity
+state rather than authority, SourceChunk filtering occurs before recall/ranking, and code remains
+static-only with `ran_code=false`.
+
+Online model-call budget: TaskPlan is counted separately and each concrete capability may call the
+model at most once. Do not add online generator→reviewer chains. Practice selection uses that one call
+for a `structured_rewrite`, validates IDs/citations/hidden fields deterministically, and falls back to
+the approved original. Context v2 stores only the presentation kind/digest; it never stores the
+question, answer, rubric, or authorization. Independent review remains in offline authoring/audit.
