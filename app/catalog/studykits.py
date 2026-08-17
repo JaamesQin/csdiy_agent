@@ -354,7 +354,9 @@ class ArchivedStudyKitStore(_DocumentStudyKitStore):
                 FROM studykit_documents AS d
                 JOIN studykit_builds AS b ON b.build_id = d.build_id
                 WHERE d.review_status = 'approved'
+                  AND d.document_status IN ('draft', 'reviewed', 'published')
                   AND b.review_status = 'approved'
+                  AND b.build_status = 'succeeded'
                 ORDER BY d.course_id, d.course_version, d.unit_id
                 """
             ).fetchall()

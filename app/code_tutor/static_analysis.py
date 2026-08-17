@@ -108,6 +108,23 @@ def _python_diagnostics(code: str, spec: LanguageSpec) -> list[StaticDiagnostic]
         ]
 
     diagnostics: list[StaticDiagnostic] = []
+    for body in _statement_bodies(tree):
+        terminal_seen = False
+        for statement in body:
+            if terminal_seen:
+                diagnostics.append(
+                    StaticDiagnostic(
+                        code="unreachable_statement",
+                        message="该语句位于无条件控制流终止之后，静态上不可达。",
+                        line=statement.lineno,
+                        column=statement.col_offset + 1,
+                        end_line=getattr(statement, "end_lineno", statement.lineno),
+                    )
+                )
+                break
+            terminal_seen = isinstance(
+                statement, (ast.Return, ast.Raise, ast.Break, ast.Continue)
+            )
     for node in ast.walk(tree):
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             defaults = [
@@ -149,6 +166,18 @@ def _python_diagnostics(code: str, spec: LanguageSpec) -> list[StaticDiagnostic]
                 )
             )
     return diagnostics
+
+
+def _statement_bodies(tree: ast.AST) -> list[list[ast.stmt]]:
+    bodies: list[list[ast.stmt]] = []
+    for node in ast.walk(tree):
+        for field in ("body", "orelse", "finalbody"):
+            value = getattr(node, field, None)
+            if isinstance(value, list) and value and all(
+                isinstance(item, ast.stmt) for item in value
+            ):
+                bodies.append(value)
+    return bodies
 
 
 def _tree_sitter_diagnostics(

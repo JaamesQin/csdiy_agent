@@ -44,6 +44,37 @@ async def test_lookup_lists_ready_units_for_course_context() -> None:
     assert "请明确选择" in result.answer
 
 
+async def test_material_usage_includes_independent_support_review() -> None:
+    store = ReviewedFileStudyKitStore()
+    document = store.get_ready(
+        CONTEXT.course_id, CONTEXT.course_version, CONTEXT.unit_id or ""
+    )
+    assert document is not None
+    probe = StudyKitLookupService(store)
+    evidence = probe._select_evidence(document, "反向传播是什么？")
+    assert evidence
+    generator = FakeStructuredModel(
+        {
+            "answer": evidence[0].text,
+            "citation_ids": [evidence[0].citation_id],
+        }
+    )
+    reviewer = FakeStructuredModel({"supported": True})
+    service = StudyKitLookupService(
+        store,
+        model=generator,
+        claim_reviewer=reviewer,
+    )
+
+    result = await service.material_question(
+        messages=_messages("反向传播是什么？"),
+        course_context=CONTEXT,
+    )
+
+    assert "### 依据" in result.answer
+    assert result.usage["total_tokens"] == 30
+
+
 async def test_catalog_only_course_is_not_mistaken_for_online_studykit() -> None:
     store = ReviewedFileStudyKitStore()
     service = StudyKitLookupService(
@@ -216,6 +247,10 @@ async def test_practice_feedback_model_is_page_bounded_and_non_aggregating() -> 
     assert "最重要的修正" in result.answer
     assert "不统计分数或整体掌握度" in result.answer
     assert result.usage["total_tokens"] == 15
+    prompt = model.calls[0]["user_prompt"]
+    assert "expected_evidence" not in prompt
+    assert '"evaluation"' not in prompt
+    assert "full_credit" not in prompt
 
     invalid = StudyKitLookupService(
         ReviewedFileStudyKitStore(),

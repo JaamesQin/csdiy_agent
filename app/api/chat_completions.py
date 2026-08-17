@@ -38,14 +38,16 @@ async def create_chat_completion(
 
     user_message = user_messages[-1]
     profile_user_id = principal.profile_user_id(request.user)
-    reply = await agent.handle(messages=request.messages, user_id=profile_user_id)
+    handle_arguments = {"messages": request.messages, "user_id": profile_user_id}
+    if request.coursepilot_context is not None:
+        handle_arguments["coursepilot_context"] = request.coursepilot_context
+    reply = await agent.handle(**handle_arguments)
     answer = reply.answer
     completion_id = f"chatcmpl-{uuid.uuid4().hex}"
     created = int(time.time())
 
     if not request.stream:
-        return JSONResponse(
-            {
+        payload = {
                 "id": completion_id,
                 "object": "chat.completion",
                 "created": created,
@@ -59,7 +61,9 @@ async def create_chat_completion(
                 ],
                 "usage": reply.usage,
             }
-        )
+        if reply.coursepilot_context is not None:
+            payload["coursepilot_context"] = reply.coursepilot_context
+        return JSONResponse(payload)
 
     return StreamingResponse(
         completion_stream(
@@ -68,6 +72,7 @@ async def create_chat_completion(
             answer,
             usage=reply.usage,
             inject_error=should_inject_stream_error(user_message),
+            coursepilot_context=reply.coursepilot_context,
         ),
         media_type="text/event-stream",
         headers={

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from functools import lru_cache
 
 from app.generation.model import DeepSeekModel, ModelConfigurationError, StructuredModel
@@ -11,6 +12,8 @@ from app.generation.model import DeepSeekModel, ModelConfigurationError, Structu
 def load_optional_model() -> StructuredModel | None:
     """Lazily reuse the existing DeepSeek adapter without making startup require it."""
 
+    if os.getenv("COURSEPILOT_TEST_MODE", "").strip().lower() == "true":
+        return None
     try:
         return DeepSeekModel.from_env()
     except ModelConfigurationError:

@@ -10,7 +10,7 @@ from typing import Any
 from pydantic import ValidationError
 
 from app.agent.contracts import CourseContext
-from app.agent.model_support import normalized_usage
+from app.agent.model_support import add_usage, normalized_usage
 from app.catalog.courses import CatalogDataError, CourseCatalogStore
 from app.catalog.studykits import StudyKitStore
 from app.generation.model import ModelError, StructuredModel
@@ -21,6 +21,12 @@ from app.learning.contracts import (
 )
 from app.protocol.schemas import ChatMessage
 from app.retrieval.practice import render_practice_prompt
+from app.retrieval.source_chunks import (
+    AccessScope,
+    SourceChunkRetriever,
+    SourceChunkStore,
+)
+from app.agent.contracts import StudyKitCourseIdentity
 
 
 _FULL_SOLUTION = re.compile(
@@ -69,10 +75,14 @@ class StudyKitLookupService:
         store: StudyKitStore,
         model: StructuredModel | None = None,
         catalog: CourseCatalogStore | None = None,
+        source_chunks: SourceChunkStore | None = None,
+        claim_reviewer: StructuredModel | None = None,
     ) -> None:
         self.store = store
         self.model = model
         self.catalog = catalog
+        self.source_chunks = source_chunks
+        self.claim_reviewer = claim_reviewer
 
     async def lookup(
         self,
@@ -111,8 +121,29 @@ class StudyKitLookupService:
         if document is None:
             return self._reply(unavailable)
         question = _latest_user_text(messages)
-        candidates = self._select_evidence(document, question)
         page = self._requested_page(question)
+        candidates: list[_EvidenceItem] = []
+        if self.source_chunks is not None and course_context is not None:
+            hits = await SourceChunkRetriever(self.source_chunks, self.model).retrieve(
+                question,
+                AccessScope(),
+                StudyKitCourseIdentity.from_context(course_context),
+                page_filter=page,
+                limit=8,
+            )
+            candidates = [
+                _EvidenceItem(
+                    citation_id=hit.chunk.chunk_id,
+                    kind="source_chunk",
+                    text=hit.chunk.text,
+                    source_id=hit.chunk.source_id,
+                    pages=(hit.chunk.page,) if hit.chunk.page is not None else (),
+                    search_terms=(),
+                )
+                for hit in hits
+            ]
+        if not candidates:
+            candidates = self._select_evidence(document, question)
         if not candidates:
             if page is not None:
                 return self._reply(
@@ -120,6 +151,9 @@ class StudyKitLookupService:
                     "SourceChunk 检索尚未上线，因此我不会猜测该页原文；请回看官方材料，"
                     "或改问 StudyKit 已覆盖的核心概念。"
                 )
+            general = await self._general_explanation(question)
+            if general is not None:
+                return general
             return self._reply(
                 "当前 StudyKit 中没有找到与这个问题直接对应且带页码的已审核内容。"
                 "SourceChunk 检索尚未上线，因此我不会用通用知识补成课程事实。"
@@ -167,6 +201,13 @@ class StudyKitLookupService:
                 ):
                     raise ValueError("material answer violated its evidence contract")
                 cited = [allowed[citation_id] for citation_id in dict.fromkeys(draft.citation_ids)]
+                if self.claim_reviewer is not None:
+                    supported, review_usage = await self._claim_supported(
+                        question, draft.answer, cited
+                    )
+                    usage = add_usage(usage, review_usage)
+                    if not supported:
+                        raise ValueError("material answer failed independent support review")
                 return LearningReply(
                     answer=self._render_material_answer(draft.answer, cited),
                     usage=usage,
@@ -178,16 +219,91 @@ class StudyKitLookupService:
             usage=usage,
         )
 
+    async def _claim_supported(
+        self, question: str, answer: str, evidence: list[_EvidenceItem]
+    ) -> tuple[bool, dict[str, int]]:
+        try:
+            response = await self.claim_reviewer.generate_json(  # type: ignore[union-attr]
+                system_prompt=(
+                    "你是独立课程材料支持性审查器。只有 evidence 语义蕴含 answer 中"
+                    "每个课程事实时 supported 才为 true。不得使用外部知识。只输出 JSON。"
+                ),
+                user_prompt=json.dumps(
+                    {
+                        "question": question,
+                        "answer": answer,
+                        "evidence": [
+                            {"citation_id": item.citation_id, "text": item.text}
+                            for item in evidence
+                        ],
+                        "output_contract": {"supported": False},
+                    },
+                    ensure_ascii=False,
+                ),
+                thinking_enabled=False,
+                max_tokens=512,
+                timeout_seconds=20,
+            )
+            return (
+                response.output.get("supported") is True,
+                normalized_usage(response.usage),
+            )
+        except (ModelError, ValueError):
+            return False, normalized_usage()
+
+    async def _general_explanation(self, question: str) -> LearningReply | None:
+        if _FULL_SOLUTION.search(question):
+            return self._reply(
+                "我不能提供完整标准答案或可直接提交的作业解答；可以根据你的当前尝试"
+                "给出诊断、测试思路和分层提示。"
+            )
+        if self.model is None:
+            return None
+        try:
+            response = await self.model.generate_json(
+                system_prompt=(
+                    "你是通用计算机科学解释器。回答只能是 general_knowledge，"
+                    "不得声称来自当前课程、版本、讲次、页码或原文。不得提供完整作业解答。"
+                    "只输出 JSON object。"
+                ),
+                user_prompt=json.dumps(
+                    {
+                        "question": question[:4000],
+                        "output_contract": {"answer": "concise general explanation"},
+                    },
+                    ensure_ascii=False,
+                ),
+                thinking_enabled=False,
+                max_tokens=1536,
+                timeout_seconds=30,
+            )
+            answer = response.output.get("answer")
+            if not isinstance(answer, str) or not answer.strip() or _HIDDEN_OUTPUT.search(answer):
+                return None
+            return LearningReply(
+                answer=(
+                    "### 通用知识（不代表当前课程材料）\n"
+                    + answer.strip()
+                    + "\n\n当前已审核材料不足以核实课程特有表述、版本、讲次或页码。"
+                ),
+                usage=normalized_usage(response.usage),
+            )
+        except (ModelError, ValueError):
+            return None
+
     async def concept_explanation(
         self,
         *,
         messages: list[ChatMessage],
         course_context: CourseContext | None,
     ) -> LearningReply:
+        question = _latest_user_text(messages)
         document, unavailable = self._require_document(course_context, messages)
         if document is None:
+            general = await self._general_explanation(question)
+            if general is not None:
+                return general
             return self._reply(unavailable)
-        question = _latest_user_text(messages)
         concepts = [item for item in document.get("core_concepts", []) if isinstance(item, dict)]
         ranked = sorted(
             (
@@ -197,6 +313,12 @@ class StudyKitLookupService:
             key=lambda entry: (-entry[0], entry[1]),
         )
         if not ranked or ranked[0][0] <= 0:
+            general = await self._general_explanation(question)
+            if general is not None:
+                general.answer = (
+                    "当前 StudyKit 没有覆盖你询问的概念。\n\n" + general.answer
+                )
+                return general
             available = "、".join(_concept_label(item) for item in concepts[:8])
             return self._reply(
                 "当前 StudyKit 没有覆盖你询问的概念，不能把通用解释冒充为课程内容。"
@@ -292,7 +414,6 @@ class StudyKitLookupService:
                     system_prompt=(
                         "你是 CoursePilot 练习反馈器。只评价 current_answer，不累计分数或掌握度。"
                         "指出已经正确的点、一个最重要的错误或遗漏、下一层提示；不要给完整标准答案。"
-                        "expected_evidence 和 evaluation 仅用于内部比较，绝不能复述、列出或提及这些字段。"
                         "source_pages 只能选 allowed_source_pages。只输出 JSON object。"
                     ),
                     user_prompt=json.dumps(
@@ -301,8 +422,7 @@ class StudyKitLookupService:
                                 "id": practice_id,
                                 "question": problem.get("question"),
                                 "deliverable": problem.get("deliverable"),
-                                "expected_evidence": problem.get("expected_evidence", []),
-                                "evaluation": problem.get("evaluation", {}),
+                                "original_hint": problem.get("hint"),
                             },
                             "current_answer": answer_text[:6000],
                             "allowed_source_pages": source_pages,
