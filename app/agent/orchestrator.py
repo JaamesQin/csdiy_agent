@@ -249,14 +249,23 @@ class CoursePilotAgent:
             previous_context.active_practice_id if previous_context else None
         )
         hint_level = previous_context.hint_level if previous_context else 0
+        practice_presentation_kind = (
+            previous_context.practice_presentation_kind if previous_context else None
+        )
+        practice_presentation_digest = (
+            previous_context.practice_presentation_digest if previous_context else None
+        )
         code_artifact_id = previous_context.code_artifact_id if previous_context else None
         code_digest = previous_context.code_digest if previous_context else None
+        profile_observed = False
 
         async def execute(task: PlannedTask) -> TaskExecutionResult:
             nonlocal current_profile, profile_error, active_practice_id, hint_level
             nonlocal code_artifact_id, code_digest
+            nonlocal profile_observed, practice_presentation_kind
+            nonlocal practice_presentation_digest
             usage = normalized_usage()
-            if task.self_statement:
+            if task.self_statement and not profile_observed:
                 observation = await self.profiles.observe(
                     user_id=user_id,
                     text=latest,
@@ -268,6 +277,7 @@ class CoursePilotAgent:
                 profile_error = profile_error or observation.persistence_error
                 if observation.notice:
                     observation_notices.append(observation.notice)
+                profile_observed = True
 
             capability = task.capability_id
             answer: str
@@ -322,6 +332,10 @@ class CoursePilotAgent:
                 if match:
                     active_practice_id = match.group(1)
                     displayed_practice_ids.append(active_practice_id)
+                if result.active_practice_id:
+                    active_practice_id = result.active_practice_id
+                practice_presentation_kind = result.presentation_kind
+                practice_presentation_digest = result.presentation_digest
             elif capability is CapabilityId.PRACTICE_FEEDBACK:
                 feedback_messages = messages
                 if re.search(r"(?:下一层|更多|再给).{0,6}提示|next hint", latest, re.I):
@@ -339,7 +353,10 @@ class CoursePilotAgent:
                         ),
                     ]
                 result = await self.studykit_learning.practice_feedback(
-                    messages=feedback_messages, course_context=studykit_context
+                    messages=feedback_messages,
+                    course_context=studykit_context,
+                    presentation_digest=practice_presentation_digest,
+                    presentation_kind=practice_presentation_kind,
                 )
                 answer, usage = result.answer, add_usage(usage, result.usage)
             elif capability is CapabilityId.CODE_TUTORING:
@@ -413,6 +430,8 @@ class CoursePilotAgent:
                 active_practice_id=active_practice_id,
                 displayed_practice_ids=displayed_practice_ids,
                 hint_level=hint_level,
+                practice_presentation_kind=practice_presentation_kind,
+                practice_presentation_digest=practice_presentation_digest,
                 code_artifact_id=code_artifact_id,
                 code_digest=code_digest,
             )

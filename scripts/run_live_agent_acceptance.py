@@ -13,6 +13,7 @@ import asyncio
 import json
 import sys
 import tempfile
+import time
 from pathlib import Path
 from typing import Any, Awaitable, Callable
 
@@ -31,6 +32,16 @@ from app.protocol.schemas import ChatMessage
 
 
 Check = Callable[[], Awaitable[dict[str, Any]]]
+
+
+class CountingModel:
+    def __init__(self, delegate: DeepSeekModel) -> None:
+        self.delegate = delegate
+        self.call_count = 0
+
+    async def generate_json(self, **kwargs: Any):
+        self.call_count += 1
+        return await self.delegate.generate_json(**kwargs)
 
 
 class SyntheticStudyKitStore:
@@ -87,7 +98,8 @@ class SyntheticStudyKitStore:
 
 
 async def main(only: set[str] | None = None) -> int:
-    model = DeepSeekModel.from_env()
+    provider = DeepSeekModel.from_env()
+    model = CountingModel(provider)
     store = SyntheticStudyKitStore()
     results: list[dict[str, Any]] = []
 
@@ -120,11 +132,11 @@ async def main(only: set[str] | None = None) -> int:
         }
 
     async def profile_check() -> dict[str, Any]:
+        before = model.call_count
         with tempfile.TemporaryDirectory(prefix="coursepilot-live-profile-") as directory:
             profiles = ProfileService(
                 SQLiteProfileRepository(Path(directory) / "profiles.sqlite3"),
                 model=model,
-                support_reviewer=model,
             )
             observation = await profiles.observe(
                 user_id=None,
@@ -139,15 +151,18 @@ async def main(only: set[str] | None = None) -> int:
             for fact in observation.profile.facts
             if fact.status is FactStatus.CONFIRMED
         }
+        capability_calls = model.call_count - before
         passed = (
             ("learning_directions", "algorithms") in confirmed
             and ("learning_directions", "systems") not in confirmed
             and ("background", "Java") not in confirmed
+            and capability_calls == 1
         )
         return {
-            "name": "profile_negation_semantic_review",
+            "name": "profile_negation_single_call",
             "passed": passed,
             "confirmed_fields": sorted(field for field, _ in confirmed),
+            "capability_model_calls": capability_calls,
             "usage": observation.usage,
         }
 
@@ -159,10 +174,10 @@ async def main(only: set[str] | None = None) -> int:
     learning = StudyKitLookupService(
         store,
         model=model,
-        claim_reviewer=model,
     )
 
     async def material_check() -> dict[str, Any]:
+        before = model.call_count
         reply = await learning.material_question(
             messages=[
                 ChatMessage(
@@ -173,34 +188,87 @@ async def main(only: set[str] | None = None) -> int:
             course_context=context,
         )
         forbidden = ("expected_evidence", "evaluation", "rubric", "评分标准")
+        capability_calls = model.call_count - before
         passed = (
             "### 依据" in reply.answer
             and "第 " in reply.answer
             and not any(item.casefold() in reply.answer.casefold() for item in forbidden)
+            and capability_calls == 1
         )
         return {
-            "name": "material_generation_and_support_audit",
+            "name": "material_generation_single_call_provenance",
             "passed": passed,
             "has_citation_section": "### 依据" in reply.answer,
+            "capability_model_calls": capability_calls,
             "usage": reply.usage,
         }
 
+    async def presentation_check() -> dict[str, Any]:
+        forbidden = ("expected_evidence", "evaluation", "rubric", "full_credit", "标准答案")
+        replies = []
+        calls_per_request = []
+        usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+        for request in (
+            "给我一道 10 分钟内可完成的概念练习。",
+            "把这道概念题的已知条件和作答格式说清楚。",
+            "给我一道表述明确、可以直接作答的入门题。",
+        ):
+            before = model.call_count
+            reply = await learning.practice_selection(
+                messages=[ChatMessage(role="user", content=request)],
+                course_context=context,
+            )
+            calls_per_request.append(model.call_count - before)
+            replies.append(reply)
+            for key in usage:
+                usage[key] += int(reply.usage.get(key, 0))
+        rewrite_successes = sum(
+            reply.presentation_kind == "structured_rewrite" for reply in replies
+        )
+        passed = (
+            rewrite_successes >= 2
+            and all(reply.presentation_digest is not None for reply in replies)
+            and all(
+                not any(item.casefold() in reply.answer.casefold() for item in forbidden)
+                for reply in replies
+            )
+            and max(calls_per_request, default=0) == 1
+        )
+        return {
+            "name": "practice_presentation_single_call",
+            "passed": passed,
+            "requests": len(replies),
+            "rewrite_successes": rewrite_successes,
+            "fallback_reasons": [
+                reply.presentation_fallback_reason
+                for reply in replies
+                if reply.presentation_fallback_reason
+            ],
+            "max_capability_model_calls_per_request": max(calls_per_request, default=0),
+            "usage": usage,
+        }
+
     async def general_check() -> dict[str, Any]:
+        before = model.call_count
         reply = await learning.concept_explanation(
             messages=[ChatMessage(role="user", content="什么是 amortized analysis？")],
             course_context=None,
         )
+        capability_calls = model.call_count - before
         passed = (
             "通用知识（不代表当前课程材料）" in reply.answer
             and "当前已审核材料不足" in reply.answer
+            and capability_calls == 1
         )
         return {
             "name": "explicit_general_knowledge_partition",
             "passed": passed,
+            "capability_model_calls": capability_calls,
             "usage": reply.usage,
         }
 
     async def practice_check() -> dict[str, Any]:
+        before = model.call_count
         reply = await learning.practice_feedback(
             messages=[
                 ChatMessage(
@@ -220,18 +288,22 @@ async def main(only: set[str] | None = None) -> int:
             "full_credit",
             "评分标准",
         )
+        capability_calls = model.call_count - before
         passed = (
             "ran_code=true" not in reply.answer
             and not any(item.casefold() in reply.answer.casefold() for item in forbidden)
             and "完整标准答案" not in reply.answer
+            and capability_calls == 1
         )
         return {
             "name": "practice_feedback_no_hidden_control_leak",
             "passed": passed,
+            "capability_model_calls": capability_calls,
             "usage": reply.usage,
         }
 
     async def code_check() -> dict[str, Any]:
+        before = model.call_count
         result = await CodeTutorService(store, model=model).tutor_code(
             user_id=None,
             conversation_id=None,
@@ -243,6 +315,7 @@ async def main(only: set[str] | None = None) -> int:
             profile=LearnerProfile(),
         )
         rendered = render_tutor_result(result)
+        capability_calls = model.call_count - before
         passed = (
             result.ran_code is False
             and result.artifact is not None
@@ -253,12 +326,14 @@ async def main(only: set[str] | None = None) -> int:
                 for item in result.bound_hypotheses
             )
             and "ran_code=false" in rendered
+            and capability_calls == 1
         )
         return {
             "name": "static_code_artifact_binding",
             "passed": passed,
             "diagnostic_codes": [item.code for item in result.diagnostics],
             "hypothesis_count": len(result.bound_hypotheses),
+            "capability_model_calls": capability_calls,
             "usage": result.usage,
         }
 
@@ -266,6 +341,7 @@ async def main(only: set[str] | None = None) -> int:
         "planning": planning_check,
         "profile": profile_check,
         "material": material_check,
+        "presentation": presentation_check,
         "general": general_check,
         "practice": practice_check,
         "code": code_check,
@@ -274,27 +350,38 @@ async def main(only: set[str] | None = None) -> int:
         check for name, check in checks.items() if only is None or name in only
     ]
     for check in selected:
+        started = time.perf_counter()
         try:
-            results.append(await check())
+            result = await check()
         except Exception as exc:  # noqa: BLE001 - sanitized manual acceptance boundary
-            results.append(
-                {
-                    "name": check.__name__,
-                    "passed": False,
-                    "error_type": type(exc).__name__,
-                }
-            )
+            result = {
+                "name": check.__name__,
+                "passed": False,
+                "error_type": type(exc).__name__,
+            }
+        result["latency_ms"] = round((time.perf_counter() - started) * 1000)
+        results.append(result)
 
     total_usage = sum(
         int(result.get("usage", {}).get("total_tokens", 0))
         for result in results
         if isinstance(result.get("usage"), dict)
     )
+    latencies = sorted(int(result["latency_ms"]) for result in results)
     summary = {
-        "provider_model": model.model,
+        "provider_model": provider.model,
         "passed": sum(result["passed"] is True for result in results),
         "total": len(results),
         "total_reported_tokens": total_usage,
+        "latency_ms": {
+            "p50": latencies[(len(latencies) - 1) // 2] if latencies else 0,
+            "p95": latencies[max(0, (len(latencies) * 95 + 99) // 100 - 1)] if latencies else 0,
+        },
+        "presentation_fallbacks": sum(
+            len(result.get("fallback_reasons", []))
+            + bool(result.get("fallback_reason"))
+            for result in results
+        ),
         "checks": results,
     }
     print(json.dumps(summary, ensure_ascii=False, indent=2))
@@ -306,7 +393,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--only",
         action="append",
-        choices=["planning", "profile", "material", "general", "practice", "code"],
+        choices=["planning", "profile", "material", "presentation", "general", "practice", "code"],
     )
     arguments = parser.parse_args()
     raise SystemExit(asyncio.run(main(set(arguments.only) if arguments.only else None)))

@@ -44,7 +44,7 @@ async def test_lookup_lists_ready_units_for_course_context() -> None:
     assert "请明确选择" in result.answer
 
 
-async def test_material_usage_includes_independent_support_review() -> None:
+async def test_material_uses_one_model_call_and_reports_usage() -> None:
     store = ReviewedFileStudyKitStore()
     document = store.get_ready(
         CONTEXT.course_id, CONTEXT.course_version, CONTEXT.unit_id or ""
@@ -55,16 +55,16 @@ async def test_material_usage_includes_independent_support_review() -> None:
     assert evidence
     generator = FakeStructuredModel(
         {
-            "answer": evidence[0].text,
-            "citation_ids": [evidence[0].citation_id],
+            "claims": [
+                {
+                    "text": evidence[0].text,
+                    "provenance": "course_material",
+                    "citation_ids": [evidence[0].citation_id],
+                }
+            ]
         }
     )
-    reviewer = FakeStructuredModel({"supported": True})
-    service = StudyKitLookupService(
-        store,
-        model=generator,
-        claim_reviewer=reviewer,
-    )
+    service = StudyKitLookupService(store, model=generator)
 
     result = await service.material_question(
         messages=_messages("反向传播是什么？"),
@@ -72,7 +72,8 @@ async def test_material_usage_includes_independent_support_review() -> None:
     )
 
     assert "### 依据" in result.answer
-    assert result.usage["total_tokens"] == 30
+    assert result.usage["total_tokens"] == 15
+    assert len(generator.calls) == 1
 
 
 async def test_catalog_only_course_is_not_mistaken_for_online_studykit() -> None:
@@ -120,8 +121,13 @@ async def test_material_question_rejects_uncovered_page() -> None:
 async def test_material_model_must_use_allowed_citations() -> None:
     valid_model = FakeStructuredModel(
         {
-            "answer": "反向传播负责计算梯度，梯度下降使用梯度更新参数。",
-            "citation_ids": ["concept-5", "concept-1"],
+            "claims": [
+                {
+                    "text": "反向传播负责计算梯度，梯度下降使用梯度更新参数。",
+                    "provenance": "course_material",
+                    "citation_ids": ["concept-5", "concept-1"],
+                }
+            ]
         }
     )
     valid = StudyKitLookupService(ReviewedFileStudyKitStore(), model=valid_model)
@@ -136,7 +142,15 @@ async def test_material_model_must_use_allowed_citations() -> None:
     assert result.usage["total_tokens"] == 15
 
     invalid_model = FakeStructuredModel(
-        {"answer": "没有依据的回答", "citation_ids": ["invented-citation"]}
+        {
+            "claims": [
+                {
+                    "text": "没有依据的回答",
+                    "provenance": "course_material",
+                    "citation_ids": ["invented-citation"],
+                }
+            ]
+        }
     )
     invalid = StudyKitLookupService(ReviewedFileStudyKitStore(), model=invalid_model)
     fallback = await invalid.material_question(
@@ -147,6 +161,35 @@ async def test_material_model_must_use_allowed_citations() -> None:
     assert "不补充外部事实" in fallback.answer
     assert "invented-citation" not in fallback.answer
     assert fallback.usage["total_tokens"] == 15
+
+
+async def test_invalid_course_partition_keeps_single_call_general_knowledge() -> None:
+    model = FakeStructuredModel(
+        {
+            "claims": [
+                {
+                    "text": "未经依据支持的课程事实。",
+                    "provenance": "course_material",
+                    "citation_ids": ["invented-citation"],
+                },
+                {
+                    "text": "梯度通常描述函数在局部增长最快的方向。",
+                    "provenance": "general_knowledge",
+                    "citation_ids": [],
+                },
+            ]
+        }
+    )
+    service = StudyKitLookupService(ReviewedFileStudyKitStore(), model=model)
+
+    result = await service.material_question(
+        messages=_messages("反向传播和梯度有什么关系？"), course_context=CONTEXT
+    )
+
+    assert "未经依据" not in result.answer
+    assert "通用知识（不代表当前课程材料）" in result.answer
+    assert "梯度通常" in result.answer
+    assert len(model.calls) == 1
 
 
 async def test_concept_explanation_is_layered_and_cited() -> None:
@@ -206,6 +249,148 @@ async def test_practice_selection_supports_debug_type() -> None:
 
     assert "practice-debugging-01" in result.answer
     assert "gradient clipping" in result.answer
+
+
+async def test_practice_selection_automatically_rewrites_once() -> None:
+    model = FakeStructuredModel(
+        {
+            "practice_id": "practice-concept-01",
+            "transformation_kind": "structured_rewrite",
+            "title": "区分梯度计算与参数更新",
+            "scenario": "考虑一次标准训练迭代。",
+            "givens": ["已经得到一个标量损失。"],
+            "question": "分别说明反向传播和梯度下降在该迭代中承担的动作。",
+            "constraints": ["按发生顺序回答。"],
+            "deliverable": "用两到三句话说明输入、输出和先后关系。",
+            "estimated_minutes": 8,
+            "citation_ids": [],
+            "retained_objective_ids": [],
+            "retained_requirement_ids": [],
+        }
+    )
+    service = StudyKitLookupService(ReviewedFileStudyKitStore(), model=model)
+
+    result = await service.practice_selection(
+        messages=_messages("给我一道概念练习"), course_context=CONTEXT
+    )
+
+    assert "模型精确化" in result.answer
+    assert "区分梯度计算与参数更新" in result.answer
+    assert result.presentation_kind == "structured_rewrite"
+    assert result.presentation_digest is not None
+    assert len(model.calls) == 1
+    prompt = model.calls[0]["user_prompt"]
+    assert "expected_evidence_key_points" in prompt
+    assert '"evaluation"' not in prompt
+    assert "full_credit" not in prompt
+
+
+async def test_practice_rewrite_leak_falls_back_to_original_once() -> None:
+    model = FakeStructuredModel(
+        {
+            "practice_id": "practice-concept-01",
+            "transformation_kind": "structured_rewrite",
+            "title": "答案",
+            "scenario": None,
+            "givens": [],
+            "question": "反向传播输入损失及计算图信息，输出参数梯度。",
+            "constraints": [],
+            "deliverable": "复述上面的结论。",
+            "estimated_minutes": None,
+            "citation_ids": [],
+            "retained_objective_ids": [],
+            "retained_requirement_ids": [],
+        }
+    )
+    service = StudyKitLookupService(ReviewedFileStudyKitStore(), model=model)
+
+    result = await service.practice_selection(
+        messages=_messages("给我一道概念练习"), course_context=CONTEXT
+    )
+
+    assert "题目精确化暂时不可用" in result.answer
+    assert "作答要求" in result.answer
+    assert result.presentation_kind == "original"
+    assert len(model.calls) == 1
+
+
+async def test_practice_rewrite_kill_switch_uses_no_model_call() -> None:
+    model = FakeStructuredModel({})
+    service = StudyKitLookupService(
+        ReviewedFileStudyKitStore(), model=model, practice_rewrite_enabled=False
+    )
+
+    result = await service.practice_selection(
+        messages=_messages("给我一道概念练习"), course_context=CONTEXT
+    )
+
+    assert result.presentation_kind == "original"
+    assert model.calls == []
+
+
+async def test_feedback_uses_digest_bound_presented_question() -> None:
+    model = FakeStructuredModel(
+        {
+            "practice_id": "practice-concept-01",
+            "transformation_kind": "structured_rewrite",
+            "title": "区分两个训练阶段",
+            "scenario": None,
+            "givens": ["已经得到标量损失。"],
+            "question": "按顺序说明梯度计算和参数更新分别发生在哪一步。",
+            "constraints": [],
+            "deliverable": "用两句话回答。",
+            "estimated_minutes": 5,
+            "citation_ids": [],
+            "retained_objective_ids": [],
+            "retained_requirement_ids": [],
+        },
+        {
+            "correct_points": ["说明了反向传播先计算梯度。"],
+            "correction": "补充参数更新发生在梯度计算之后。",
+            "next_hint": "按损失、梯度、参数的顺序检查。",
+            "source_pages": [8, 44],
+        },
+    )
+    service = StudyKitLookupService(ReviewedFileStudyKitStore(), model=model)
+    presentation = await service.practice_selection(
+        messages=_messages("给我一道概念练习"), course_context=CONTEXT
+    )
+    messages = [
+        ChatMessage(role="user", content="给我一道概念练习"),
+        ChatMessage(role="assistant", content=presentation.answer),
+        ChatMessage(
+            role="user",
+            content="点评 practice-concept-01。我的答案是先算梯度，再更新参数。",
+        ),
+    ]
+
+    result = await service.practice_feedback(
+        messages=messages,
+        course_context=CONTEXT,
+        presentation_digest=presentation.presentation_digest,
+        presentation_kind=presentation.presentation_kind,
+    )
+
+    assert "本题点评" in result.answer
+    assert len(model.calls) == 2
+    assert "按顺序说明梯度计算" in model.calls[1]["user_prompt"]
+
+
+async def test_grounded_variant_feedback_requires_matching_presentation() -> None:
+    model = FakeStructuredModel({})
+    service = StudyKitLookupService(ReviewedFileStudyKitStore(), model=model)
+
+    result = await service.practice_feedback(
+        messages=_messages(
+            "点评 practice-concept-01。我的答案是先算梯度，再更新参数。"
+        ),
+        course_context=CONTEXT,
+        presentation_digest="a" * 64,
+        presentation_kind="grounded_variant",
+    )
+
+    assert "无法从当前消息历史恢复" in result.answer
+    assert model.calls == []
 
 
 async def test_practice_feedback_transparently_degrades_without_model() -> None:

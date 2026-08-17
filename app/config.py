@@ -42,6 +42,9 @@ def _load_positive_int(name: str, default: int) -> int:
 
 
 COOKIE_SECURE = _load_bool("COURSEPILOT_COOKIE_SECURE", default=False)
+PRACTICE_REWRITE_ENABLED = _load_bool(
+    "COURSEPILOT_PRACTICE_REWRITE_ENABLED", default=True
+)
 SESSION_TTL_HOURS = _load_positive_int("COURSEPILOT_SESSION_TTL_HOURS", 12)
 SESSION_COOKIE_NAME = "coursepilot_session"
 ALLOWED_ORIGINS = {

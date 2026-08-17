@@ -37,9 +37,20 @@ Provider-backed acceptance is opt-in and uses only invented evidence; see
 [`platform_validation.md`](platform_validation.md#opt-in-provider-backed-acceptance). The normal pytest
 suite remains deterministic, offline, and credential-free.
 
-The 2026-08-17 `deepseek-v4-flash` acceptance run passed 6/6 checks: full-history multi-intent
-planning, negation-aware profile review, material generation with independent support audit, labeled
-general knowledge, minimum-projection practice feedback, and artifact-bound static code tutoring.
-It exposed and led to fixes for planner Schema retry/fallback, reviewer usage aggregation, rubric
-removal from the external feedback prompt, and ambient-key isolation in test mode. Run it manually
-with `.venv/bin/python scripts/run_live_agent_acceptance.py`; the script prints only verdict metadata.
+Online model calls follow a request-local budget: TaskPlan is counted separately, and each concrete
+capability may call the model at most once. Profile extraction and material generation no longer run
+a second online reviewer; SourceChunk recall is deterministic before the material answer call.
+Deterministic schemas, exact evidence quotes, provenance ID allowlists, hidden-control scans, and
+transparent fallbacks enforce the online boundary. Independent semantic audit remains mandatory for
+offline StudyKit authoring and archive approval.
+
+Practice selection automatically uses its one model call to produce a `structured_rewrite` with
+explicit givens, question, constraints, deliverable, and estimated time. The model receives a minimal
+intent projection but not the complete evaluation/rubric. Invalid output falls back to the approved
+original. Context-token v2 binds the active presentation kind and digest without storing the question
+or answer; v1 tokens remain accepted. `grounded_variant` remains disabled until an approved public
+SourceChunk index is actually available.
+
+The final opt-in `deepseek-v4-flash` acceptance passed 7/7 checks with 4,310 reported tokens. Every
+concrete model-backed capability reported one call per request; all three practice-presentation samples
+produced validated `structured_rewrite` results with zero fallbacks.

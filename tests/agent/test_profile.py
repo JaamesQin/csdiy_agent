@@ -298,7 +298,7 @@ def test_expired_inferred_fact_cannot_be_confirmed(tmp_path) -> None:
     assert repository.get_profile("user-a").facts == []
 
 
-async def test_profile_usage_includes_independent_support_review(tmp_path) -> None:
+async def test_profile_uses_one_model_call_and_reports_usage(tmp_path) -> None:
     extractor = FakeStructuredModel(
         {
             "candidates": [
@@ -315,11 +315,9 @@ async def test_profile_usage_includes_independent_support_review(tmp_path) -> No
             ]
         }
     )
-    reviewer = FakeStructuredModel({"supported_indexes": [0]})
     service = ProfileService(
         SQLiteProfileRepository(tmp_path / "profiles.sqlite3"),
         model=extractor,
-        support_reviewer=reviewer,
     )
 
     result = await service.observe(
@@ -328,4 +326,5 @@ async def test_profile_usage_includes_independent_support_review(tmp_path) -> No
         current=LearnerProfile(),
     )
 
-    assert result.usage["total_tokens"] == 30
+    assert result.usage["total_tokens"] == 15
+    assert len(extractor.calls) == 1

@@ -13,6 +13,8 @@ def test_context_token_is_minimal_tamper_evident_and_expiring() -> None:
         ),
         active_practice_id="practice-1",
         displayed_practice_ids=["practice-1"],
+        practice_presentation_kind="structured_rewrite",
+        practice_presentation_digest="b" * 64,
         code_artifact_id="code-1",
         code_digest="a" * 64,
         now=100,
@@ -21,6 +23,34 @@ def test_context_token_is_minimal_tamper_evident_and_expiring() -> None:
     verified = signer.verify(token, now=120)
     assert verified is not None
     assert verified.active_practice_id == "practice-1"
+    assert verified.version == 2
+    assert verified.practice_presentation_kind == "structured_rewrite"
+    assert verified.practice_presentation_digest == "b" * 64
     assert "answer" not in token and "secret" not in token
     assert signer.verify(token + "x", now=120) is None
     assert signer.verify(token, now=160) is None
+
+
+def test_context_token_accepts_v1_without_presentation_state() -> None:
+    signer = ContextTokenSigner(b"x" * 32, ttl_seconds=60)
+    token = signer.issue(plan={"tasks": ["practice"]}, now=100)
+    encoded, signature = token.split(".", 1)
+    import base64
+    import hashlib
+    import hmac
+    import json
+
+    payload = json.loads(base64.urlsafe_b64decode(encoded + "=" * (-len(encoded) % 4)))
+    payload["version"] = 1
+    payload.pop("practice_presentation_kind", None)
+    payload.pop("practice_presentation_digest", None)
+    raw = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode()
+    encoded = base64.urlsafe_b64encode(raw).rstrip(b"=").decode()
+    signature = base64.urlsafe_b64encode(
+        hmac.digest(b"x" * 32, encoded.encode("ascii"), hashlib.sha256)
+    ).rstrip(b"=").decode()
+
+    verified = signer.verify(f"{encoded}.{signature}", now=120)
+    assert verified is not None
+    assert verified.version == 1
+    assert verified.practice_presentation_digest is None

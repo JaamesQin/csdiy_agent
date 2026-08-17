@@ -43,6 +43,23 @@ def test_task_plan_rejects_cycles_and_unknown_capabilities() -> None:
             objective="bad",
         )
 
+    with pytest.raises(ValidationError, match="capability may appear at most once"):
+        TaskPlan(
+            user_goal="重复能力",
+            tasks=[
+                PlannedTask(
+                    task_id="first",
+                    capability_id=CapabilityId.CONCEPT_EXPLANATION,
+                    objective="解释 A",
+                ),
+                PlannedTask(
+                    task_id="second",
+                    capability_id=CapabilityId.CONCEPT_EXPLANATION,
+                    objective="解释 B",
+                ),
+            ],
+        )
+
 
 async def test_executor_preserves_independent_success_and_blocks_dependents() -> None:
     async def handler(task: PlannedTask) -> TaskExecutionResult:

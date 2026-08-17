@@ -7,7 +7,7 @@ import hashlib
 import hmac
 import json
 import time
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
@@ -17,7 +17,7 @@ from app.agent.contracts import StudyKitCourseIdentity
 class ConversationContextToken(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    version: int = Field(default=1, ge=1, le=1)
+    version: int = Field(default=2, ge=1, le=2)
     issued_at: int
     expires_at: int
     plan_digest: str = Field(pattern=r"^[0-9a-f]{64}$")
@@ -25,12 +25,22 @@ class ConversationContextToken(BaseModel):
     active_practice_id: str | None = Field(default=None, max_length=300)
     displayed_practice_ids: list[str] = Field(default_factory=list, max_length=64)
     hint_level: int = Field(default=0, ge=0, le=5)
+    practice_presentation_kind: Literal[
+        "original", "structured_rewrite", "grounded_variant"
+    ] | None = None
+    practice_presentation_digest: str | None = Field(
+        default=None, pattern=r"^[0-9a-f]{64}$"
+    )
     code_artifact_id: str | None = Field(default=None, max_length=100)
     code_digest: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
 
     def model_post_init(self, __context: object) -> None:
         if (self.code_artifact_id is None) != (self.code_digest is None):
             raise ValueError("code artifact ID and digest must be present together")
+        if (self.practice_presentation_kind is None) != (
+            self.practice_presentation_digest is None
+        ):
+            raise ValueError("practice presentation kind and digest must be present together")
 
 
 class ContextTokenSigner:
@@ -50,6 +60,10 @@ class ContextTokenSigner:
         active_practice_id: str | None = None,
         displayed_practice_ids: list[str] | None = None,
         hint_level: int = 0,
+        practice_presentation_kind: Literal[
+            "original", "structured_rewrite", "grounded_variant"
+        ] | None = None,
+        practice_presentation_digest: str | None = None,
         code_artifact_id: str | None = None,
         code_digest: str | None = None,
         now: int | None = None,
@@ -66,6 +80,8 @@ class ContextTokenSigner:
             active_practice_id=active_practice_id,
             displayed_practice_ids=list(dict.fromkeys(displayed_practice_ids or [])),
             hint_level=hint_level,
+            practice_presentation_kind=practice_presentation_kind,
+            practice_presentation_digest=practice_presentation_digest,
             code_artifact_id=code_artifact_id,
             code_digest=code_digest,
         )

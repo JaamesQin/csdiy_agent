@@ -150,6 +150,9 @@ class TaskPlan(BaseModel):
         ids = [task.task_id for task in self.tasks]
         if len(ids) != len(set(ids)):
             raise ValueError("task IDs must be unique")
+        capabilities = [task.capability_id for task in self.tasks]
+        if len(capabilities) != len(set(capabilities)):
+            raise ValueError("each capability may appear at most once per task plan")
         known = set(ids)
         graph: dict[str, list[str]] = {}
         for task in self.tasks:

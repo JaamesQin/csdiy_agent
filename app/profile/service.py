@@ -14,7 +14,7 @@ from typing import Iterable
 from pydantic import ValidationError
 
 from app.agent.contracts import CourseContext
-from app.agent.model_support import add_usage, normalized_usage
+from app.agent.model_support import normalized_usage
 from app.generation.model import ModelError, StructuredModel
 from app.profile.contracts import (
     FactStatus,
@@ -51,11 +51,9 @@ class ProfileService:
         self,
         repository: SQLiteProfileRepository,
         model: StructuredModel | None = None,
-        support_reviewer: StructuredModel | None = None,
     ) -> None:
         self.repository = repository
         self.model = model
-        self.support_reviewer = support_reviewer
 
     def load(self, user_id: str | None) -> LearnerProfile:
         if not user_id:
@@ -212,11 +210,8 @@ class ProfileService:
                     timeout_seconds=30,
                 )
                 observation = ProfileObservation.model_validate(response.output)
-                reviewed, review_usage = await self._review_model_candidates(
-                    observation.candidates, prose
-                )
-                candidates.extend(reviewed)
-                usage = add_usage(normalized_usage(response.usage), review_usage)
+                candidates.extend(observation.candidates)
+                usage = normalized_usage(response.usage)
             except (ModelError, ValidationError, ValueError):
                 pass
 
@@ -277,60 +272,6 @@ class ProfileService:
             usage=usage,
             persistence_error=persistence_error,
         )
-
-    async def _review_model_candidates(
-        self, candidates: list[ProfileCandidate], prose: str
-    ) -> tuple[list[ProfileCandidate], dict[str, int]]:
-        confirmed = [item for item in candidates if item.status is FactStatus.CONFIRMED]
-        if not confirmed:
-            return candidates, normalized_usage()
-        if self.support_reviewer is None:
-            # Backward-compatible embedders may omit the independent reviewer.
-            # The default online runtime always wires it when a model is present.
-            return candidates, normalized_usage()
-        supported_indexes: set[int] = set()
-        usage = normalized_usage()
-        try:
-            response = await self.support_reviewer.generate_json(
-                system_prompt=(
-                    "你是独立画像证据审查器。判断原文是否语义蕴含每个候选事实；"
-                    "否定、转折、引用他人、问题和假设均不构成用户自我陈述。只输出 JSON。"
-                ),
-                user_prompt=json.dumps(
-                    {
-                        "text": prose,
-                        "candidates": [item.model_dump() for item in confirmed],
-                        "output_contract": {
-                            "supported_indexes": ["zero-based integer"]
-                        },
-                    },
-                    ensure_ascii=False,
-                ),
-                thinking_enabled=False,
-                max_tokens=1024,
-                timeout_seconds=20,
-            )
-            usage = normalized_usage(response.usage)
-            raw = response.output.get("supported_indexes", [])
-            if isinstance(raw, list) and all(
-                isinstance(index, int) and not isinstance(index, bool) for index in raw
-            ):
-                supported_indexes = {
-                    index for index in raw if 0 <= index < len(confirmed)
-                }
-        except (ModelError, ValueError):
-            supported_indexes = set()
-        reviewed: list[ProfileCandidate] = []
-        confirmed_index = 0
-        for candidate in candidates:
-            item = candidate.model_copy(deep=True)
-            if item.status is FactStatus.CONFIRMED:
-                if confirmed_index not in supported_indexes:
-                    item.status = FactStatus.INFERRED
-                    item.confidence = min(item.confidence, 0.7)
-                confirmed_index += 1
-            reviewed.append(item)
-        return reviewed, usage
 
     def render(self, profile: LearnerProfile) -> str:
         confirmed = [fact for fact in profile.facts if fact.status is FactStatus.CONFIRMED]

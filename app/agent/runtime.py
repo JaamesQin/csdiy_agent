@@ -21,7 +21,7 @@ from app.course_navigation.service import CourseNavigationService
 from app.learning.service import StudyKitLookupService
 from app.retrieval.source_chunks import SQLiteSourceChunkStore
 from app.profile.service import ProfileService, get_profile_service
-from app.config import API_KEY
+from app.config import API_KEY, PRACTICE_REWRITE_ENABLED
 
 
 @lru_cache(maxsize=8)
@@ -35,8 +35,6 @@ def _build_coursepilot_agent(profiles: ProfileService) -> CoursePilotAgent:
     catalog = ReviewedCourseCatalogStore(store)
     if profiles.model is None:
         profiles.model = model
-    if profiles.support_reviewer is None:
-        profiles.support_reviewer = model
     return CoursePilotAgent(
         store=store,
         router=IntentRouter(store, model=model),
@@ -53,7 +51,7 @@ def _build_coursepilot_agent(profiles: ProfileService) -> CoursePilotAgent:
                 / "archive"
                 / "source_chunks.sqlite3"
             ),
-            claim_reviewer=model,
+            practice_rewrite_enabled=PRACTICE_REWRITE_ENABLED,
         ),
         planner=TaskPlanner(model=model),
         context_signer=ContextTokenSigner(
