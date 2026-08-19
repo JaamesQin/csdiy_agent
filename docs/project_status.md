@@ -29,6 +29,11 @@ StudyKit 和 12,008 个文本审计工件，并删除约 4.27 GiB 的重复 `out
 读取 archive，否则回退到人工批准的 golden 数据。当前 286 条均为 `validated_draft`，
 所以实际在线范围仍为 Lecture 2/8。
 
+在线输入现先经过统一模型理解与有界 TaskPlan：支持自然语言内联代码、聊天平台压平围栏、中文讲次/
+页码、课程纠正、签名序号和多意图计划；确定性层只负责身份、证据和持久化校验。练习上下文已签名时，
+用户可以直接提交答案而无需重复 practice ID。真实 DeepSeek 后端 E2E 由
+`scripts/run_live_backend_e2e.py` 单独执行，离线 pytest 继续使用 fake model。
+
 ## 二、能力状态矩阵
 
 | 能力 | 当前状态 | 发布前缺口 |

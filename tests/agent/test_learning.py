@@ -44,6 +44,30 @@ async def test_lookup_lists_ready_units_for_course_context() -> None:
     assert "请明确选择" in result.answer
 
 
+def test_unit_summary_uses_only_approved_studykit_content() -> None:
+    service = StudyKitLookupService(ReviewedFileStudyKitStore())
+
+    result = service.unit_summary(
+        messages=_messages("这讲最重要的内容是什么？"),
+        course_context=CONTEXT,
+    )
+
+    assert "本讲重点" in result.answer
+    assert "反向传播" in result.answer
+    assert "已审核 StudyKit" in result.answer
+    assert "算法、数据结构、编程语言和计算理论" not in result.answer
+
+
+async def test_unscoped_lookup_never_enumerates_every_unit() -> None:
+    service = StudyKitLookupService(ReviewedFileStudyKitStore())
+
+    result = await service.lookup(messages=_messages("查看 StudyKit"), course_context=None)
+
+    assert "可继续缩小范围的课程" in result.answer
+    assert result.answer.count("\n-") <= 3
+    assert "避免一次返回全部学习包" in result.answer
+
+
 async def test_material_uses_one_model_call_and_reports_usage() -> None:
     store = ReviewedFileStudyKitStore()
     document = store.get_ready(
@@ -116,6 +140,13 @@ async def test_material_question_rejects_uncovered_page() -> None:
 
     assert "没有足够依据" in result.answer
     assert "不会猜测" in result.answer
+
+    chinese = await service.material_question(
+        messages=_messages("讲义第九百九十九页说了什么？"),
+        course_context=CONTEXT,
+    )
+    assert "第 999 页" in chinese.answer
+    assert "没有足够依据" in chinese.answer
 
 
 async def test_material_model_must_use_allowed_citations() -> None:

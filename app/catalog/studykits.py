@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any, Protocol
 
 from app.agent.contracts import CourseContext
+from app.agent.numbers import parse_positive_int
 from app.catalog.contracts import ReadyStudyKitSummary
 from app.retrieval.schema_validation import validate_yaml
 
@@ -55,7 +56,7 @@ _ARCHIVE_TABLE_COLUMNS = {
     },
 }
 _UNIT_REFERENCE = re.compile(
-    r"(?:lecture\s*[- ]?(0?[0-9]{1,3})|第\s*(0?[0-9]{1,3})\s*讲)",
+    r"(?:lecture\s*[- ]?(0?[0-9]{1,3})|第\s*([零〇一二两三四五六七八九十百千0-9]{1,8})\s*讲)",
     re.IGNORECASE,
 )
 
@@ -203,8 +204,9 @@ class _DocumentStudyKitStore:
             unit_matches = list(_UNIT_REFERENCE.finditer(text))
             if unit_matches:
                 match = unit_matches[-1]
-                number = match.group(1) or match.group(2)
-                selected_unit = f"lecture-{int(number):02d}"
+                number = parse_positive_int(match.group(1) or match.group(2))
+                if number is not None:
+                    selected_unit = f"lecture-{number:02d}"
 
         if selected is None and selected_unit is None:
             return None
@@ -269,11 +271,13 @@ class _DocumentStudyKitStore:
     def _normalize_unit(value: str) -> str:
         lowered = value.strip().lower()
         match = re.fullmatch(
-            r"(?:lecture\s*[- ]?0?([0-9]{1,3})|第\s*0?([0-9]{1,3})\s*讲)",
+            r"(?:lecture\s*[- ]?0?([0-9]{1,3})|第\s*([零〇一二两三四五六七八九十百千0-9]{1,8})\s*讲)",
             lowered,
         )
         if match:
-            return f"lecture-{int(match.group(1) or match.group(2)):02d}"
+            number = parse_positive_int(match.group(1) or match.group(2))
+            if number is not None:
+                return f"lecture-{number:02d}"
         return lowered
 
 

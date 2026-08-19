@@ -3,6 +3,8 @@ from __future__ import annotations
 import pytest
 
 from app.agent.orchestrator import CoursePilotAgent
+from app.agent.planning import TaskPlanner
+from app.agent.events import AgentEvent
 from app.agent.router import IntentRouter
 from app.catalog.courses import ReviewedCourseCatalogStore
 from app.catalog.studykits import ReviewedFileStudyKitStore
@@ -93,6 +95,18 @@ async def test_help_lists_only_available_capabilities_and_skips_observation(
     assert "3. **课程导航**" in reply.answer
     assert "8. **练习反馈**" in reply.answer
     assert "/help code" in reply.answer
+
+
+async def test_natural_general_help_short_circuits_planner(tmp_path) -> None:
+    agent = _agent(tmp_path)
+    agent.planner = TaskPlanner(robust_input_enabled=True)
+
+    reply = await agent.handle(
+        messages=[ChatMessage(role="user", content="你目前能帮我做什么？")],
+        user_id="stable-user",
+    )
+
+    assert "CoursePilot 当前功能" in reply.answer
 
 
 async def test_specific_code_help_lists_languages(tmp_path) -> None:
@@ -204,3 +218,54 @@ async def test_agent_practice_feedback_wins_over_code_fence(tmp_path) -> None:
 
     assert "本题反馈暂时降级" in reply.answer
     assert "ran_code=false" not in reply.answer
+
+
+async def test_planned_agent_handles_inline_cpp_naturally(tmp_path) -> None:
+    agent = _agent(tmp_path)
+    agent.planner = TaskPlanner(robust_input_enabled=True)
+
+    reply = await agent.handle(
+        messages=[
+            ChatMessage(
+                role="user",
+                content=(
+                    "这段代码有什么问题：“include<stdio.h> "
+                    "int main(){int a,b; cin>>a>>b; cout<<a+b; return 0;}"
+                ),
+            )
+        ],
+        user_id=None,
+    )
+
+    assert "理解：我按 C++ 代码进行静态分析" in reply.answer
+    assert "ran_code=false" in reply.answer
+    assert "未收到可静态分析的代码" not in reply.answer
+
+
+async def test_planned_agent_emits_only_structured_capability_events(tmp_path) -> None:
+    class Sink:
+        def __init__(self) -> None:
+            self.events: list[AgentEvent] = []
+
+        def emit(self, event: AgentEvent) -> None:
+            self.events.append(event)
+
+    sink = Sink()
+    agent = _agent(tmp_path)
+    agent.planner = TaskPlanner(robust_input_enabled=True)
+    agent.event_sink = sink
+
+    await agent.handle(
+        messages=[ChatMessage(role="user", content="推荐一门系统课程")],
+        user_id=None,
+    )
+
+    assert [event.kind for event in sink.events] == [
+        "understanding",
+        "plan_task",
+        "task_result",
+    ]
+    assert sink.events[0].reason == "model_unavailable_deterministic"
+    assert sink.events[0].task_count == 1
+    assert all(event.capability_id is not None for event in sink.events[1:])
+    assert not hasattr(sink.events[0], "content")

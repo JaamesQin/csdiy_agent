@@ -172,6 +172,7 @@ curl http://127.0.0.1:8000/v1/chat/completions \
 | `COURSEPILOT_COOKIE_SECURE` | `false` | HTTPS 生产环境必须设为 `true` |
 | `COURSEPILOT_ALLOWED_ORIGINS` | 当前请求 Origin | 可选，逗号分隔的网页登录 Origin allowlist |
 | `COURSEPILOT_TEST_MODE` | `false` | 仅测试使用 |
+| `COURSEPILOT_ROBUST_INPUT` | `true` | 启用自然语言、内联代码、压平围栏及中文讲次/页码解析；首个发布周期可设为 `false` 回退旧 Planner 路径 |
 | `DEEPSEEK_API_KEY` | 无 | 可选；启用在线结构化路由/画像/材料问答/练习反馈/语义辅导，并用于离线生成 |
 
 生产环境必须使用 HTTPS、持久化受限权限的数据库卷，并在反向代理层增加全局登录/注册限流。应用内限流只覆盖单进程实例。
@@ -193,7 +194,19 @@ Cookie 认证的 `POST /v1/chat/completions` 同样要求 `X-CSRF-Token`。API K
 .venv/bin/pytest -q
 ```
 
-当前基线为 `303 passed`：299 项普通测试和 4 项绑定 `127.0.0.1` 临时端口的真实 HTTP 测试。覆盖密码和令牌非明文存储、v1→v2 迁移、账号隔离、JSON/SSE 契约、课程目录校验与分级、archive 双 review 门禁、portable schema 兼容、上下文解析、StudyKit 安全投影、材料引用白名单、概念解释、练习选择/反馈降级、隐藏字段防泄漏、多语言静态诊断、生成管线和真实本地 HTTP/SSE。
+当前基线为 `553 passed`。覆盖密码和令牌非明文存储、v1→v2 迁移、账号隔离、JSON/SSE 契约、课程目录与 archive 门禁、模型驱动的统一自然语言理解、内联/压平代码、签名序号指代、中文讲次/页码、画像校验、上下文连续反馈、材料引用白名单、多语言静态诊断、生成管线和本地 HTTP/SSE。
+
+真实 DeepSeek 后端端到端验收不属于 pytest，使用合成消息、临时画像数据库和真实受审核 Store：
+
+```bash
+.venv/bin/python scripts/run_live_backend_e2e.py --suite smoke
+.venv/bin/python scripts/run_live_backend_e2e.py --suite full \
+  --report /tmp/coursepilot-live-e2e-full.json
+```
+
+运行器不会输出 Key、完整 prompt、模型正文、用户代码或画像证据，只报告场景结果、调用次数、usage 和延迟。
+整改设计、用户/开发者双视角验收和完整新手测试流程见
+[自然语言鲁棒性整改与端到端验证](docs/live-novice-agent-remediation-validation-20260819.md)。
 
 ## 安全与隐私
 

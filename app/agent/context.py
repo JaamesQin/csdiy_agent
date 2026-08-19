@@ -6,11 +6,11 @@ import re
 
 from pydantic import BaseModel
 
+from app.agent.understanding import FENCE_BLOCK, OUTPUT_FENCE_LABELS, understand_user_texts
 from app.code_tutor.languages import normalize_language_label
 from app.protocol.schemas import ChatMessage
 
 CODE_FENCE = re.compile(r"```([^\n`]*)\r?\n(.*?)```", re.DOTALL)
-OUTPUT_FENCE_LABELS = {"console", "error", "errors", "log", "output", "text", "traceback"}
 ERROR_LINE = re.compile(
     r"(?:"
     r"(?:fatal\s+)?error(?:\[[A-Z0-9_]+\])?\s*[:：]|"
@@ -27,24 +27,15 @@ class TurnContext(BaseModel):
     code: str = ""
     language: str | None = None
     error_text: str | None = None
+    language_inferred: bool = False
+    code_source: str | None = None
 
 
 def build_turn_context(messages: list[ChatMessage]) -> TurnContext:
     user_messages = [message.content for message in messages if message.role == "user"]
-    latest = user_messages[-1]
-    code = ""
-    language: str | None = None
-    for text in reversed(user_messages):
-        matches = list(CODE_FENCE.finditer(text))
-        for match in reversed(matches):
-            candidate_language = normalize_language_label(match.group(1))
-            if candidate_language in OUTPUT_FENCE_LABELS:
-                continue
-            language = candidate_language
-            code = match.group(2).strip()
-            break
-        if code:
-            break
+    understanding = understand_user_texts(user_messages)
+    latest = understanding.latest_user_text
+    extracted = understanding.code
 
     error_text: str | None = None
     for text in reversed(user_messages):
@@ -62,7 +53,7 @@ def build_turn_context(messages: list[ChatMessage]) -> TurnContext:
         if traceback:
             error_text = traceback.group(1).strip()[:8000]
             break
-        plain_text = CODE_FENCE.sub("", text)
+        plain_text = FENCE_BLOCK.sub("", text)
         error_lines = [
             line.strip()
             for line in plain_text.splitlines()
@@ -73,7 +64,9 @@ def build_turn_context(messages: list[ChatMessage]) -> TurnContext:
             break
     return TurnContext(
         user_text=latest,
-        code=code[:20000],
-        language=language,
+        code=extracted.content,
+        language=extracted.language,
         error_text=error_text,
+        language_inferred=extracted.language_inferred,
+        code_source=extracted.source,
     )

@@ -11,6 +11,7 @@ from typing import Any
 from pydantic import ValidationError
 
 from app.agent.contracts import AnswerClaim, CourseContext, ProvenanceKind
+from app.agent.numbers import parse_positive_int
 from app.agent.model_support import normalized_usage
 from app.agent.provenance import ProvenanceResult, enforce_provenance, render_claims
 from app.catalog.courses import CatalogDataError, CourseCatalogStore
@@ -36,7 +37,10 @@ _FULL_SOLUTION = re.compile(
     r"完整答案|标准答案|全部解答|直接给.*答案|可提交|帮我做完|full solution|solve it for me",
     re.IGNORECASE,
 )
-_PAGE_REFERENCE = re.compile(r"(?:第\s*(\d{1,4})\s*页|page\s*(\d{1,4}))", re.IGNORECASE)
+_PAGE_REFERENCE = re.compile(
+    r"(?:第\s*([零〇一二两三四五六七八九十百千\d]{1,8})\s*页|page\s*(\d{1,4}))",
+    re.IGNORECASE,
+)
 _HIDDEN_OUTPUT = re.compile(
     r"expected_evidence|full_credit|partial_credit|evaluation|rubric|评分标准|预期证据|"
     r"累计正确率|总体掌握度|\b\d+\s*/\s*\d+\b|得分[:：]",
@@ -107,18 +111,24 @@ class StudyKitLookupService:
             ready = self.store.list_ready()
             if not ready:
                 return self._reply("当前没有可在线读取的已审核 StudyKit。")
-            lines = ["## 当前可用 StudyKit", ""]
+            grouped: dict[tuple[str, str], list[Any]] = {}
             for item in ready:
-                lines.append(
-                    f"- `{item.course_id}` / `{item.course_version}` / `{item.unit_id}`：{item.title}"
-                )
-            lines.extend(["", "请指定课程和讲次，例如“查看 MIT 6.7960 第 2 讲的 StudyKit”。"])
+                grouped.setdefault((item.course_id, item.course_version), []).append(item)
+            lines = ["## 可继续缩小范围的课程", ""]
+            for (course_id, version), units in list(grouped.items())[:3]:
+                lines.append(f"- `{course_id}` / `{version}`：共 {len(units)} 个在线讲次")
+            lines.extend(
+                [
+                    "",
+                    "为避免一次返回全部学习包，请告诉我课程名或方向；我会继续帮你定位讲次。",
+                ]
+            )
             return self._reply("\n".join(lines))
         if course_context.unit_id is None:
             return self._reply(self._render_available_units(course_context))
         document = self._get_document(course_context)
         if document is None:
-            return self._reply(self._unavailable_context(course_context))
+            return self._reply(self._unavailable_with_alternatives(course_context))
         return self._reply(self._render_lookup(document))
 
     async def material_question(
@@ -329,6 +339,50 @@ class StudyKitLookupService:
             return self._reply("这个概念在当前 StudyKit 中没有可核查页码，因此暂不提供课程化解释。")
         return self._reply(self._render_concept(document, concept, citations))
 
+    def unit_summary(
+        self,
+        *,
+        messages: list[ChatMessage],
+        course_context: CourseContext | None,
+    ) -> LearningReply:
+        """Summarize one approved unit without a general-knowledge fallback."""
+
+        document, unavailable = self._require_document(course_context, messages)
+        if document is None:
+            return self._reply(unavailable)
+        lines = [f"## {document['title']} · 本讲重点", ""]
+        summary = document.get("scope", {}).get("summary")
+        if summary:
+            lines.append(str(summary))
+        objectives = [
+            str(item.get("objective"))
+            for item in document.get("learning_objectives", [])
+            if isinstance(item, dict) and item.get("objective")
+        ][:4]
+        if objectives:
+            lines.extend(["", "### 学完应能做到", *[f"- {item}" for item in objectives]])
+        concepts = [
+            item
+            for item in document.get("core_concepts", [])
+            if isinstance(item, dict) and _concept_label(item)
+        ][:5]
+        if concepts:
+            lines.extend(["", "### 核心概念"])
+            for concept in concepts:
+                citations = _normalized_citations(concept)
+                pages = sorted(
+                    {int(item["page"]) for item in citations if isinstance(item.get("page"), int)}
+                )
+                page_text = f"（第 {', '.join(str(page) for page in pages)} 页）" if pages else ""
+                lines.append(f"- {_concept_label(concept)}{page_text}")
+        lines.extend(
+            [
+                "",
+                "以上只根据当前已审核 StudyKit 整理；未加入与本讲无关的通用知识。",
+            ]
+        )
+        return self._reply("\n".join(lines))
+
     async def practice_selection(
         self,
         *,
@@ -388,7 +442,8 @@ class StudyKitLookupService:
                 )
         answer = (
             f"{rendered}{fallback_notice}\n\n"
-            f"作答后请明确写出 `practice ID: {practice_id}` 并附上你的当前答案。"
+            "作答后直接发送你的当前答案即可；如果客户端没有回传对话上下文，也可以附上 "
+            f"`practice ID: {practice_id}`。"
             "反馈只针对这一次回答，不累计得分或掌握度。"
         )
         return LearningReply(
@@ -696,8 +751,24 @@ class StudyKitLookupService:
             return None, self._render_available_units(course_context)
         document = self._get_document(course_context)
         if document is None:
-            return None, self._unavailable_context(course_context)
+            return None, self._unavailable_with_alternatives(course_context)
         return document, ""
+
+    def _unavailable_with_alternatives(self, context: CourseContext) -> str:
+        available = self.store.list_ready(
+            course_id=context.course_id,
+            course_version=context.course_version,
+        )
+        if not available:
+            return self._unavailable_context(context)
+        requested = context.unit_id or "所选讲次"
+        visible = "、".join(f"`{item.unit_id}`" for item in available[:10])
+        if len(available) > 10:
+            visible += f" 等，共 {len(available)} 讲"
+        return (
+            f"`{requested}` 当前没有可在线读取的已审核 StudyKit。"
+            f"该课程当前可用讲次为：{visible}。"
+        )
 
     def _catalog_status(self, messages: list[ChatMessage]) -> str | None:
         if self.catalog is None:
@@ -710,7 +781,10 @@ class StudyKitLookupService:
             return None
         card = matches[0]
         if card.online_studykits:
-            units = "、".join(f"`{item.unit_id}`" for item in card.online_studykits)
+            visible = card.online_studykits[:10]
+            units = "、".join(f"`{item.unit_id}`" for item in visible)
+            if len(card.online_studykits) > len(visible):
+                units += f" 等，共 {len(card.online_studykits)} 讲"
             return (
                 f"已在目录中匹配到 **{card.title}**，当前在线 StudyKit 讲次为 {units}。"
                 "请使用课程号并明确选择一个讲次。"
@@ -735,9 +809,11 @@ class StudyKitLookupService:
             return self._unavailable_context(context)
         lines = [
             f"`{context.course_id}` / `{context.course_version}` 当前可在线读取的讲次：",
-            *[f"- `{item.unit_id}`：{item.title}" for item in ready],
+            *[f"- `{item.unit_id}`：{item.title}" for item in ready[:10]],
             "请明确选择一个讲次。",
         ]
+        if len(ready) > 10:
+            lines.insert(-1, f"- 其余 {len(ready) - 10} 个讲次已省略，可按讲次号继续查询。")
         return "\n".join(lines)
 
     @staticmethod
@@ -805,7 +881,7 @@ class StudyKitLookupService:
     @staticmethod
     def _requested_page(question: str) -> int | None:
         match = _PAGE_REFERENCE.search(question)
-        return int(match.group(1) or match.group(2)) if match else None
+        return parse_positive_int(match.group(1) or match.group(2)) if match else None
 
     @staticmethod
     def _evidence_items(document: dict[str, Any]) -> list[_EvidenceItem]:

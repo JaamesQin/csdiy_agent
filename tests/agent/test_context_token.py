@@ -23,7 +23,7 @@ def test_context_token_is_minimal_tamper_evident_and_expiring() -> None:
     verified = signer.verify(token, now=120)
     assert verified is not None
     assert verified.active_practice_id == "practice-1"
-    assert verified.version == 2
+    assert verified.version == 3
     assert verified.practice_presentation_kind == "structured_rewrite"
     assert verified.practice_presentation_digest == "b" * 64
     assert "answer" not in token and "secret" not in token
@@ -54,3 +54,22 @@ def test_context_token_accepts_v1_without_presentation_state() -> None:
     assert verified is not None
     assert verified.version == 1
     assert verified.practice_presentation_digest is None
+
+
+def test_context_token_carries_only_bounded_semantic_continuity() -> None:
+    signer = ContextTokenSigner(b"x" * 32, ttl_seconds=60)
+    token = signer.issue(
+        plan={"tasks": ["course"]},
+        displayed_catalog_ids=["course-a", "course-b"],
+        selected_catalog_id="course-a",
+        last_capability="course_navigation",
+        last_concept="backpropagation",
+        now=100,
+    )
+
+    verified = signer.verify(token, now=120)
+    assert verified is not None
+    assert verified.displayed_catalog_ids == ["course-a", "course-b"]
+    assert verified.selected_catalog_id == "course-a"
+    assert verified.last_concept == "backpropagation"
+    assert "learner_answer" not in token

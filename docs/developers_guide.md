@@ -65,10 +65,17 @@ API Key 客户端继续把 OpenAI `user` 映射到 `legacy:<user>`。请求体 `
 不能覆盖账号身份。完整认证、CSRF 和数据库迁移契约见
 [账号认证与画像隔离](account_authentication.md)。
 
-当前自动化测试基线为 `303 passed`。在线模型通过现有 `DeepSeekModel` 惰性加载；
+当前自动化测试基线为 `553 passed`。在线模型通过现有 `DeepSeekModel` 惰性加载；
 未配置 `DEEPSEEK_API_KEY` 时规则路由、功能帮助、课程导航、StudyKit 查询、概念解释、
 练习选择、显式画像抽取、Python AST 和 Tree-sitter 多语言语法诊断仍可用；材料问答
 只返回已审核摘要，练习反馈透明降级且不判分。
+
+在线输入先经过一次模型驱动的统一理解与 TaskPlan：Markdown 围栏不是必需条件，聊天平台压平
+围栏、自然指代、纠正、多意图、代码候选和画像操作都由模型结合短期签名上下文理解。确定性层
+只校验代码字符回绑、Catalog/StudyKit 身份、页码证据、画像持久化和权限边界。
+`COURSEPILOT_ROBUST_INPUT=false` 仅作为首个发布周期的临时 Planner 回退开关。
+凭据化后端验收使用 `scripts/run_live_backend_e2e.py`；它直接调用完整 Agent 和真实
+DeepSeek，但不属于离线 pytest 门禁。
 
 当前本地生成器仍有明确边界：一个生成请求使用一个 `material_set_id`、一个课程单位、一个 source，并要求整数页码 anchor。多来源课程、网页标题 anchor、混合公共/私有资料需要先在 ingestion 层拆成可生成的 unit 或扩展生成器，不能由在线 Agent 临时拼接后绕过 Evidence 校验。
 
