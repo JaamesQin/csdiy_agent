@@ -17,7 +17,7 @@ from app.agent.contracts import StudyKitCourseIdentity
 class ConversationContextToken(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    version: int = Field(default=2, ge=1, le=2)
+    version: int = Field(default=3, ge=1, le=3)
     issued_at: int
     expires_at: int
     plan_digest: str = Field(pattern=r"^[0-9a-f]{64}$")
@@ -33,6 +33,10 @@ class ConversationContextToken(BaseModel):
     )
     code_artifact_id: str | None = Field(default=None, max_length=100)
     code_digest: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
+    displayed_catalog_ids: list[str] = Field(default_factory=list, max_length=5)
+    selected_catalog_id: str | None = Field(default=None, max_length=200)
+    last_capability: str | None = Field(default=None, max_length=100)
+    last_concept: str | None = Field(default=None, max_length=200)
 
     def model_post_init(self, __context: object) -> None:
         if (self.code_artifact_id is None) != (self.code_digest is None):
@@ -66,6 +70,10 @@ class ContextTokenSigner:
         practice_presentation_digest: str | None = None,
         code_artifact_id: str | None = None,
         code_digest: str | None = None,
+        displayed_catalog_ids: list[str] | None = None,
+        selected_catalog_id: str | None = None,
+        last_capability: str | None = None,
+        last_concept: str | None = None,
         now: int | None = None,
     ) -> str:
         issued_at = int(time.time()) if now is None else now
@@ -84,6 +92,10 @@ class ContextTokenSigner:
             practice_presentation_digest=practice_presentation_digest,
             code_artifact_id=code_artifact_id,
             code_digest=code_digest,
+            displayed_catalog_ids=list(dict.fromkeys(displayed_catalog_ids or []))[:5],
+            selected_catalog_id=selected_catalog_id,
+            last_capability=last_capability,
+            last_concept=last_concept,
         )
         encoded = _encode(payload.model_dump_json().encode("utf-8"))
         signature = _encode(hmac.digest(self._secret, encoded.encode("ascii"), "sha256"))

@@ -21,7 +21,7 @@ from app.course_navigation.service import CourseNavigationService
 from app.learning.service import StudyKitLookupService
 from app.retrieval.source_chunks import SQLiteSourceChunkStore
 from app.profile.service import ProfileService, get_profile_service
-from app.config import API_KEY, PRACTICE_REWRITE_ENABLED
+from app.config import API_KEY, PRACTICE_REWRITE_ENABLED, ROBUST_INPUT_ENABLED
 
 
 @lru_cache(maxsize=8)
@@ -53,7 +53,7 @@ def _build_coursepilot_agent(profiles: ProfileService) -> CoursePilotAgent:
             ),
             practice_rewrite_enabled=PRACTICE_REWRITE_ENABLED,
         ),
-        planner=TaskPlanner(model=model),
+        planner=TaskPlanner(model=model, robust_input_enabled=ROBUST_INPUT_ENABLED),
         context_signer=ContextTokenSigner(
             hashlib.sha256(f"coursepilot-context-v1:{API_KEY}".encode()).digest()
         ),

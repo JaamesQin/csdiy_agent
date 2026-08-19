@@ -215,11 +215,11 @@ class DeepSeekModel:
     temperature: float = 0.1
     thinking_enabled: bool = False
     reasoning_effort: str = DEFAULT_REASONING_EFFORT
-    max_retries: int = 0
-    max_empty_content_retries: int = 3
-    max_invalid_json_retries: int = 2
-    max_length_retries: int = 1
-    retry_base_delay_seconds: float = 0.5
+    max_retries: int = 4
+    max_empty_content_retries: int = 5
+    max_invalid_json_retries: int = 4
+    max_length_retries: int = 2
+    retry_base_delay_seconds: float = 1.0
     _transport: httpx.AsyncBaseTransport | None = field(
         default=None, repr=False, compare=False
     )

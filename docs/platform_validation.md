@@ -306,3 +306,26 @@ each reported exactly one capability model call. Practice presentation ran three
 each used one call, and all 3/3 produced non-fallback `structured_rewrite` results. Check-level latency
 was P50 2,221 ms and P95 9,324 ms (the presentation check includes three sequential samples), with
 zero presentation fallbacks. No provider prose, credentials, learner data, or repository StudyKit
+content was printed or persisted.
+
+## Live backend natural-language E2E
+
+`scripts/run_live_backend_e2e.py` 使用合成学习者消息、临时画像 SQLite、真实受审核
+Catalog/StudyKitStore 和配置的 DeepSeek，从 `CoursePilotAgent.handle()` 验证到最终
+`AgentReply`。该脚本故意排除在 pytest 之外；运行时不会打印凭据、完整 prompt、模型正文、
+代码或画像证据。
+
+```bash
+.venv/bin/python scripts/run_live_backend_e2e.py --suite smoke
+.venv/bin/python scripts/run_live_backend_e2e.py --suite full \
+  --report /tmp/coursepilot-live-e2e-full.json
+```
+
+full suite 覆盖内联/压平 C++、画像与课程多意图、中文讲次和页码、材料与概念证据、
+练习选择后无 ID连续反馈、签名上下文篡改、课程纠正和帮助短路。结构化事件只记录
+capability、task status 和模型调用元数据，不记录学习者内容。
+
+2026-08-19 自然语言整改后的 `deepseek-v4-flash` full suite 覆盖 25 个场景（另含 provider
+preflight），包括无格式代码、模型候选回绑、签名课程序号、自然 StudyKit/摘要、画像纠正删除、
+课程拼写和缺失练习上下文。完整新手探索另覆盖 24 条多轮旅程；报告写入 `/tmp`，不属于仓库产物。
+具体命令和双视角审查见 `docs/live-novice-agent-remediation-validation-20260819.md`。

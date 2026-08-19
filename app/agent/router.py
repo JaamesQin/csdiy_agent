@@ -16,6 +16,7 @@ from app.agent.contracts import (
 )
 from app.agent.capabilities import CAPABILITIES, match_capability_help
 from app.agent.model_support import normalized_usage
+from app.agent.understanding import understand_user_texts
 from app.catalog.studykits import StudyKitStore
 from app.generation.model import ModelError, StructuredModel
 from app.protocol.schemas import ChatMessage
@@ -241,13 +242,15 @@ class IntentRouter:
                 reason="practice_feedback_rule",
             )
 
+        understanding = understand_user_texts([text])
+        extracted_code = understanding.code
         code_signal = bool(
-            "```" in text
+            understanding.code_requested
+            or extracted_code.content
             or re.search(r"traceback \(most recent call last\)|syntaxerror|typeerror|cuda error", lowered)
-            or re.search(r"代码辅导|帮我调试|debug|报错|审阅.*代码|代码.*问题", lowered)
         )
         if code_signal:
-            has_code = "```" in text
+            has_code = bool(extracted_code.content)
             required = [] if has_code else ["user_code"]
             return RouteDecision(
                 intent=Intent.CODE_TUTORING,
@@ -257,7 +260,7 @@ class IntentRouter:
                 clarifying_question=(
                     None
                     if has_code
-                    else "请用 Markdown 代码围栏粘贴最小相关代码，并附上报错。"
+                    else "请粘贴需要分析的最小相关代码；普通文本或 Markdown 形式都可以。"
                 ),
                 reason="code_rule",
             )

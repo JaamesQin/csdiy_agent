@@ -79,7 +79,7 @@ def render_execution(results: list[TaskExecutionResult], plan: TaskPlan) -> str:
             if not item.startswith("dependency:")
         )
     )
-    sections = [answer for answer in completed if answer]
+    sections = list(dict.fromkeys(answer for answer in completed if answer))
     if missing:
         questions = plan.clarifying_questions[:1]
         sections.append(
