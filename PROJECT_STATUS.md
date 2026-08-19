@@ -245,3 +245,10 @@ Online practice presentation now performs an automatic, single-call `structured_
 mutating approved StudyKits. TaskPlan is budgeted separately; each concrete capability may call the
 model once, and online profile/material second-pass reviewers were removed. Signed context v2 binds
 only the active presentation kind/digest and remains backward compatible with v1.
+
+Natural-language robustness now uses one model-owned turn understanding contract together with a
+bounded TaskPlan. Deterministic code validates code spans, signed ordinals, Catalog/StudyKit identity,
+profile mutations, evidence and permissions; it does not replace semantic understanding with keyword
+tables. Inline/flattened code, Chinese unit/page references, correction phrasing, and context-bound
+practice feedback no longer require learner-facing formatting workarounds. A
+credentialed real-DeepSeek backend E2E runner validates the full Agent path outside offline pytest.

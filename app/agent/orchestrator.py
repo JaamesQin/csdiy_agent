@@ -5,10 +5,16 @@ from __future__ import annotations
 import sqlite3
 import re
 
-from app.agent.context import build_turn_context
+from app.agent.context import TurnContext, build_turn_context
+from app.agent.understanding import (
+    ExtractedCode,
+    language_assumption,
+    validate_model_code,
+)
 from app.agent.contracts import (
     AgentReply,
     CapabilityId,
+    ConversationAct,
     CourseContext,
     Intent,
     PlannedTask,
@@ -23,6 +29,7 @@ from app.agent.capabilities import (
 )
 from app.agent.executor import TaskExecutor, render_execution
 from app.agent.context_token import ContextTokenSigner
+from app.agent.events import AgentEvent, AgentEventSink, NullAgentEventSink
 from app.agent.model_support import add_usage, normalized_usage
 from app.agent.planning import TaskPlanner
 from app.agent.router import IntentRouter
@@ -48,6 +55,7 @@ class CoursePilotAgent:
         studykit_learning: StudyKitLookupService,
         planner: TaskPlanner | None = None,
         context_signer: ContextTokenSigner | None = None,
+        event_sink: AgentEventSink | None = None,
     ) -> None:
         self.store = store
         self.router = router
@@ -57,6 +65,7 @@ class CoursePilotAgent:
         self.studykit_learning = studykit_learning
         self.planner = planner
         self.context_signer = context_signer
+        self.event_sink = event_sink or NullAgentEventSink()
 
     async def handle(
         self,
@@ -199,6 +208,16 @@ class CoursePilotAgent:
                 profile=profile,
             )
             answer = render_tutor_result(result)
+            assumption = language_assumption(
+                ExtractedCode(
+                    content=turn.code,
+                    language=turn.language,
+                    language_inferred=turn.language_inferred,
+                    source=turn.code_source,
+                )
+            )
+            if assumption:
+                answer = f"{assumption}\n\n{answer}"
             usage = add_usage(usage, result.usage)
         elif decision.intent is Intent.ADMIN_GENERATE_STUDYKIT:
             answer = (
@@ -229,19 +248,237 @@ class CoursePilotAgent:
         profile_error: bool,
         supplied_context: str | None,
     ) -> AgentReply:
-        plan_outcome = await self.planner.plan(messages)  # type: ignore[union-attr]
-        plan = plan_outcome.plan
-        user_texts = [message.content for message in messages if message.role == "user"]
-        studykit_context = self.store.match_context(user_texts[-8:]) or self._profile_course_context(
-            profile
-        )
-        current_profile = profile
-        observation_notices: list[str] = []
         previous_context = (
             self.context_signer.verify(supplied_context)
             if self.context_signer is not None and supplied_context
             else None
         )
+        continuity = (
+            previous_context.model_dump(
+                mode="json",
+                exclude={"issued_at", "expires_at", "plan_digest"},
+            )
+            if previous_context is not None
+            else {}
+        )
+        profile_summary: dict[str, object] = {}
+        for fact in profile.facts:
+            if fact.status is FactStatus.CONFIRMED:
+                profile_summary.setdefault(fact.field_name, [])
+                values = profile_summary[fact.field_name]
+                if isinstance(values, list):
+                    values.append(fact.value)
+        plan_outcome = await self.planner.plan(  # type: ignore[union-attr]
+            messages,
+            continuity=continuity,
+            profile_summary=profile_summary,
+        )
+        plan = plan_outcome.plan
+        understanding = plan_outcome.understanding
+        if (
+            understanding is not None
+            and understanding.conversation_act is ConversationAct.ONBOARDING
+        ):
+            self.event_sink.emit(
+                AgentEvent(
+                    kind="understanding",
+                    reason=plan_outcome.reason,
+                    task_count=0,
+                )
+            )
+            return AgentReply(
+                answer=(
+                    "第一次使用可以任选一种方式开始：\n\n"
+                    "1. 告诉我想学的方向，我帮你选课；\n"
+                    "2. 直接贴代码，我做静态分析；\n"
+                    "3. 指定课程和讲次，我查询已审核 StudyKit。\n\n"
+                    "学习画像是可选的，不填写也可以直接提问。"
+                ),
+                usage=normalized_usage(plan_outcome.usage),
+            )
+        user_texts = [message.content for message in messages if message.role == "user"]
+        displayed_catalog_ids = list(
+            previous_context.displayed_catalog_ids if previous_context else []
+        )
+        selected_catalog_id = previous_context.selected_catalog_id if previous_context else None
+        resolved_card = None
+        if (
+            understanding is not None
+            and understanding.course is not None
+            and understanding.course_mode != "recommendation"
+        ):
+            reference = understanding.course
+            referenced_id: str | None = None
+            if reference.ordinal is not None:
+                index = reference.ordinal - 1
+                if 0 <= index < len(displayed_catalog_ids):
+                    referenced_id = displayed_catalog_ids[index]
+            elif (
+                understanding.course_mode == "selection"
+                and displayed_catalog_ids
+                and not reference.candidate_id
+                and not reference.raw
+            ):
+                referenced_id = displayed_catalog_ids[0]
+            resolved_card = self.course_navigation.resolve_card(
+                referenced_id,
+                reference.candidate_id,
+                reference.raw,
+            )
+            if resolved_card is not None:
+                selected_catalog_id = resolved_card.catalog_id
+        if (
+            resolved_card is None
+            and selected_catalog_id
+            and understanding is not None
+            and understanding.unit is not None
+        ):
+            resolved_card = self.course_navigation.get_card(selected_catalog_id)
+
+        studykit_context: CourseContext | None = None
+        profile_course_context: CourseContext | None = None
+        if resolved_card is not None and resolved_card.manifest_course_id and resolved_card.course_version:
+            unit_id: str | None = None
+            if understanding is not None and understanding.unit is not None:
+                unit_ref = understanding.unit
+                unit_id = unit_ref.candidate_id
+                if unit_id is None and unit_ref.ordinal is not None:
+                    ready_units = self.store.list_ready(
+                        course_id=resolved_card.manifest_course_id,
+                        course_version=resolved_card.course_version,
+                    )
+                    index = unit_ref.ordinal - 1
+                    unit_id = (
+                        ready_units[index].unit_id
+                        if 0 <= index < len(ready_units)
+                        else f"lecture-{unit_ref.ordinal:02d}"
+                    )
+            studykit_context = CourseContext(
+                course_id=resolved_card.manifest_course_id,
+                course_version=resolved_card.course_version,
+                unit_id=unit_id,
+                title=resolved_card.title,
+            )
+            profile_course_context = self.store.resolve_context(
+                course_id=resolved_card.manifest_course_id,
+                course_version=resolved_card.course_version,
+                unit_id=unit_id,
+            )
+            if profile_course_context is None and unit_id is not None:
+                profile_course_context = self.store.resolve_context(
+                    course_id=resolved_card.manifest_course_id,
+                    course_version=resolved_card.course_version,
+                    unit_id=None,
+                )
+        if studykit_context is None and understanding is not None:
+            candidates = [
+                value
+                for value in (
+                    understanding.course.candidate_id if understanding.course else None,
+                    understanding.course.raw if understanding.course else None,
+                    understanding.unit.candidate_id if understanding.unit else None,
+                    understanding.unit.raw if understanding.unit else None,
+                )
+                if value
+            ]
+            if candidates:
+                studykit_context = self.store.match_context(candidates)
+        if studykit_context is None and previous_context is not None and previous_context.course:
+            inherited_unit = previous_context.course.unit_id
+            if understanding is not None and understanding.unit is not None:
+                inherited_unit = understanding.unit.candidate_id
+                if inherited_unit is None and understanding.unit.ordinal is not None:
+                    inherited_unit = f"lecture-{understanding.unit.ordinal:02d}"
+            studykit_context = self.store.resolve_context(
+                course_id=previous_context.course.course_id,
+                course_version=previous_context.course.course_version,
+                unit_id=inherited_unit,
+            )
+        if studykit_context is None:
+            studykit_context = self.store.match_context([user_texts[-1]]) or self._profile_course_context(
+                profile
+            )
+        if profile_course_context is None and studykit_context is not None:
+            profile_course_context = self.store.resolve_context(
+                course_id=studykit_context.course_id,
+                course_version=studykit_context.course_version,
+                unit_id=studykit_context.unit_id,
+            )
+        if (
+            resolved_card is None
+            and understanding is not None
+            and understanding.course is not None
+            and understanding.course.raw
+            and understanding.unit is not None
+            and any(
+                task.capability_id
+                in {
+                    CapabilityId.STUDYKIT_LOOKUP,
+                    CapabilityId.MATERIAL_QUESTION,
+                    CapabilityId.CONCEPT_EXPLANATION,
+                    CapabilityId.PRACTICE_SELECTION,
+                }
+                for task in plan.tasks
+            )
+        ):
+            plan = plan.model_copy(
+                update={
+                    "tasks": [
+                        PlannedTask(
+                            task_id="resolve_course",
+                            capability_id=CapabilityId.COURSE_NAVIGATION,
+                            objective="先从已验证目录中明确课程身份",
+                            evidence_quote=latest[:500],
+                        )
+                    ]
+                }
+            )
+        if (
+            any(task.capability_id is CapabilityId.COURSE_NAVIGATION for task in plan.tasks)
+            and studykit_context is None
+        ):
+            learning_capabilities = {
+                CapabilityId.STUDYKIT_LOOKUP,
+                CapabilityId.MATERIAL_QUESTION,
+                CapabilityId.CONCEPT_EXPLANATION,
+                CapabilityId.PRACTICE_SELECTION,
+                CapabilityId.PRACTICE_FEEDBACK,
+            }
+            retained = [
+                task for task in plan.tasks if task.capability_id not in learning_capabilities
+            ]
+            retained_ids = {task.task_id for task in retained}
+            plan = plan.model_copy(
+                update={
+                    "tasks": [
+                        task.model_copy(
+                            update={
+                                "depends_on": [
+                                    item for item in task.depends_on if item in retained_ids
+                                ]
+                            }
+                        )
+                        for task in retained
+                    ]
+                }
+            )
+        self.event_sink.emit(
+            AgentEvent(
+                kind="understanding",
+                reason=plan_outcome.reason,
+                task_count=len(plan.tasks),
+            )
+        )
+        for task in plan.tasks:
+            self.event_sink.emit(
+                AgentEvent(
+                    kind="plan_task",
+                    capability_id=task.capability_id,
+                    task_id=task.task_id,
+                )
+            )
+        current_profile = profile
+        observation_notices: list[str] = []
         displayed_practice_ids = list(
             previous_context.displayed_practice_ids if previous_context else []
         )
@@ -257,6 +494,24 @@ class CoursePilotAgent:
         )
         code_artifact_id = previous_context.code_artifact_id if previous_context else None
         code_digest = previous_context.code_digest if previous_context else None
+        last_capability = previous_context.last_capability if previous_context else None
+        last_concept = (
+            understanding.concept
+            if understanding is not None and understanding.concept
+            else (previous_context.last_concept if previous_context else None)
+        )
+        semantic_code = validate_model_code(
+            messages,
+            understanding.code_artifact if understanding is not None else None,
+        )
+        if not semantic_code.content:
+            current_turn = build_turn_context([messages[-1]])
+            semantic_code = ExtractedCode(
+                content=current_turn.code,
+                language=current_turn.language,
+                language_inferred=current_turn.language_inferred,
+                source=current_turn.code_source,
+            )
         profile_observed = False
 
         async def execute(task: PlannedTask) -> TaskExecutionResult:
@@ -264,14 +519,24 @@ class CoursePilotAgent:
             nonlocal code_artifact_id, code_digest
             nonlocal profile_observed, practice_presentation_kind
             nonlocal practice_presentation_digest
+            nonlocal selected_catalog_id
             usage = normalized_usage()
             if task.self_statement and not profile_observed:
-                observation = await self.profiles.observe(
-                    user_id=user_id,
-                    text=latest,
-                    current=current_profile,
-                    course_context=studykit_context,
-                )
+                if understanding is not None and understanding.profile_operations:
+                    observation = self.profiles.apply_operations(
+                        user_id=user_id,
+                        text=latest,
+                        current=current_profile,
+                        operations=understanding.profile_operations,
+                        course_context=profile_course_context,
+                    )
+                else:
+                    observation = await self.profiles.observe(
+                        user_id=user_id,
+                        text=latest,
+                        current=current_profile,
+                        course_context=profile_course_context,
+                    )
                 current_profile = observation.profile
                 usage = add_usage(usage, observation.usage)
                 profile_error = profile_error or observation.persistence_error
@@ -286,6 +551,11 @@ class CoursePilotAgent:
                     "普通对话不能触发后台 StudyKit authoring。在线请求只读取已审核产物；"
                     "生成任务必须通过受控的开发者或后台入口提交。"
                 )
+            elif task.parameters.get("understanding_unavailable") is True:
+                answer = (
+                    "我没能从当前消息和会话上下文确认你指的具体对象，因此没有猜测或修改学习记录。"
+                    "请直接补充你指的题目、课程、材料或代码；无需使用特定格式。"
+                )
             elif capability is CapabilityId.PROFILE_ANALYSIS:
                 action, _ = self.profiles.management_action(latest)
                 if action is not ProfileAction.NONE:
@@ -294,23 +564,76 @@ class CoursePilotAgent:
                         text=latest,
                         profile=current_profile,
                     )
+                elif (
+                    understanding is not None
+                    and understanding.profile_operations
+                    and not profile_observed
+                ):
+                    observation = self.profiles.apply_operations(
+                        user_id=user_id,
+                        text=latest,
+                        current=current_profile,
+                        operations=understanding.profile_operations,
+                        course_context=studykit_context,
+                    )
+                    current_profile = observation.profile
+                    profile_error = profile_error or observation.persistence_error
+                    if observation.notice:
+                        observation_notices.append(observation.notice)
+                    profile_observed = True
+                    answer = (
+                        self.profiles.render(current_profile)
+                        if observation.added or observation.notice
+                        else ""
+                    )
                 else:
                     answer = self.profiles.render(current_profile)
             elif capability is CapabilityId.COURSE_NAVIGATION:
-                answer = self.course_navigation.navigate(text=latest, profile=current_profile)
+                navigation_text = latest
+                if (
+                    understanding is not None
+                    and understanding.course is not None
+                    and understanding.course_mode != "recommendation"
+                ):
+                    navigation_text = (
+                        understanding.course.candidate_id
+                        or understanding.course.raw
+                        or latest
+                    )
+                navigation = self.course_navigation.navigate_result(
+                    text=navigation_text,
+                    profile=current_profile,
+                    candidate_id=resolved_card.catalog_id if resolved_card is not None else None,
+                )
+                answer = navigation.answer
+                if navigation.catalog_ids:
+                    displayed_catalog_ids[:] = navigation.catalog_ids[:5]
+                    if len(navigation.catalog_ids) == 1:
+                        selected_catalog_id = navigation.catalog_ids[0]
             elif capability is CapabilityId.STUDYKIT_LOOKUP:
                 result = await self.studykit_learning.lookup(
                     messages=messages, course_context=studykit_context
                 )
                 answer, usage = result.answer, add_usage(usage, result.usage)
             elif capability is CapabilityId.MATERIAL_QUESTION:
-                result = await self.studykit_learning.material_question(
-                    messages=messages, course_context=studykit_context
-                )
+                if understanding is not None and understanding.response_mode == "unit_summary":
+                    result = self.studykit_learning.unit_summary(
+                        messages=messages, course_context=studykit_context
+                    )
+                else:
+                    material_messages = self._messages_with_resolved_concept(
+                        messages, understanding.concept if understanding else None
+                    )
+                    result = await self.studykit_learning.material_question(
+                        messages=material_messages, course_context=studykit_context
+                    )
                 answer, usage = result.answer, add_usage(usage, result.usage)
             elif capability is CapabilityId.CONCEPT_EXPLANATION:
+                concept_messages = self._messages_with_resolved_concept(
+                    messages, last_concept
+                )
                 result = await self.studykit_learning.concept_explanation(
-                    messages=messages, course_context=studykit_context
+                    messages=concept_messages, course_context=studykit_context
                 )
                 answer, usage = result.answer, add_usage(usage, result.usage)
             elif capability is CapabilityId.PRACTICE_SELECTION:
@@ -338,16 +661,53 @@ class CoursePilotAgent:
                 practice_presentation_digest = result.presentation_digest
             elif capability is CapabilityId.PRACTICE_FEEDBACK:
                 feedback_messages = messages
-                if re.search(r"(?:下一层|更多|再给).{0,6}提示|next hint", latest, re.I):
+                if active_practice_id is None and studykit_context is None:
+                    answer = (
+                        "当前会话没有可恢复的上一道练习。请发送 practice ID（或完整题面）"
+                        "和你的当前答案；如果知道课程与讲次，也可以一并提供。"
+                    )
+                    return TaskExecutionResult(
+                        task_id=task.task_id,
+                        capability_id=capability,
+                        status=TaskStatus.COMPLETED,
+                        answer=answer,
+                        usage=normalized_usage(usage),
+                    )
+                if (
+                    understanding is not None
+                    and understanding.conversation_act is ConversationAct.MORE_HINT
+                ):
                     hint_level = min(5, hint_level + 1)
+                    answer_index = understanding.answer_message_index
+                    window = messages[-12:]
+                    prior_answer = (
+                        window[answer_index].content
+                        if answer_index is not None
+                        and answer_index < len(window)
+                        and window[answer_index].role == "user"
+                        else None
+                    )
+                    if prior_answer:
+                        feedback_messages = [
+                            *messages[:-1],
+                            messages[-1].model_copy(
+                                update={
+                                    "content": (
+                                        f"我的上一份答案是：{prior_answer}\n"
+                                        f"本轮请求：{latest}"
+                                    )
+                                }
+                            ),
+                        ]
                 if active_practice_id and active_practice_id not in latest:
                     feedback_messages = [
-                        *messages[:-1],
-                        messages[-1].model_copy(
+                        *feedback_messages[:-1],
+                        feedback_messages[-1].model_copy(
                             update={
                                 "content": (
                                     f"practice ID: {active_practice_id}\n"
-                                    f"hint level: {hint_level}\n{latest}"
+                                    f"hint level: {hint_level}\n"
+                                    f"{feedback_messages[-1].content}"
                                 )
                             }
                         ),
@@ -360,7 +720,13 @@ class CoursePilotAgent:
                 )
                 answer, usage = result.answer, add_usage(usage, result.usage)
             elif capability is CapabilityId.CODE_TUTORING:
-                turn = build_turn_context(messages)
+                turn = TurnContext(
+                    user_text=latest,
+                    code=semantic_code.content,
+                    language=semantic_code.language,
+                    language_inferred=semantic_code.language_inferred,
+                    code_source=semantic_code.source,
+                )
                 previous_artifact = None
                 if code_artifact_id and code_digest:
                     previous_artifact = CodeArtifact(
@@ -381,10 +747,25 @@ class CoursePilotAgent:
                     previous_artifact=previous_artifact,
                 )
                 answer = render_tutor_result(result)
+                assumption = language_assumption(
+                    ExtractedCode(
+                        content=turn.code,
+                        language=turn.language,
+                        language_inferred=turn.language_inferred,
+                        source=turn.code_source,
+                    )
+                )
+                if assumption:
+                    answer = f"{assumption}\n\n{answer}"
                 usage = add_usage(usage, result.usage)
                 if result.artifact is not None:
                     code_artifact_id = result.artifact.artifact_id
                     code_digest = result.artifact.content_sha256
+            elif capability is CapabilityId.GENERATION_STATUS:
+                answer = (
+                    "当前上下文不足以确定你指的是哪道题。请粘贴题面或 practice ID，"
+                    "并附上你的当前答案；我不会凭空猜测上一道题。"
+                )
             else:
                 answer = render_capability_help(capability)
             return TaskExecutionResult(
@@ -409,9 +790,25 @@ class CoursePilotAgent:
         executable_plan = plan.model_copy(update={"tasks": runnable_tasks})
         executor = TaskExecutor({capability: execute for capability in CapabilityId})
         results = await executor.execute(executable_plan)
+        for result in results:
+            self.event_sink.emit(
+                AgentEvent(
+                    kind="task_result",
+                    capability_id=result.capability_id,
+                    task_id=result.task_id,
+                    status=result.status,
+                )
+            )
         usage = normalized_usage(plan_outcome.usage)
         for result in results:
             usage = add_usage(usage, result.usage)
+        completed_capabilities = [
+            result.capability_id.value
+            for result in results
+            if result.status is TaskStatus.COMPLETED
+        ]
+        if completed_capabilities:
+            last_capability = completed_capabilities[-1]
         answer = render_execution(results, executable_plan)
         notices = [f"画像更新：{item}" for item in observation_notices]
         if profile_error:
@@ -434,6 +831,10 @@ class CoursePilotAgent:
                 practice_presentation_digest=practice_presentation_digest,
                 code_artifact_id=code_artifact_id,
                 code_digest=code_digest,
+                displayed_catalog_ids=displayed_catalog_ids,
+                selected_catalog_id=selected_catalog_id,
+                last_capability=last_capability,
+                last_concept=last_concept,
             )
         return AgentReply(
             answer=answer,
@@ -471,6 +872,22 @@ class CoursePilotAgent:
                 else None
             ),
         )
+
+    @staticmethod
+    def _messages_with_resolved_concept(
+        messages: list[ChatMessage], concept: str | None
+    ) -> list[ChatMessage]:
+        if not concept:
+            return messages
+        latest = messages[-1]
+        if latest.role != "user" or concept.casefold() in latest.content.casefold():
+            return messages
+        return [
+            *messages[:-1],
+            latest.model_copy(
+                update={"content": f"当前概念：{concept}\n用户本轮请求：{latest.content}"}
+            ),
+        ]
 
     def _fallback_answer(
         self,

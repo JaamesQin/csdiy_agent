@@ -21,6 +21,73 @@ class CapabilityId(str, Enum):
     GENERATION_STATUS = "generation_status"
 
 
+class ConversationAct(str, Enum):
+    NEW_REQUEST = "new_request"
+    FOLLOW_UP = "follow_up"
+    SELECTION = "selection"
+    CORRECTION = "correction"
+    SUBMIT_ANSWER = "submit_answer"
+    MORE_HINT = "more_hint"
+    PROFILE_MANAGEMENT = "profile_management"
+    ONBOARDING = "onboarding"
+
+
+class SemanticReference(BaseModel):
+    """A model interpretation that still requires local identity validation."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    raw: str | None = Field(default=None, max_length=500)
+    candidate_id: str | None = Field(default=None, max_length=300)
+    ordinal: int | None = Field(default=None, ge=1, le=64)
+    from_recent_context: bool = False
+    alternatives: list[str] = Field(default_factory=list, max_length=5)
+
+
+class SemanticCodeArtifact(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    content: str = Field(min_length=1, max_length=20000)
+    language: str | None = Field(default=None, max_length=100)
+    source_message_index: int = Field(ge=0)
+    replaces_previous: bool = True
+
+
+class ProfileOperation(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    action: Literal["add", "replace", "delete", "infer"]
+    field_name: Literal[
+        "learning_directions",
+        "goals",
+        "background",
+        "weekly_minutes",
+        "preferred_explanation_style",
+        "active_course",
+        "active_unit",
+    ]
+    value: Any = None
+    evidence_quote: str | None = Field(default=None, max_length=500)
+
+
+class ModelTurnUnderstanding(BaseModel):
+    """One model-owned semantic reading of the current conversational turn."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    conversation_act: ConversationAct = ConversationAct.NEW_REQUEST
+    course: SemanticReference | None = None
+    unit: SemanticReference | None = None
+    practice: SemanticReference | None = None
+    concept: str | None = Field(default=None, max_length=500)
+    course_mode: Literal["none", "recommendation", "lookup", "selection"] = "none"
+    response_mode: Literal["default", "unit_summary"] = "default"
+    answer_message_index: int | None = Field(default=None, ge=0)
+    code_artifact: SemanticCodeArtifact | None = None
+    profile_operations: list[ProfileOperation] = Field(default_factory=list, max_length=16)
+    ambiguities: list[str] = Field(default_factory=list, max_length=3)
+
+
 class Intent(str, Enum):
     COURSE_NAVIGATION = "course_navigation"
     STUDYKIT_LOOKUP = "studykit_lookup"
@@ -132,6 +199,7 @@ class PlannedTask(BaseModel):
     parameters: dict[str, Any] = Field(default_factory=dict)
     required_context: list[str] = Field(default_factory=list, max_length=16)
     self_statement: bool = False
+    evidence_quote: str | None = Field(default=None, max_length=500)
 
 
 class TaskPlan(BaseModel):
@@ -140,7 +208,7 @@ class TaskPlan(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     user_goal: str = Field(min_length=1, max_length=2000)
-    tasks: list[PlannedTask] = Field(min_length=1, max_length=8)
+    tasks: list[PlannedTask] = Field(min_length=1, max_length=4)
     course_mentions: list[str] = Field(default_factory=list, max_length=16)
     missing_context: list[str] = Field(default_factory=list, max_length=16)
     clarifying_questions: list[str] = Field(default_factory=list, max_length=3)

@@ -3,6 +3,7 @@ from __future__ import annotations
 from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime, timedelta
 
+from app.agent.contracts import ProfileOperation
 from app.profile.contracts import FactStatus, LearnerProfile
 from app.profile.repository import SQLiteProfileRepository
 from app.profile.service import ProfileService
@@ -195,6 +196,105 @@ async def test_correction_and_deletion_are_real_database_changes(tmp_path) -> No
     assert repository.get_profile("user-a").facts == []
 
 
+def test_model_understood_profile_operations_replace_and_delete(tmp_path) -> None:
+    repository = SQLiteProfileRepository(tmp_path / "profiles.sqlite3")
+    service = ProfileService(repository)
+    current = LearnerProfile(user_id="user-a", persisted=True)
+
+    first = service.apply_operations(
+        user_id="user-a",
+        text="我会 Python，想学 AI。",
+        current=current,
+        operations=[
+            ProfileOperation(
+                action="add",
+                field_name="background",
+                value="python",
+                evidence_quote="我会 Python",
+            ),
+            ProfileOperation(
+                action="add",
+                field_name="learning_directions",
+                value="AI",
+                evidence_quote="想学 AI",
+            ),
+        ],
+    )
+    corrected = service.apply_operations(
+        user_id="user-a",
+        text="其实不是 AI，是系统。",
+        current=first.profile,
+        operations=[
+            ProfileOperation(
+                action="replace",
+                field_name="learning_directions",
+                value="系统",
+                evidence_quote="不是 AI，是系统",
+            )
+        ],
+    )
+    deleted = service.apply_operations(
+        user_id="user-a",
+        text="把我的编程基础忘掉。",
+        current=corrected.profile,
+        operations=[
+            ProfileOperation(
+                action="delete",
+                field_name="background",
+                evidence_quote="编程基础忘掉",
+            )
+        ],
+    )
+
+    assert [fact.value for fact in corrected.profile.confirmed("learning_directions")] == [
+        "systems"
+    ]
+    assert deleted.profile.confirmed("background") == []
+
+
+def test_course_like_typo_is_not_persisted_as_a_learning_direction(tmp_path) -> None:
+    repository = SQLiteProfileRepository(tmp_path / "profiles.sqlite3")
+    service = ProfileService(repository)
+
+    result = service.apply_operations(
+        user_id="user-a",
+        text="我想学 cs6lc。",
+        current=LearnerProfile(user_id="user-a", persisted=True),
+        operations=[
+            ProfileOperation(
+                action="add",
+                field_name="learning_directions",
+                value="cs6lc",
+                evidence_quote="我想学 cs6lc",
+            )
+        ],
+    )
+
+    assert result.profile.confirmed("learning_directions") == []
+
+
+def test_model_course_profile_operation_requires_validated_course_context(tmp_path) -> None:
+    repository = SQLiteProfileRepository(tmp_path / "profiles.sqlite3")
+    service = ProfileService(repository)
+
+    result = service.apply_operations(
+        user_id="user-a",
+        text="我想学 cs6lc",
+        current=LearnerProfile(user_id="user-a", persisted=True),
+        operations=[
+            ProfileOperation(
+                action="add",
+                field_name="active_course",
+                value="cs6lc",
+                evidence_quote="想学 cs6lc",
+            )
+        ],
+        course_context=None,
+    )
+
+    assert result.profile.confirmed("active_course") == []
+
+
 async def test_profile_evidence_never_contains_fenced_code(tmp_path) -> None:
     repository = SQLiteProfileRepository(tmp_path / "profiles.sqlite3")
     service = ProfileService(repository)
@@ -207,6 +307,43 @@ async def test_profile_evidence_never_contains_fenced_code(tmp_path) -> None:
 
     assert result.added
     assert all("do-not-store" not in (fact.evidence_excerpt or "") for fact in result.added)
+
+
+async def test_profile_deduplicates_background_case_and_strips_inline_code(tmp_path) -> None:
+    model = FakeStructuredModel(
+        {
+            "candidates": [
+                {
+                    "field_name": "background",
+                    "value": "python",
+                    "status": "confirmed",
+                    "confidence": 1.0,
+                    "evidence_quote": "我有python基础",
+                    "course_id": None,
+                    "course_version": None,
+                    "unit_id": None,
+                }
+            ]
+        }
+    )
+    service = ProfileService(
+        SQLiteProfileRepository(tmp_path / "profiles.sqlite3"), model=model
+    )
+
+    result = await service.observe(
+        user_id="user-a",
+        text=(
+            "我有python基础，这段代码有什么问题：“include<stdio.h> "
+            "int main(){return 0;}"
+        ),
+        current=LearnerProfile(user_id="user-a", persisted=True),
+    )
+
+    assert [fact.value for fact in result.profile.confirmed("background")] == ["Python"]
+    assert all(
+        "include<stdio.h>" not in (fact.evidence_excerpt or "")
+        for fact in result.profile.facts
+    )
 
 
 async def test_model_cannot_mark_unquoted_claim_as_confirmed(tmp_path) -> None:

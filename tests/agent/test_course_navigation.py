@@ -66,3 +66,38 @@ def test_navigation_list_is_capped_at_five() -> None:
 
     assert "## 课程目录候选" in answer
     assert "6. **" not in answer
+
+
+def test_navigation_prefers_corrected_course_and_hides_internal_statuses() -> None:
+    answer = _service().navigate(
+        text="不是 CS61A，我想了解 CS61C", profile=LearnerProfile()
+    )
+
+    assert "按你的纠正匹配到的课程" in answer
+    assert "CS61C" in answer
+    assert "CS61A" not in answer
+    assert "independently_audited" not in answer
+    assert "目录状态：已独立审核" in answer
+
+
+def test_navigation_compacts_long_ready_unit_ranges() -> None:
+    units = CourseNavigationService._compact_units(
+        [f"lecture-{index:02d}" for index in range(1, 27)]
+    )
+
+    assert units == "共 26 讲：lecture-01–lecture-26"
+
+
+def test_navigation_accepts_a_validated_model_course_candidate() -> None:
+    service = _service()
+    card = service.resolve_card("CS61C")
+
+    assert card is not None
+    result = service.navigate_result(
+        text="cs6lc",
+        profile=LearnerProfile(),
+        candidate_id=card.catalog_id,
+    )
+
+    assert result.catalog_ids == (card.catalog_id,)
+    assert "CS61C" in result.answer
