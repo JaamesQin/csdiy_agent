@@ -14,6 +14,7 @@ from app.learning.service import StudyKitLookupService
 from app.profile.repository import SQLiteProfileRepository
 from app.profile.service import ProfileService
 from app.protocol.schemas import ChatMessage
+from tests.agent.helpers import FakeStructuredModel
 
 
 def _agent(tmp_path) -> CoursePilotAgent:
@@ -124,13 +125,10 @@ async def test_specific_code_help_lists_languages(tmp_path) -> None:
     assert "LaTeX" in reply.answer
     assert "ran_code 始终为 false" in reply.answer
     assert "````text" not in reply.answer
-    assert (
-        "### 输入示例\n\n"
-        "请分析下面的代码，并说明诊断与验证步骤：\n\n"
-        "```cpp\n"
-        "int main( { return 0; }\n"
-        "```"
-    ) in reply.answer
+    assert "生成最小完整示例" in reply.answer
+    assert "展示虚函数、override 和多态调用" in reply.answer
+    assert "静态诊断已有代码" in reply.answer
+    assert "int main( { return 0; }" in reply.answer
 
 
 async def test_code_capability_availability_question_short_circuits_tutoring(
@@ -147,6 +145,65 @@ async def test_code_capability_availability_question_short_circuits_tutoring(
     assert "### 支持语言" in reply.answer
     assert "### 观察" not in reply.answer
     assert "未收到可静态分析的代码" not in reply.answer
+
+
+async def test_followup_request_generates_complete_cpp_example(tmp_path) -> None:
+    model = FakeStructuredModel(
+        {
+            "observation": "基类引用会动态分派到 Derived::speak。",
+            "code_blocks": [
+                {
+                    "kind": "example",
+                    "language": "cpp",
+                    "filename": "main.cpp",
+                    "code": (
+                        "#include <iostream>\n"
+                        "class Base { public: virtual void speak() const { std::cout << \"Base\\n\"; } "
+                        "virtual ~Base() = default; };\n"
+                        "class Derived : public Base { public: void speak() const override "
+                        "{ std::cout << \"Derived\\n\"; } };\n"
+                        "int main() { Derived d; Base& b = d; b.speak(); return 0; }\n"
+                    ),
+                    "explanation": "virtual 与 override 建立可检查的覆盖关系。",
+                    "expected_behavior": "输出 Derived。",
+                }
+            ],
+            "diagnostic_hypotheses": [],
+            "next_checks": ["自行编译并核对预期输出。"],
+            "next_attempt": "再增加一个派生类。",
+            "citation_ids": [],
+            "safety_notes": [],
+        }
+    )
+    store = ReviewedFileStudyKitStore()
+    catalog = ReviewedCourseCatalogStore(store)
+    agent = CoursePilotAgent(
+        store=store,
+        router=IntentRouter(store),
+        profiles=ProfileService(SQLiteProfileRepository(tmp_path / "profiles.sqlite3")),
+        code_tutor=CodeTutorService(store, model=model),
+        course_navigation=CourseNavigationService(catalog),
+        studykit_learning=StudyKitLookupService(store),
+    )
+
+    reply = await agent.handle(
+        messages=[
+            ChatMessage(role="user", content="教我怎么写面向对象编程中的虚函数"),
+            ChatMessage(
+                role="assistant",
+                content="虚函数允许派生类覆盖基类方法。",
+            ),
+            ChatMessage(role="user", content="给我一段完整的cpp示例代码"),
+        ],
+        user_id=None,
+    )
+
+    assert "virtual" in reply.answer
+    assert "override" in reply.answer
+    assert "int main" in reply.answer
+    assert "请粘贴" not in reply.answer
+    assert "ran_code=false" in reply.answer
+    assert len(model.calls) == 1
 
 
 async def test_available_course_navigation_help_reports_usage(tmp_path) -> None:

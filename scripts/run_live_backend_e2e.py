@@ -210,6 +210,20 @@ async def run(suite: str, selected: set[str], repeat: int) -> dict[str, Any]:
                 provider_calls=len(model.calls) - before,
             )
 
+        async def generated_cpp_example() -> dict[str, Any]:
+            runner = ConversationRunner(agent, "legacy:live-code-generate")
+            before = len(model.calls)
+            event_before = len(events.events)
+            answer = await runner.turn("给我一段完整的 cpp 虚函数示例代码")
+            return _result(
+                "code_generate_cpp_example",
+                all(marker in answer for marker in ("virtual", "override", "int main", "ran_code=false"))
+                and "预期行为（未运行）" in answer
+                and "请粘贴" not in answer
+                and events.completed_capabilities_since(event_before) == ["code_tutoring"],
+                provider_calls=len(model.calls) - before,
+            )
+
         async def profile_course() -> dict[str, Any]:
             user_id = "legacy:live-profile-course"
             runner = ConversationRunner(agent, user_id)
@@ -670,6 +684,7 @@ async def run(suite: str, selected: set[str], repeat: int) -> dict[str, Any]:
         checks: dict[str, Check] = {
             "code_inline_cpp": inline_cpp,
             "code_flattened_fence": flattened_fence,
+            "code_generate_cpp_example": generated_cpp_example,
             "profile_course_multi_intent": profile_course,
             "negative_background_course_path": negative_background_course_path,
             "studykit_chinese_unit": chinese_unit_lookup,

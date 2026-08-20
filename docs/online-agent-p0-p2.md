@@ -24,8 +24,11 @@ frame, preserving role → content → stop → `[DONE]`. It contains identity/d
 answers, code, scores, profile data, authorization scopes, or secrets—and is not an authorization
 credential.
 
-Code tutoring creates an ephemeral `CodeArtifact`, performs static-only analysis, parses supplied
-toolchain diagnostics, binds hypotheses to actual artifact line ranges, and keeps `ran_code=false`.
+Code tutoring accepts a structured mode for example generation, explanation, diagnosis, review,
+repair, refactoring, or test design. Learner or explicitly referenced recent code creates an ephemeral
+`CodeArtifact`; generated blocks remain non-persistent and are checked with the same offline parser
+where available. Toolchain diagnostics stay bound to real artifact line ranges, model-only languages
+are labeled, and every path keeps `ran_code=false`.
 Course advice metadata is accepted only from an approved sidecar; unknown fields remain unknown, and
 target fit is scored separately from online StudyKit readiness.
 

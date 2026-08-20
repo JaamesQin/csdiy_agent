@@ -10,8 +10,14 @@ import re
 import unicodedata
 from dataclasses import dataclass
 
-from app.agent.contracts import SemanticCodeArtifact
-from app.code_tutor.languages import get_language, normalize_language_label, resolve_language
+from app.agent.contracts import CodeTutorMode, SemanticCodeArtifact, SemanticCodeRequest
+from app.code_tutor.contracts import CodeTutorRequest
+from app.code_tutor.languages import (
+    LANGUAGE_SPECS,
+    get_language,
+    normalize_language_label,
+    resolve_language,
+)
 from app.protocol.schemas import ChatMessage
 
 
@@ -20,8 +26,71 @@ FENCE_BLOCK = re.compile(r"```(?P<body>.*?)```", re.DOTALL)
 CODE_REQUEST = re.compile(
     r"(?:代码(?:辅导|分析|审阅|检查|有什么问题|哪里有问题)|"
     r"(?:这段|以下|下面的?).{0,8}代码|帮我.{0,8}(?:调试|debug)|"
-    r"静态分析|编译(?:错误|失败)|syntaxerror|traceback)",
+    r"静态分析|编译(?:错误|失败)|syntaxerror|traceback|"
+    r"示例代码|代码示例|example\s+code|sample\s+code|"
+    r"逐行解释.{0,8}代码|修(?:好|复|正).{0,8}代码|"
+    r"重构.{0,8}代码|优化.{0,8}代码|单元测试|测试用例|边界用例)",
     re.IGNORECASE,
+)
+ASSISTANT_CODE_REFERENCE = re.compile(
+    r"(?:上面|上一段|前面|刚才|这段|这个|该)(?:的)?(?:例子|示例|代码|程序)|"
+    r"(?:above|previous|last)\s+(?:example|code|snippet)",
+    re.IGNORECASE,
+)
+
+_MODE_PATTERNS: tuple[tuple[CodeTutorMode, re.Pattern[str]], ...] = (
+    (
+        CodeTutorMode.REFACTOR,
+        re.compile(
+            r"(?:重构|refactor).{0,12}(?:这段|上面|刚才|代码|程序|函数|类|示例)|"
+            r"(?:这段|上面|刚才|代码|程序|函数|类|示例).{0,12}(?:重构|refactor)|"
+            r"优化.{0,8}代码",
+            re.I,
+        ),
+    ),
+    (
+        CodeTutorMode.REPAIR,
+        re.compile(
+            r"(?:修(?:好|复|正)|改正).{0,12}(?:这段|上面|刚才|代码|程序|函数|类|示例|错误|bug)|"
+            r"(?:这段|上面|刚才|代码|程序|函数|类|示例|错误|bug).{0,12}(?:修(?:好|复|正)|改正)|"
+            r"(?:fix|repair).{0,8}(?:this|the|above|previous)?\s*(?:code|example|function|class|bug)",
+            re.I,
+        ),
+    ),
+    (
+        CodeTutorMode.DESIGN_TESTS,
+        re.compile(
+            r"单元测试|测试用例|边界用例|(?:代码|函数|方法|类).{0,12}测试|"
+            r"测试.{0,12}(?:代码|函数|方法|类)|unit\s+tests?|test\s+cases?",
+            re.I,
+        ),
+    ),
+    (
+        CodeTutorMode.REVIEW,
+        re.compile(r"代码审阅|审查.{0,8}代码|代码质量|code\s+review|review\s+(?:this|the)?\s*code", re.I),
+    ),
+    (
+        CodeTutorMode.EXPLAIN,
+        re.compile(r"逐行解释|解释.{0,12}(?:这段|下面|以上|代码|程序)|walk\s+me\s+through", re.I),
+    ),
+    (
+        CodeTutorMode.GENERATE_EXAMPLE,
+        re.compile(
+            r"示例代码|代码示例|示例程序|example\s+code|sample\s+code|"
+            r"(?:给|写|生成|提供|展示).{0,24}(?:一段|一个|一份)?.{0,12}(?:代码|程序)(?!.*(?:练习|习题))|"
+            r"(?:怎么|如何).{0,16}(?:写|实现).{0,20}(?:函数|类|程序|代码)",
+            re.I,
+        ),
+    ),
+    (
+        CodeTutorMode.DIAGNOSE,
+        re.compile(
+            r"代码(?:辅导|分析|检查|有什么问题|哪里有问题)|调试|debug|"
+            r"静态分析|编译(?:错误|失败)|syntaxerror|traceback|"
+            r"(?:代码|程序).{0,8}(?:报错|哪里错)",
+            re.I,
+        ),
+    ),
 )
 
 
@@ -62,7 +131,72 @@ def normalize_for_matching(text: str) -> str:
 
 def is_code_request(text: str) -> bool:
     normalized = normalize_for_matching(text)
-    return bool(CODE_REQUEST.search(normalized) or FENCE_BLOCK.search(text))
+    return bool(
+        CODE_REQUEST.search(normalized)
+        or infer_code_tutor_mode(text) is not None
+        or FENCE_BLOCK.search(text)
+    )
+
+
+def infer_code_tutor_mode(text: str) -> CodeTutorMode | None:
+    """Classify only high-confidence code-coaching operations."""
+
+    normalized = normalize_for_matching(text)
+    if re.search(r"(?:练习|习题)", normalized) and not re.search(
+        r"示例代码|代码示例|example\s+code|sample\s+code|测试用例|单元测试",
+        normalized,
+        re.I,
+    ):
+        return None
+    return next(
+        (mode for mode, pattern in _MODE_PATTERNS if pattern.search(normalized)),
+        None,
+    )
+
+
+def explicit_language_from_text(text: str) -> str | None:
+    """Find an explicitly named supported language without treating prose as code."""
+
+    normalized = normalize_for_matching(text)
+    candidates: list[tuple[int, int, str]] = []
+    aliases = sorted(
+        (
+            (alias.casefold(), spec.language_id)
+            for spec in LANGUAGE_SPECS
+            for alias in (spec.language_id, *spec.aliases)
+            if len(alias) >= 2 or alias.casefold() == "c"
+        ),
+        key=lambda item: len(item[0]),
+        reverse=True,
+    )
+    for alias, language_id in aliases:
+        match = re.search(
+            rf"(?<![a-z0-9_]){re.escape(alias)}(?![a-z0-9_+#.-])",
+            normalized,
+            re.I,
+        )
+        if not match:
+            continue
+        if alias.isalpha() and len(alias) <= 2:
+            if alias in {"cs", "ml"}:
+                continue
+            whole_message = normalized.strip(" .,:;!?/()[]{}") == alias
+            contextual = bool(
+                re.search(
+                    rf"(?:用|使用|采用|改成|换成|in|using)\s*{re.escape(alias)}\b|"
+                    rf"\b{re.escape(alias)}\s*(?:语言|代码|程序|示例|测试|"
+                    rf"language|code|program|example|tests?)\b",
+                    normalized,
+                    re.I,
+                )
+            )
+            if not whole_message and not contextual:
+                continue
+        candidates.append((match.start(), -len(alias), language_id))
+    if not candidates:
+        return None
+    candidates.sort()
+    return candidates[0][2]
 
 
 def looks_like_code(text: str) -> bool:
@@ -87,22 +221,9 @@ def looks_like_code(text: str) -> bool:
 
 
 def _infer_language(code: str, surrounding_text: str) -> tuple[str | None, bool]:
-    normalized = normalize_for_matching(surrounding_text)
-    explicit_labels = (
-        (r"(?:c\+\+|cpp|cxx)\s*(?:代码|程序)?", "cpp"),
-        (r"python\s*(?:代码|程序)?", "python"),
-        (r"(?:rust|java|javascript|typescript|golang|go|cuda|sql|bash|shell)\s*(?:代码|程序)?", None),
-    )
-    for pattern, fixed in explicit_labels:
-        match = re.search(pattern, normalized, re.I)
-        if not match:
-            continue
-        if fixed is not None:
-            return fixed, False
-        label = match.group(0).split()[0]
-        spec = resolve_language(label)
-        if spec is not None:
-            return spec.language_id, False
+    explicit = explicit_language_from_text(surrounding_text)
+    if explicit is not None:
+        return explicit, False
 
     votes: dict[str, int] = {}
 
@@ -195,6 +316,80 @@ def understand_user_texts(user_texts: list[str]) -> TurnUnderstanding:
     )
 
 
+def build_code_tutor_request(
+    text: str,
+    code: ExtractedCode,
+    semantic: SemanticCodeRequest | None = None,
+) -> CodeTutorRequest:
+    """Resolve mode and language using deterministic evidence before model advice."""
+
+    mode = infer_code_tutor_mode(text)
+    if mode is None and semantic is not None:
+        mode = semantic.mode
+    if mode is None:
+        mode = CodeTutorMode.DIAGNOSE
+    references_existing_code = bool(
+        ASSISTANT_CODE_REFERENCE.search(normalize_for_matching(text))
+    )
+
+    explicit_language = explicit_language_from_text(text)
+    if explicit_language is not None:
+        return CodeTutorRequest(
+            mode=mode,
+            target_language=explicit_language,
+            language_inferred=False,
+            references_existing_code=references_existing_code,
+        )
+    if code.language is not None:
+        return CodeTutorRequest(
+            mode=mode,
+            target_language=code.language,
+            language_inferred=code.language_inferred,
+            references_existing_code=references_existing_code,
+        )
+    if semantic is not None and semantic.target_language:
+        spec = resolve_language(semantic.target_language)
+        if spec is not None:
+            return CodeTutorRequest(
+                mode=mode,
+                target_language=spec.language_id,
+                language_inferred=True,
+                references_existing_code=references_existing_code,
+            )
+    return CodeTutorRequest(
+        mode=mode,
+        references_existing_code=references_existing_code,
+    )
+
+
+def extract_referenced_assistant_code(
+    messages: list[ChatMessage], latest_user_text: str
+) -> ExtractedCode:
+    """Recover an exact recent assistant code block only for an explicit reference."""
+
+    if not ASSISTANT_CODE_REFERENCE.search(normalize_for_matching(latest_user_text)):
+        return ExtractedCode()
+    for message in reversed(messages[-12:-1]):
+        if message.role != "assistant":
+            continue
+        for match in reversed(list(FENCE_BLOCK.finditer(message.content))):
+            code, label = _parse_fence(match.group("body"))
+            if not code or label in OUTPUT_FENCE_LABELS:
+                continue
+            spec = resolve_language(label) if label else None
+            if spec is None:
+                language, inferred = _infer_language(code, message.content)
+            else:
+                language, inferred = spec.language_id, False
+            return ExtractedCode(
+                content=code[:20000],
+                language=language,
+                language_inferred=inferred,
+                source="assistant_reference",
+            )
+    return ExtractedCode()
+
+
 def prose_without_code(text: str) -> str:
     """Remove recognizable code artifacts before profile or planner prose analysis."""
 
@@ -224,7 +419,9 @@ def language_assumption(extracted: ExtractedCode) -> str | None:
         display = get_language(extracted.language).display_name
     except KeyError:
         display = extracted.language
-    return f"理解：我按 {display} 代码进行静态分析；如果语言判断不对，请直接纠正我。"
+    if extracted.content:
+        return f"理解：我按 {display} 代码进行静态分析；如果语言判断不对，请直接纠正我。"
+    return f"理解：我按 {display} 处理这次代码辅导；如果语言判断不对，请直接纠正我。"
 
 
 def validate_model_code(

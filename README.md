@@ -56,7 +56,7 @@ CoursePilot 是一个面向中文计算机科学自学者的循证学习 Agent�
 - 通用学习问答：专用能力无法覆盖当前学习请求时，使用一般知识直接回答；除最近最多 30 条/48,000 字符对话、已确认画像值和最小验签连续状态外，始终获得 119 门课程的安全极简索引，并按需获得最多 12 门学习者可见详情。模型 prose 与后端验证的课程 metadata 分区保存，不冒充课程材料、不运行代码、不提供可提交的完整作业答案。
 - 课程导航：按课程名、学校、课程号或已确认学习方向检索 CSDIY registry；个性化推荐每阶段最多 3 门，列表最多 5 门，并明确区分目录、离线和在线状态。模型失败时只展示明确标注的未个性化方向候选。
 - StudyKit 学习：查询学习包、按页码白名单回答材料问题、分层解释概念、选择不重复练习，并只对携带 practice ID 的当前答案给反馈。
-- 代码辅导：Python/Triton 使用 Python AST，C/C++、CUDA、ISPC、LaTeX、Java、Go、Rust、函数式语言、Web/SQL、Verilog 和汇编等使用离线 Tree-sitter 语法解析；提供诊断、假设、验证步骤和下一次尝试，不运行用户代码，也不代写可提交作业。
+- 代码辅导：支持按语言和约束生成最小完整示例，也可解释、诊断、审阅、修复、重构代码并设计测试；Python/Triton 使用 Python AST，其余主流语言使用离线 Tree-sitter 对输入或生成代码做结构检查。所有输出保持 `ran_code=false`，预期行为不冒充运行结果，也不代写可提交作业。
 - 已审核 StudyKit 读取：统一 `StudyKitStore` 使用 220 份 approved archive StudyKit 优先、Lecture 2/8 golden 回退；不输出 `expected_evidence`、evaluation、rubric、本地路径或审计字段。
 - 离线 StudyKit 生成：生成包含目标、前置知识、提纲、术语、练习、引用和限制说明的中文学习包。
 - 检索基础：公共 SourceChunk 的 FTS5 范围过滤和运行时接线已完成；仍需发布 approved 索引，并继续实现 MaterialSet 权限、私有/向量检索和学习复盘。
@@ -70,7 +70,7 @@ CoursePilot 是一个面向中文计算机科学自学者的循证学习 Agent�
         ↓ OpenAI 兼容协议
 协议适配层：鉴权、JSON、SSE、错误处理、文件 URL
         ↓
-Agent 编排：意图路由、主动画像、课程导航、StudyKit 学习、静态代码辅导
+Agent 编排：意图路由、主动画像、课程导航、StudyKit 学习、多模式静态代码教练
         ↓
 只读课程表与 approved archive/golden StudyKit；后续接入 MaterialSet、RAG 与复盘
 ```

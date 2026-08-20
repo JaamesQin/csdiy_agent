@@ -9,6 +9,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from app.agent.contracts import (
     CapabilityId,
+    CodeTutorMode,
     ModelTurnUnderstanding,
     PlannedTask,
     SemanticReference,
@@ -20,7 +21,12 @@ from app.agent.capabilities import (
     match_unavailable_capability_request,
 )
 from app.agent.model_support import normalized_usage
-from app.agent.understanding import extract_code, is_code_request, understand_user_texts
+from app.agent.understanding import (
+    extract_code,
+    infer_code_tutor_mode,
+    is_code_request,
+    understand_user_texts,
+)
 from app.generation.model import ModelError, StructuredModel
 from app.protocol.schemas import ChatMessage
 
@@ -128,6 +134,11 @@ class TaskPlanner:
                             "source_message_index": "index from messages",
                             "replaces_previous": True,
                         },
+                        "code_request": {
+                            "mode": "generate_example | explain | diagnose | review | repair | refactor | design_tests",
+                            "target_language": "supported language id or null",
+                            "language_inferred": False,
+                        },
                         "profile_operations": [
                             {
                                 "action": "add | replace | delete | infer",
@@ -185,6 +196,11 @@ class TaskPlanner:
                         " 候选。‘第一门/第二门’必须以 continuity.displayed_catalog_ids 的实际顺序设置"
                         " ordinal 和 candidate_id，不得按常识另选课程。"
                         "course/unit/candidate 只是候选，后端会验证。代码 content 必须逐字来自指定用户消息，"
+                        "代码辅导同时支持生成示例、解释、诊断、审阅、修复、重构和测试设计。"
+                        "用户明确要求示例代码时，即使没有现成代码也必须创建 code_tutoring，并设置"
+                        " code_request.mode=generate_example；此时 code_artifact 必须为 null，不能要求 user_code。"
+                        "code_request.target_language 使用规范语言 ID；只有根据上下文推断时才将"
+                        " language_inferred 设为 true。"
                         "背景技能不是代码语言。明确画像陈述用 add/replace/delete，模型推断才用 infer。"
                         "‘想学 X/我会 X/每周可投入 X’都是用户明确陈述，必须 add 或 replace，不能标 infer。"
                         "‘不是 X，是 Y/改成 Y/先学 Y’这类带最终值的纠正必须对同一字段输出一个"
@@ -212,7 +228,7 @@ class TaskPlanner:
             else:
                 understanding = None
             understanding = self._harmonize_understanding(plan, understanding)
-            tasks = self._complete_semantic_tasks(plan.tasks, understanding)
+            tasks = self._complete_semantic_tasks(plan.tasks, understanding, latest)
             plan = plan.model_copy(
                 update={
                     "tasks": self._prefer_specialized_tasks(
@@ -246,42 +262,93 @@ class TaskPlanner:
     def _complete_semantic_tasks(
         tasks: list[PlannedTask],
         understanding: ModelTurnUnderstanding | None,
+        latest: str,
     ) -> list[PlannedTask]:
         """Recover an explicit semantic operation omitted from the model's task list.
 
-        This does not infer intent from vocabulary. It only makes the executable plan
-        consistent with the model's already-structured understanding.
+        Semantic output and high-confidence deterministic code intent are both allowed
+        to repair a model task omission. The result remains bounded to four tasks.
         """
 
-        if understanding is None or not understanding.profile_operations:
-            return tasks
-        existing_profile = next(
-            (
-                task
-                for task in tasks
-                if task.capability_id is CapabilityId.PROFILE_ANALYSIS
-            ),
-            None,
-        )
-        if existing_profile is not None:
-            return [
-                existing_profile,
-                *[task for task in tasks if task is not existing_profile],
-            ]
-        profile_task = PlannedTask(
-            task_id="profile",
-            capability_id=CapabilityId.PROFILE_ANALYSIS,
-            objective="应用当前消息中明确识别的学习画像操作",
-            evidence_quote=next(
+        completed = list(tasks)
+        if understanding is not None and understanding.profile_operations:
+            existing_profile = next(
                 (
-                    operation.evidence_quote
-                    for operation in understanding.profile_operations
-                    if operation.evidence_quote
+                    task
+                    for task in completed
+                    if task.capability_id is CapabilityId.PROFILE_ANALYSIS
                 ),
                 None,
-            ),
+            )
+            if existing_profile is not None:
+                completed = [
+                    existing_profile,
+                    *[task for task in completed if task is not existing_profile],
+                ]
+            else:
+                profile_task = PlannedTask(
+                    task_id="profile",
+                    capability_id=CapabilityId.PROFILE_ANALYSIS,
+                    objective="应用当前消息中明确识别的学习画像操作",
+                    evidence_quote=next(
+                        (
+                            operation.evidence_quote
+                            for operation in understanding.profile_operations
+                            if operation.evidence_quote
+                        ),
+                        None,
+                    ),
+                )
+                completed = [profile_task, *completed]
+
+        semantic_code_request = understanding.code_request if understanding else None
+        explicit_code_request = infer_code_tutor_mode(latest) is not None
+        has_code_task = any(
+            task.capability_id is CapabilityId.CODE_TUTORING for task in completed
         )
-        return [profile_task, *tasks]
+        if (semantic_code_request is not None or explicit_code_request) and not has_code_task:
+            code_task = PlannedTask(
+                task_id="code" if all(task.task_id != "code" for task in completed) else "code_tutor",
+                capability_id=CapabilityId.CODE_TUTORING,
+                objective="执行用户明确请求的代码辅导操作",
+                evidence_quote=latest[:500],
+            )
+            completed.append(code_task)
+
+        required_capabilities: set[CapabilityId] = set()
+        if understanding is not None and understanding.profile_operations:
+            required_capabilities.add(CapabilityId.PROFILE_ANALYSIS)
+        if semantic_code_request is not None or explicit_code_request:
+            required_capabilities.add(CapabilityId.CODE_TUTORING)
+        if len(completed) <= 4:
+            return completed
+
+        prioritized = [
+            task for task in completed if task.capability_id in required_capabilities
+        ]
+        prioritized.extend(
+            task
+            for task in completed
+            if task.capability_id not in required_capabilities
+            and task.capability_id is not CapabilityId.GENERAL_ASSISTANCE
+        )
+        prioritized.extend(
+            task
+            for task in completed
+            if task.capability_id is CapabilityId.GENERAL_ASSISTANCE
+        )
+        bounded = prioritized[:4]
+        retained_ids = {task.task_id for task in bounded}
+        return [
+            task.model_copy(
+                update={
+                    "depends_on": [
+                        item for item in task.depends_on if item in retained_ids
+                    ]
+                }
+            )
+            for task in bounded
+        ]
 
     @staticmethod
     def _harmonize_understanding(
@@ -503,11 +570,16 @@ class TaskPlanner:
     @staticmethod
     def _safe_fallback_plan(text: str) -> TaskPlan:
         extracted = extract_code([text])
-        if extracted.content or "```" in text:
+        if extracted.content or is_code_request(text) or "```" in text:
+            mode = infer_code_tutor_mode(text)
             task = PlannedTask(
                 task_id="code",
                 capability_id=CapabilityId.CODE_TUTORING,
-                objective="静态分析明确提供的代码",
+                objective=(
+                    "生成用户要求的代码示例"
+                    if mode is CodeTutorMode.GENERATE_EXAMPLE
+                    else "执行用户要求的静态代码辅导"
+                ),
                 evidence_quote=text[:500],
             )
         elif re.search(r"studykit|学习包", text, re.I):
@@ -560,7 +632,10 @@ class TaskPlanner:
             )
         )
         code = understanding.code_requested or bool(extracted.content)
-        concept = bool(re.search(r"解释|什么是|为什么|如何理解|区别", lowered))
+        code_mode = infer_code_tutor_mode(text)
+        concept = code_mode is None and bool(
+            re.search(r"解释|什么是|为什么|如何理解|区别", lowered)
+        )
         if studykit or material or practice or feedback:
             course = False
 
@@ -615,11 +690,25 @@ class TaskPlanner:
                     depends_on=dependencies,
                 )
             if code:
+                needs_artifact = code_mode in {
+                    CodeTutorMode.DIAGNOSE,
+                    CodeTutorMode.REVIEW,
+                    CodeTutorMode.REPAIR,
+                    CodeTutorMode.REFACTOR,
+                }
                 add(
                     "code",
                     CapabilityId.CODE_TUTORING,
-                    "静态分析用户提供的代码",
-                    required=[] if extracted.content else ["user_code"],
+                    (
+                        "生成用户要求的代码示例"
+                        if code_mode is CodeTutorMode.GENERATE_EXAMPLE
+                        else "执行用户要求的静态代码辅导"
+                    ),
+                    required=(
+                        []
+                        if extracted.content or not needs_artifact
+                        else ["user_code"]
+                    ),
                     self_statement=profile_statement,
                 )
 
