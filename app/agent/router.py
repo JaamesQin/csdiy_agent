@@ -9,6 +9,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from app.agent.contracts import (
     CapabilityId,
+    CodeTutorMode,
     CourseContext,
     Intent,
     RouteDecision,
@@ -21,7 +22,7 @@ from app.agent.capabilities import (
     match_unavailable_capability_request,
 )
 from app.agent.model_support import normalized_usage
-from app.agent.understanding import understand_user_texts
+from app.agent.understanding import infer_code_tutor_mode, understand_user_texts
 from app.catalog.studykits import StudyKitStore
 from app.generation.model import ModelError, StructuredModel
 from app.protocol.schemas import ChatMessage
@@ -280,7 +281,14 @@ class IntentRouter:
         )
         if code_signal:
             has_code = bool(extracted_code.content)
-            required = [] if has_code else ["user_code"]
+            mode = infer_code_tutor_mode(text)
+            needs_artifact = mode in {
+                CodeTutorMode.DIAGNOSE,
+                CodeTutorMode.REVIEW,
+                CodeTutorMode.REPAIR,
+                CodeTutorMode.REFACTOR,
+            }
+            required = [] if has_code or not needs_artifact else ["user_code"]
             return RouteDecision(
                 intent=Intent.CODE_TUTORING,
                 confidence=0.98,
@@ -288,7 +296,7 @@ class IntentRouter:
                 required_context=required,
                 clarifying_question=(
                     None
-                    if has_code
+                    if has_code or not needs_artifact
                     else "请粘贴需要分析的最小相关代码；普通文本或 Markdown 形式都可以。"
                 ),
                 reason="code_rule",

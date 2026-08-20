@@ -8,27 +8,43 @@ from typing import Any
 
 from pydantic import ValidationError
 
-from app.agent.contracts import CourseContext
+from app.agent.contracts import CodeTutorMode, CourseContext
 from app.agent.model_support import normalized_usage
 from app.catalog.studykits import StudyKitStore
 from app.code_tutor.contracts import (
     CodeArtifact,
+    CodeTutorRequest,
     CodeTutorContext,
     TutorCitation,
     TutorDraft,
     TutorResult,
     TutorHypothesis,
+    TutorCodeBlock,
 )
 from app.code_tutor.error_parsers import parse_toolchain_errors
+from app.code_tutor.languages import resolve_language
 from app.code_tutor.static_analysis import StaticAnalysis, analyze_static_code
 from app.generation.model import ModelError, StructuredModel
 from app.profile.contracts import FactStatus, LearnerProfile
 
 ACADEMIC_CONTEXT = re.compile(r"作业|课程项目|assignment|homework|lab\b", re.IGNORECASE)
 FULL_SOLUTION = re.compile(
-    r"完整答案|全部代码|直接写|直接给.*答案|可提交|帮我做完|full solution|solve it for me",
+    r"完整答案|完整(?:的)?(?:代码|实现|解答)|全部代码|直接写|直接给.*答案|"
+    r"可提交|帮我做完|full solution|solve it for me",
     re.IGNORECASE,
 )
+CODE_REQUIRED_MODES = {
+    CodeTutorMode.DIAGNOSE,
+    CodeTutorMode.REVIEW,
+    CodeTutorMode.REPAIR,
+    CodeTutorMode.REFACTOR,
+}
+GENERATED_BLOCK_KIND = {
+    CodeTutorMode.GENERATE_EXAMPLE: "example",
+    CodeTutorMode.REPAIR: "repair",
+    CodeTutorMode.REFACTOR: "refactor",
+    CodeTutorMode.DESIGN_TESTS: "tests",
+}
 
 
 class CodeTutorService:
@@ -51,60 +67,116 @@ class CodeTutorService:
         error_text: str | None,
         question: str,
         profile: LearnerProfile,
+        request: CodeTutorRequest | None = None,
         filename: str | None = None,
         previous_artifact: CodeArtifact | None = None,
     ) -> TutorResult:
         del user_id, conversation_id  # Reserved for future CodeArtifact persistence.
-        if not code.strip():
-            return TutorResult(
-                answer=(
-                    "请粘贴最小相关代码，并在 Markdown 代码围栏中标明语言；"
-                    "若有报错，也请附上完整的编译器、解释器或工具链错误输出。"
-                ),
-                next_checks=["保留能复现问题的最小输入、期望行为和实际行为。"],
-                next_attempt="提供最小代码、输入、期望行为和实际行为。",
-                ran_code=False,
-                safety_notes=["未收到可静态分析的代码，未运行任何内容。"],
-                usage=normalized_usage(),
-            )
-
-        analysis = analyze_static_code(code, language)
-        artifact = CodeArtifact.create(
-            code,
-            language=analysis.normalized_language,
-            filename=filename,
-            previous=previous_artifact,
+        request = request or CodeTutorRequest(
+            mode=CodeTutorMode.DIAGNOSE,
+            target_language=language,
         )
-        diagnostics = [
-            item.model_copy(
-                update={
-                    "artifact_id": artifact.artifact_id,
-                    "end_line": item.end_line or item.line,
-                }
-            )
-            for item in analysis.diagnostics
-        ]
-        diagnostics.extend(parse_toolchain_errors(error_text, artifact=artifact))
+        mode = request.mode
+        target_language = request.target_language or language
+
         if ACADEMIC_CONTEXT.search(question) and FULL_SOLUTION.search(question):
             return TutorResult(
+                mode=mode,
                 answer=(
                     "我不能代写可直接提交的完整作业答案。可以基于你的当前尝试帮助定位一个问题，"
-                    "并给出最小测试和下一层提示。"
+                    "提供分层提示、最小测试，或生成不对应作业答案的独立概念示例。"
                 ),
-                diagnostics=diagnostics,
                 next_checks=[
                     "说明当前实现在哪个输入上失败。",
                     "先写一个只覆盖该失败行为的最小测试。",
                 ],
                 next_attempt="提交你当前失败的最小实现和一个失败测试，我会从第一层提示开始。",
                 ran_code=False,
-                safety_notes=["学术诚信模式：未生成完整解答。", "代码仅做静态分析，未运行。"],
+                safety_notes=["学术诚信模式：未生成完整解答。", "代码未运行。"],
                 usage=normalized_usage(),
-                artifact=artifact,
-                bound_hypotheses=self._bind_hypotheses(
-                    artifact, diagnostics, [item.message for item in diagnostics]
-                ),
             )
+
+        if not code.strip() and (
+            mode in CODE_REQUIRED_MODES or request.references_existing_code
+        ):
+            return TutorResult(
+                mode=mode,
+                answer=(
+                    "这个辅导操作需要看到当前代码，或它所指的最近代码。请直接粘贴最小相关代码；"
+                    "普通文本或 Markdown 代码块都可以。"
+                ),
+                next_checks=["保留能复现问题的最小输入、期望行为和实际行为。"],
+                next_attempt="提供当前代码，以及你希望执行的解释、诊断、修复、审阅、重构或测试目标。",
+                ran_code=False,
+                safety_notes=["未收到可静态分析的代码，未运行任何内容。"],
+                usage=normalized_usage(),
+            )
+
+        if target_language is None:
+            unlabeled_analysis = analyze_static_code(code, None) if code.strip() else None
+            unlabeled_artifact = (
+                CodeArtifact.create(
+                    code,
+                    language=None,
+                    filename=filename,
+                    previous=previous_artifact,
+                )
+                if code.strip()
+                else None
+            )
+            unlabeled_diagnostics = [
+                item.model_copy(
+                    update={
+                        "artifact_id": (
+                            unlabeled_artifact.artifact_id
+                            if unlabeled_artifact is not None
+                            else None
+                        )
+                    }
+                )
+                for item in (
+                    unlabeled_analysis.diagnostics
+                    if unlabeled_analysis is not None
+                    else []
+                )
+            ]
+            return TutorResult(
+                mode=mode,
+                answer=(
+                    "请说明希望使用的编程语言，例如 C++、Python、Rust 或 Java。"
+                    "我不会在语言不明确时默认选择 Python。"
+                ),
+                next_checks=["补充目标语言；不需要使用特定 Markdown 格式。"],
+                next_attempt="告诉我目标语言后，我会继续当前代码辅导任务。",
+                diagnostics=unlabeled_diagnostics,
+                ran_code=False,
+                safety_notes=["语言尚未确认，未生成或运行代码。"],
+                usage=normalized_usage(),
+                artifact=unlabeled_artifact,
+            )
+
+        analysis = analyze_static_code(code, language or target_language)
+        artifact = (
+            CodeArtifact.create(
+                code,
+                language=analysis.normalized_language,
+                filename=filename,
+                previous=previous_artifact,
+            )
+            if code.strip()
+            else None
+        )
+        diagnostics = [
+            item.model_copy(
+                update={
+                    "artifact_id": artifact.artifact_id if artifact is not None else None,
+                    "end_line": item.end_line or item.line,
+                }
+            )
+            for item in (analysis.diagnostics if artifact is not None else [])
+        ]
+        if artifact is not None:
+            diagnostics.extend(parse_toolchain_errors(error_text, artifact=artifact))
 
         context = self._build_context(
             course_context=course_context,
@@ -113,8 +185,13 @@ class CodeTutorService:
             error_text=error_text,
             question=question,
             profile=profile,
+            request=request,
         )
-        deterministic_checks = self._deterministic_checks(analysis, error_text)
+        deterministic_checks = (
+            self._deterministic_checks(analysis, error_text)
+            if artifact is not None
+            else ["使用目标语言的本地工具链自行编译或检查，并核对预期行为。"]
+        )
         fallback_hypotheses = [item.message for item in diagnostics]
         draft: TutorDraft | None = None
         usage = normalized_usage()
@@ -123,9 +200,13 @@ class CodeTutorService:
             try:
                 response = await self.model.generate_json(
                     system_prompt=(
-                        "你是 CoursePilot Code Coach。只做静态分析，不得声称运行了代码。"
+                        "你是 CoursePilot Code Coach，支持生成示例、解释、诊断、审阅、修复、"
+                        "重构和测试设计。只做静态推理，不得声称编译、运行或测试了代码。"
                         "必须按照 context.language 分析对应语言，不得把非 Python 代码当作 Python。"
-                        "按观察、诊断假设、验证步骤和下一次尝试提供分层提示。"
+                        "生成示例时默认给一个自包含、设计为最小可运行的例子；预期行为必须明确"
+                        "标为预期而不是运行结果。只有用户明确要求额外源文件或测试块时才返回多个"
+                        " code_blocks。修复、重构和测试设计应把代码放入 code_blocks。"
+                        "按当前 mode 提供结论、必要解释、验证步骤和下一次尝试。"
                         "只能引用 allowed_citations 中的 citation_id，不得输出完整作业解答。"
                         "只输出 JSON object。"
                     ),
@@ -135,6 +216,16 @@ class CodeTutorService:
                             "static_diagnostics": [item.model_dump() for item in diagnostics],
                             "output_contract": {
                                 "observation": "string",
+                                "code_blocks": [
+                                    {
+                                        "kind": "example | repair | refactor | tests",
+                                        "language": "context.target_language",
+                                        "filename": "basename or null",
+                                        "code": "complete code",
+                                        "explanation": "string",
+                                        "expected_behavior": "expected, not observed, behavior",
+                                    }
+                                ],
                                 "diagnostic_hypotheses": ["string"],
                                 "next_checks": ["string"],
                                 "next_attempt": "string",
@@ -150,6 +241,7 @@ class CodeTutorService:
                 )
                 usage = normalized_usage(response.usage)
                 draft = self._parse_model_draft(response.output)
+                draft = self._validate_model_draft(draft, request)
             except (ModelError, ValidationError, ValueError):
                 draft = None
 
@@ -160,11 +252,25 @@ class CodeTutorService:
             # Tutor citations are a resource list, not prose claims. Invalid IDs
             # are removed here; claim partitions use enforce_provenance atomically.
             citations = [allowed[item] for item in draft.citation_ids if item in allowed]
+        code_blocks: list[TutorCodeBlock] = [] if draft is None else draft.code_blocks
+        generated_notes = self._generated_code_notes(code_blocks)
         if draft is None:
-            answer = (
-                "已完成静态检查。优先处理下面的确定性诊断，再用最小输入验证行为；"
-                "当前未配置或未成功调用辅导模型，因此没有补充语义推断。"
-            )
+            if mode in {
+                CodeTutorMode.GENERATE_EXAMPLE,
+                CodeTutorMode.EXPLAIN,
+                CodeTutorMode.REPAIR,
+                CodeTutorMode.REFACTOR,
+                CodeTutorMode.DESIGN_TESTS,
+            }:
+                answer = (
+                    "代码辅导模型当前不可用，或返回的代码没有通过结构与静态语法校验，"
+                    "因此本轮没有展示未经验证的生成内容。"
+                )
+            else:
+                answer = (
+                    "已完成静态检查。优先处理下面的确定性诊断，再用最小输入验证行为；"
+                    "当前未配置或未成功调用辅导模型，因此没有补充语义推断。"
+                )
             hypotheses = fallback_hypotheses or [
                 (
                     f"{analysis.display_name} 解析器未定位到结构性语法错误；"
@@ -173,16 +279,23 @@ class CodeTutorService:
             ]
             next_checks = deterministic_checks
             next_attempt = "按验证步骤缩小到第一个与期望不一致的中间状态。"
+            if artifact is None:
+                hypotheses = []
+                next_attempt = "保留目标语言和需求后稍后重试；本轮没有生成代码。"
             safety_notes = ["代码仅做静态分析，未运行。"]
         else:
             answer = draft.observation
             hypotheses = draft.diagnostic_hypotheses or fallback_hypotheses
             next_checks = self._dedupe([*deterministic_checks, *draft.next_checks])
             next_attempt = draft.next_attempt
-            safety_notes = self._dedupe([*draft.safety_notes, "代码仅做静态分析，未运行。"])
+            safety_notes = self._dedupe(
+                [*draft.safety_notes, *generated_notes, "代码仅做静态分析，未运行。"]
+            )
 
         return TutorResult(
+            mode=mode,
             answer=answer,
+            code_blocks=code_blocks,
             citations=citations,
             diagnostics=diagnostics,
             diagnostic_hypotheses=hypotheses,
@@ -192,8 +305,10 @@ class CodeTutorService:
             safety_notes=safety_notes,
             usage=usage,
             artifact=artifact,
-            bound_hypotheses=self._bind_hypotheses(
-                artifact, diagnostics, hypotheses, next_checks
+            bound_hypotheses=(
+                self._bind_hypotheses(artifact, diagnostics, hypotheses, next_checks)
+                if artifact is not None
+                else []
             ),
         )
 
@@ -242,7 +357,7 @@ class CodeTutorService:
         """Accept harmless provider formatting drift without widening the contract.
 
         Some OpenAI-compatible models add explanatory top-level fields or wrap the
-        requested object in ``result``/``answer``. We retain only the six
+        requested object in ``result``/``answer``. We retain only the seven
         learner-facing fields and let Pydantic reject missing or mistyped content.
         """
 
@@ -257,6 +372,7 @@ class CodeTutorService:
 
         allowed = {
             "observation",
+            "code_blocks",
             "diagnostic_hypotheses",
             "next_checks",
             "next_attempt",
@@ -275,6 +391,60 @@ class CodeTutorService:
                 normalized[key] = [value]
         return TutorDraft.model_validate(normalized)
 
+    @staticmethod
+    def _validate_model_draft(
+        draft: TutorDraft, request: CodeTutorRequest
+    ) -> TutorDraft:
+        """Validate generated code without widening the one-call model budget."""
+
+        target = resolve_language(request.target_language)
+        normalized_blocks: list[TutorCodeBlock] = []
+        for block in draft.code_blocks:
+            spec = resolve_language(block.language)
+            if spec is None:
+                raise ValueError("generated code uses an unsupported language")
+            if target is not None and spec.language_id != target.language_id:
+                raise ValueError("generated code language does not match the request")
+            if not block.explanation.strip() or not block.expected_behavior.strip():
+                raise ValueError(
+                    "generated code must explain its purpose and expected behavior"
+                )
+            if block.filename and not re.fullmatch(
+                r"[A-Za-z0-9][A-Za-z0-9._-]{0,199}", block.filename
+            ):
+                raise ValueError("generated code filename must be a safe basename")
+            analysis = analyze_static_code(block.code, spec.language_id)
+            if any(
+                item.code in {"python_syntax_error", "syntax_error"}
+                for item in analysis.diagnostics
+            ):
+                raise ValueError("generated code failed deterministic syntax validation")
+            normalized_blocks.append(
+                block.model_copy(update={"language": spec.language_id})
+            )
+
+        required_kind = GENERATED_BLOCK_KIND.get(request.mode)
+        if required_kind is not None and not any(
+            block.kind == required_kind for block in normalized_blocks
+        ):
+            raise ValueError("code tutor response omitted the required code block")
+        return draft.model_copy(update={"code_blocks": normalized_blocks})
+
+    @staticmethod
+    def _generated_code_notes(blocks: list[TutorCodeBlock]) -> list[str]:
+        notes: list[str] = []
+        for block in blocks:
+            analysis = analyze_static_code(block.code, block.language)
+            if analysis.deterministic_parser_used:
+                notes.append(
+                    f"{analysis.display_name} 代码通过了确定性语法结构检查，但未编译或运行。"
+                )
+            else:
+                notes.append(
+                    f"{analysis.display_name} 暂无可用的确定性解析结果，本段仅为模型静态建议。"
+                )
+        return list(dict.fromkeys(notes))
+
     def _build_context(
         self,
         *,
@@ -284,6 +454,7 @@ class CodeTutorService:
         error_text: str | None,
         question: str,
         profile: LearnerProfile,
+        request: CodeTutorRequest,
     ) -> CodeTutorContext:
         document: dict[str, Any] | None = None
         if course_context is not None and course_context.unit_id is not None:
@@ -350,8 +521,10 @@ class CodeTutorService:
                     values.append(fact.value)
 
         return CodeTutorContext(
+            mode=request.mode,
             course_context=course_context,
             language=analysis.normalized_language,
+            target_language=request.target_language or analysis.normalized_language,
             language_display_name=analysis.display_name,
             deterministic_parser_used=analysis.deterministic_parser_used,
             code=code,
@@ -442,7 +615,39 @@ def _common_prefix(left: str, right: str) -> int:
 
 
 def render_tutor_result(result: TutorResult) -> str:
-    lines = ["### 观察", result.answer]
+    block_headings = {
+        CodeTutorMode.GENERATE_EXAMPLE: "### 代码示例",
+        CodeTutorMode.REPAIR: "### 修复版本",
+        CodeTutorMode.REFACTOR: "### 重构版本",
+        CodeTutorMode.DESIGN_TESTS: "### 测试代码",
+    }
+    summary_headings = {
+        CodeTutorMode.GENERATE_EXAMPLE: "### 说明",
+        CodeTutorMode.EXPLAIN: "### 代码讲解",
+        CodeTutorMode.REVIEW: "### 审阅结论",
+        CodeTutorMode.REPAIR: "### 修复说明",
+        CodeTutorMode.REFACTOR: "### 重构说明",
+        CodeTutorMode.DESIGN_TESTS: "### 测试设计",
+    }
+    lines: list[str] = []
+    block_heading = block_headings.get(result.mode)
+    if block_heading and result.code_blocks:
+        lines.append(block_heading)
+        for block in result.code_blocks:
+            if block.filename:
+                lines.extend(["", f"**{block.filename}**"])
+            lines.extend(["", _render_code_block(block)])
+            if block.explanation:
+                lines.extend(["", f"说明：{block.explanation}"])
+        lines.extend(["", summary_headings[result.mode], result.answer])
+        expected = [block for block in result.code_blocks if block.expected_behavior]
+        if expected:
+            lines.extend(["", "### 预期行为（未运行）"])
+            for block in expected:
+                label = f"{block.filename}：" if block.filename else ""
+                lines.append(f"- {label}{block.expected_behavior}")
+    else:
+        lines.extend([summary_headings.get(result.mode, "### 观察"), result.answer])
     if result.diagnostics:
         deterministic = any(
             item.code not in {"language_required", "static_parser_unavailable"}
@@ -457,13 +662,26 @@ def render_tutor_result(result: TutorResult) -> str:
             if location:
                 location += "）"
             lines.append(f"- {item.message}{location}")
-    lines.extend(["", "### 诊断假设"])
-    hypotheses = result.diagnostic_hypotheses
-    lines.extend(
-        f"- {item}" for item in hypotheses or ["目前没有足够信息形成具体假设。"]
-    )
-    lines.extend(["", "### 验证步骤"])
-    lines.extend(f"- {item}" for item in result.next_checks)
+    hypothesis_heading = {
+        CodeTutorMode.DIAGNOSE: "### 诊断假设",
+        CodeTutorMode.REVIEW: "### 审阅发现",
+        CodeTutorMode.REPAIR: "### 修复依据",
+        CodeTutorMode.REFACTOR: "### 改进依据",
+    }.get(result.mode)
+    if hypothesis_heading:
+        lines.extend(["", hypothesis_heading])
+        hypotheses = result.diagnostic_hypotheses
+        lines.extend(
+            f"- {item}" for item in hypotheses or ["目前没有足够信息形成具体假设。"]
+        )
+    if result.next_checks:
+        checks_heading = (
+            "### 验证步骤"
+            if result.mode in {CodeTutorMode.DIAGNOSE, CodeTutorMode.REVIEW}
+            else "### 自查步骤"
+        )
+        lines.extend(["", checks_heading])
+        lines.extend(f"- {item}" for item in result.next_checks)
     if result.next_attempt:
         lines.extend(["", "### 下一次尝试", result.next_attempt])
     if result.citations:
@@ -473,3 +691,9 @@ def render_tutor_result(result: TutorResult) -> str:
     lines.extend(f"- {item}" for item in result.safety_notes)
     lines.append(f"- ran_code={str(result.ran_code).lower()}")
     return "\n".join(lines).strip()
+
+
+def _render_code_block(block: TutorCodeBlock) -> str:
+    longest = max((len(match.group(0)) for match in re.finditer(r"`+", block.code)), default=0)
+    fence = "`" * max(3, longest + 1)
+    return f"{fence}{block.language}\n{block.code}\n{fence}"

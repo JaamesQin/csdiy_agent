@@ -33,6 +33,18 @@ class ConversationAct(str, Enum):
     ONBOARDING = "onboarding"
 
 
+class CodeTutorMode(str, Enum):
+    """One primary learner-visible operation for a code tutoring turn."""
+
+    GENERATE_EXAMPLE = "generate_example"
+    EXPLAIN = "explain"
+    DIAGNOSE = "diagnose"
+    REVIEW = "review"
+    REPAIR = "repair"
+    REFACTOR = "refactor"
+    DESIGN_TESTS = "design_tests"
+
+
 class SemanticReference(BaseModel):
     """A model interpretation that still requires local identity validation."""
 
@@ -52,6 +64,16 @@ class SemanticCodeArtifact(BaseModel):
     language: str | None = Field(default=None, max_length=100)
     source_message_index: int = Field(ge=0)
     replaces_previous: bool = True
+
+
+class SemanticCodeRequest(BaseModel):
+    """Model-owned interpretation of the requested code tutoring operation."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    mode: CodeTutorMode
+    target_language: str | None = Field(default=None, max_length=100)
+    language_inferred: bool = False
 
 
 class ProfileOperation(BaseModel):
@@ -85,6 +107,7 @@ class ModelTurnUnderstanding(BaseModel):
     response_mode: Literal["default", "unit_summary"] = "default"
     answer_message_index: int | None = Field(default=None, ge=0)
     code_artifact: SemanticCodeArtifact | None = None
+    code_request: SemanticCodeRequest | None = None
     profile_operations: list[ProfileOperation] = Field(default_factory=list, max_length=16)
     ambiguities: list[str] = Field(default_factory=list, max_length=3)
 

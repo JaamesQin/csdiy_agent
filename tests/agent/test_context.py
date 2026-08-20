@@ -1,8 +1,12 @@
 from __future__ import annotations
 
 from app.agent.context import build_turn_context
-from app.agent.contracts import SemanticCodeArtifact
-from app.agent.understanding import validate_model_code
+from app.agent.contracts import CodeTutorMode, SemanticCodeArtifact
+from app.agent.understanding import (
+    explicit_language_from_text,
+    infer_code_tutor_mode,
+    validate_model_code,
+)
 from app.protocol.schemas import ChatMessage
 
 
@@ -102,3 +106,104 @@ def test_model_code_must_be_grounded_in_a_user_message() -> None:
     assert valid.content == "int main(){return 0;}"
     assert valid.language == "cpp"
     assert invented.content == ""
+
+
+def test_generation_request_extracts_mode_and_language_without_code() -> None:
+    context = build_turn_context(
+        [ChatMessage(role="user", content="给我一段完整的cpp示例代码")]
+    )
+
+    assert context.code == ""
+    assert context.code_request.mode is CodeTutorMode.GENERATE_EXAMPLE
+    assert context.code_request.target_language == "cpp"
+    assert context.code_request.language_inferred is False
+
+
+def test_code_tutor_modes_cover_v1_operations() -> None:
+    assert infer_code_tutor_mode("逐行解释这段代码") is CodeTutorMode.EXPLAIN
+    assert infer_code_tutor_mode("修好下面的代码") is CodeTutorMode.REPAIR
+    assert infer_code_tutor_mode("重构这段代码") is CodeTutorMode.REFACTOR
+    assert infer_code_tutor_mode("做一次代码审阅") is CodeTutorMode.REVIEW
+    assert infer_code_tutor_mode("为这个函数设计单元测试") is CodeTutorMode.DESIGN_TESTS
+    assert infer_code_tutor_mode("看看代码哪里错了") is CodeTutorMode.DIAGNOSE
+    assert infer_code_tutor_mode("修复课程目录") is None
+    assert infer_code_tutor_mode("重构课程结构") is None
+    assert explicit_language_from_text("请生成 Rust 代码") == "rust"
+    assert explicit_language_from_text("How do I go about writing example code?") is None
+    assert explicit_language_from_text("请用 Go 写一个示例") == "go"
+
+
+def test_explicit_reference_reuses_recent_assistant_code_only_in_memory() -> None:
+    context = build_turn_context(
+        [
+            ChatMessage(
+                role="assistant",
+                content="示例：\n```cpp\nint main() { return 0; }\n```",
+            ),
+            ChatMessage(role="user", content="把上面的例子重构一下"),
+        ]
+    )
+
+    assert context.code == "int main() { return 0; }"
+    assert context.language == "cpp"
+    assert context.code_source == "assistant_reference"
+    assert context.code_request.mode is CodeTutorMode.REFACTOR
+
+
+def test_unreferenced_generation_does_not_reuse_old_assistant_code() -> None:
+    context = build_turn_context(
+        [
+            ChatMessage(
+                role="assistant",
+                content="```cpp\nint main() { return 0; }\n```",
+            ),
+            ChatMessage(role="user", content="给我一个新的 Rust 示例代码"),
+        ]
+    )
+
+    assert context.code == ""
+    assert context.code_request.target_language == "rust"
+
+
+def test_generation_reuses_only_recent_verified_language_not_old_code_body() -> None:
+    context = build_turn_context(
+        [
+            ChatMessage(
+                role="user",
+                content="请分析：```cpp\nint main() { return 0; }\n```",
+            ),
+            ChatMessage(role="user", content="再给我一个完整示例代码"),
+        ]
+    )
+
+    assert context.code == ""
+    assert context.code_request.mode is CodeTutorMode.GENERATE_EXAMPLE
+    assert context.code_request.target_language == "cpp"
+    assert context.code_request.language_inferred is True
+
+
+def test_spec_based_test_design_does_not_attach_unreferenced_old_code() -> None:
+    context = build_turn_context(
+        [
+            ChatMessage(role="user", content="```rust\nfn main() {}\n```"),
+            ChatMessage(role="user", content="按这个规格设计单元测试：空输入返回错误"),
+        ]
+    )
+
+    assert context.code == ""
+    assert context.code_request.mode is CodeTutorMode.DESIGN_TESTS
+    assert context.code_request.target_language == "rust"
+    assert context.code_request.language_inferred is True
+
+
+def test_explicit_explanation_reference_reuses_recent_user_code() -> None:
+    context = build_turn_context(
+        [
+            ChatMessage(role="user", content="```cpp\nint main() { return 0; }\n```"),
+            ChatMessage(role="user", content="解释上面的代码"),
+        ]
+    )
+
+    assert context.code == "int main() { return 0; }"
+    assert context.code_request.mode is CodeTutorMode.EXPLAIN
+    assert context.code_request.references_existing_code is True

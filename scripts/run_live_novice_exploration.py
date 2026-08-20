@@ -52,6 +52,11 @@ SCENARIOS: dict[str, list[str]] = {
         "/help code",
         "帮我看看这段程序哪里错了 def add(a,b) return a+b print(add(1,2))",
     ],
+    "code_generate_cpp_example": [
+        "/help code",
+        "教我怎么写面向对象编程中的虚函数",
+        "给我一段完整的cpp示例代码",
+    ],
     "course_followup": [
         "/help course",
         "我只会一点Python，最近想学计算机系统，有没有适合我的课？",

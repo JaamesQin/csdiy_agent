@@ -101,7 +101,7 @@ credential: <COURSEPILOT_API_KEY>
 - 当前执行功能帮助、画像、课程导航、StudyKit 查询、材料/概念、练习选择/反馈、代码辅导和通用学习问答；学习复盘和生成状态仍降级；
 - Catalog 仍读取 tracked registry/Manifest，StudyKit 使用 approved archive 优先与 golden 回退；公共 SourceChunk FTS5 adapter 已接线但当前没有 approved 索引，数据库 MaterialSet、私有/向量检索尚未上线；
 - 课程上下文覆盖 220 份 approved archive StudyKit，并保留 Lecture 2/8 人工批准的黄金 StudyKit 回退；
-- 代码只做 AST/Tree-sitter 静态分析，始终 `ran_code=false`；课程专用 DSL 可能只获得模型静态建议；
+- 代码辅导支持示例生成、解释、诊断、审阅、修复、重构和测试设计；输入与生成代码只做 AST/Tree-sitter 静态检查，始终 `ran_code=false`，课程专用 DSL 可能只获得模型静态建议；
 - API Key 请求的 `user` 是客户端提供的逻辑标识，只进入 legacy 命名空间，不是生产授权凭据；
 - 尚未完成清小搭生产探测；
 - selective repair 的任一 build/plan/audit 或 practice-ID coverage mismatch 都阻止 completion；
@@ -116,7 +116,7 @@ credential: <COURSEPILOT_API_KEY>
 - 流式代理不稳定：保留非流式 JSON；
 - 文件输入不可用：使用公开链接、文本粘贴或预上传样板资料；
 - 长期状态不可用：输出可复制状态卡；
-- DeepSeek 不可用：通用学习问答透明降级；课程精确查询/列表仍可用，个性化推荐明确标注为未结合画像排序；保留功能帮助、StudyKit 查询、概念解释、练习选择、显式画像识别和多语言静态诊断；材料问答返回已审核摘要，练习反馈不判分；
+- DeepSeek 不可用：通用学习问答透明降级；课程精确查询/列表仍可用，个性化推荐明确标注为未结合画像排序；保留功能帮助、StudyKit 查询、概念解释、练习选择、显式画像识别和确定性静态诊断；代码生成/改写透明说明模型不可用，不伪造示例；材料问答返回已审核摘要，练习反馈不判分；
 - 画像数据库不可用：继续本轮临时画像和代码辅导，并提示未保存；
 - 云端候选版本异常：回退到最近一个完整测试通过的提交。
 
