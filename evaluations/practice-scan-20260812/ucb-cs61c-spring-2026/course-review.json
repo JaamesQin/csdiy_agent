@@ -1,0 +1,433 @@
+{
+  "schema_version": "practice-course-review-v1",
+  "course_id": "ucb-cs61c-spring-2026",
+  "build_id": "d67ae21b12a58a3f5b08240b45cf84a18e36a192572b9c261cbf98434d77f09a",
+  "reviewed_range_reports": [
+    {
+      "path": "evaluations/practice-scan-20260812/ucb-cs61c-spring-2026/range-01-18.json",
+      "declared_unit_range": ["lecture-01", "lecture-18"],
+      "declared_unit_count": 18,
+      "normalized_unit_records": 18,
+      "current_manifest_units_covered": 17,
+      "normalized_counts": {"total": 86, "pass": 80, "needs_repair": 0, "blocker": 6},
+      "count_key_normalization": "items_scanned -> total; blocker -> blocker; needs_repair absent -> 0",
+      "course_build_match": true,
+      "offline_only": true
+    },
+    {
+      "path": "evaluations/practice-scan-20260812/ucb-cs61c-spring-2026/range-19-35.json",
+      "declared_unit_range": ["lecture-19", "lecture-35"],
+      "declared_unit_count": 17,
+      "normalized_unit_records": 17,
+      "current_manifest_units_covered": 17,
+      "normalized_counts": {"total": 97, "pass": 93, "needs_repair": 0, "blocker": 4},
+      "count_key_normalization": "total/pass/blocker retained; needs_repair absent -> 0",
+      "course_build_match": true,
+      "offline_only": true
+    },
+    {
+      "path": "evaluations/practice-scan-20260812/ucb-cs61c-spring-2026/range-36.json",
+      "declared_unit_range": ["lecture-36"],
+      "declared_unit_count": 1,
+      "normalized_unit_records": 1,
+      "current_manifest_units_covered": 1,
+      "normalized_counts": {"total": 8, "pass": 5, "needs_repair": 0, "blocker": 3},
+      "count_key_normalization": "blocker_count -> blocker when present; needs_repair retained as 0",
+      "report_shape": "top-level unit_id/item_results rather than a units[] record; normalized without treating the items as missing",
+      "course_build_match": true,
+      "offline_only": true
+    }
+  ],
+  "manifest_unit_count": 35,
+  "scanned_unit_count": 35,
+  "item_counts": {
+    "total": 191,
+    "pass": 178,
+    "needs_repair": 0,
+    "blocker_items": 13,
+    "blocker_findings": 19
+  },
+  "coverage_gaps": [
+    {
+      "code": "report_scope_extra_nonexistent_unit",
+      "unit_ids": ["lecture-01"],
+      "report": "range-01-18.json",
+      "detail": "lecture-01 is explicitly missing from the report and is absent from both the catalog manifest and the current build; the manifest covers lecture-02 through lecture-36.",
+      "blocking_semantic_gap": false
+    },
+    {
+      "code": "range_36_noncanonical_record_shape",
+      "unit_ids": ["lecture-36"],
+      "report": "range-36.json",
+      "detail": "The report has no units[] record, but its top-level unit_id and item_results cover all eight current lecture-36 items; normalization recovered the record.",
+      "blocking_semantic_gap": false
+    },
+    {
+      "code": "missing_manifest_units_after_normalization",
+      "unit_ids": [],
+      "detail": "No manifest unit is missing from the normalized scan: current unit directories and manifest both contain exactly lecture-02 through lecture-36.",
+      "blocking_semantic_gap": false
+    },
+    {
+      "code": "missing_item_ids_after_normalization",
+      "item_ids": [],
+      "detail": "All 191 current 03-practice-flow item IDs are represented exactly once across the normalized reports.",
+      "blocking_semantic_gap": false
+    },
+    {
+      "code": "duplicate_unit_or_item_ids",
+      "unit_ids": [],
+      "item_ids": [],
+      "detail": "No duplicate declared/recorded unit IDs and no duplicate (unit_id, practice_id) pairs were found.",
+      "blocking_semantic_gap": false
+    }
+  ],
+  "independently_confirmed_findings": [
+    {
+      "kind": "semantic_blocker",
+      "status": "confirmed_blocker",
+      "unit_id": "lecture-07",
+      "practice_id": "p1",
+      "blocker_codes": ["lecture_specific_dependency", "underspecified_setting"],
+      "direct_basis": "03 and 05 only name swap_int, swap_string, malloc/free/realloc; they do not restate the declarations, concrete objects, call/state, or observable comparison needed to answer.",
+      "source_anchors_checked": ["### `swap_int`", "### `swap_string`", "## Generic functions in standard C libraries"],
+      "repair_direction": "Inline a self-contained pair of declarations and a concrete call/state, then ask for object-level behavior and an explicit changed type condition."
+    },
+    {
+      "kind": "semantic_blocker",
+      "status": "confirmed_blocker",
+      "unit_id": "lecture-07",
+      "practice_id": "p2",
+      "blocker_codes": ["lecture_specific_dependency", "underspecified_setting"],
+      "direct_basis": "03 and 05 provide no void-pointer expression, source/destination regions, byte count, or overlap state; the learner must recover the missing example before choosing memcpy or memmove.",
+      "source_anchors_checked": ["## You cannot dereference `void *`", "## Generic memory access with `memcpy`, `memmove`"],
+      "repair_direction": "Provide the exact snippet, two concrete regions, byte count, and one non-overlap/overlap comparison."
+    },
+    {
+      "kind": "semantic_blocker",
+      "status": "confirmed_blocker",
+      "unit_id": "lecture-07",
+      "practice_id": "p4",
+      "blocker_codes": ["lecture_specific_dependency", "underspecified_setting"],
+      "direct_basis": "03 and 05 refer to swap_ends, but omit array type, nelems, nbytes, the operation body, and a concrete last-element address; the source's worked example supplies those missing conditions.",
+      "source_anchors_checked": ["## Application: `swap_ends`"],
+      "repair_direction": "Inline the relevant operation with a concrete array and values such as nelems=4/nbytes=sizeof(int), then add the nelems=1 boundary."
+    },
+    {
+      "kind": "semantic_blocker",
+      "status": "confirmed_blocker",
+      "unit_id": "lecture-07",
+      "practice_id": "p5",
+      "blocker_codes": ["lecture_specific_dependency", "underspecified_setting"],
+      "direct_basis": "The array [3,1,4] is present, but mutate_map, multiply2, multiply10, their definitions, and the call order are only names in 03/05; the requested trace depends on finding the source code.",
+      "source_anchors_checked": ["### Function Pointers", "## Example Code and Output"],
+      "repair_direction": "State the function transformations, loop behavior, and both calls in the prompt; retain the changed second-call trace."
+    },
+    {
+      "kind": "semantic_blocker",
+      "status": "confirmed_blocker",
+      "unit_id": "lecture-08",
+      "practice_id": "P5",
+      "blocker_codes": ["generic_exercise_shell", "underspecified_setting"],
+      "direct_basis": "03 and 05 use int i = … and ask the learner to invent a failure scenario; the integer, cast path, and observable failed comparison are not supplied.",
+      "source_anchors_checked": ["## Casting and converting", "## Floating Point Rounding Modes"],
+      "repair_direction": "Give a concrete source-supported value such as 2^24+1, require the int-to-float-to-int trace, and keep validation explicitly hypothetical."
+    },
+    {
+      "kind": "semantic_blocker",
+      "status": "confirmed_blocker",
+      "unit_id": "lecture-13",
+      "practice_id": "P4",
+      "blocker_codes": ["citation_mismatch"],
+      "direct_basis": "The current 03 and 05 citation uses the non-existent exact heading value '## Assembly Instruction $\\rightarrow$ Machine Instruction [occurrence 3]'. The current chunk is '## Assembly Instruction $\\rightarrow$ Machine Instruction' without the occurrence suffix; one unresolved citation is enough to block.",
+      "source_anchors_checked": ["## S-Type: Fields", "## S-Type vs. I-Type vs. R-Type", "invalid: ## Assembly Instruction $\\rightarrow$ Machine Instruction [occurrence 3]"],
+      "repair_direction": "Replace the occurrence-suffixed value with the exact current anchor and revalidate anchor existence."
+    },
+    {
+      "kind": "semantic_blocker",
+      "status": "confirmed_blocker",
+      "unit_id": "lecture-29",
+      "practice_id": "P4",
+      "blocker_codes": ["lecture_specific_dependency"],
+      "direct_basis": "03/05 say to use the source DGEMM setting and source C[0][0] order; the final question does not enumerate the four access objects, so the observable trace depends on recovering the lecture's worked sequence rather than a replaced setting.",
+      "source_anchors_checked": ["## Architecture details", "## Approach 1: Naive DGEMM Memory Access Pattern"],
+      "repair_direction": "List an explicit access sequence (or create a new one) in the prompt and require block-level hit/miss reasoning without referring back to the lecture example."
+    },
+    {
+      "kind": "semantic_blocker",
+      "status": "confirmed_blocker",
+      "unit_id": "lecture-33",
+      "practice_id": "P2",
+      "blocker_codes": ["lecture_specific_dependency"],
+      "direct_basis": "The current 03 question names the Hello World add construction but 05 compresses it to critical/printf/barrier; the thread count and exact construct scopes needed to derive x=12 and print-order behavior are not self-contained in the final task.",
+      "source_anchors_checked": ["## Critical Sections in OpenMP", "### OpenMP Hello World: Add"],
+      "repair_direction": "Restate 12 threads, x++ inside critical, printf outside, and barrier placement in the learner-facing question."
+    },
+    {
+      "kind": "semantic_blocker",
+      "status": "confirmed_blocker",
+      "unit_id": "lecture-33",
+      "practice_id": "P3",
+      "blocker_codes": ["underspecified_setting", "citation_mismatch"],
+      "direct_basis": "03/05 name sum, A, B, and C rows but omit thread ownership, declarations, and exact read/write locations needed for a race judgment. The final citation points to Hello World Add, while the reported DGEMM anchor '## DGEMM 11: OpenMP DGEMM' does not exist as a current chunk anchor.",
+      "source_anchors_checked": ["## DGEMM 11: OpenMP DGEMM (not found)", "### OpenMP Hello World: Add", "## Data Race"],
+      "repair_direction": "Put T0/T1 row ownership and variable/access assumptions directly in the prompt and cite the exact current DGEMM-supporting source chunk."
+    },
+    {
+      "kind": "semantic_blocker",
+      "status": "confirmed_blocker",
+      "unit_id": "lecture-33",
+      "practice_id": "P7",
+      "blocker_codes": ["evidence_misalignment"],
+      "direct_basis": "03 asks for the critical-section rationale, but the final 05 question/deliverable only asks for lock-order comparison and a wait cycle while expected_evidence/evaluation still require critical-section scope reasoning.",
+      "source_anchors_checked": ["### Deadlock", "## Critical Sections in OpenMP", "## Data Race"],
+      "repair_direction": "Either add an explicit critical-section abstraction/scope subquestion to 05 or remove that requirement from expected evidence/evaluation."
+    },
+    {
+      "kind": "semantic_blocker",
+      "status": "confirmed_blocker",
+      "unit_id": "lecture-36",
+      "practice_id": "P2",
+      "blocker_codes": ["lecture_specific_dependency"],
+      "direct_basis": "03 and 05 reproduce the source Quick Check tuple exactly: 32-bit address, 16 KiB pages, 4 B PTEs, 128 KiB L1, and the same requested calculations. It is solvable but is worked-example replay without a replacement setting.",
+      "source_anchors_checked": ["## Page Table Details"],
+      "repair_direction": "Change at least one source-supported numeric parameter and require recomputation of offset/VPN bits, entries, bytes, and cache fit."
+    },
+    {
+      "kind": "semantic_blocker",
+      "status": "confirmed_blocker",
+      "unit_id": "lecture-36",
+      "practice_id": "P6",
+      "blocker_codes": ["lecture_specific_dependency"],
+      "direct_basis": "03 and 05 copy the source firefox/intellij toy scenario, VA 0x00004ABC, VPN 4, PPN 0x8C121D, PA 0x8C121DABC, and the same three traces; no identifiers or address setting is replaced.",
+      "source_anchors_checked": ["## The Translation Lookaside Buffer", "## Address Translation with the TLB"],
+      "repair_direction": "Use a new process/VA/VPN/PPN scenario or an explicit changed-process/stale-PID condition while retaining the three branch rules."
+    },
+    {
+      "kind": "semantic_blocker",
+      "status": "confirmed_blocker",
+      "unit_id": "lecture-36",
+      "practice_id": "P8",
+      "blocker_codes": ["lecture_specific_dependency"],
+      "direct_basis": "03 and 05 reproduce the source AMAT parameters and the exact R=99.9999%/99.9% cases and target values 5.5, 5.9, and 405.5 cycles; excluding the malformed source row does not make the task a transfer task.",
+      "source_anchors_checked": ["## Revisiting AMAT: Impact of Paging"],
+      "repair_direction": "Change at least one cache/DRAM parameter or hit-rate condition and require fresh baseline, penalty, and sensitivity calculations."
+    },
+    {
+      "kind": "pass_sample",
+      "status": "confirmed_pass",
+      "unit_id": "lecture-05",
+      "practice_id": "p-02",
+      "range_report": "range-01-18.json",
+      "protocol_checks": {"concrete_setting": true, "all_necessary_conditions_restated": true, "transferable_concept_replacement_check": true, "observable_result": true, "hint_expected_evaluation_aligned": true, "relevant_anchors": true, "formative_no_assessed_answer": true},
+      "direct_basis": "Concrete stack address and frame sizes support a checkable sp/LIFO trace and a changed dangling-pointer condition; the prompt restates the needed growth and call assumptions.",
+      "source_anchors_checked": ["## How the Stack Works"]
+    },
+    {
+      "kind": "pass_sample",
+      "status": "confirmed_pass",
+      "unit_id": "lecture-10",
+      "practice_id": "P1",
+      "range_report": "range-01-18.json",
+      "protocol_checks": {"concrete_setting": true, "all_necessary_conditions_restated": true, "transferable_concept_replacement_check": true, "observable_result": true, "hint_expected_evaluation_aligned": true, "relevant_anchors": true, "formative_no_assessed_answer": true},
+      "direct_basis": "The two source addresses, destination, register-only add constraint, and required load/add/store sequence are explicit and yield a directly observable data-flow table.",
+      "source_anchors_checked": ["## RISC-V is Load-Store"]
+    },
+    {
+      "kind": "pass_sample",
+      "status": "confirmed_pass",
+      "unit_id": "lecture-16",
+      "practice_id": "P3",
+      "range_report": "range-01-18.json",
+      "protocol_checks": {"concrete_setting": true, "all_necessary_conditions_restated": true, "transferable_concept_replacement_check": true, "observable_result": true, "hint_expected_evaluation_aligned": true, "relevant_anchors": true, "formative_no_assessed_answer": true},
+      "direct_basis": "The four input rows are fully specified; the truth table and unique 11 output provide an observable result for the NAND concept.",
+      "source_anchors_checked": ["### Example digital circuit: NAND"]
+    },
+    {
+      "kind": "pass_sample",
+      "status": "confirmed_pass",
+      "unit_id": "lecture-19",
+      "practice_id": "P1",
+      "range_report": "range-19-35.json",
+      "protocol_checks": {"concrete_setting": true, "all_necessary_conditions_restated": true, "transferable_concept_replacement_check": true, "observable_result": true, "hint_expected_evaluation_aligned": true, "relevant_anchors": true, "formative_no_assessed_answer": true},
+      "direct_basis": "The 1-bit inputs and both selector values plus the new 8-bit 4-to-1 sizing task make selection and scaling independently checkable.",
+      "source_anchors_checked": ["## The Mux"]
+    },
+    {
+      "kind": "pass_sample",
+      "status": "confirmed_pass",
+      "unit_id": "lecture-24",
+      "practice_id": "p2",
+      "range_report": "range-19-35.json",
+      "protocol_checks": {"concrete_setting": true, "all_necessary_conditions_restated": true, "transferable_concept_replacement_check": true, "observable_result": true, "hint_expected_evaluation_aligned": true, "relevant_anchors": true, "formative_no_assessed_answer": true},
+      "direct_basis": "The four-stage/30-minute/6:00 pm assumptions and explicit three-load changed batch create checkable schedules, resource occupancy, latency, and finite-batch versus steady-state conclusions.",
+      "source_anchors_checked": ["## Sequential Laundry", "## Pipelined Laundry", "## Laundry: Latency vs. Throughput"]
+    },
+    {
+      "kind": "pass_sample",
+      "status": "confirmed_pass",
+      "unit_id": "lecture-35",
+      "practice_id": "P7",
+      "range_report": "range-19-35.json",
+      "protocol_checks": {"concrete_setting": true, "all_necessary_conditions_restated": true, "transferable_concept_replacement_check": true, "observable_result": true, "hint_expected_evaluation_aligned": true, "relevant_anchors": true, "formative_no_assessed_answer": true},
+      "direct_basis": "A new process with exactly V0-V3 and first request V2 supports a falsifiable before/after page-table state and an explicit V1 boundary variation.",
+      "source_anchors_checked": ["## Demand Paging"]
+    },
+    {
+      "kind": "pass_sample",
+      "status": "confirmed_pass",
+      "unit_id": "lecture-36",
+      "practice_id": "P1",
+      "range_report": "range-36.json",
+      "protocol_checks": {"concrete_setting": true, "all_necessary_conditions_restated": true, "transferable_concept_replacement_check": true, "observable_result": true, "hint_expected_evaluation_aligned": true, "relevant_anchors": true, "formative_no_assessed_answer": true},
+      "direct_basis": "VPN/frame identities, LRU order, and dirty branches are concrete; placement, identification, replacement, and write-back outcomes are separately observable.",
+      "source_anchors_checked": ["## Virtual Memory System Design", "### Dirty Bit"]
+    },
+    {
+      "kind": "pass_sample",
+      "status": "confirmed_pass",
+      "unit_id": "lecture-36",
+      "practice_id": "P3",
+      "range_report": "range-36.json",
+      "protocol_checks": {"concrete_setting": true, "all_necessary_conditions_restated": true, "transferable_concept_replacement_check": true, "observable_result": true, "hint_expected_evaluation_aligned": true, "relevant_anchors": true, "formative_no_assessed_answer": true},
+      "direct_basis": "The two process mappings, shared PPN, per-process write permission, and protected page-table location determine all four read/write outcomes and the role assignments.",
+      "source_anchors_checked": ["## Implementing Protection with Virtual Memory", "### Write Protection Bit"]
+    },
+    {
+      "kind": "pass_sample",
+      "status": "confirmed_pass",
+      "unit_id": "lecture-36",
+      "practice_id": "P5",
+      "range_report": "range-36.json",
+      "protocol_checks": {"concrete_setting": true, "all_necessary_conditions_restated": true, "transferable_concept_replacement_check": true, "observable_result": true, "hint_expected_evaluation_aligned": true, "relevant_anchors": true, "formative_no_assessed_answer": true},
+      "direct_basis": "The 64-entry/4 KiB TLB and valid-PTE miss state yield a checkable 256 KiB reach and an ordered translation/data-access trace that distinguishes a TLB miss from a page fault.",
+      "source_anchors_checked": ["## Page Table Walks", "## The Translation Lookaside Buffer"]
+    },
+    {
+      "kind": "pass_sample",
+      "status": "confirmed_pass",
+      "unit_id": "lecture-36",
+      "practice_id": "P7",
+      "range_report": "range-36.json",
+      "protocol_checks": {"concrete_setting": true, "all_necessary_conditions_restated": true, "transferable_concept_replacement_check": true, "observable_result": true, "hint_expected_evaluation_aligned": true, "relevant_anchors": true, "formative_no_assessed_answer": true},
+      "direct_basis": "The VA-to-PA mapping, PIPT assumption, cache-miss state, refill step, and terminology distinctions make translation-first order and physical tag/index/offset use directly checkable.",
+      "source_anchors_checked": ["## Virtual Memory and Caches", "## Physically Indexed, Physically Tagged Caches"]
+    }
+  ],
+  "repair_priority": [
+    {
+      "priority": 1,
+      "pattern": "missing self-contained setting / generic exercise shell",
+      "items": ["lecture-07:p1", "lecture-07:p2", "lecture-07:p4", "lecture-07:p5", "lecture-08:P5", "lecture-29:P4", "lecture-33:P2", "lecture-33:P3"],
+      "finding_codes": ["underspecified_setting", "generic_exercise_shell", "lecture_specific_dependency"],
+      "reason": "These items do not give the learner all input, state, operation, ownership, or observable-result conditions needed to begin independently.",
+      "repair_action": "Repair the Practice prompt/checkpoint with concrete values/code/states and explicit changed conditions; then re-audit hint, expected evidence, evaluation, and anchors together."
+    },
+    {
+      "priority": 2,
+      "pattern": "lecture-specific worked-example replay without transferable replacement",
+      "items": ["lecture-07:p1", "lecture-07:p2", "lecture-07:p4", "lecture-07:p5", "lecture-29:P4", "lecture-36:P2", "lecture-36:P6", "lecture-36:P8"],
+      "finding_codes": ["lecture_specific_dependency"],
+      "reason": "The source variables/identifiers are not themselves disallowed, but these tasks preserve the source special-case setting or require recovering its exact sequence rather than testing the concept under a changed setting.",
+      "repair_action": "Keep the concept and source-supported rules, replace numbers/objects/identifiers or add a meaningful boundary case, and require a newly computed observable result."
+    },
+    {
+      "priority": 3,
+      "pattern": "citation grounding and anchor existence",
+      "items": ["lecture-13:P4", "lecture-33:P3"],
+      "finding_codes": ["citation_mismatch"],
+      "reason": "One item cites a non-existent occurrence-suffixed heading; the other uses a Hello World anchor for a DGEMM ownership claim and names a DGEMM anchor not present in current chunks.",
+      "repair_action": "Use exact current chunk anchors that support the task's claim and revalidate every citation after repair."
+    },
+    {
+      "priority": 4,
+      "pattern": "final learner task versus evidence/evaluation misalignment",
+      "items": ["lecture-33:P7"],
+      "finding_codes": ["evidence_misalignment"],
+      "reason": "The final question omits the critical-section rationale that its evidence and evaluation still demand.",
+      "repair_action": "Add the missing subquestion and keep its expected evidence, or remove the extra criterion from the evidence/evaluation contract."
+    }
+  ],
+  "deferred_structural_findings": [
+    {
+      "code": "semantic_structural_separation",
+      "detail": "Structural findings below are kept separate from the semantic gate. They are not converted into pass or blocker item results; the 13 semantic blocker items and 19 blocker findings remain blockers.",
+      "semantic_blocker": false
+    },
+    {
+      "code": "legacy_mapping_shape",
+      "unit_ids": ["lecture-04", "lecture-06", "lecture-07", "lecture-11"],
+      "detail": "03-practice-flow items lack normalized requirement/concept/objective mapping fields in these units; semantic judgments used the corresponding 01/02 content and final artifact where available.",
+      "semantic_blocker": false
+    },
+    {
+      "code": "legacy_content_shape",
+      "unit_ids": ["lecture-02", "lecture-03", "lecture-05", "lecture-07", "lecture-08", "lecture-09", "lecture-10", "lecture-11", "lecture-16", "lecture-17", "lecture-18"],
+      "detail": "Several upstream checkpoints use legacy field shapes or omit normalized objective/requirement arrays; no checkpoint was mutated or silently reinterpreted.",
+      "semantic_blocker": false
+    },
+    {
+      "code": "review_plan_scope_anomaly",
+      "unit_ids": ["lecture-03", "lecture-07"],
+      "detail": "Review-plan selected/actual page fields are anomalous; this is deferred to structural/review-plan reconciliation and is not used to erase item blockers.",
+      "semantic_blocker": false
+    },
+    {
+      "code": "final_text_normalization",
+      "unit_ids": ["lecture-03", "lecture-09", "lecture-10", "lecture-14", "lecture-15", "lecture-17", "lecture-18"],
+      "detail": "05-studykit normalizes some punctuation/formatting relative to 03 while preserving item identity and task substance; this review judged the learner-visible semantics.",
+      "semantic_blocker": false
+    },
+    {
+      "code": "source_chunk_id_collision",
+      "unit_ids": ["lecture-24", "lecture-27", "lecture-28"],
+      "detail": "Current chunks have duplicate IDs despite distinct rows; cited semantic anchors remain real, but deterministic provenance identity needs separate repair.",
+      "semantic_blocker": false
+    },
+    {
+      "code": "source_anchor_occurrence_ambiguity",
+      "unit_ids": ["lecture-21", "lecture-24", "lecture-27", "lecture-28"],
+      "detail": "Repeated headings require occurrence-aware provenance reconciliation; heading existence/relevance was checked without treating this structural ambiguity as a pass.",
+      "semantic_blocker": false
+    },
+    {
+      "code": "stage_projection_drift",
+      "unit_ids": ["lecture-19", "lecture-22", "lecture-23", "lecture-24", "lecture-27", "lecture-28", "lecture-29", "lecture-31", "lecture-33", "lecture-35"],
+      "detail": "Some 05 practice objects are compressed relative to 03; this review judged final learner-visible semantics and leaves upstream-to-final projection reconciliation to the structural audit.",
+      "semantic_blocker": false
+    },
+    {
+      "code": "review_and_hash_reconciliation",
+      "unit_ids": ["lecture-19", "lecture-21", "lecture-24", "lecture-25", "lecture-35"],
+      "detail": "Review-plan, source-hash, legacy-root, or historical-build identity discrepancies remain deferred to structural reconciliation.",
+      "semantic_blocker": false
+    },
+    {
+      "code": "upstream_checkpoint_build_metadata_mismatch",
+      "unit_id": "lecture-36",
+      "detail": "01 and 02 retain a target_build_id from an earlier build; this review did not rewrite upstream checkpoints.",
+      "semantic_blocker": false
+    },
+    {
+      "code": "heading_anchor_review_boundary",
+      "unit_id": "lecture-36",
+      "detail": "lecture-36 uses heading anchors and all 25 current chunks were read; no page-level visual review is claimed for this non-PDF source.",
+      "semantic_blocker": false
+    },
+    {
+      "code": "existing_practice_issues_deferred",
+      "unit_id": "lecture-36",
+      "detail": "Pre-existing practice issues explicitly deferred by the unit checkpoints were not modified or counted as passes in this scan.",
+      "semantic_blocker": false
+    },
+    {
+      "code": "range_36_top_level_item_results",
+      "unit_id": "lecture-36",
+      "detail": "The range report's top-level item_results shape is a structural report-format anomaly only; its eight items were normalized into coverage.",
+      "semantic_blocker": false
+    }
+  ],
+  "auditor_id": "luna-xhigh-course-practice-auditor-ucb-cs61c-spring-2026-20260812",
+  "offline_only": true,
+  "next_action": "DO NOT RELEASE: repair the ordered semantic blocker groups, preserve all blocker statuses, then independently re-audit all 13 blocker items and recheck the full 191-item coverage. Structural findings are separate from these semantic blockers and require their own reconciliation; no network, provider, or model call was used."
+}

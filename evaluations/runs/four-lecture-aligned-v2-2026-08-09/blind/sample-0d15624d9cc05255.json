@@ -1,0 +1,750 @@
+{
+  "lecture_id": "lecture-04",
+  "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+  "claims": [
+    {
+      "text": "更受约束的架构把学习限制在较小的映射集合内；只要真实映射仍可表达，结构约束就可能减少仅靠数据排除错误解的负担。好的架构还需便于梯度搜索与并行计算。",
+      "anchors": [
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 6
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 8
+        }
+      ]
+    },
+    {
+      "text": "不同网络拟合信号的表现差异不能自动归因于表示能力，因为逼近能力和优化能力在实验中通常耦合。",
+      "anchors": [
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 9
+        }
+      ]
+    },
+    {
+      "text": "语义分割要求每个像素有输出。小块定位细，却可能看不清对象；大而重叠的块让每个输出保持密集，同时获得较大上下文。",
+      "anchors": [
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 18
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 19
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 22
+        }
+      ]
+    },
+    {
+      "text": "复用相同局部规则意味着输入平移后输出标签图相应平移。分类式不变读出是不同目标，不能把二者混写。",
+      "anchors": [
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 23
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 36
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 50
+        }
+      ]
+    },
+    {
+      "text": "每个位置的输出由邻域像素加权组合；若相同相对位置复用同一核，就形成卷积。矩阵表示因此带重复约束并减少自由参数。",
+      "anchors": [
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 24
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 27
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 28
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 29
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 32
+        }
+      ]
+    },
+    {
+      "text": "卷积层先跨输入通道汇集局部响应，再通过多个滤波器产生多个输出特征图；各图表现相应滤波器在空间位置上的响应。",
+      "anchors": [
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 31
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 41
+        }
+      ]
+    },
+    {
+      "text": "平移等变、块处理、图像滤波、权重共享与可变尺寸张量处理是同一卷积结构的行为、算法和参数化视角。",
+      "anchors": [
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 34
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 36
+        }
+      ]
+    },
+    {
+      "text": "单个卷积输出依赖局部邻域，堆叠后深层单元依赖更大输入范围；逐点非线性不扩展空间依赖，而下采样会加快相对感受野增长。",
+      "anchors": [
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 37
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 62
+        }
+      ]
+    },
+    {
+      "text": "空间池化聚合邻近位置，可增加对小位移的容忍并降低分辨率；跨通道池化则聚合不同滤波器响应，可对方向等特征变化形成另一类不变性。",
+      "anchors": [
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 48
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 50
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 52
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 53
+        }
+      ]
+    },
+    {
+      "text": "步幅卷积或池化把运算和下采样合并，降低内存及计算；课堂材料同时展示步幅增大可能造成混叠和边界消失。",
+      "anchors": [
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 56
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 58
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 59
+        }
+      ]
+    },
+    {
+      "text": "扩张卷积拉开核内部采样点，以较少参数覆盖较大输入范围，但它并不等同于稀疏输出位置的步幅下采样。",
+      "anchors": [
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 60
+        }
+      ]
+    },
+    {
+      "text": "编码端下采样并提炼表示，解码端上采样恢复空间输出；对于分割等图像到图像任务，过强瓶颈可能丢失细节。",
+      "anchors": [
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 67
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 69
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 71
+        }
+      ]
+    },
+    {
+      "text": "U-Net 在镜像尺度间按通道拼接早期激活以保留高频定位信息；ResNet 将输入路径与块变换相加，让块学习修正量。",
+      "anchors": [
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 68
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 70
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 71
+        }
+      ]
+    },
+    {
+      "text": "不希望模型忽略绝对位置时，可以换用非平移不变架构或把位置加入输入。神经场直接从连续坐标返回场值；课程以颜色场与颜色加体密度为例。",
+      "anchors": [
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 76
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 77
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 78
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 79
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 80
+        }
+      ]
+    }
+  ],
+  "formulas": [],
+  "objectives": [
+    "用假设空间图分析结构约束、数据量、逼近能力和优化效果之间的边界。",
+    "由逐像素分类严格区分局部处理、共享权重、平移等变与任务级不变性。",
+    "从矩阵约束、多通道特征图、滑动滤波和可变输入尺寸统一解释卷积层。",
+    "评估池化、下采样、步幅、扩张及深度对分辨率、混叠、感受野和计算的影响。",
+    "为图像到标签、图像到图像和坐标到场值任务选择合适架构，并论证跳跃连接或位置输入。"
+  ],
+  "practice": [
+    {
+      "question": "画出输入平移前后，逐像素标签图与全图分类标签应如何变化，并分别标注等变或不变。",
+      "hint": "空间输出保留位置；全图标签不保留位置。",
+      "deliverable": "两组图和定义。",
+      "expected_evidence": [
+        "标签图随输入移动",
+        "分类标签保持",
+        "术语不混淆"
+      ],
+      "evaluation": {
+        "criteria": [
+          "定义",
+          "图示",
+          "证据"
+        ]
+      },
+      "anchors": [
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 22
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 23
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 50
+        }
+      ]
+    },
+    {
+      "question": "画出三输入通道到两个输出特征图的局部卷积连接，区分跨位置共享与跨输出通道不共享的参数。",
+      "hint": "先只画一个输出位置和一个输出通道，再扩展。",
+      "deliverable": "连接图、参数分组和文字说明。",
+      "expected_evidence": [
+        "跨输入通道组合",
+        "同一滤波器跨位置复用",
+        "不同输出通道使用不同滤波器"
+      ],
+      "evaluation": {
+        "criteria": [
+          "通道正确",
+          "共享正确",
+          "局部性正确"
+        ]
+      },
+      "anchors": [
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 29
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 31
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 41
+        }
+      ]
+    },
+    {
+      "question": "任务要求细边界且显存有限。比较步幅 2、扩张卷积、空间池化和普通卷积堆叠，并指出哪些选择有混叠或分辨率代价。",
+      "hint": "把输出采样密度与核采样密度分开。",
+      "deliverable": "四方案矩阵和选择理由。",
+      "expected_evidence": [
+        "步幅下采样",
+        "扩张核覆盖",
+        "混叠风险",
+        "计算权衡"
+      ],
+      "evaluation": {
+        "criteria": [
+          "比较完整",
+          "事实可追溯",
+          "推荐一致"
+        ]
+      },
+      "anchors": [
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 50
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 58
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 59
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 60
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 62
+        }
+      ]
+    },
+    {
+      "question": "设计一个图像到细粒度分割图的网络：说明瓶颈路径、镜像 U-Net 跳跃和可选 ResNet 块各解决什么问题，并标注拼接或相加。",
+      "hint": "不要用“skip”一词代替具体融合算子。",
+      "deliverable": "带张量路径的架构图与 250 字论证。",
+      "expected_evidence": [
+        "上下采样路径",
+        "U-Net 拼接",
+        "ResNet 相加",
+        "细节与上下文角色"
+      ],
+      "evaluation": {
+        "criteria": [
+          "结构有效",
+          "融合明确",
+          "论证基于来源"
+        ]
+      },
+      "anchors": [
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 67
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 68
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 69
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 70
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 71
+        }
+      ]
+    },
+    {
+      "question": "为任意连续坐标处查询颜色的任务制定决策：何时用普通卷积、何时注入位置、何时采用神经场？把课堂事实、合理推断和未知项分别标注。",
+      "hint": "先判断固定网格、绝对位置和连续查询三项需求。",
+      "deliverable": "决策树、推荐架构和证据边界表。",
+      "expected_evidence": [
+        "位置依赖处理正确",
+        "连续坐标输入明确",
+        "不扩展未给出的论文机制"
+      ],
+      "evaluation": {
+        "criteria": [
+          "需求映射",
+          "证据边界",
+          "推荐自洽"
+        ]
+      },
+      "anchors": [
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 76
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 77
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 78
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 79
+        },
+        {
+          "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "page": 80
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "本地原始 PDF 是讲课转录，固定页锚点来自 84 页 slide chunks；所有引用均定位到 chunks。",
+    "slide chunks 中的复杂公式排版无法由归档 PDF 逐式视觉确认，因此最终学习包不含公式对象或依赖这些公式的计算练习。",
+    "第三方图片不复制；仅保留页面明确陈述的架构关系，不扩展论文细节。"
+  ],
+  "anchors": [
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 4
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 5
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 6
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 8
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 9
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 10
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 14
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 17
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 18
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 19
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 20
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 21
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 22
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 23
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 24
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 25
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 26
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 27
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 28
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 29
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 31
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 32
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 34
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 36
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 37
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 41
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 42
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 48
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 50
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 52
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 53
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 56
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 58
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 59
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 60
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 62
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 64
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 66
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 67
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 68
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 69
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 70
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 71
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 72
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 73
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 76
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 77
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 78
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 79
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 80
+    },
+    {
+      "pdf_sha256": "8bddd7b92da432811bc972659dac450d5086b96bf5fa4ef7d0cc018e24049463",
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "page": 82
+    }
+  ],
+  "duration_seconds": 105.908885,
+  "reviewed_page_count": 0,
+  "semantic_passes": 5,
+  "tokens": null,
+  "anonymous_id": "sample-0d15624d9cc05255"
+}

@@ -1,5 +1,0 @@
-{
-  "verdict": "pass",
-  "summary": "独立 standard-mode 语义审核通过。01 证据计划按内联/独立汇编、特权 CSR、系统调用四阶段、trampoline/trapframe、usertrap 与分派表建立闭合证据链，并明确 ecall 只完成讲义所述的最小硬件动作。第 10 页低文本和第 24 页重复层清理均被排除出材料性主张，同时仍留在待视觉检查范围。02 正确区分 satp、stvec、sepc、sscratch、用户寄存器与内核转换状态，没有把硬件动作和软件 trampoline 职责混为一谈。03 的五项非考核练习从汇编约束、CSR 配对到 write 路径排序、trapframe 注释和设计权衡逐级推进，总时长恰为 180 分钟。候选 JSON 符合 portable schema，113 个引用出现全部解析到非空、非隐藏的当前来源页；来源 ID、SHA-256、Fall 2021 vintage 与限制一致。未发现公式臆造、实验答案、引用越界、顺序矛盾或需修复问题。人工页面视觉复核仍未完成，因此本 verdict 不授权 finalization。",
-  "issues": []
-}

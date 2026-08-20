@@ -149,6 +149,7 @@ class SQLiteProfileRepository:
         )
 
     def confirm_inferred(self, user_id: str) -> int:
+        now = datetime.now(UTC).isoformat()
         with self._lock, self._connect() as connection:
             connection.execute("BEGIN IMMEDIATE")
             cursor = connection.execute(
@@ -156,8 +157,14 @@ class SQLiteProfileRepository:
                 UPDATE profile_facts
                 SET status = ?, confidence = 1.0, expires_at = NULL
                 WHERE user_id = ? AND status = ? AND superseded_at IS NULL
+                  AND (expires_at IS NULL OR expires_at > ?)
                 """,
-                (FactStatus.CONFIRMED.value, user_id, FactStatus.INFERRED.value),
+                (
+                    FactStatus.CONFIRMED.value,
+                    user_id,
+                    FactStatus.INFERRED.value,
+                    now,
+                ),
             )
         return int(cursor.rowcount)
 

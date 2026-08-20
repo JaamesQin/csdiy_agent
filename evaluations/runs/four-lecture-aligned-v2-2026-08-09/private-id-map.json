@@ -1,0 +1,16 @@
+{
+  "sample-4878e65b868f0018": ["codex-fast", "lecture-02", 1],
+  "sample-8fe86f7e08d31c28": ["codex-fast", "lecture-03", 1],
+  "sample-62143fb7348b65ee": ["codex-fast", "lecture-04", 1],
+  "sample-57d03e24c9474ede": ["codex-fast", "lecture-08", 1],
+  "sample-975ac8dd11c91244": ["codex-fast", "lecture-08", 2],
+  "sample-a68cdb9e60b53f82": ["codex-fast", "lecture-08", 3],
+  "sample-c6827e9dacea222b": ["codex-standard", "lecture-02", 1],
+  "sample-a7297f7cfe733ce3": ["codex-standard", "lecture-03", 1],
+  "sample-1113431262b879a7": ["codex-standard", "lecture-04", 1],
+  "sample-8c3ed9f6504a4966": ["codex-standard", "lecture-08", 1],
+  "sample-4804f0aaf98b4cca": ["codex-strict", "lecture-02", 1],
+  "sample-1761294fac71c7ba": ["codex-strict", "lecture-03", 1],
+  "sample-0d15624d9cc05255": ["codex-strict", "lecture-04", 1],
+  "sample-75cdc1e642562708": ["codex-strict", "lecture-08", 1]
+}

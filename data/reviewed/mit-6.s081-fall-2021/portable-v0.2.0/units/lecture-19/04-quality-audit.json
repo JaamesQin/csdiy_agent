@@ -1,5 +1,0 @@
-{
-  "verdict": "pass",
-  "summary": "独立 standard-mode 语义审核通过。单元身份与官方 Fall 2021 日程链接的 2020 Virtual Machines/Dune 文本讲义一致；source_id、转换后 PDF SHA-256、URL、本地路径和年代全部匹配准备清单。证据计划及候选正确区分硬件、VMM、host、guest，追踪 RISC-V trap-and-emulate 的虚拟特权状态、shadow page table 与设备陷阱，解释 VT-x root/non-root、VMCS 和 EPT 两级翻译，并把 Dune 限定为借 VT-x 让 Linux 进程管理自身页表/故障/guest 模式的论文方案。逐页核对四页后，sandbox 和 GC 案例的职责及性能代价均受来源支持，候选也明确不把讲义中的 SPEC/GC 观察推广到其他工作负载。第 2 页去重四行但连续机制仍可核验；52 个引用出现全部有效。五项练习从分层图、事件追踪、shadow/EPT 比较，推进到沙箱边界设计和三方案决策矩阵，恰为 180 分钟且不要求可提交实现。候选 portable schema 通过，无公式、性能外推、引用或安全边界错误。actual_reviewed_pages 为空，本 verdict 不授权 finalization。",
-  "issues": []
-}

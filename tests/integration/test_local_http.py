@@ -61,8 +61,9 @@ def live_server_url(tmp_path_factory: pytest.TempPathFactory) -> Iterator[str]:
             stdout, stderr = process.communicate(timeout=2)
             pytest.fail(f"Uvicorn exited early.\nstdout={stdout}\nstderr={stderr}")
         try:
-            if httpx.get(f"{url}/health", timeout=0.25).status_code == 200:
-                break
+            with httpx.Client(trust_env=False) as client:
+                if client.get(f"{url}/health", timeout=0.25).status_code == 200:
+                    break
         except httpx.HTTPError:
             time.sleep(0.05)
     else:
@@ -84,33 +85,33 @@ def _headers() -> dict[str, str]:
 
 
 def test_live_auth_and_non_streaming(live_server_url: str) -> None:
-    assert httpx.get(f"{live_server_url}/health").json() == {"status": "ok"}
-    assert (
-        httpx.get(
-            f"{live_server_url}/v1/models",
-            headers={"Authorization": "Bearer wrong-key"},
-        ).status_code
-        == 401
-    )
-
-    response = httpx.post(
-        f"{live_server_url}/v1/chat/completions",
-        headers=_headers(),
-        json={
-            "messages": [{"role": "user", "content": "本地黑盒测试"}],
-            "stream": False,
-        },
-    )
+    with httpx.Client(trust_env=False) as client:
+        assert client.get(f"{live_server_url}/health").json() == {"status": "ok"}
+        assert (
+            client.get(
+                f"{live_server_url}/v1/models",
+                headers={"Authorization": "Bearer wrong-key"},
+            ).status_code
+            == 401
+        )
+        response = client.post(
+            f"{live_server_url}/v1/chat/completions",
+            headers=_headers(),
+            json={
+                "messages": [{"role": "user", "content": "本地黑盒测试"}],
+                "stream": False,
+            },
+        )
 
     assert response.status_code == 200
     assert response.headers["content-type"].startswith("application/json")
     content = response.json()["choices"][0]["message"]["content"]
-    assert "画像" in content
-    assert "代码" in content
+    assert "通用学习回答当前暂时不可用" in content
+    assert "无需使用特定格式" in content
 
 
 def test_live_account_session_and_profile(live_server_url: str) -> None:
-    with httpx.Client(base_url=live_server_url) as client:
+    with httpx.Client(base_url=live_server_url, trust_env=False) as client:
         registered = client.post(
             "/auth/register",
             headers={"Origin": live_server_url},
@@ -151,22 +152,23 @@ def test_live_sse_headers_order_and_timing(live_server_url: str) -> None:
     lines: list[str] = []
     start = time.monotonic()
 
-    with httpx.stream(
-        "POST",
-        f"{live_server_url}/v1/chat/completions",
-        headers=_headers(),
-        json={
-            "messages": [{"role": "user", "content": "真实流式测试"}],
-            "stream": True,
-        },
-        timeout=5,
-    ) as response:
-        assert response.status_code == 200
-        assert response.headers["content-type"].startswith("text/event-stream")
-        for line in response.iter_lines():
-            if line.startswith("data: "):
-                lines.append(line)
-                arrival_times.append(time.monotonic() - start)
+    with httpx.Client(trust_env=False) as client:
+        with client.stream(
+            "POST",
+            f"{live_server_url}/v1/chat/completions",
+            headers=_headers(),
+            json={
+                "messages": [{"role": "user", "content": "真实流式测试"}],
+                "stream": True,
+            },
+            timeout=5,
+        ) as response:
+            assert response.status_code == 200
+            assert response.headers["content-type"].startswith("text/event-stream")
+            for line in response.iter_lines():
+                if line.startswith("data: "):
+                    lines.append(line)
+                    arrival_times.append(time.monotonic() - start)
 
     events = parse_sse("\n\n".join(lines) + "\n\n")
     assert events[-1] == "[DONE]"
@@ -174,9 +176,47 @@ def test_live_sse_headers_order_and_timing(live_server_url: str) -> None:
     assert arrival_times[-1] > arrival_times[0]
 
 
+def test_live_session_id_contract_for_json_and_sse(live_server_url: str) -> None:
+    with httpx.Client(trust_env=False) as client:
+        first = client.post(
+            f"{live_server_url}/v1/chat/completions",
+            headers=_headers(),
+            json={
+                "messages": [{"role": "user", "content": "本地 session 状态测试"}],
+                "sessionId": "live-conversation-1",
+                "stream": False,
+            },
+        )
+        second = client.post(
+            f"{live_server_url}/v1/chat/completions",
+            headers=_headers(),
+            json={
+                "messages": [
+                    {"role": "user", "content": "本地 session 状态测试"},
+                    {
+                        "role": "assistant",
+                        "content": first.json()["choices"][0]["message"]["content"],
+                    },
+                    {"role": "user", "content": "/help"},
+                ],
+                "sessionId": "live-conversation-1",
+                "stream": True,
+            },
+        )
+
+    assert first.status_code == 200
+    assert "coursepilot_context" not in first.json()
+    assert second.status_code == 200
+    events = [event for event in parse_sse(second.text) if isinstance(event, dict)]
+    assert events[-1]["choices"][0]["finish_reason"] == "stop"
+    assert "coursepilot_context" not in events[-1]
+    assert second.text.rstrip().endswith("data: [DONE]")
+
+
 @pytest.mark.asyncio
 async def test_light_concurrency_and_repetition(live_server_url: str) -> None:
-    async with httpx.AsyncClient(timeout=5) as client:
+    # Loopback black-box tests must not inherit a developer machine's HTTP proxy.
+    async with httpx.AsyncClient(timeout=5, trust_env=False) as client:
         model_responses = await asyncio.gather(
             *[
                 client.get(f"{live_server_url}/v1/models", headers=_headers())

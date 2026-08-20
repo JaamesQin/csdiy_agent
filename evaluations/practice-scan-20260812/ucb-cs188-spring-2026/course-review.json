@@ -1,0 +1,292 @@
+{
+  "schema_version": "practice-course-review-v1",
+  "course_id": "ucb-cs188-spring-2026",
+  "build_id": "443efc651cd290edbf7ebf368bb2a79fd314c3db49da3969de19dc2d13aa204f",
+  "reviewed_range_reports": [
+    {
+      "file": "range-01-14.json",
+      "unit_ids": [
+        "lecture-01",
+        "lecture-02",
+        "lecture-03",
+        "lecture-04",
+        "lecture-05",
+        "lecture-06",
+        "lecture-07",
+        "lecture-08",
+        "lecture-09",
+        "lecture-10",
+        "lecture-11",
+        "lecture-12",
+        "lecture-13",
+        "lecture-14"
+      ],
+      "raw_count_keys": {
+        "total": "items",
+        "pass": "pass",
+        "needs_repair": "needs_repair",
+        "blocker_items": "blockers"
+      },
+      "normalized_counts": {
+        "total": 71,
+        "pass": 71,
+        "needs_repair": 0,
+        "blocker_items": 0,
+        "blocker_findings": 0
+      }
+    },
+    {
+      "file": "range-15-28.json",
+      "unit_ids": [
+        "lecture-15",
+        "lecture-16",
+        "lecture-17",
+        "lecture-18",
+        "lecture-19",
+        "lecture-20",
+        "lecture-21",
+        "lecture-22",
+        "lecture-23",
+        "lecture-24",
+        "lecture-25",
+        "lecture-26",
+        "lecture-27",
+        "lecture-28"
+      ],
+      "raw_count_keys": {
+        "total": "items",
+        "pass": "pass_items",
+        "needs_repair": "absent_normalized_to_zero",
+        "blocker_items": "blocker_items",
+        "blocker_findings": "blocker_findings"
+      },
+      "normalized_counts": {
+        "total": 68,
+        "pass": 64,
+        "needs_repair": 0,
+        "blocker_items": 4,
+        "blocker_findings": 6
+      }
+    }
+  ],
+  "manifest_unit_count": 28,
+  "scanned_unit_count": 28,
+  "item_counts": {
+    "total": 139,
+    "pass": 121,
+    "needs_repair": 0,
+    "blocker_items": 18,
+    "blocker_findings": 20,
+    "basis": "independent course-level audit; normalized report totals are retained below",
+    "reported_item_counts": {
+      "total": 139,
+      "pass": 135,
+      "needs_repair": 0,
+      "blocker_items": 4,
+      "blocker_findings": 6
+    }
+  },
+  "coverage_gaps": [
+    {
+      "category": "unit_coverage",
+      "status": "closed",
+      "detail": "Catalog manifest and current build manifest each contain the same ordered 28 unit IDs; the two reports partition those IDs into 14 plus 14 with no missing or duplicate report units."
+    },
+    {
+      "category": "item_coverage",
+      "status": "closed",
+      "detail": "After normalizing result/status and practice_id/item_id/id, all 139 reported item IDs are unique within their units and match the active 03-practice-flow item IDs for all 28 units."
+    },
+    {
+      "category": "source_anchor_coverage",
+      "status": "closed",
+      "detail": "All 349 reported source anchors resolve to current unit chunks; every reported per-unit source_chunk_count also matches the current chunks.jsonl record count."
+    },
+    {
+      "category": "actual_build_unit_directories",
+      "status": "gap",
+      "detail": "The expected 28 direct unit directories each contain active practice artifacts, but the current build also has a stray immediate directory named units/ucb-cs188-spring-2026 containing a nested units/lecture-10 directory with no practice artifacts. This is structural and does not add a scanned unit.",
+      "path": "outputs/ucb-cs188-spring-2026/443efc651cd290edbf7ebf368bb2a79fd314c3db49da3969de19dc2d13aa204f/courses/ucb-cs188-spring-2026/units/ucb-cs188-spring-2026"
+    }
+  ],
+  "independently_confirmed_findings": [
+    {
+      "category": "reported_semantic_blockers_confirmed",
+      "status": "blocker",
+      "items": [
+        {
+          "unit_id": "lecture-23",
+          "practice_id": "practice-3",
+          "codes": ["underspecified_setting"],
+          "anchors": [12, 14, 15],
+          "finding": "The active 03 and final 05 introduce vector z=(2,-1) and then ask for scalar z=0.2 and z=-0.2 without defining the relationship; the cited chunks support the neuron input/output and activation concepts but do not repair the missing input definition."
+        },
+        {
+          "unit_id": "lecture-27",
+          "practice_id": "practice-1",
+          "codes": ["underspecified_setting", "unobservable_result"],
+          "anchors": [2, 3],
+          "finding": "取货/等待 has no transition consequences, risk or delay values, objective comparison, or observable success criterion, so neither action nor the requested reason is falsifiable."
+        },
+        {
+          "unit_id": "lecture-28",
+          "practice_id": "practice-1",
+          "codes": ["underspecified_setting", "unobservable_result"],
+          "anchors": [2, 6, 7, 77],
+          "finding": "Routes A/B provide steps and visibility only; no cost/risk model, decision objective, feedback, belief variable, or update rule determines the requested choice or planning/learning result."
+        },
+        {
+          "unit_id": "lecture-28",
+          "practice_id": "practice-2",
+          "codes": ["underspecified_setting"],
+          "anchors": [41, 42, 44, 45, 46, 47, 48],
+          "finding": "The crossword intersection position supplies no letter or 2-Down candidate constraint, so the candidate sets cannot be uniquely filtered; the components are named but the required input is absent."
+        }
+      ]
+    },
+    {
+      "category": "pass_sample_results",
+      "sampled_items": [
+        {"range": "01-14", "unit_id": "lecture-01", "practice_id": "practice-2", "independent_result": "pass", "reason": "Concrete finite percept/transition trace, changed percept, observable action tables, aligned evidence/evaluation, and relevant agent-function anchors."},
+        {"range": "01-14", "unit_id": "lecture-03", "practice_id": "P3", "independent_result": "pass", "reason": "New 8-puzzle state/goal and explicit legal-move cost make both heuristics and relaxed-problem lower-bound checks directly solvable; the lecture board is not replayed."},
+        {"range": "01-14", "unit_id": "lecture-07", "practice_id": "p3", "independent_result": "pass", "reason": "The finite MAX/MIN tree, order, values, alpha/beta state, prune test, and root result are observable and transferable."},
+        {"range": "01-14", "unit_id": "lecture-10", "practice_id": "p2-finite-horizon-vi", "independent_result": "pass", "reason": "The three-state MDP, transitions, rewards, terminal convention, gamma boundary, and V0 convention are self-contained and aligned."},
+        {"range": "01-14", "unit_id": "lecture-14", "practice_id": "p5", "independent_result": "blocker", "codes": ["lecture_specific_dependency"], "reason": "The question asks the learner to reproduce the exact P(B|j,m) four-term expansion and repeated-factor observation shown on pages 20-21; no changed setting or new inference is required."},
+        {"range": "15-28", "unit_id": "lecture-15", "practice_id": "p4-ve-trace", "independent_result": "blocker", "codes": ["lecture_specific_dependency", "underspecified_setting"], "reason": "The 03 item is the exact page-15/16 P(B|j,m), A-then-E trace; the final 05 item further omits the factor list/graph needed to solve it without replaying the lecture."},
+        {"range": "15-28", "unit_id": "lecture-18", "practice_id": "p3", "independent_result": "pass", "reason": "Explicitly labeled teaching transfer with a complete two-state trellis, transition/observation weights, sum/max comparison, and observable recurrences."},
+        {"range": "15-28", "unit_id": "lecture-20", "practice_id": "p4", "independent_result": "pass", "reason": "Train/validation/test counts, predictions, labels, accuracy calculation, and test-leakage judgment are complete and anchored."},
+        {"range": "15-28", "unit_id": "lecture-24", "practice_id": "p2", "independent_result": "pass", "reason": "Bigram/trigram contexts and the long-distance boundary are explicitly answerable from the supplied sentence and cited n-gram evidence."},
+        {"range": "15-28", "unit_id": "lecture-28", "practice_id": "practice-3", "independent_result": "pass", "reason": "Top-1, Top-1000, full-pipeline success, stage failure, and closed/open-book remeasurement are numerically checkable and stage-aligned."
+        }
+      ],
+      "summary": "Ten reported pass items were independently checked across both ranges; eight pass, while lecture-14/p5 and lecture-15/p4 are reclassified as blockers below."
+    },
+    {
+      "category": "lecture_specific_dependency",
+      "status": "blocker",
+      "items": [
+        {"unit_id": "lecture-13", "practice_id": "p1", "anchors": [6, 9, 10], "detail": "Replays the exact weather joint-table conditional calculation and answer from the cited lecture pages."},
+        {"unit_id": "lecture-13", "practice_id": "p2", "anchors": [17, 18, 19], "codes": ["underspecified_setting"], "detail": "Names the exact page-18 16-row table and asks for its answer; the table values are not restated in the item, so the learner must look back to the slide."},
+        {"unit_id": "lecture-14", "practice_id": "p3", "anchors": [14, 15], "detail": "Copies the exact Alarm-network event, CPT values, product, and final 0.000028 shown on page 15."},
+        {"unit_id": "lecture-14", "practice_id": "p5", "anchors": [20, 21, 22], "detail": "Copies the exact P(B|j,m) expansion and repeated-subexpression example shown on pages 20-21."},
+        {"unit_id": "lecture-15", "practice_id": "p1-enumerate", "anchors": [2], "detail": "Asks for the exact formula already printed for the same network/query on page 2."},
+        {"unit_id": "lecture-15", "practice_id": "p4-ve-trace", "anchors": [12, 14, 15, 16], "codes": ["underspecified_setting"], "detail": "Replays the exact variable-elimination trace; the final 05 wording does not restate all factors or graph conditions."},
+        {"unit_id": "lecture-15", "practice_id": "p5-order-cost", "anchors": [17, 19], "detail": "Copies the two elimination orders, maximum factor sizes, and explanation from the worked example."},
+        {"unit_id": "lecture-16", "practice_id": "p4-weight", "anchors": [18, 19], "detail": "Uses the exact likelihood-weighting sample and 1.0×0.1×0.99=0.099 example from the slides."},
+        {"unit_id": "lecture-16", "practice_id": "p5-gibbs", "anchors": [25, 30], "detail": "Directly reproduces the page-30 Gibbs example's evidence, state variables, and three conditional distributions."},
+        {"unit_id": "lecture-17", "practice_id": "p1", "anchors": [2, 7], "detail": "Replays the exact page-7 Gibbs example with the same network, evidence, update order, and conditionals."},
+        {"unit_id": "lecture-17", "practice_id": "p2", "anchors": [19, 20, 21, 22, 25], "detail": "Replays the exact three weather forward calculations and stationary vector printed on pages 19-25."},
+        {"unit_id": "lecture-19", "practice_id": "p1-umbrella-eu", "anchors": [22], "detail": "Reproduces the exact bad-forecast umbrella decision, utilities, EU values, and action from page 22."},
+        {"unit_id": "lecture-19", "practice_id": "p2-vpi", "anchors": [25], "detail": "Explicitly says to recalculate the exact page-25 VPI example and supplies its answer inputs/results."},
+        {"unit_id": "lecture-24", "practice_id": "p3", "anchors": [18, 19], "detail": "Reuses the exact sentence, zero count, 8662/198015222 counts, and back-off sequence from the worked example; only the boundary prompt is new."
+        }
+      ],
+      "repair_rule": "Replace lecture-owned numbers, names, tables, or exact worked-example states with a new solvable setting or a materially changed condition; restate every necessary input and require a checkable transfer result."
+    }
+  ],
+  "repair_priority": [
+    {
+      "priority": 1,
+      "pattern": "underspecified_setting_and_unobservable_result",
+      "items": ["lecture-23/practice-3", "lecture-27/practice-1", "lecture-28/practice-1", "lecture-28/practice-2"],
+      "action": "Repair the Practice prompt/checkpoint with all inputs, states, transitions or constraints, objective/selection rule, and observable result. For lecture-23 remove or define the vector/scalar mismatch; for lecture-27 add action consequences and a decision criterion; for lecture-28/p1 add route risk/cost, feedback, belief/update data, and output; for lecture-28/p2 give the missing crossing letter or complete candidate constraint. Re-audit both 03 and 05."
+    },
+    {
+      "priority": 2,
+      "pattern": "lecture_specific_worked_example_replay",
+      "items": ["lecture-13/p1", "lecture-13/p2", "lecture-14/p3", "lecture-14/p5", "lecture-15/p1-enumerate", "lecture-15/p4-ve-trace", "lecture-15/p5-order-cost", "lecture-16/p4-weight", "lecture-16/p5-gibbs", "lecture-17/p1", "lecture-17/p2", "lecture-19/p1-umbrella-eu", "lecture-19/p2-vpi", "lecture-24/p3"],
+      "action": "Create a fresh, non-copy setting or a meaningful condition change that tests the same concept. Keep lecture variables only when all conditions are restated and the learner must perform a new judgment/derivation/prediction; do not ask to recalculate or reproduce a cited page's exact answer."
+    },
+    {
+      "priority": 3,
+      "pattern": "final_assembly_self_containment_loss",
+      "items": ["lecture-15/p4-ve-trace"],
+      "action": "Restore the factor definitions, graph/query conditions, and a task-specific evidence/evaluation contract in the final 05 artifact while preserving learner-facing privacy boundaries; then compare 03, 05, and citations before independent re-audit."
+    },
+    {
+      "priority": 4,
+      "pattern": "structural_closure_separate_from_semantics",
+      "items": ["build-level", "lecture-04", "lecture-05", "lecture-06", "lecture-09", "lecture-10", "lecture-11", "lecture-16", "lecture-21", "lecture-23", "lecture-24", "lecture-26", "lecture-27", "lecture-28"],
+      "action": "Resolve the deferred structural findings below, remove or quarantine the stray nested directory, create a new fingerprinted build for any artifact change, and rerun deterministic structural validation plus the independent semantic scan."
+    }
+  ],
+  "structural_findings_separate": true,
+  "deferred_structural_findings": [
+    {
+      "code": "stray_nested_course_directory",
+      "scope": ["build-level"],
+      "reason": "The current build's direct units namespace has an extra course-named directory containing a nested units/lecture-10 path without active practice artifacts.",
+      "source": "current build directory inspection",
+      "semantic_status": "separate from semantic blocker counts"
+    },
+    {
+      "code": "checkpoint_schema_shape_drift",
+      "scope": ["lecture-04", "lecture-05", "lecture-09"],
+      "reason": "Stage-03 files use legacy practices/practice-flow shapes; semantic items were read from active files, but schema/shape reconciliation was not certified.",
+      "source": "range-01-14.json"
+    },
+    {
+      "code": "candidate_assembly_parity_gap",
+      "scope": ["lecture-05", "lecture-07", "lecture-10"],
+      "reason": "Preserved sidecar evidence records learner-content/candidate omissions or anchor drift; this review does not certify candidate/final parity.",
+      "source": "range-01-14.json"
+    },
+    {
+      "code": "review_ledger_closure_gap",
+      "scope": ["lecture-04", "lecture-05", "lecture-06", "lecture-10", "lecture-11"],
+      "reason": "Selected/actual/risk/cited page ledgers and historical audit closure were not reconciled here.",
+      "source": "range-01-14.json"
+    },
+    {
+      "code": "citation_representation_variant",
+      "scope": ["lecture-09", "lecture-12", "lecture-13", "lecture-14"],
+      "reason": "Some active checkpoints use source_pages/source_refs rather than citation objects; anchors resolve, but representation parity remains structural work.",
+      "source": "range-01-14.json"
+    },
+    {
+      "code": "historical_audit_status_disagreement",
+      "scope": ["lecture-04", "lecture-05", "lecture-06", "lecture-08", "lecture-10", "lecture-11", "lecture-12"],
+      "reason": "Preserved independent-audit sidecars include blocked or pre-repair verdicts that were not overwritten or replaced by this review.",
+      "source": "range-01-14.json"
+    },
+    {
+      "code": "source_visual_review_boundary",
+      "scope": ["lecture-01", "lecture-03", "lecture-04", "lecture-07", "lecture-08", "lecture-12", "lecture-14"],
+      "reason": "Chunk/formula/low-extraction risks remain source and visual-review concerns; this audit used visible chunk anchors and did not claim visual repair.",
+      "source": "range-01-14.json"
+    },
+    {
+      "code": "final_format_structural_validation_deferred",
+      "scope": ["lecture-01", "lecture-03", "lecture-04", "lecture-05", "lecture-06", "lecture-07", "lecture-08", "lecture-09", "lecture-10", "lecture-11", "lecture-12", "lecture-13", "lecture-14"],
+      "reason": "This review does not certify schema validation, candidate/final/YAML semantic equality, or final delivery status.",
+      "source": "range-01-14.json"
+    },
+    {
+      "code": "missing_explicit_practice_mapping_ids",
+      "scope": ["lecture-16", "lecture-23", "lecture-26", "lecture-27", "lecture-28"],
+      "reason": "Some 03 items lack explicit requirement/concept/opportunity IDs; semantic grounding was checked separately, but mapping closure is not certified.",
+      "source": "range-15-28.json"
+    },
+    {
+      "code": "independent_review_metadata_incomplete",
+      "scope": ["lecture-16", "lecture-21", "lecture-23", "lecture-24", "lecture-26", "lecture-27", "lecture-28"],
+      "reason": "Some review plans lack a completed independent_audit_result; this report does not rewrite or certify that gate.",
+      "source": "range-15-28.json"
+    },
+    {
+      "code": "low_extracted_text_or_review_range_anomaly",
+      "scope": ["lecture-23", "lecture-27", "lecture-28"],
+      "reason": "Cited low-text pages and/or selected-versus-actual review-page differences require separate visual/structural reconciliation; no hidden text was used as evidence.",
+      "source": "range-15-28.json"
+    },
+    {
+      "code": "chunk_page_slice_transformation",
+      "scope": ["lecture-22"],
+      "reason": "The source chunks include a noted page-slice transformation; provenance and structural integrity remain a separate check.",
+      "source": "range-15-28.json"
+    }
+  ],
+  "auditor_id": "luna-xhigh-course-independent-practice-auditor-ucb-cs188-spring-2026-20260812",
+  "offline_only": true,
+  "next_action": "Do not release this build as semantically closed. Repair the four reported blockers and the independently confirmed lecture-replay/self-containment blockers, create a new fingerprinted build, then rerun full course semantic and deferred structural validation."
+}

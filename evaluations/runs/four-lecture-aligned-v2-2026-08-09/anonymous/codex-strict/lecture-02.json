@@ -1,0 +1,771 @@
+{
+  "lecture_id": "lecture-02",
+  "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+  "claims": [
+    {
+      "text": "训练选择参数 θ，使样本损失之和最小：θ*=argmin_θ Σ_i L(f_θ(x⁽ⁱ⁾),y⁽ⁱ⁾)。",
+      "anchors": [
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 5
+        }
+      ]
+    },
+    {
+      "text": "第 k 步沿负梯度更新 θ：θ^(k+1)=θ^k−η∇_θJ(θ^k)。学习率 η 决定局部步长。",
+      "anchors": [
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 8
+        }
+      ]
+    },
+    {
+      "text": "讲义把历史方向 m^t 加入更新：θ^(t+1)=θ^t−η∇f(θ^t)−αm^t，以平滑方向并加速一致方向。",
+      "anchors": [
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 10
+        }
+      ]
+    },
+    {
+      "text": "狭长曲率会导致振荡，鞍点附近梯度小但并非极小值；深层复合还会造成梯度消失或爆炸。",
+      "anchors": [
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 12
+        },
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 16
+        },
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 19
+        }
+      ]
+    },
+    {
+      "text": "归一化与残差连接改善信号传播；梯度裁剪限制梯度范数；ReLU 为 max(0,z)，其正区间导数不衰减。",
+      "anchors": [
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 20
+        },
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 22
+        },
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 24
+        }
+      ]
+    },
+    {
+      "text": "标量对向量的梯度写成行向量；向量输出关于向量输入的 Jacobian 为“输出维×输入维”。",
+      "anchors": [
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 32
+        }
+      ]
+    },
+    {
+      "text": "若 x→u→z，则 dz/dx=(dz/du)(du/dx)，维度为 (m×p)(p×n)=m×n。",
+      "anchors": [
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 34
+        }
+      ]
+    },
+    {
+      "text": "计算图把共享的链式乘积只计算一次，再把上游梯度传给多个局部导数。",
+      "anchors": [
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 36
+        }
+      ]
+    },
+    {
+      "text": "对层 x_out=f(x_in,θ)，先求局部 Jacobian L^x、L^θ，再计算 g_in=g_out L^x 与 dJ/dθ=g_out L^θ。",
+      "anchors": [
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 38
+        },
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 41
+        }
+      ]
+    },
+    {
+      "text": "训练迭代先前向保存中间量，再反向累积梯度，最后使用优化器更新参数。",
+      "anchors": [
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 42
+        }
+      ]
+    },
+    {
+      "text": "批损失是样本损失的平均，相应参数梯度也是逐样本梯度的平均。",
+      "anchors": [
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 45
+        }
+      ]
+    },
+    {
+      "text": "若 x_out=W x_in，则输入梯度为 g_in=g_out W；权重梯度由上游梯度与输入形成外积。",
+      "anchors": [
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 46
+        },
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 48
+        }
+      ]
+    },
+    {
+      "text": "一个节点流向多支时，回传贡献相加；同一参数在多处使用时，其各处参数梯度也相加。",
+      "anchors": [
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 53
+        },
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 55
+        }
+      ]
+    },
+    {
+      "text": "只要目标是标量，反向传播可计算它对计算图中任意节点或边变量的梯度，而不局限于模型参数。",
+      "anchors": [
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 61
+        }
+      ]
+    },
+    {
+      "text": "可固定模型并求 argmax_x(y_j+λR(x))，再按输入梯度做上升；正则项约束所求输入。",
+      "anchors": [
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 66
+        }
+      ]
+    }
+  ],
+  "formulas": [],
+  "objectives": [
+    "写出经验风险目标，并比较梯度下降、动量和自适应优化器的更新思想。",
+    "诊断深层网络训练中的曲率、鞍点和梯度传播问题，并选择对应缓解策略。",
+    "按讲义的 Jacobian 约定，把链式法则组织成可复用的反向传播接口。",
+    "推导线性层、批处理、分支与参数共享结构中的梯度。",
+    "把反向传播用于参数之外的变量，并复核讲义数值例题的一次更新。"
+  ],
+  "practice": [
+    {
+      "question": "解释病态曲率为何使固定学习率梯度下降发生之字形振荡，并给出一个讲义中的缓解思路。",
+      "hint": "先写出相关局部公式或计算图，再检查维度与符号。",
+      "deliverable": "一份含推导或解释的书面答案",
+      "expected_evidence": [
+        "不同方向曲率差异大时，稳定所需步长受陡峭方向限制，而平缓方向进展慢；动量可平滑振荡并积累一致方向。"
+      ],
+      "evaluation": {
+        "criterion": "答案须与 expected_evidence 一致，并引用对应讲义页。"
+      },
+      "anchors": [
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 10
+        },
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 12
+        }
+      ]
+    },
+    {
+      "question": "设 z∈R^m、u∈R^p、x∈R^n，写出 dz/dx 的链式法则和各矩阵形状。",
+      "hint": "先写出相关局部公式或计算图，再检查维度与符号。",
+      "deliverable": "一份含推导或解释的书面答案",
+      "expected_evidence": [
+        "dz/dx=(dz/du)(du/dx)，形状为 (m×p)(p×n)=m×n。"
+      ],
+      "evaluation": {
+        "criterion": "答案须与 expected_evidence 一致，并引用对应讲义页。"
+      },
+      "anchors": [
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 34
+        }
+      ]
+    },
+    {
+      "question": "对 x_out=W x_in，给定行向量 g_out，写出输入梯度并描述权重梯度结构。",
+      "hint": "先写出相关局部公式或计算图，再检查维度与符号。",
+      "deliverable": "一份含推导或解释的书面答案",
+      "expected_evidence": [
+        "g_in=g_out W；权重梯度是与 W 同形的外积，由上游梯度各输出分量与输入各分量配对。"
+      ],
+      "evaluation": {
+        "criterion": "答案须与 expected_evidence 一致，并引用对应讲义页。"
+      },
+      "anchors": [
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 46
+        },
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 48
+        }
+      ]
+    },
+    {
+      "question": "同一中间变量分成两支后再汇合，且两支都使用共享参数 θ。反向传播时两类梯度如何处理？",
+      "hint": "先写出相关局部公式或计算图，再检查维度与符号。",
+      "deliverable": "一份含推导或解释的书面答案",
+      "expected_evidence": [
+        "对中间变量的梯度把两条路径贡献相加；对 θ 的梯度也把每个使用位置的贡献相加。"
+      ],
+      "evaluation": {
+        "criterion": "答案须与 expected_evidence 一致，并引用对应讲义页。"
+      },
+      "anchors": [
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 53
+        },
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 55
+        }
+      ]
+    },
+    {
+      "question": "固定分类器参数，想寻找使第 j 类得分高且不过度噪声化的输入，应写什么目标并更新哪个变量？",
+      "hint": "先写出相关局部公式或计算图，再检查维度与符号。",
+      "deliverable": "一份含推导或解释的书面答案",
+      "expected_evidence": [
+        "优化输入 x：argmax_x(y_j+λR(x))，根据目标关于 x 的梯度做上升；模型参数保持固定。"
+      ],
+      "evaluation": {
+        "criterion": "答案须与 expected_evidence 一致，并引用对应讲义页。"
+      },
+      "anchors": [
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 66
+        }
+      ]
+    },
+    {
+      "question": "讲义两层网络例题从 x=(1.0,0.1) 出发。列出核验一次训练迭代的顺序，并解释 η=−0.2 的符号。",
+      "hint": "先写出相关局部公式或计算图，再检查维度与符号。",
+      "deliverable": "一份含推导或解释的书面答案",
+      "expected_evidence": [
+        "依次复算 x1、x2、x3 与损失，再从损失回传各层梯度，最后更新 W1、W0；例题采用加 η 倍梯度且 η 为负，因此方向仍是梯度下降。讲义给出的前向值约为 x1=(0.7,0.3)、x2=(0.604,0.291)、x3=0.313、损失 0.017。"
+      ],
+      "evaluation": {
+        "criterion": "答案须与 expected_evidence 一致，并引用对应讲义页。"
+      },
+      "anchors": [
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 72
+        },
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 75
+        },
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 76
+        },
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 77
+        },
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 78
+        },
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 79
+        },
+        {
+          "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "page": 80
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "本 StudyKit 仅依据第 2 讲讲义；对优化器的完整收敛理论和软件框架实现不作外推（第 1、3 页）。",
+    "第 31、35、74 页主要是章节转换页，因此不作为独立知识主张的核心证据。",
+    "数值例题使用负学习率配合加号更新；复算时必须保持讲义自己的符号约定（第 72、80 页）。"
+  ],
+  "anchors": [
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 1
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 2
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 3
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 4
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 5
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 6
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 7
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 8
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 9
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 10
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 11
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 12
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 13
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 14
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 15
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 16
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 17
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 18
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 19
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 20
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 21
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 22
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 23
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 24
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 25
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 26
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 27
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 28
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 29
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 30
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 31
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 32
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 33
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 34
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 35
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 36
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 37
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 38
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 39
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 40
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 41
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 42
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 43
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 44
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 45
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 46
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 47
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 48
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 49
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 50
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 51
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 52
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 53
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 54
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 55
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 56
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 57
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 58
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 59
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 60
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 61
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 62
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 63
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 64
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 65
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 66
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 67
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 68
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 69
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 70
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 71
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 72
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 73
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 74
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 75
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 76
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 77
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 78
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 79
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 80
+    },
+    {
+      "pdf_sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006",
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "page": 81
+    }
+  ],
+  "duration_seconds": 283.541042,
+  "reviewed_page_count": 56,
+  "semantic_passes": 5,
+  "tokens": null,
+  "anonymous_id": "sample-4804f0aaf98b4cca"
+}

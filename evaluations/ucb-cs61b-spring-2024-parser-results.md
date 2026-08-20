@@ -6,7 +6,7 @@ Parser: `pdf-page-v0.2`
 
 Quality mode: `standard` (`review-pages-v1`)
 
-Result: all 40 numbered lecture units pass deterministic source preparation and the no-model production preflight
+Result: all 40 numbered lecture units pass deterministic source preparation and have completed canonical StudyKit authoring, validation, and the fast audit/review gate
 
 ## Summary
 
@@ -99,9 +99,9 @@ For every unit, the no-model preflight checked:
 - rendered-image and sidecar counts;
 - completed selected-page review with no remaining blockers;
 - production `build_request` and `build_evidence_bundle` acceptance;
-- absence of CS 61B StudyKit outputs or `01-evidence-plan.json` artifacts.
+- canonical fast StudyKit output, candidate/final/review artifacts, and unit validation records are present for all 40 units.
 
-No DeepSeek request, `scripts/generate_studykit.py`, `scripts/run_lecture_regression.py`, or other model-backed authoring step was run.
+No provider-backed generator, `scripts/generate_studykit.py`, `scripts/run_lecture_regression.py`, or online model API was used. Final course-level records are in `outputs/ucb-cs61b-spring-2024/a748c428609e7a5bc9f0697a06ae0d7fbd56e2469aaaba8f5b034121f2479ab1/`; the tracked authoring evaluation is `evaluations/ucb-cs61b-spring-2024-studykit-results.md`.
 
 ## Repository verification
 

@@ -1,0 +1,30 @@
+[
+  {
+    "canonical_course_id": "mit-6-042j",
+    "auditor": "classification-direction-audit",
+    "evidence_paths": [
+      "data/raw/catalog-sources/cs-self-learning/81d874ee0fb37b2289839847026ba7651f3725d5/mkdocs.yml",
+      "data/raw/catalog-sources/cs-self-learning/81d874ee0fb37b2289839847026ba7651f3725d5/docs/数学进阶/6.042J.md",
+      "data/catalog/csdiy-course-registry.yaml"
+    ],
+    "major_direction": "discrete_mathematics_probability",
+    "secondary_directions": [],
+    "conclusion": "pass",
+    "audited_at": "2026-08-12T11:35:40+08:00"
+  },
+  {
+    "canonical_course_id": "ucb-cs168",
+    "auditor": "classification-direction-audit",
+    "evidence_paths": [
+      "data/raw/catalog-sources/cs-self-learning/81d874ee0fb37b2289839847026ba7651f3725d5/mkdocs.yml",
+      "data/raw/catalog-sources/cs-self-learning/81d874ee0fb37b2289839847026ba7651f3725d5/docs/计算机网络/CS168.md",
+      "data/catalog/csdiy-course-registry.yaml"
+    ],
+    "major_direction": "networks",
+    "secondary_directions": [
+      "architecture"
+    ],
+    "conclusion": "pass: networks is primary; architecture is secondary only",
+    "audited_at": "2026-08-12T11:35:40+08:00"
+  }
+]

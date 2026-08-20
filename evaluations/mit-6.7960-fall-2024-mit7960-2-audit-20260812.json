@@ -1,0 +1,168 @@
+{
+  "audit_id": "mit-6.7960-fall-2024-mit7960-2-audit-20260812",
+  "audit_date": "2026-08-12",
+  "worker": "mit-6.7960-reviewed-package-audit-worker",
+  "scope": {
+    "course_id": "mit-6.7960-fall-2024",
+    "reviewed_package": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0",
+    "units": ["lecture-07", "lecture-08", "lecture-09", "lecture-10", "lecture-11", "lecture-12"],
+    "raw_root": "data/raw/mit-6.7960/fall-2024",
+    "chunks": "data/sources/mit-6.7960-fall-2024/full-course-v0.1.0/chunks.jsonl",
+    "ingestion_report": "data/sources/mit-6.7960-fall-2024/full-course-v0.1.0/ingestion-report.json",
+    "read_only_review": true
+  },
+  "contract_basis": {
+    "skill": "skills/studykit-generator/SKILL.md",
+    "references": [
+      "skills/studykit-generator/references/contract.md",
+      "skills/studykit-generator/references/formats.md",
+      "skills/studykit-generator/references/examples.md",
+      "skills/studykit-generator/references/quality-modes.md",
+      "skills/studykit-generator/references/parallelism.md"
+    ],
+    "quality_mode_used_for_audit": "standard",
+    "hard_gates_applied": [
+      "citation anchors must exist",
+      "final JSON and YAML must be semantically equal",
+      "retained formulas need visible-page evidence",
+      "practice semantic defects are not converted into a pass"
+    ]
+  },
+  "build_provenance": {
+    "reviewed_manifest_build_id": "4f758f6f76878aac08ccea9683b9f20fe1f040bd02d153d801606309ecf71882",
+    "reviewed_input_fingerprint": "b5f8b4963964a5873c022b904fc9d3cf8cf27d0a49046e09a2895c449938514a",
+    "reviewed_chunks_sha256": "692fac70bf34368f054e308d92c740177353c7965310531c75ca12c3a7409ef2",
+    "reviewed_pipeline_version": "studykit-generator-v0.1.0",
+    "reviewed_schema_version": "studykit-v0.1",
+    "reviewed_prompt_version": "host-authoring-v0.1.0",
+    "author_provenance": {
+      "status": "not_recorded_in_reviewed_artifacts",
+      "evidence": "05-studykit.json contains no author identity/provenance fields; run.json records external_model_calls=0 only."
+    },
+    "auditor_provenance": {
+      "status": "audit_artifacts_present_identity_not_recorded",
+      "evidence": "04-quality-audit.json and 04-quality-audit.resolution.json exist for every scoped unit, but neither records an auditor identity or independent-run identifier."
+    },
+    "fingerprint_version_check": {
+      "against_reviewed_manifest_and_raw_sources": "match",
+      "against_current_v0.2.1_build": "mismatch",
+      "reason": "The reviewed package is portable-v0.1.0 with v0.1.0 pipeline/schema/prompt metadata; no v0.2.1 build fingerprint or v0.2.1 unit artifacts are present in the repository."
+    }
+  },
+  "units": [
+    {
+      "unit_id": "lecture-07",
+      "source_id": "mit6-7960-f24-lec7-d9137f6191",
+      "files": {
+        "final": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-07/05-studykit.json",
+        "validation": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-07/validation.json",
+        "yaml": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-07/studykit.yaml",
+        "audit": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-07/04-quality-audit.json",
+        "resolution": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-07/04-quality-audit.resolution.json"
+      },
+      "counts": {"raw_pdf_pages": 32, "chunk_count": 32, "validation_citation_count": 118, "unique_final_citations": 21, "practice_count": 7, "final_formula_count": 9, "final_formula_pages": [4, 10, 11, 14, 19, 23, 24, 25, 26]},
+      "checks": {"final_status": "draft", "validation_status": "succeeded", "yaml_semantic_equal": true, "audit_verdict": "pass_with_documented_limitations", "visible_formula_review": "pass; each of 9 resolved formulas cites a page-image-reviewed visible page", "visible_evidence_boundary": "pass; third-party/hidden or overlay-derived claims excluded and limitations recorded"},
+      "practice_semantic_issues_deferred": [],
+      "next_action_for_v0_2_1": "Re-author or migrate this unit into a fresh v0.2.1 build using the same raw PDF/chunk source hashes, then rerun v0.2.1 validation and independent semantic practice audit; do not promote the v0.1.0 artifact by fingerprint reuse."
+    },
+    {
+      "unit_id": "lecture-08",
+      "source_id": "mit6-7960-f24-lec8-e72290651c",
+      "files": {
+        "final": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-08/05-studykit.json",
+        "validation": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-08/validation.json",
+        "yaml": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-08/studykit.yaml",
+        "audit": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-08/04-quality-audit.json",
+        "resolution": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-08/04-quality-audit.resolution.json"
+      },
+      "counts": {"raw_pdf_pages": 55, "chunk_count": 55, "validation_citation_count": 118, "unique_final_citations": 19, "practice_count": 8, "final_formula_count": 6, "final_formula_pages": [16, 17, 18, 34, 37, 41]},
+      "checks": {"final_status": "draft", "validation_status": "succeeded", "yaml_semantic_equal": true, "audit_verdict": "pass_with_documented_limitations", "visible_formula_review": "pass; all 6 resolved formulas cite visible page-image evidence", "visible_evidence_boundary": "pass; overlay/latexit/third-party visual content explicitly excluded"},
+      "practice_semantic_issues_deferred": [
+        {"practice_ids": ["p-06", "p-08"], "issue": "Transfer/design prompts specify the conceptual task but do not fully specify a concrete new setting and finite observable operations as required by the content-grounded practice contract.", "disposition": "deferred; not counted as a pass"}
+      ],
+      "next_action_for_v0_2_1": "Create a fresh v0.2.1 unit and repair p-06/p-08 into concrete, answerable settings while preserving the visible-page formula provenance; then rerun independent item-by-item semantic audit."
+    },
+    {
+      "unit_id": "lecture-09",
+      "source_id": "mit6-7960-f24-lec9-132cf6994a",
+      "files": {
+        "final": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-09/05-studykit.json",
+        "validation": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-09/validation.json",
+        "yaml": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-09/studykit.yaml",
+        "audit": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-09/04-quality-audit.json",
+        "resolution": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-09/04-quality-audit.resolution.json"
+      },
+      "counts": {"raw_pdf_pages": 72, "chunk_count": 72, "validation_citation_count": 177, "unique_final_citations": 34, "practice_count": 8, "final_formula_count": 1, "final_formula_pages": [9]},
+      "checks": {"final_status": "draft", "validation_status": "succeeded", "yaml_semantic_equal": true, "audit_verdict": "pass_with_documented_limitations", "visible_formula_review": "pass; the single resolved formula cites page 9 page-image evidence", "visible_evidence_boundary": "pass; third-party visual detail excluded"},
+      "practice_semantic_issues_deferred": [
+        {"practice_ids": ["p1", "p3", "p4", "p6", "p8"], "issue": "Several diagnostic/design prompts use generic placeholders (a batch, three curves, a new task, a training run, a long-context task) without a concrete learner-solvable setting and bounded observable inputs/outputs.", "disposition": "deferred; not counted as a pass"}
+      ],
+      "next_action_for_v0_2_1": "Fresh v0.2.1 authoring/migration: retain the page-9 formula and citations, instantiate concrete tensors/curves/configurations for the listed practice items, and repeat independent semantic review."
+    },
+    {
+      "unit_id": "lecture-10",
+      "source_id": "mit6-7960-f24-lec10-17b3fa52fe",
+      "files": {
+        "final": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-10/05-studykit.json",
+        "validation": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-10/validation.json",
+        "yaml": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-10/studykit.yaml",
+        "audit": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-10/04-quality-audit.json",
+        "resolution": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-10/04-quality-audit.resolution.json"
+      },
+      "counts": {"raw_pdf_pages": 69, "chunk_count": 69, "validation_citation_count": 184, "unique_final_citations": 30, "practice_count": 8, "final_formula_count": 5, "final_formula_pages": [21, 28, 36, 43, 50]},
+      "checks": {"final_status": "draft", "validation_status": "succeeded", "yaml_semantic_equal": true, "audit_verdict": "pass_with_documented_limitations", "visible_formula_review": "pass; all 5 resolved formulas cite visible page-image evidence", "visible_evidence_boundary": "pass; source page-2 numbering inconsistency documented; hidden/overlaid text not used"},
+      "practice_semantic_issues_deferred": [
+        {"practice_ids": ["p3", "p6", "p8"], "issue": "Qualitative-case, train/inference-path, and long-context evaluation prompts leave the concrete inputs or finite evaluation instance to the learner rather than supplying an answerable setting.", "disposition": "deferred; not counted as a pass"}
+      ],
+      "next_action_for_v0_2_1": "Fresh v0.2.1 build: preserve the documented lecture-number warning and formula page anchors, add concrete cases/sequence/configuration for p3/p6/p8, then re-audit every practice item."
+    },
+    {
+      "unit_id": "lecture-11",
+      "source_id": "mit6-7960-f24-lec11-5c0ea53f8a",
+      "files": {
+        "final": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-11/05-studykit.json",
+        "validation": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-11/validation.json",
+        "yaml": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-11/studykit.yaml",
+        "audit": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-11/04-quality-audit.json",
+        "resolution": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-11/04-quality-audit.resolution.json"
+      },
+      "counts": {"raw_pdf_pages": 65, "chunk_count": 65, "validation_citation_count": 35, "unique_final_citations": 10, "practice_count": 5, "final_formula_count": 0, "final_formula_pages": []},
+      "checks": {"final_status": "draft", "validation_status": "succeeded", "yaml_semantic_equal": true, "audit_verdict": "pass_with_warnings", "visible_formula_review": "not_applicable; no formula metadata retained in final", "visible_evidence_boundary": "pass with source warnings; publication gate remains human_review_required"},
+      "practice_semantic_issues_deferred": [
+        {"practice_ids": ["p1", "p2", "p3", "p4", "p5"], "issue": "All five items are generic explain/compare/classify/design shells without a concrete instance, values, objects, or bounded observable result; citations alone do not satisfy the content-grounded practice contract.", "disposition": "deferred; not counted as a pass"}
+      ],
+      "next_action_for_v0_2_1": "Do not promote as-is. Re-author all five practices in a fresh v0.2.1 build with concrete representations/datasets/parameter states, preserve the two source warnings, and complete an independent semantic audit before validation sign-off."
+    },
+    {
+      "unit_id": "lecture-12",
+      "source_id": "mit6-7960-f24-lec12-11bdb82708",
+      "files": {
+        "final": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-12/05-studykit.json",
+        "validation": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-12/validation.json",
+        "yaml": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-12/studykit.yaml",
+        "audit": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-12/04-quality-audit.json",
+        "resolution": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-12/04-quality-audit.resolution.json"
+      },
+      "counts": {"raw_pdf_pages": 70, "chunk_count": 70, "validation_citation_count": 45, "unique_final_citations": 15, "practice_count": 5, "final_formula_count": 0, "final_formula_pages": []},
+      "checks": {"final_status": "draft", "validation_status": "succeeded", "yaml_semantic_equal": true, "audit_verdict": "pass_with_warnings", "visible_formula_review": "not_applicable; formula fidelity warning says quantitative loss relations were intentionally not transcribed", "visible_evidence_boundary": "pass with source warnings; publication gate remains human_review_required"},
+      "practice_semantic_issues_deferred": [
+        {"practice_ids": ["p1", "p3", "p4", "p5"], "issue": "Most items are generic evidence/design prompts without a supplied concrete representation, augmentation instance, data-flow instance, or finite batch/false-negative configuration; p2 is concrete and answerable.", "disposition": "deferred; not counted as a pass"}
+      ],
+      "next_action_for_v0_2_1": "Fresh v0.2.1 build required: retain the domain-shift and formula-fidelity limitations, concretize p1/p3/p4/p5, and independently audit the revised semantic contract before release."
+    }
+  ],
+  "aggregate": {
+    "units_reviewed": 6,
+    "raw_pdf_pages": 363,
+    "chunks_for_scoped_sources": 363,
+    "validation_citation_count_total": 677,
+    "final_formula_count_total": 21,
+    "units_validation_succeeded": 6,
+    "units_yaml_semantically_equal": 6,
+    "units_with_deferred_practice_semantic_issues": 5,
+    "units_with_current_v0_2_1_fingerprint_mismatch": 6,
+    "release_decision": "not_migratable_as-is",
+    "reason": "The old v0.1.0 artifacts validate internally, but current v0.2.1 migration requires a new fingerprinted build and deferred practice semantic defects must be resolved or explicitly re-audited."
+  },
+  "next_action": "Create a new isolated current v0.2.1 build from the verified raw source hashes and the full-course chunk inventory; migrate only after per-unit semantic repairs (especially lecture-11 and lecture-12), rerun validation plus independent practice audit, then compare the new final/YAML semantics and record a new v0.2.1 fingerprint."
+}

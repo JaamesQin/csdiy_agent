@@ -50,7 +50,9 @@ def test_non_streaming_accepts_missing_model_and_stream(
     assert body["model"] == "coursepilot-probe"
     assert body["choices"][0]["index"] == 0
     assert body["choices"][0]["message"]["role"] == "assistant"
-    assert "画像" in body["choices"][0]["message"]["content"]
+    content = body["choices"][0]["message"]["content"]
+    assert "通用学习回答当前暂时不可用" in content
+    assert "无需使用特定格式" in content
     assert body["choices"][0]["finish_reason"] == "stop"
     assert body["usage"] == {
         "prompt_tokens": 0,

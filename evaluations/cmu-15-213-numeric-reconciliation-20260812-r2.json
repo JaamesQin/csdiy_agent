@@ -1,0 +1,128 @@
+{
+  "schema_version": "numeric-reconciliation-v0.2-r2",
+  "audit_id": "cmu-15-213-numeric-reconciliation-20260812-r2",
+  "audited_at": "2026-08-12",
+  "course_id": "cmu-15.213-summer-2026",
+  "build_id": "40bd4156f8432f731a6dce34d04cd3cdf7e198a7c754d1533131b7e7754938f6",
+  "offline_only": true,
+  "provider_or_model_calls": 0,
+  "scope": {
+    "root": "outputs/cmu-15.213-summer-2026/40bd4156f8432f731a6dce34d04cd3cdf7e198a7c754d1533131b7e7754938f6",
+    "unit_checkpoint_files": true,
+    "course_summary": "outputs/cmu-15.213-summer-2026/40bd4156f8432f731a6dce34d04cd3cdf7e198a7c754d1533131b7e7754938f6/course-summary.json",
+    "practice_semantic_existing_issues": "recorded_as_deferred_and_excluded_from_this_numeric_audit"
+  },
+  "root_summary_claims": {
+    "run_status": "succeeded",
+    "result_status": "succeeded",
+    "batch_status": "succeeded",
+    "course_summary_status": "succeeded",
+    "requested_units": 24,
+    "completed_units": 24,
+    "validated_units": 24,
+    "audited_units": 24,
+    "failed_units": 0,
+    "pending_units": 0,
+    "chunk_count_from_validation": 1441,
+    "root_files_sha256": {
+      "run.json": "83b75914c39cddee1d11976091f29d6a9eaf8fb933984f4e5e503e453605d1a5",
+      "result.json": "470e394c95fb9ca7fac59b3b294f2feee825bb8d82d6f30c311fd899595169f6",
+      "batch-summary.json": "04a3cf1410787e6a0e91d2579772705c9072e1c957163592c06e8bbb0f1ca67d",
+      "course-summary.json": "c66afaf7e41ccc416336c528f754ecd1616b7c7c86e520bb16492135d7f7488f",
+      "manifest.yaml": "7dba39cb831150ffc5892f78b2b675ef68252cf47de61140222df649c786da10"
+    }
+  },
+  "observed_totals": {
+    "unit_directories": 24,
+    "requested_unit_ids": 24,
+    "final_studykit_json": 24,
+    "candidate_json": 24,
+    "studykit_yaml": 24,
+    "studykit_md": 24,
+    "validation_json": 24,
+    "validation_succeeded": 24,
+    "review_validation_json": 24,
+    "review_validation_succeeded": 24,
+    "evidence_plans": 24,
+    "learning_content": 24,
+    "practice_flows": 24,
+    "quality_audits": 24,
+    "review_plans": 24,
+    "metrics": 24,
+    "chunks": 1441,
+    "validation_citations": 3480,
+    "final_source_anchor_objects": 3480,
+    "practices": 170,
+    "formulas": 51,
+    "review_plan_selected_pages": 1017,
+    "review_plan_actual_reviewed_pages": 1020
+  },
+  "audit_provenance_observation": {
+    "review_plan_independent_audit_true": 22,
+    "review_plan_independent_audit_false": 2,
+    "review_plan_independent_auditor_and_result_present": 20,
+    "independent_audit_json_sidecars_present": 11,
+    "units_without_review_plan_independent_audit": ["lecture-22", "lecture-23"],
+    "units_with_true_flag_but_missing_auditor_and_result": ["lecture-08", "lecture-21"],
+    "interpretation": "The root summaries claim 24 audited units, but the current per-unit review-plan evidence proves only 22 independent_audit=true units and 20 with both auditor identity and result. This is an audit-provenance numeric drift/false-complete risk, not a practice-semantic finding."
+  },
+  "review_page_reconciliation": {
+    "selected_total": 1017,
+    "actual_total": 1020,
+    "delta_actual_minus_selected": 3,
+    "units_with_page_count_delta": ["lecture-20"],
+    "lecture-20_selected_count": 55,
+    "lecture-20_actual_count": 58,
+    "interpretation": "lecture-20 actual_reviewed_pages contains three additional pages beyond selected_pages; the page lists are otherwise equal in count for the other 23 units. This is a review-plan numeric drift requiring provenance reconciliation before treating the root audit count as fully current."
+  },
+  "per_unit": [
+    {"unit_id":"lecture-01","chunks":67,"validation_citations":60,"practices":5,"formulas":1,"selected_pages":27,"actual_reviewed_pages":27,"validation":"succeeded","review_validation":"succeeded","independent_audit":true},
+    {"unit_id":"lecture-02","chunks":66,"validation_citations":114,"practices":6,"formulas":9,"selected_pages":35,"actual_reviewed_pages":35,"validation":"succeeded","review_validation":"succeeded","independent_audit":true},
+    {"unit_id":"lecture-03","chunks":82,"validation_citations":128,"practices":7,"formulas":1,"selected_pages":50,"actual_reviewed_pages":50,"validation":"succeeded","review_validation":"succeeded","independent_audit":true},
+    {"unit_id":"lecture-04","chunks":72,"validation_citations":144,"practices":6,"formulas":0,"selected_pages":57,"actual_reviewed_pages":57,"validation":"succeeded","review_validation":"succeeded","independent_audit":true},
+    {"unit_id":"lecture-05","chunks":81,"validation_citations":94,"practices":7,"formulas":2,"selected_pages":60,"actual_reviewed_pages":60,"validation":"succeeded","review_validation":"succeeded","independent_audit":true},
+    {"unit_id":"lecture-06","chunks":68,"validation_citations":192,"practices":8,"formulas":0,"selected_pages":68,"actual_reviewed_pages":68,"validation":"succeeded","review_validation":"succeeded","independent_audit":true},
+    {"unit_id":"lecture-07","chunks":43,"validation_citations":115,"practices":6,"formulas":1,"selected_pages":24,"actual_reviewed_pages":24,"validation":"succeeded","review_validation":"succeeded","independent_audit":true},
+    {"unit_id":"lecture-08","chunks":62,"validation_citations":181,"practices":8,"formulas":0,"selected_pages":57,"actual_reviewed_pages":57,"validation":"succeeded","review_validation":"succeeded","independent_audit":true},
+    {"unit_id":"lecture-09","chunks":72,"validation_citations":125,"practices":7,"formulas":2,"selected_pages":20,"actual_reviewed_pages":20,"validation":"succeeded","review_validation":"succeeded","independent_audit":true},
+    {"unit_id":"lecture-10","chunks":71,"validation_citations":225,"practices":7,"formulas":5,"selected_pages":46,"actual_reviewed_pages":46,"validation":"succeeded","review_validation":"succeeded","independent_audit":true},
+    {"unit_id":"lecture-11","chunks":42,"validation_citations":102,"practices":7,"formulas":6,"selected_pages":42,"actual_reviewed_pages":42,"validation":"succeeded","review_validation":"succeeded","independent_audit":true},
+    {"unit_id":"lecture-12","chunks":40,"validation_citations":132,"practices":8,"formulas":4,"selected_pages":40,"actual_reviewed_pages":40,"validation":"succeeded","review_validation":"succeeded","independent_audit":true},
+    {"unit_id":"lecture-13","chunks":48,"validation_citations":169,"practices":8,"formulas":1,"selected_pages":48,"actual_reviewed_pages":48,"validation":"succeeded","review_validation":"succeeded","independent_audit":true},
+    {"unit_id":"lecture-14","chunks":59,"validation_citations":120,"practices":8,"formulas":2,"selected_pages":22,"actual_reviewed_pages":22,"validation":"succeeded","review_validation":"succeeded","independent_audit":true},
+    {"unit_id":"lecture-15","chunks":37,"validation_citations":176,"practices":8,"formulas":3,"selected_pages":37,"actual_reviewed_pages":37,"validation":"succeeded","review_validation":"succeeded","independent_audit":true},
+    {"unit_id":"lecture-16","chunks":66,"validation_citations":149,"practices":7,"formulas":0,"selected_pages":37,"actual_reviewed_pages":37,"validation":"succeeded","review_validation":"succeeded","independent_audit":true},
+    {"unit_id":"lecture-17","chunks":65,"validation_citations":179,"practices":7,"formulas":2,"selected_pages":44,"actual_reviewed_pages":44,"validation":"succeeded","review_validation":"succeeded","independent_audit":true},
+    {"unit_id":"lecture-18","chunks":51,"validation_citations":182,"practices":7,"formulas":0,"selected_pages":39,"actual_reviewed_pages":39,"validation":"succeeded","review_validation":"succeeded","independent_audit":true},
+    {"unit_id":"lecture-19","chunks":59,"validation_citations":230,"practices":7,"formulas":0,"selected_pages":56,"actual_reviewed_pages":56,"validation":"succeeded","review_validation":"succeeded","independent_audit":true},
+    {"unit_id":"lecture-20","chunks":58,"validation_citations":198,"practices":8,"formulas":2,"selected_pages":55,"actual_reviewed_pages":58,"validation":"succeeded","review_validation":"succeeded","independent_audit":true},
+    {"unit_id":"lecture-21","chunks":72,"validation_citations":87,"practices":7,"formulas":1,"selected_pages":48,"actual_reviewed_pages":48,"validation":"succeeded","review_validation":"succeeded","independent_audit":true},
+    {"unit_id":"lecture-22","chunks":53,"validation_citations":109,"practices":6,"formulas":4,"selected_pages":38,"actual_reviewed_pages":38,"validation":"succeeded","review_validation":"succeeded","independent_audit":false},
+    {"unit_id":"lecture-23","chunks":45,"validation_citations":138,"practices":8,"formulas":2,"selected_pages":38,"actual_reviewed_pages":38,"validation":"succeeded","review_validation":"succeeded","independent_audit":false},
+    {"unit_id":"lecture-24","chunks":62,"validation_citations":131,"practices":7,"formulas":3,"selected_pages":29,"actual_reviewed_pages":29,"validation":"succeeded","review_validation":"succeeded","independent_audit":true}
+  ],
+  "findings": [
+    {
+      "code": "ROOT_NUMBERS_RECONCILE_FOR_FILES_AND_VALIDATORS",
+      "severity": "info",
+      "message": "All 24 requested units have the expected stage files, final JSON/YAML/Markdown, succeeded validation, and succeeded review validation. The root 24/24 file and validator counts reconcile."
+    },
+    {
+      "code": "AUDIT_COUNT_PROVENANCE_DRIFT",
+      "severity": "block",
+      "message": "course-summary/batch-summary report audited_units=24, but current review-plan independent audit fields are true for only 22 units; lecture-22 and lecture-23 explicitly have independent_audit=false. Only 20 units have both auditor identity and result populated."
+    },
+    {
+      "code": "REVIEW_PAGE_COUNT_DRIFT",
+      "severity": "warning",
+      "message": "actual_reviewed_pages totals 1020 versus selected_pages totals 1017; lecture-20 is 58 actual versus 55 selected."
+    },
+    {
+      "code": "PRACTICE_SEMANTIC_REVIEW_DEFERRED",
+      "severity": "deferred",
+      "message": "Existing practice-semantic issues were not evaluated as repair blockers in this report, per instruction."
+    }
+  ],
+  "release_decision": "partial_numeric_reconciliation",
+  "next_action": "Reconcile or recreate independent-audit provenance for lecture-22 and lecture-23, fill missing auditor/result provenance for lecture-08 and lecture-21, and explain lecture-20's three additional reviewed pages before accepting the root audited=24 claim."
+}

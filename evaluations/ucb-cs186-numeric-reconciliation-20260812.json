@@ -1,0 +1,83 @@
+{
+  "schema_version": "numeric-reconciliation-v1",
+  "audit_id": "ucb-cs186-numeric-reconciliation-20260812",
+  "auditor": "readonly-numeric-audit-worker",
+  "audited_at": "2026-08-12T13:41:48+08:00",
+  "offline_only": true,
+  "read_only_scope": {
+    "course_id": "ucb-cs186-spring-2026",
+    "build_id_checked": "aadb0606a7f2fd9a5920e2340bf30cc42d6522e06628a12124e8e74d1a5fd277",
+    "manifest": "data/manifests/ucb-cs186-spring-2026.yaml",
+    "root": "outputs/ucb-cs186-spring-2026/aadb0606a7f2fd9a5920e2340bf30cc42d6522e06628a12124e8e74d1a5fd277",
+    "source_chunks": "data/sources/ucb-cs186-spring-2026/<unit>/chunks.jsonl",
+    "note": "Another worker was modifying note-17/note-19 during this audit window. Their completed checkpoints were visible in the checked root, but root summaries had not yet been reconciled."
+  },
+  "root_snapshot": {
+    "requested": 20,
+    "completed": 17,
+    "validated": 17,
+    "audited": 17,
+    "failed": 1,
+    "pending": 2,
+    "completed_units": ["note-01", "note-02", "note-03", "note-04", "note-05", "note-06", "note-07", "note-08", "note-09", "note-10", "note-11", "note-12", "note-13", "note-15", "note-16", "note-18", "note-20"],
+    "validated_units": ["note-01", "note-02", "note-03", "note-04", "note-05", "note-06", "note-07", "note-08", "note-09", "note-10", "note-11", "note-12", "note-13", "note-15", "note-16", "note-18", "note-20"],
+    "audited_units": ["note-01", "note-02", "note-03", "note-04", "note-05", "note-06", "note-07", "note-08", "note-09", "note-10", "note-11", "note-12", "note-13", "note-15", "note-16", "note-18", "note-20"],
+    "failed_units": ["note-14"],
+    "pending_units": ["note-17", "note-19"],
+    "summary_timestamp": "2026-08-12T05:08:34+00:00"
+  },
+  "manifest_snapshot": {
+    "requested": 20,
+    "unit_ids": ["note-01", "note-02", "note-03", "note-04", "note-05", "note-06", "note-07", "note-08", "note-09", "note-10", "note-11", "note-12", "note-13", "note-14", "note-15", "note-16", "note-17", "note-18", "note-19", "note-20"],
+    "anchor_type": "heading",
+    "page_count": null,
+    "page_count_note": "These are Markdown note sources, not paginated PDFs; page-level counts are therefore not applicable."
+  },
+  "aggregate_reconciled_source_metrics": {
+    "manifest_chunk_count": 293,
+    "actual_chunk_count": 293,
+    "chunk_count_mismatch_units": [],
+    "final_citation_count_observed": 917,
+    "reviewed_anchor_or_page_count_observed": 183,
+    "review_count_note": "The 183 figure is the sum of checkpoint reviewed_page_count/actual_reviewed_page_count fields. For heading-anchored Markdown units it is a review-count metric, not a PDF page count."
+  },
+  "unit_reconciliation": [
+    {"unit_id":"note-01","manifest_chunks":15,"actual_chunks":15,"final_citations":48,"reviewed_count":13,"review_status":"succeeded","independent_audit":"pass","root_class":"completed"},
+    {"unit_id":"note-02","manifest_chunks":12,"actual_chunks":12,"final_citations":55,"reviewed_count":9,"review_status":"succeeded","independent_audit":"pass","root_class":"completed"},
+    {"unit_id":"note-03","manifest_chunks":21,"actual_chunks":21,"final_citations":39,"reviewed_count":0,"review_status":"succeeded","independent_audit":"pass","root_class":"completed"},
+    {"unit_id":"note-04","manifest_chunks":10,"actual_chunks":10,"final_citations":45,"reviewed_count":8,"review_status":"succeeded","independent_audit":"pass","root_class":"completed"},
+    {"unit_id":"note-05","manifest_chunks":10,"actual_chunks":10,"final_citations":35,"reviewed_count":6,"review_status":"succeeded","independent_audit":"pass","root_class":"completed"},
+    {"unit_id":"note-06","manifest_chunks":14,"actual_chunks":14,"final_citations":86,"reviewed_count":14,"review_status":"succeeded","independent_audit":"pass","root_class":"completed"},
+    {"unit_id":"note-07","manifest_chunks":10,"actual_chunks":10,"final_citations":42,"reviewed_count":7,"review_status":"succeeded","independent_audit":"pass","root_class":"completed"},
+    {"unit_id":"note-08","manifest_chunks":8,"actual_chunks":8,"final_citations":38,"reviewed_count":7,"review_status":"succeeded","independent_audit":"pass","root_class":"completed"},
+    {"unit_id":"note-09","manifest_chunks":12,"actual_chunks":12,"final_citations":41,"reviewed_count":9,"review_status":"succeeded","independent_audit":"pass","root_class":"completed"},
+    {"unit_id":"note-10","manifest_chunks":18,"actual_chunks":18,"final_citations":36,"reviewed_count":12,"review_status":"succeeded","independent_audit":"pass","root_class":"completed"},
+    {"unit_id":"note-11","manifest_chunks":9,"actual_chunks":9,"final_citations":47,"reviewed_count":8,"review_status":"succeeded","independent_audit":"pass","root_class":"completed"},
+    {"unit_id":"note-12","manifest_chunks":14,"actual_chunks":14,"final_citations":54,"reviewed_count":12,"review_status":"succeeded","independent_audit":"pass","root_class":"completed"},
+    {"unit_id":"note-13","manifest_chunks":11,"actual_chunks":11,"final_citations":36,"reviewed_count":0,"review_status":"succeeded","independent_audit":"pass","root_class":"completed"},
+    {"unit_id":"note-14","manifest_chunks":29,"actual_chunks":29,"final_citations":null,"reviewed_count":0,"review_status":null,"independent_audit":null,"root_class":"failed"},
+    {"unit_id":"note-15","manifest_chunks":23,"actual_chunks":23,"final_citations":39,"reviewed_count":22,"review_status":"succeeded","independent_audit":"pass","root_class":"completed"},
+    {"unit_id":"note-16","manifest_chunks":9,"actual_chunks":9,"final_citations":37,"reviewed_count":5,"review_status":"succeeded","independent_audit":"pass","root_class":"completed"},
+    {"unit_id":"note-17","manifest_chunks":20,"actual_chunks":20,"final_citations":74,"reviewed_count":17,"review_status":"succeeded","independent_audit":"pass","root_class":"pending_in_root_but_checkpoint_complete"},
+    {"unit_id":"note-18","manifest_chunks":22,"actual_chunks":22,"final_citations":40,"reviewed_count":13,"review_status":"succeeded","independent_audit":"pass","root_class":"completed"},
+    {"unit_id":"note-19","manifest_chunks":15,"actual_chunks":15,"final_citations":80,"reviewed_count":12,"review_status":"succeeded","independent_audit":"pass","root_class":"pending_in_root_but_checkpoint_complete"},
+    {"unit_id":"note-20","manifest_chunks":11,"actual_chunks":11,"final_citations":45,"reviewed_count":9,"review_status":"succeeded","independent_audit":"block","root_class":"completed_but_semantically_blocked"}
+  ],
+  "findings": {
+    "structure_numbers": "partial",
+    "consistent": ["manifest unit IDs exactly match the 20 requested root IDs", "all 20 source chunk files exist", "all 20 manifest chunk_count values equal actual JSONL line counts", "note-17 and note-19 now have final, validation, review-validation, and independent-audit checkpoints in the checked build"],
+    "mismatches": [
+      {"code":"root_summary_stale_after_worker_checkpoint","units":["note-17","note-19"],"details":"Root run/result/course-summary/batch-summary still report pending and exclude these units from completed/validated/audited, although their unit checkpoints are complete and independently audited pass."},
+      {"code":"false_complete_semantic_audit","unit":"note-20","details":"Root counts note-20 as completed and audited, but its current independent audit is block. This is a semantic release discrepancy, not a chunk/citation arithmetic discrepancy."},
+      {"code":"failed_unit_checkpoint_missing","unit":"note-14","details":"29 source chunks exist, but no final StudyKit, validation, review-validation, or independent audit checkpoint was present in the checked build."}
+    ],
+    "citation_numbers": "observed_from_final_studykits_only; not compared to a course-summary total because the root summary exposes no citation total",
+    "review_numbers": "observed from metrics/review-plan checkpoints; no course-summary total exists",
+    "semantic_practice_issues": {
+      "status": "deferred_and_not_fixed",
+      "note-20": "independent audit block; practice semantic issue remains recorded by the auditor",
+      "scope_boundary": "This report does not re-audit or repair practice semantics for other units; it only records the current audit result while checking numeric structure."
+    }
+  },
+  "conclusion": "BLOCKED_FOR_NUMERIC_RECONCILIATION_RELEASE: source chunk arithmetic is internally consistent (293/293 across 20 units), but root summaries are stale for note-17/note-19 and falsely count note-20 as complete despite an independent-audit block. Reconcile the root after worker handoff, and retain note-20 blocked; do not treat this report as authorization to modify unit content."
+}

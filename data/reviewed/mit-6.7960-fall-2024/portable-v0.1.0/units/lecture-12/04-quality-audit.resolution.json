@@ -1,9 +1,0 @@
-{
-  "unit_id": "lecture-12",
-  "outcome": "accepted_with_documented_limitations",
-  "resolved_issue_ids": [],
-  "unresolved_warning_ids": ["w1", "w2"],
-  "changes": [],
-  "note": "候选以定性距离关系和数据域限定表述保留来源保真，不作猜测性公式扩写。",
-  "semantic_reaudit_performed": false
-}

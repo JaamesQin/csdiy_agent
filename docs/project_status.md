@@ -1,6 +1,6 @@
 # CoursePilot 全局进度
 
-更新时间：2026-08-10
+更新时间：2026-08-20
 
 状态口径：
 
@@ -16,9 +16,36 @@
 生成 Content 和 Practice，执行一次独立 Audit，并确定性输出
 StudyKit JSON/YAML/Markdown。
 
-本地账号、会话安全和可信 subject 学习画像已经落地，产品运行时也已加入意图路由、
-能力帮助、主动学习画像和多语言静态代码辅导。尚未完成的是用户资料接入、MaterialSet 权限、
-在线 SourceChunk 检索、材料答疑、完整 LearnerState、清小搭生产部署和真实用户验收。
+本地账号、会话安全和可信 subject 学习画像已经落地，产品运行时也已加入有界 TaskPlan、
+能力帮助、主动学习画像、全目录分级课程导航、golden StudyKit 查询/材料/概念/练习能力
+和多语言静态代码辅导。公共 SourceChunk 的 permission-first FTS5 接口与材料问答 adapter
+已经实现，但当前没有 approved 在线索引；尚未完成的是用户资料接入、MaterialSet 权限、
+私有/向量检索、完整 LearnerState、清小搭生产部署和真实用户验收。
+
+同源 Web 客户端已加入安全学习者渲染：助手 Markdown、表格、代码高亮和原生 MathML
+在严格 CSP 下显示；用户/错误保持纯文本，模型 HTML、脚本、危险链接和远程图片被阻断。
+原始 Markdown 历史与 DOM 展示分离，避免 MathML 或复制按钮污染下一轮请求。
+
+离线成果现有独立 SQLite 归档层：2026-08-12 的整理保留 12 个最新 build、286 个
+StudyKit；初始保留 12,008 个文本审计工件，CS186 身份修复后为 12,010 个，并删除约 4.27 GiB 的重复 `outputs/` checkpoint/
+图片缓存。2026-08-13 已把 `data/` 迁移为私有 Git submodule；Git LFS 管理
+`archive/studykits.sqlite3` 与 anchored JSONL chunks。在线运行时使用只读 archive adapter
+和组合 Store；build/document 双 `approved` 后才读取 archive，否则回退到人工批准的 golden
+数据。2026-08-17 已批准 9 个 build、220 个 StudyKit：其中两个 build 依据仓库所有者的
+reviewed-legacy 结论保留豁免记录，CS186 则通过直接父快照的新指纹 build 修复
+`note-03`/`lecture-03` 身份漂移。其余 3 个 partial build、66 个文档继续保持
+`validated_draft`。组合 Store 当前提供 220 个在线 StudyKit。
+
+在线输入现先经过统一模型理解与有界 TaskPlan：支持自然语言内联代码、聊天平台压平围栏、中文讲次/
+页码、课程纠正、签名序号和多意图计划；确定性层只负责身份、证据和持久化校验。练习上下文已签名时，
+用户可以直接提交答案而无需重复 practice ID。真实 DeepSeek 后端 E2E 由
+`scripts/run_live_backend_e2e.py` 单独执行，离线 pytest 继续使用 fake model。
+
+当前目标无法落入专用能力或规划结构校验失败时，TaskPlan 使用 `general_assistance` 作为终端
+兜底。它读取最近最多 30 条/48,000 字符对话、confirmed 画像值、最小验签连续状态和全量安全
+课程索引；模型 prose 保持 general knowledge，所选课程 ID 经后端验证后成为独立 catalog metadata。
+个性化课程导航同时消费负向学习背景等全部 confirmed 约束，输出“现在开始/长期目标”；精确查课
+仍确定性执行。课程材料事实、代码执行和完整作业答案边界保持不变。
 
 ## 二、能力状态矩阵
 
@@ -31,18 +58,23 @@ StudyKit JSON/YAML/Markdown。
 | DeepSeek 调用可靠性 | 已完成基础机制 | 生产速率、超时和成本监控 |
 | 单次 Audit 回修 | 已完成 | 已加入字段所有权归一化、去重、ID 身份保护和依赖传播 |
 | Schema/引用/渲染 | 已完成 | 加入在线权限与检索边界检查 |
-| CourseManifest | 有 YAML manifest | 正式 Schema、Catalog 和运行时 API |
+| CourseManifest / Catalog | 已完成类型化只读 Catalog MVP | 正式 Schema、数据库和独立分类审核 |
 | MaterialManifest/MaterialSet | 待完成 | 存储、权限、过期、删除和混合授权 |
-| 检索 | 待完成 | 元数据过滤、关键词检索、可选向量检索 |
+| 私有检索数据归档 | 已完成精简快照；9 builds/220 documents approved | 其余 3/66 partial build 完成后再审批；继续接入 permission-filtered SourceChunk |
+| 检索 | 公共 permission-first FTS5 基础和运行时接线已完成 | 发布 approved 索引；实现私有 MaterialSet 权限和可选向量检索 |
 | 本地账号与会话 | 已完成安全 MVP | 邮箱、找回/修改密码和账号删除不在首版 |
-| OpenAI 兼容 API | 双身份兼容且已接入首批 Agent 路由 | 扩展检索、答疑、练习与复盘 handler |
+| Web 学习界面 | 已完成 Vite/React/TypeScript 安全富文本 MVP | 生产可观测性与更多真实设备验收 |
+| OpenAI 兼容 API | 双身份兼容且已接入九项 Agent 能力 | 扩展权限检索、私有材料与复盘 handler |
 | 主动学习画像 | 已完成账号/legacy 隔离的 SQLite MVP | 验证清小搭稳定身份并演进完整 LearnerState |
-| 能力帮助 | 已完成可发现能力目录与 `/help` | 新能力接入时同步状态与帮助内容 |
+| 能力帮助 | 已完成可发现能力目录与 `/help`；未上线能力禁止执行路由 | 新能力接入时同步状态与帮助内容 |
+| 通用学习问答 | 已完成专用能力之后的受约束兜底 | 继续进行真实后端质量与延迟评测 |
+| 画像感知课程导航 | 已接入 119 门安全索引、单次结构化排序和明确降级 | 继续扩充 registry 的官方先修数据 |
 | 代码辅导 | 已完成 Python AST + Tree-sitter 多语言静态 MVP | 接入 SourceChunk 检索；沙箱执行不属于当前范围 |
-| 材料答疑 | 待完成 | 权限过滤、检索、引用和端到端测试 |
+| StudyKit 查询/概念/练习选择 | 已完成 approved archive + golden 回退 MVP | 人工批准更多课程和端到端评测 |
+| 材料答疑/练习反馈 | 材料答疑已接公共 FTS5 adapter；无 approved 索引时按页码白名单透明降级 | 发布公共索引；扩展私有权限、练习反馈检索和生产模型评测 |
 | LearnerState/复盘 | 有账号隔离的画像事实基础 | 练习/代码证据更新、目标映射和复盘状态机 |
-| 清小搭接入 | 本地协议已验证 | 账号级文件、会话、超时和生产实测 |
-| 自动化测试 | 254 项通过 | MaterialSet 权限、检索和生产测试 |
+| 清小搭接入 | 本地协议、`sessionId` 与真实 DeepSeek 多轮已验证 | 账号级文件、超时和生产平台实测 |
+| 自动化测试 | 623 项 Python、18 项前端单元、7 项 Chrome E2E 通过；另有 27 场景真实 DeepSeek 后端 E2E 和 24 旅程新手探索 | MaterialSet 权限、检索和生产测试 |
 
 ## 三、已经完成的生成闭环
 
@@ -74,8 +106,21 @@ GenerationRequest + SourceChunks
   擅自新增或删除身份字段时由代码恢复或拒绝，保留有效字段修改。
 - PracticeFlow/StudyKit 的学习顺序强制使用 `practice_ids`，所有练习至少出现
   一次；非 practice 步骤使用空数组，review 可以重复引用。
+- 新增内容对齐的练习 checkpoint 合同：练习必须从 EvidencePlan/Content 的具体
+  requirement、concept 或 opportunity 派生，给出可求解设置、可观察结果和相关引用；
+  独立审计必须逐题检查。六课最终 repair builds 已按此合同完成逐题审计。
+- selective repair 仅离线可用：每个新 build 保留直接父 snapshot，rich independent audit
+  必须绑定当前 build+repair plan，并对当前 practice IDs 做无缺失、无重复、无 stale ID 的
+  精确逐题覆盖。任何 mismatch 都阻止 completion/false-complete；deterministic Schema pass
+  不能替代语义审查。六课 repair 已达到 161/161 validated、161/161 audited 和
+  6/6 build succeeded；五课未关闭课程级视觉复核，故 catalog 仍非全局 complete。
 
 ## 四、生成质量与回归状态
+
+2026-08-12 六课集中 practice repair 已闭环 161 个 source-supported units，当前
+residual gate units、failed 和 pending 均为 0。最终 build IDs 与逐题审计口径见
+`evaluations/csdiy-six-course-practice-repair-round2-progress.md`。这表示 practice repair
+build 成功，不替代尚未完成的课程级 visual-review gate。
 
 Prompt 固定为 `studykit-staged-v0.8-010`，当前 Pipeline 为
 `studykit-pipeline-v0.11-019`，运行版本为 `21`。
@@ -95,21 +140,21 @@ Prompt 固定为 `studykit-staged-v0.8-010`，当前 Pipeline 为
 
 总结果为 `8/8`，平均人工质量分为 `91/100`。回归耗时约 26 分 42 秒，
 每讲学习时间均为 180 分钟，未解决 blocker 为 0；8 个 warning 全部由对应阶段
-模型修复，空响应重试 24 次后全部成功。详细机器摘要见
-`data/regression/studykit-v21-lectures-01-08/regression-summary.json`。
+  模型修复，空响应重试 24 次后全部成功。详细机器摘要属于未纳入精简 submodule 的
+  历史本地 regression 数据。
 
 2026-08-10 另完成一次 host-authored portable 全课程构建，覆盖官方可用的
 Lecture 01–21、23、24 共 23 讲。23/23 均通过 portable schema、引用锚和渲染验证，
-并经 Lecture 09、18、21 随机语义抽查后批准待入库。紧凑审核包位于
-`data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/`；它尚未接入在线 Catalog，
-也不能直接混入采用另一 Schema 的 `data/golden/`。
+并经 Lecture 09、18、21 随机语义抽查。reviewed 重复包未纳入精简 submodule；正式
+archive 记录在 2026-08-17 经仓库所有者明确复核后，以记录 waived gates 的
+reviewed-legacy 方式批准上线，且不直接混入采用另一 Schema 的 `data/golden/`。
 
 同日从协作者离线快照恢复并复核 MIT 6.S081 Fall 2021 的完整 v0.2 构建。
 Lecture 01–24 共 24/24 讲重新通过 artifact、review 与输出一致性校验，随机抽查
-Lecture 07、15、17 的来源页、主张、练习和限制也通过。紧凑包本地位于
-`data/reviewed/mit-6.s081-fall-2021/portable-v0.2.0/`。用户已确认派生 StudyKit
-可以上传，因此该紧凑包进入 reviewed 目录；raw、chunks、页图和完整作者化 build
-继续留在 Git 外。
+Lecture 07、15、17 的来源页、主张、练习和限制也通过。reviewed 重复包以及 raw、
+chunks、页图和完整作者化 build 继续留在精简远端之外；正式 archive 记录在
+2026-08-17 经仓库所有者明确复核后，以 reviewed-legacy 方式批准。未来 legacy 记录仍不会
+仅凭离线结果自动成为 online-ready。
 
 本轮完成的流程改进包括：
 
@@ -124,7 +169,7 @@ Lecture 07、15、17 的来源页、主张、练习和限制也通过。紧凑�
 - 标题优先使用 manifest/unit 的可信标题，内部 `EvidencePlan` 等标签不进入
   学习者文本；外部回归 8 讲均未发现内部标签泄漏。
 
-这些修复、账号安全链路及新增在线运行时已有 254 项自动化测试覆盖，并已通过 v21 新鲜外部全量回归；由于设计
+这些修复、账号安全链路及新增在线运行时已有 623 项 Python 自动化测试覆盖，并已通过 v21 新鲜外部全量回归；由于设计
 上不进行二次语义 Audit，`repairs_applied_unverified` 结果仍必须人工复核。
 
 仍需关注的语义问题：
@@ -138,12 +183,11 @@ Lecture 07、15、17 的来源页、主张、练习和限制也通过。紧凑�
 
 ## 五、下一阶段工作
 
-1. 冻结 Manifest、MaterialSet、完整 LearnerState 和 TaskPlan 的最小接口；
-   复用已经可信的 `account:<uuid>` 身份。
-2. 完成公共课程和私有用户资料的统一解析、存储、授权与删除。
-3. 建立带 owner/session/course/version/unit 过滤的检索层。
-4. 在已完成的画像、路由和代码辅导上接入 StudyKit 查询、材料答疑、
-   练习反馈、复盘和后台生成状态。
+1. 为 archive 文档完成独立人工批准流程，并冻结 MaterialSet、完整 LearnerState 和
+   TaskPlan 的最小接口；复用可信 `account:<uuid>` 身份。
+2. 为现有公共 FTS5 检索发布 approved SourceChunk 索引并完成质量验收。
+3. 完成私有用户资料的统一解析、存储、授权与删除，把现有 course/version/unit 范围扩展到 owner/session/material_set。
+4. 在材料答疑的既有 SourceChunk 路径上继续接入练习反馈、私有材料、复盘和后台生成状态。
 5. 修复 Lecture 2 离线 profile 对齐问题，核对 Lecture 8 LayerNorm 表述，
    并完成 v21 产物的人工语义复核。
 6. 实现基于用户确认证据的最小学习状态与复盘。
@@ -152,21 +196,21 @@ Lecture 07、15、17 的来源页、主张、练习和限制也通过。紧凑�
 
 ## 六、并行开发建议
 
-在核心 Schema 和接口冻结后，可分为四条并行工作流：
+在当前只读接口基础上，可分为四条并行工作流：
 
 - Agent/API：意图路由、上下文管理和对话编排；
 - Material/Retrieval：资料输入、MaterialSet、权限和检索；
 - Quality/Evaluation：生成回归、语义审核、离线评测和红队；
 - Platform/Product：清小搭实测、部署、前端、Demo 和用户试用。
 
-MaterialSet 与检索接口是 Agent 编排的主要前置依赖；端到端和平台验收必须在
+MaterialSet 与检索接口是下一阶段 Agent 扩展的主要前置依赖；端到端和平台验收必须在
 各工作流集成后串行关闭。
 
 当前在线 Agent 的约束：StudyKitGenerator 只在离线流程运行；Cookie 会话只使用
 服务端验证的 `account:<uuid>`，API Key 请求的 `user` 只映射为 `legacy:<user>`、
 不能替代生产授权；能力总览只展示已经上线的能力；代码辅导始终为静态分析并返回
-`ran_code=false`，语言解析不调用编译器或执行用户代码；课程页码只来自
-Lecture 2/8 人工批准的黄金 StudyKit。
+`ran_code=false`，语言解析不调用编译器或执行用户代码；课程目录事实来自已校验 registry/
+Manifest，课程页码只来自 Lecture 2/8 人工批准的黄金 StudyKit。练习答案不持久化。
 
 ## 七、下一阶段完成定义
 
@@ -177,3 +221,13 @@ Lecture 2/8 人工批准的黄金 StudyKit。
 - v0.11-019/v21 完成新鲜 Lecture 1–8 回归并达到 8/8，记录每讲修复轨迹和质量评分；
 - 模板课程与未知私有资料各完成一次端到端验收；
 - 清小搭生产能力、安全边界和资料删除策略有实测记录。
+# Online Agent P0–P2 status (2026-08-17)
+
+See [`online-agent-p0-p2.md`](online-agent-p0-p2.md) for the enabled contracts and explicit deferred
+boundaries. This status does not claim private retrieval, vector retrieval, or globally complete
+StudyKit repair.
+
+Online practice selection now automatically clarifies approved questions with one model call and
+falls back to the original on any contract violation. TaskPlan is separate; concrete capabilities are
+limited to one online model call, while independent semantic review remains an offline authoring gate.
+Context-token v2 adds only a presentation kind/digest and continues to accept v1.

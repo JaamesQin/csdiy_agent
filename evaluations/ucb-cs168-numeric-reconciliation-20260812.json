@@ -1,0 +1,111 @@
+{
+  "schema_version": "numeric-reconciliation-v1",
+  "audit_id": "ucb-cs168-numeric-reconciliation-20260812",
+  "audited_at": "2026-08-12",
+  "auditor_role": "read_only_numeric_audit_worker",
+  "offline_only": true,
+  "provider_or_model_called": false,
+  "write_scope": [
+    "evaluations/ucb-cs168-numeric-reconciliation-20260812.json"
+  ],
+  "course_id": "ucb-cs168-spring-2026",
+  "build_id": "483da4bf0bedfb48ae15e51dbdd31cbbf5490d11945be2ebefad8fa8cbf904e6",
+  "build_root": "outputs/ucb-cs168-spring-2026/483da4bf0bedfb48ae15e51dbdd31cbbf5490d11945be2ebefad8fa8cbf904e6",
+  "manifest_path": "data/manifests/ucb-cs168-spring-2026.yaml",
+  "method": {
+    "canonical_chunk_counts": "manifest source chunk_count, chunks.jsonl line count, and validation.json chunk_count",
+    "canonical_citation_counts": "per-unit validation.json citation_count",
+    "canonical_review_counts": "review-plan.json actual_reviewed_pages and selected independent-audit evidence",
+    "root_counts": "run.json, batch-summary.json, course-summary.json, result.json",
+    "deterministic_script": "scripts/audit_csdiy_registry.py --registry data/catalog/csdiy-course-registry.yaml --repository-root . --report /tmp/cs168-registry-audit-20260812.json"
+  },
+  "root_summary": {
+    "status": "partial",
+    "requested": 26,
+    "completed": 25,
+    "validated": 26,
+    "audited": 25,
+    "failed": 1,
+    "pending": 0,
+    "completed_ids": [
+      "lecture-01", "lecture-02", "lecture-03", "lecture-04", "lecture-05", "lecture-06", "lecture-07", "lecture-08", "lecture-09", "lecture-10", "lecture-11", "lecture-12", "lecture-13", "lecture-14", "lecture-15", "lecture-17", "lecture-18", "lecture-19", "lecture-20", "lecture-21", "lecture-22", "lecture-23", "lecture-24", "lecture-25", "lecture-26"
+    ],
+    "validated_ids": [
+      "lecture-01", "lecture-02", "lecture-03", "lecture-04", "lecture-05", "lecture-06", "lecture-07", "lecture-08", "lecture-09", "lecture-10", "lecture-11", "lecture-12", "lecture-13", "lecture-14", "lecture-15", "lecture-16", "lecture-17", "lecture-18", "lecture-19", "lecture-20", "lecture-21", "lecture-22", "lecture-23", "lecture-24", "lecture-25", "lecture-26"
+    ],
+    "audited_ids": [
+      "lecture-01", "lecture-02", "lecture-03", "lecture-04", "lecture-05", "lecture-06", "lecture-07", "lecture-08", "lecture-09", "lecture-10", "lecture-11", "lecture-12", "lecture-13", "lecture-14", "lecture-15", "lecture-17", "lecture-18", "lecture-19", "lecture-20", "lecture-21", "lecture-22", "lecture-23", "lecture-24", "lecture-25", "lecture-26"
+    ],
+    "failed_ids": ["lecture-16"],
+    "pending_ids": []
+  },
+  "aggregate_numbers": {
+    "manifest_unit_count": 26,
+    "manifest_source_chunks": 1890,
+    "manifest_source_pages": 1890,
+    "chunk_file_lines": 1890,
+    "validation_chunk_count": 1890,
+    "validation_citation_count": 2581,
+    "review_plan_actual_reviewed_page_count": 885,
+    "selected_independent_audit_actual_reviewed_page_count": 902,
+    "supplemental_textbook_chunks_excluded_from_lecture_total": 605,
+    "manifest_warning_chunks": 512,
+    "manifest_empty_chunks": 4
+  },
+  "consistency": {
+    "root_summary_counts_match_run_batch_result": true,
+    "manifest_unit_ids_match_root_requested_ids": true,
+    "manifest_chunk_counts_match_chunk_files_all_26": true,
+    "manifest_chunk_counts_match_validation_all_26": true,
+    "manifest_page_counts_match_chunk_files_all_26": true,
+    "candidate_and_final_validation_counts_match_all_available_units": true,
+    "review_plan_page_count_matches_metrics_all_26": true,
+    "review_plan_page_count_matches_selected_audit": false,
+    "conclusion": "partial_numeric_drift"
+  },
+  "unit_records": [
+    {"unit_id":"lecture-01","chunks":46,"citations":69,"review_pages":27,"audit_pages":27,"practice_count":5,"audit_result":"pass"},
+    {"unit_id":"lecture-02","chunks":58,"citations":96,"review_pages":29,"audit_pages":29,"practice_count":5,"audit_result":"pass"},
+    {"unit_id":"lecture-03","chunks":211,"citations":175,"review_pages":45,"audit_pages":45,"practice_count":6,"audit_result":"pass"},
+    {"unit_id":"lecture-04","chunks":98,"citations":103,"review_pages":30,"audit_pages":30,"practice_count":5,"audit_result":"pass"},
+    {"unit_id":"lecture-05","chunks":64,"citations":97,"review_pages":42,"audit_pages":42,"practice_count":5,"audit_result":"pass_with_warnings"},
+    {"unit_id":"lecture-06","chunks":115,"citations":128,"review_pages":26,"audit_pages":26,"practice_count":6,"audit_result":"pass"},
+    {"unit_id":"lecture-07","chunks":59,"citations":65,"review_pages":27,"audit_pages":27,"practice_count":5,"audit_result":"pass"},
+    {"unit_id":"lecture-08","chunks":42,"citations":71,"review_pages":28,"audit_pages":28,"practice_count":6,"audit_result":"pass"},
+    {"unit_id":"lecture-09","chunks":68,"citations":81,"review_pages":36,"audit_pages":36,"practice_count":5,"audit_result":"pass_with_warnings"},
+    {"unit_id":"lecture-10","chunks":87,"citations":69,"review_pages":51,"audit_pages":51,"practice_count":7,"audit_result":"pass_with_warnings"},
+    {"unit_id":"lecture-11","chunks":78,"citations":103,"review_pages":40,"audit_pages":40,"practice_count":5,"audit_result":"pass_with_warnings"},
+    {"unit_id":"lecture-12","chunks":32,"citations":121,"review_pages":24,"audit_pages":24,"practice_count":6,"audit_result":"pass"},
+    {"unit_id":"lecture-13","chunks":55,"citations":112,"review_pages":34,"audit_pages":34,"practice_count":5,"audit_result":"pass"},
+    {"unit_id":"lecture-14","chunks":82,"citations":66,"review_pages":36,"audit_pages":36,"practice_count":4,"audit_result":"pass"},
+    {"unit_id":"lecture-15","chunks":72,"citations":136,"review_pages":57,"audit_pages":57,"practice_count":4,"audit_result":"pass"},
+    {"unit_id":"lecture-16","chunks":50,"citations":248,"review_pages":43,"audit_pages":43,"practice_count":5,"audit_result":"block"},
+    {"unit_id":"lecture-17","chunks":69,"citations":87,"review_pages":59,"audit_pages":59,"practice_count":5,"audit_result":"pass_with_warnings"},
+    {"unit_id":"lecture-18","chunks":83,"citations":184,"review_pages":11,"audit_pages":11,"practice_count":5,"audit_result":"pass"},
+    {"unit_id":"lecture-19","chunks":55,"citations":60,"review_pages":18,"audit_pages":18,"practice_count":5,"audit_result":"pass"},
+    {"unit_id":"lecture-20","chunks":54,"citations":75,"review_pages":19,"audit_pages":19,"practice_count":5,"audit_result":"pass"},
+    {"unit_id":"lecture-21","chunks":33,"citations":62,"review_pages":14,"audit_pages":33,"practice_count":5,"audit_result":"pass","numeric_issue":"independent audit reviewed 19 more pages than review-plan"},
+    {"unit_id":"lecture-22","chunks":42,"citations":85,"review_pages":25,"audit_pages":23,"practice_count":5,"audit_result":"pass","numeric_issue":"independent audit reviewed 2 fewer pages than review-plan"},
+    {"unit_id":"lecture-23","chunks":113,"citations":104,"review_pages":37,"audit_pages":37,"practice_count":5,"audit_result":"pass_with_warnings"},
+    {"unit_id":"lecture-24","chunks":106,"citations":64,"review_pages":45,"audit_pages":45,"practice_count":6,"audit_result":"pass_with_warnings"},
+    {"unit_id":"lecture-25","chunks":61,"citations":38,"review_pages":45,"audit_pages":45,"practice_count":6,"audit_result":"pass"},
+    {"unit_id":"lecture-26","chunks":57,"citations":82,"review_pages":37,"audit_pages":37,"practice_count":6,"audit_result":"pass"}
+  ],
+  "metric_checkpoint_findings": {
+    "metrics_source_chunks_missing": 20,
+    "metrics_source_chunks_missing_units": ["lecture-04","lecture-05","lecture-06","lecture-07","lecture-08","lecture-09","lecture-10","lecture-14","lecture-15","lecture-16","lecture-17","lecture-18","lecture-19","lecture-20","lecture-21","lecture-22","lecture-23","lecture-24","lecture-25","lecture-26"],
+    "metrics_candidate_citation_count_missing": 19,
+    "metrics_reviewed_page_count_missing": 0,
+    "interpretation": "These are incomplete metrics fields, not substituted into canonical totals; populated fields agree with validation/review-plan values. They should be repaired before treating metrics as a complete aggregate source."
+  },
+  "semantic_practice_issues": {
+    "status": "deferred_and_not_scored_by_this_worker",
+    "scope_boundary": "Existing practice semantic issues are recorded separately and were neither repaired nor used to alter numeric counts.",
+    "lecture16": "Independent audit block is retained as the root failure; this report does not diagnose or repair its practice semantics."
+  },
+  "release_conclusion": {
+    "result": "partial",
+    "reason": "Numeric core counts reconcile, but audit page-count drift exists for lecture-21 and lecture-22, metrics fields are incomplete, and lecture-16 remains independently blocked.",
+    "next_action": "Reconcile lecture-21/22 audit page records and complete an independent audit repair/reaudit for lecture-16; do not treat deferred practice findings as resolved."
+  }
+}

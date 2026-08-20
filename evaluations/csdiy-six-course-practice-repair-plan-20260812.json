@@ -1,0 +1,88 @@
+{
+  "schema_version": "practice-only-repair-plan-v1",
+  "created_at": "2026-08-12",
+  "policy": {
+    "repair_scope": "confirmed practice semantic blockers only",
+    "scan_scope": "all 161 units and all 790 practice items; newly confirmed blockers may expand the repair set",
+    "unchanged_units": "reuse old build after tree hash verification",
+    "repair_stage": "03-practice-flow",
+    "max_targeted_repairs_per_stage": 1,
+    "author_self_check": true,
+    "independent_gate": "repaired units only, different auditor",
+    "condition_policy": "add missing conditions when concept remains valid; reconstruct the task when it only replays a lecture-specific example",
+    "citation_policy": "a source anchor supports the condition or concept but never replaces necessary conditions in the learner-facing prompt"
+  },
+  "scan_reconciliation": {
+    "reconciled_at": "2026-08-12",
+    "scope": "all six course builds, every manifest unit and every practice item",
+    "units_scanned": 161,
+    "practice_items_scanned": 790,
+    "initial_confirmed_blocker_items": 117,
+    "newly_confirmed_blocker_items": 1,
+    "confirmed_blocker_items_after_scan": 118,
+    "confirmed_repair_units_after_scan": 52,
+    "new_finding": "ucb-cs186-spring-2026/note-07/p3; the unit was already in the repair set, so the unit denominator remains 52 after the corrected CS168 set is used",
+    "course_results": [
+      {"course_id": "mit-6-042j-spring-2024", "units_scanned": 24, "practice_items_scanned": 71, "confirmed_blocker_items": 70, "repair_units": 24, "modified_practice_items": 70},
+      {"course_id": "ucb-cs168-spring-2026", "units_scanned": 26, "practice_items_scanned": 137, "confirmed_blocker_items": 7, "repair_units": 3, "modified_practice_items": 7},
+      {"course_id": "ucb-cs186-spring-2026", "units_scanned": 20, "practice_items_scanned": 113, "confirmed_blocker_items": 9, "repair_units": 8, "modified_practice_items": 9},
+      {"course_id": "ucb-cs188-spring-2026", "units_scanned": 28, "practice_items_scanned": 139, "confirmed_blocker_items": 18, "repair_units": 10, "modified_practice_items": 18},
+      {"course_id": "ucb-cs61a-summer-2026", "units_scanned": 28, "practice_items_scanned": 139, "confirmed_blocker_items": 1, "repair_units": 1, "modified_practice_items": 1},
+      {"course_id": "ucb-cs61c-spring-2026", "units_scanned": 35, "practice_items_scanned": 191, "confirmed_blocker_items": 13, "repair_units": 6, "modified_practice_items": 13}
+    ],
+    "interpretation": "The first course-level reports sampled many apparent passes. The six workers then scanned every item; therefore this reconciliation may expand the repair set and is not a claim that the remaining 672 items are semantically clean."
+  },
+  "independent_gate_reconciliation": {
+    "audited_at": "2026-08-12",
+    "scope": "all 52 units in the selective repair set; every practice in each such unit",
+    "units_audited": 52,
+    "units_passed": 8,
+    "units_blocked": 44,
+    "blocker_records": 129,
+    "newly_confirmed_baseline_blocker_items": 2,
+    "newly_confirmed_baseline_findings": [
+      "ucb-cs61a-summer-2026/lecture-28/p2: requested eight rows cannot be produced from the seven stated page choices",
+      "ucb-cs61a-summer-2026/lecture-28/p3: the candidate resource set is not stated in the learner-facing prompt"
+    ],
+    "release_status": "blocked",
+    "next_action": "Do not publish or mark these six builds complete. Create a separately fingerprinted second repair build only after approving a follow-up repair plan; preserve this gate and all blocked audit records."
+  },
+  "courses": [
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "baseline_build_id": "89a0616b96b49b2060735c20c2ba17616905b29c357aa0d8c4daa42f624ba485",
+      "repair_unit_ids": ["lecture-01", "lecture-02", "lecture-03", "lecture-04", "lecture-05", "lecture-06", "lecture-07", "lecture-08", "lecture-09", "lecture-10", "lecture-11", "lecture-12", "lecture-13", "lecture-14", "lecture-15", "lecture-16", "lecture-17", "lecture-18", "lecture-19", "lecture-20", "lecture-21", "lecture-22", "lecture-23", "lecture-24"],
+      "review_report": "evaluations/practice-scan-20260812/mit-6-042j-spring-2024/course-review.json"
+    },
+    {
+      "course_id": "ucb-cs168-spring-2026",
+      "baseline_build_id": "483da4bf0bedfb48ae15e51dbdd31cbbf5490d11945be2ebefad8fa8cbf904e6",
+      "repair_unit_ids": ["lecture-04", "lecture-13", "lecture-21"],
+      "review_report": "evaluations/practice-scan-20260812/ucb-cs168-spring-2026/course-review.json"
+    },
+    {
+      "course_id": "ucb-cs186-spring-2026",
+      "baseline_build_id": "aadb0606a7f2fd9a5920e2340bf30cc42d6522e06628a12124e8e74d1a5fd277",
+      "repair_unit_ids": ["note-01", "note-05", "note-06", "note-07", "note-10", "note-11", "note-15", "note-18"],
+      "review_report": "evaluations/practice-scan-20260812/ucb-cs186-spring-2026/course-review.json"
+    },
+    {
+      "course_id": "ucb-cs188-spring-2026",
+      "baseline_build_id": "443efc651cd290edbf7ebf368bb2a79fd314c3db49da3969de19dc2d13aa204f",
+      "repair_unit_ids": ["lecture-13", "lecture-14", "lecture-15", "lecture-16", "lecture-17", "lecture-19", "lecture-23", "lecture-24", "lecture-27", "lecture-28"],
+      "review_report": "evaluations/practice-scan-20260812/ucb-cs188-spring-2026/course-review.json"
+    },
+    {
+      "course_id": "ucb-cs61a-summer-2026",
+      "baseline_build_id": "db465e2135a7d4c31a27b046b9378cb8476f12dd3a9813ca5ab6df402179d966",
+      "repair_unit_ids": ["lecture-28"],
+      "review_report": "evaluations/practice-scan-20260812/ucb-cs61a-summer-2026/course-review.json"
+    },
+    {
+      "course_id": "ucb-cs61c-spring-2026",
+      "baseline_build_id": "d67ae21b12a58a3f5b08240b45cf84a18e36a192572b9c261cbf98434d77f09a",
+      "repair_unit_ids": ["lecture-07", "lecture-08", "lecture-13", "lecture-29", "lecture-33", "lecture-36"],
+      "review_report": "evaluations/practice-scan-20260812/ucb-cs61c-spring-2026/course-review.json"
+    }
+  ]
+}

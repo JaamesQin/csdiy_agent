@@ -1,0 +1,326 @@
+{
+  "stage": "01-evidence-plan",
+  "unit_id": "lecture-02",
+  "source_id": "mit-6.7960-f24-lecture-02-slides",
+  "topics": [
+    {
+      "topic": "训练目标、GD/SGD 与动量",
+      "anchors": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 11
+          }
+        }
+      ]
+    },
+    {
+      "topic": "损失地形、梯度故障与损失节点选择",
+      "anchors": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 12
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 25
+          }
+        }
+      ]
+    },
+    {
+      "topic": "计算图、向量导数与链式法则",
+      "anchors": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 26
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 35
+          }
+        }
+      ]
+    },
+    {
+      "topic": "反向传播算法、批次和线性层",
+      "anchors": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 36
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 52
+          }
+        }
+      ]
+    },
+    {
+      "topic": "DAG、参数共享和可微编程",
+      "anchors": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 53
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 70
+          }
+        }
+      ]
+    },
+    {
+      "topic": "一次完整数值反向传播",
+      "anchors": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 72
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 80
+          }
+        }
+      ]
+    }
+  ],
+  "learning_requirements": [
+    {
+      "id": "obj-1",
+      "objective": "从目标函数出发，比较全批量梯度下降、SGD、动量和梯度裁剪。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 10
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 22
+          }
+        }
+      ]
+    },
+    {
+      "id": "obj-2",
+      "objective": "识别损失地形中的局部极小值、梯度消失、零梯度和梯度爆炸，并解释它们为何阻碍优化。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 14
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 20
+          }
+        }
+      ]
+    },
+    {
+      "id": "obj-3",
+      "objective": "把多层网络表达为计算图，使用 Jacobian 链式法则说明前向传播和反向传播。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 26
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 29
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 42
+          }
+        }
+      ]
+    },
+    {
+      "id": "obj-4",
+      "objective": "推导通用层、线性层、数据批次、DAG 分支和参数共享的反向规则。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 38
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 45
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 46
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 48
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 53
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 55
+          }
+        }
+      ]
+    },
+    {
+      "id": "obj-5",
+      "objective": "区分优化模型参数与优化输入，并独立完成讲义给出的数值反向传播案例。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 61
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 66
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 72
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 80
+          }
+        }
+      ]
+    }
+  ],
+  "formula_pages": [
+    5,
+    8,
+    10,
+    22,
+    24,
+    34,
+    41,
+    45,
+    46,
+    48,
+    53,
+    55,
+    66,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80
+  ],
+  "excluded_claims": [
+    "外链网页内容",
+    "未视觉核验的公式",
+    "其他课程单元信息"
+  ]
+}

@@ -89,9 +89,11 @@ def test_from_env_defaults_to_v4_flash(
     assert model.model == "deepseek-v4-flash"
     assert model.base_url == "https://api.deepseek.com"
     assert model.reasoning_effort == "high"
-    assert model.max_empty_content_retries == 3
-    assert model.max_invalid_json_retries == 2
-    assert model.max_length_retries == 1
+    assert model.max_retries == 4
+    assert model.retry_base_delay_seconds == 1.0
+    assert model.max_empty_content_retries == 5
+    assert model.max_invalid_json_retries == 4
+    assert model.max_length_retries == 2
 
 
 def test_from_env_requires_llm_api_key(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -223,7 +225,7 @@ async def test_empty_thinking_response_retries_in_same_mode_with_reminder() -> N
     )
 
 
-async def test_empty_message_content_retry_stops_after_three_retries() -> None:
+async def test_empty_message_content_retry_stops_after_default_retries() -> None:
     payloads: list[dict[str, object]] = []
 
     def handler(request: httpx.Request) -> httpx.Response:
@@ -244,7 +246,7 @@ async def test_empty_message_content_retry_stops_after_three_retries() -> None:
             thinking_enabled=True,
         )
 
-    assert len(payloads) == 4
+    assert len(payloads) == 6
     assert payloads[0]["thinking"] == {"type": "enabled"}
     assert all(
         payload["thinking"] == {"type": "enabled"}
@@ -257,15 +259,15 @@ async def test_empty_message_content_retry_stops_after_three_retries() -> None:
         == 1
         for payload in payloads[1:]
     )
-    assert caught.value.transport_attempts == 4
-    assert len(caught.value.retry_diagnostics) == 3
+    assert caught.value.transport_attempts == 6
+    assert len(caught.value.retry_diagnostics) == 5
     assert [
         item["thinking_enabled"]
         for item in caught.value.retry_diagnostics
-    ] == [True, True, True]
+    ] == [True, True, True, True, True]
 
 
-async def test_invalid_json_retries_in_same_thinking_mode() -> None:
+async def test_invalid_json_retries_in_same_disabled_thinking_mode() -> None:
     payloads: list[dict[str, object]] = []
 
     def handler(request: httpx.Request) -> httpx.Response:
@@ -282,13 +284,13 @@ async def test_invalid_json_retries_in_same_thinking_mode() -> None:
     response = await model.generate_json(
         system_prompt="只输出 JSON。",
         user_prompt="生成测试对象。",
-        thinking_enabled=True,
+        thinking_enabled=False,
     )
 
     assert response.output == {"ok": True}
     assert len(payloads) == 2
     assert all(
-        payload["thinking"] == {"type": "enabled"} for payload in payloads
+        payload["thinking"] == {"type": "disabled"} for payload in payloads
     )
     assert payloads[1]["messages"][-1]["content"].endswith(
         INVALID_JSON_RETRY_SUFFIX

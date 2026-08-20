@@ -1,0 +1,830 @@
+{
+  "schema_version": "practice-semantic-scan-v1",
+  "course_id": "mit-6-042j-spring-2024",
+  "build_id": "89a0616b96b49b2060735c20c2ba17616905b29c357aa0d8c4daa42f624ba485",
+  "unit_ids": [
+    "lecture-13",
+    "lecture-14",
+    "lecture-15",
+    "lecture-16",
+    "lecture-17",
+    "lecture-18",
+    "lecture-19",
+    "lecture-20",
+    "lecture-21",
+    "lecture-22",
+    "lecture-23",
+    "lecture-24"
+  ],
+  "scanned_at": "2026-08-12T00:00:00+08:00",
+  "auditor_id": "luna-medium-unit-range-13-24",
+  "offline_only": true,
+  "units": [
+    {
+      "unit_id": "lecture-13",
+      "item_results": [
+        {
+          "practice_id": "p-01",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "‘给定一个小图’ supplies no vertices, edges, or start/end points, so none of the three requested sequences can be checked.",
+              "missing_condition": "A concrete graph (including vertex/edge set and any required endpoints) and an observable validity check.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-13-material@page1",
+                "mit-6-042j-spring-2024-lecture-13-material@page2"
+              ],
+              "repair_prescription": "State a new finite graph such as V and E, specify the requested start/end conditions, and ask for sequences whose repeated-edge/vertex properties can be verified."
+            }
+          ],
+          "source_anchors": []
+        },
+        {
+          "practice_id": "p-02",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "The learner must design the entire graph and choose the edge change; there is no determinate before/after degree or Euler result.",
+              "missing_condition": "Concrete connected graph, changed edge, and the exact Euler-tour/trail judgment to verify.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-13-material@page4",
+                "mit-6-042j-spring-2024-lecture-13-material@page5"
+              ],
+              "repair_prescription": "Give V,E and the edge insertion/deletion, then require the before/after degree table, connectivity check, and a yes/no Euler classification."
+            }
+          ],
+          "source_anchors": []
+        },
+        {
+          "practice_id": "p-03",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "underspecified_setting",
+              "reason": "‘a tree’ and ‘the edge-count formula’ do not specify the induction domain/base case; the n versus n+1 ambiguity is left for the learner to resolve.",
+              "missing_condition": "Explicit statement P(n): every tree with n vertices has n−1 edges, a valid base case, and the exact leaf-deletion transition.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-13-material@page7",
+                "mit-6-042j-spring-2024-lecture-13-material@page8"
+              ],
+              "repair_prescription": "State P(n), fix n≥2 and the base case, and ask the learner to show that deleting one leaf changes n,e to n−1,e−1 before applying the induction hypothesis."
+            }
+          ],
+          "source_anchors": []
+        }
+      ],
+      "counts": {
+        "total": 3,
+        "pass": 0,
+        "needs_repair": 3,
+        "fail": 0,
+        "blockers": 3
+      }
+    },
+    {
+      "unit_id": "lecture-14",
+      "item_results": [
+        {
+          "practice_id": "p1",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "It asks the learner to construct the entire directed graph and changed condition; no reachability instance or determinate conclusion is supplied.",
+              "missing_condition": "Concrete vertices, directed edges, source/target, and one named edge/condition change.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-14-material@page1",
+                "mit-6-042j-spring-2024-lecture-14-material@page2",
+                "mit-6-042j-spring-2024-lecture-14-material@page3",
+                "mit-6-042j-spring-2024-lecture-14-material@page4"
+              ],
+              "repair_prescription": "Provide a finite directed graph and source/target pair, require the reachability steps, then specify one edge reversal/removal and the exact changed conclusion."
+            }
+          ],
+          "source_anchors": []
+        },
+        {
+          "practice_id": "p2",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "The strong-connectivity/condensation setting and counterfactual are wholly learner-created, so the task has no fixed answer path.",
+              "missing_condition": "A concrete directed graph and the SCC relation or edge change to test.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-14-material@page4",
+                "mit-6-042j-spring-2024-lecture-14-material@page5",
+                "mit-6-042j-spring-2024-lecture-14-material@page6",
+                "mit-6-042j-spring-2024-lecture-14-material@page7"
+              ],
+              "repair_prescription": "List the directed edges, ask for SCCs and the resulting condensation edges, then remove/add one specified edge and ask which SCC relation changes."
+            }
+          ],
+          "source_anchors": []
+        },
+        {
+          "practice_id": "p3",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "No DAG, partial order, or precedence constraints are supplied; the learner must invent the topological-order problem.",
+              "missing_condition": "Concrete vertices and directed precedence edges, plus the output order and validity test.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-14-material@page7",
+                "mit-6-042j-spring-2024-lecture-14-material@page8",
+                "mit-6-042j-spring-2024-lecture-14-material@page9"
+              ],
+              "repair_prescription": "Give a finite DAG and ask for one topological ordering, with a specified edge addition that creates or does not create a cycle and a checkable conclusion."
+            }
+          ],
+          "source_anchors": []
+        },
+        {
+          "practice_id": "p4",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "The scheduling instance, task durations, precedence graph, and processor assumptions are absent; critical-path output is therefore indeterminate.",
+              "missing_condition": "Named tasks, durations, precedence edges, number of parallel processors, and the requested makespan/critical path.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-14-material@page8",
+                "mit-6-042j-spring-2024-lecture-14-material@page10",
+                "mit-6-042j-spring-2024-lecture-14-material@page11"
+              ],
+              "repair_prescription": "Specify the task DAG, durations, and processor model, then ask for earliest finishes, a critical path, and the result after one stated duration or precedence change."
+            }
+          ],
+          "source_anchors": []
+        }
+      ],
+      "counts": {
+        "total": 4,
+        "pass": 0,
+        "needs_repair": 4,
+        "fail": 0,
+        "blockers": 4
+      }
+    },
+    {
+      "unit_id": "lecture-15",
+      "item_results": [
+        {
+          "practice_id": "practice-1",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "‘构造一个小例子’ leaves the relation/function domain, mapping, and proposition to demonstrate unspecified.",
+              "missing_condition": "Concrete finite sets/relation or function, required property, and a named changed assumption.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-15-material@page1",
+                "mit-6-042j-spring-2024-lecture-15-material@page2",
+                "mit-6-042j-spring-2024-lecture-15-material@page3"
+              ],
+              "repair_prescription": "Give finite sets and a relation/function table, ask for one specified property, and state exactly which assumption is changed and what result to test."
+            }
+          ],
+          "source_anchors": []
+        },
+        {
+          "practice_id": "practice-2",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "No underlying set, relation, or equivalence condition is supplied; the learner is asked to invent the example and counterfactual.",
+              "missing_condition": "Concrete relation on a finite set and the exact equivalence-class output to compute.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-15-material@page3"
+              ],
+              "repair_prescription": "Specify a relation table or formula on a named finite set, ask whether it is reflexive/symmetric/transitive and list its classes, then alter one stated property."
+            }
+          ],
+          "source_anchors": []
+        },
+        {
+          "practice_id": "practice-3",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "No poset elements or order relation are given, so comparability and the boundary case cannot be evaluated.",
+              "missing_condition": "Finite partially ordered set, explicit order pairs or rule, and named pair(s) to classify.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-15-material@page4"
+              ],
+              "repair_prescription": "Provide a finite poset and selected pairs, ask which are comparable and why, then add/remove one relation while preserving or violating the stated order property."
+            }
+          ],
+          "source_anchors": []
+        }
+      ],
+      "counts": {
+        "total": 3,
+        "pass": 0,
+        "needs_repair": 3,
+        "fail": 0,
+        "blockers": 3
+      }
+    },
+    {
+      "unit_id": "lecture-16",
+      "item_results": [
+        {
+          "practice_id": "practice-1",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "The selection process and category sizes are not supplied, so the multiplication-rule result is not determinate.",
+              "missing_condition": "Concrete sequential choices and the number of options at each step.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-16-material@page1",
+                "mit-6-042j-spring-2024-lecture-16-material@page2"
+              ],
+              "repair_prescription": "State the finite choices and whether later choices depend on earlier ones, then ask for the product and an observable count check."
+            }
+          ],
+          "source_anchors": []
+        },
+        {
+          "practice_id": "practice-2",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "The learner must choose the bijection/counting problem and the altered assumption; no specific conclusion can be verified.",
+              "missing_condition": "Concrete finite sets or poker-counting objects, bijection, and one explicitly changed condition.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-16-material@page3",
+                "mit-6-042j-spring-2024-lecture-16-material@page5"
+              ],
+              "repair_prescription": "Give two finite sets or a specified hand-counting event, state the proposed map and the single changed condition, and require the resulting count or counterexample."
+            }
+          ],
+          "source_anchors": []
+        }
+      ],
+      "counts": {
+        "total": 2,
+        "pass": 0,
+        "needs_repair": 2,
+        "fail": 0,
+        "blockers": 2
+      }
+    },
+    {
+      "unit_id": "lecture-17",
+      "item_results": [
+        {
+          "practice_id": "p-01",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "The three sets and their overlaps are absent, so even the inclusion–exclusion terms cannot be instantiated.",
+              "missing_condition": "Named finite universe and three sets, with enough membership/cardinality data to compute the union.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-17-material@page1",
+                "mit-6-042j-spring-2024-lecture-17-material@page2"
+              ],
+              "repair_prescription": "Provide three explicit sets or their Venn-region/cardinality table and ask for the formula and numerical union count."
+            }
+          ],
+          "source_anchors": []
+        },
+        {
+          "practice_id": "p-02",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "It asks the learner to design the guarantee problem and box mapping; no objects, boxes, or target collision are fixed.",
+              "missing_condition": "A concrete number of boxes and extraction process with the desired repeated-box conclusion.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-17-material@page3"
+              ],
+              "repair_prescription": "Specify n boxes, allowed outcomes, and n+1 draws, then ask for the pigeonhole guarantee and a worst-case sequence."
+            }
+          ],
+          "source_anchors": []
+        },
+        {
+          "practice_id": "p-03",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "underspecified_setting",
+              "reason": "‘a small n binomial identity’ does not identify which identity or the counted set; n=3 alone does not make the requested proof determinate.",
+              "missing_condition": "A named identity, finite object family, and two explicit counting partitions.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-17-material@page4",
+                "mit-6-042j-spring-2024-lecture-17-material@page5"
+              ],
+              "repair_prescription": "State one identity such as the n=3 instance of the binomial theorem, define the objects being counted, and require both counts and the numerical check."
+            }
+          ],
+          "source_anchors": []
+        }
+      ],
+      "counts": {
+        "total": 3,
+        "pass": 0,
+        "needs_repair": 3,
+        "fail": 0,
+        "blockers": 3
+      }
+    },
+    {
+      "unit_id": "lecture-18",
+      "item_results": [
+        {
+          "practice_id": "p1",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "No outcomes, branching probabilities, or experiment stages are provided; the learner must invent the sample space and tree.",
+              "missing_condition": "Concrete finite experiment, branch probabilities, and requested event/result.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-18-material@page1",
+                "mit-6-042j-spring-2024-lecture-18-material@page2",
+                "mit-6-042j-spring-2024-lecture-18-material@page3",
+                "mit-6-042j-spring-2024-lecture-18-material@page4",
+                "mit-6-042j-spring-2024-lecture-18-material@page5",
+                "mit-6-042j-spring-2024-lecture-18-material@page6"
+              ],
+              "repair_prescription": "State the experiment and probabilities, require the complete sample space/tree and one event probability, then specify the branch change to analyze."
+            }
+          ],
+          "source_anchors": []
+        },
+        {
+          "practice_id": "p2",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "The event space and probability measure are unspecified, so no probability calculation or changed assumption is checkable.",
+              "missing_condition": "Named sample space, event(s), probabilities, and one explicit alteration.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-18-material@page7"
+              ],
+              "repair_prescription": "Give a finite sample space with probabilities and events, ask for the stated probability, then change one listed probability or independence condition."
+            }
+          ],
+          "source_anchors": []
+        },
+        {
+          "practice_id": "p3",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "No die faces, pairwise win probabilities, or comparison order are given; a non-transitive-dice claim cannot be tested.",
+              "missing_condition": "Explicit dice outcome distributions and the directed comparison relation to calculate.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-18-material@page8",
+                "mit-6-042j-spring-2024-lecture-18-material@page9",
+                "mit-6-042j-spring-2024-lecture-18-material@page10"
+              ],
+              "repair_prescription": "List the finite faces/probabilities for each die, ask for the relevant win probabilities and cycle, then change one face and recompute the named comparison."
+            }
+          ],
+          "source_anchors": []
+        },
+        {
+          "practice_id": "p4",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "The repeated-trial experiment, success probability, and target count are absent, so neither the count nor boundary consequence is determinate.",
+              "missing_condition": "Number of trials, outcome probabilities/independence, and exact count or event to evaluate.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-18-material@page11"
+              ],
+              "repair_prescription": "Specify n, p, independence, and the event/count, then ask for the probability or count and one stated parameter change."
+            }
+          ],
+          "source_anchors": []
+        }
+      ],
+      "counts": {
+        "total": 4,
+        "pass": 0,
+        "needs_repair": 4,
+        "fail": 0,
+        "blockers": 4
+      }
+    },
+    {
+      "unit_id": "lecture-19",
+      "item_results": [
+        {
+          "practice_id": "practice-1",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "No events, probabilities, conditioning event, or numerical data are supplied for conditional probability.",
+              "missing_condition": "Concrete finite sample space/probability table and named conditional probability.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-19-material@page1",
+                "mit-6-042j-spring-2024-lecture-19-material@page2",
+                "mit-6-042j-spring-2024-lecture-19-material@page3"
+              ],
+              "repair_prescription": "Provide a probability table and events A,B with P(B)>0, ask for P(A|B), and state the exact changed assumption."
+            }
+          ],
+          "source_anchors": []
+        },
+        {
+          "practice_id": "practice-2",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "The partition, conditional probabilities, and target posterior are not specified; the learner must create the entire Bayes example.",
+              "missing_condition": "Named partition events, priors, likelihoods, and target event.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-19-material@page4",
+                "mit-6-042j-spring-2024-lecture-19-material@page5"
+              ],
+              "repair_prescription": "Give a finite partition with priors and likelihoods, ask for one posterior using total probability/Bayes, then alter one listed likelihood."
+            }
+          ],
+          "source_anchors": []
+        },
+        {
+          "practice_id": "practice-3",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "No two groups, outcomes, or aggregate and stratified rates are provided, so Simpson reversal is not observable.",
+              "missing_condition": "A concrete 2×2-or-more contingency table and the aggregation comparison to make.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-19-material@page6",
+                "mit-6-042j-spring-2024-lecture-19-material@page7"
+              ],
+              "repair_prescription": "Supply the stratified counts, ask for each conditional rate and the aggregate rate, then state which one count changes and whether the reversal remains."
+            }
+          ],
+          "source_anchors": []
+        }
+      ],
+      "counts": {
+        "total": 3,
+        "pass": 0,
+        "needs_repair": 3,
+        "fail": 0,
+        "blockers": 3
+      }
+    },
+    {
+      "unit_id": "lecture-20",
+      "item_results": [
+        {
+          "practice_id": "practice-1",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "No sample space, events, or conditional event is supplied, so independence cannot be calculated.",
+              "missing_condition": "Concrete event probabilities/joint distribution and the independence criterion to test.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-20-material@page1",
+                "mit-6-042j-spring-2024-lecture-20-material@page2"
+              ],
+              "repair_prescription": "Give a finite probability table for A,B (and a conditional event if needed), then ask for the joint-versus-product check and one explicit condition change."
+            }
+          ],
+          "source_anchors": []
+        },
+        {
+          "practice_id": "practice-2",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "The random variables/events and changed assumption are not instantiated; a pairwise-versus-mutual independence conclusion is unavailable.",
+              "missing_condition": "Concrete joint distribution for at least three events/variables and one named independence assumption to remove.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-20-material@page3",
+                "mit-6-042j-spring-2024-lecture-20-material@page5"
+              ],
+              "repair_prescription": "Provide a three-variable probability table or explicit construction, ask which independence levels hold, and alter one specified joint probability."
+            }
+          ],
+          "source_anchors": []
+        }
+      ],
+      "counts": {
+        "total": 2,
+        "pass": 0,
+        "needs_repair": 2,
+        "fail": 0,
+        "blockers": 2
+      }
+    },
+    {
+      "unit_id": "lecture-21",
+      "item_results": [
+        {
+          "practice_id": "p-01",
+          "status": "pass",
+          "blockers": [],
+          "rationale": "The three-coin experiment supplies the finite sample space; defining a count and indicator, an event, and its probability has a direct observable answer and tests transferable random-variable notation.",
+          "source_anchors": [
+            "mit-6-042j-spring-2024-lecture-21-material@page1"
+          ]
+        },
+        {
+          "practice_id": "p-02",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "‘two self-defined discrete random variables’ leaves the probability model and values entirely to the learner, so the requested failure pair is not fixed.",
+              "missing_condition": "Concrete sample space/joint probability table and named variables with finite values.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-21-material@page2"
+              ],
+              "repair_prescription": "Give a finite joint table for X,Y, ask the learner to test a specified pair (x,y) against P(X=x)P(Y=y), and report the conclusion."
+            }
+          ],
+          "source_anchors": []
+        },
+        {
+          "practice_id": "p-03",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "underspecified_setting",
+              "reason": "The symbolic binomial structure is answerable, but the required ‘one small n,k numerical check’ leaves n and k unspecified.",
+              "missing_condition": "Concrete values such as n=4,k=2 and the success probability p (or an explicit instruction that the answer remains symbolic).",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-21-material@page5"
+              ],
+              "repair_prescription": "Set n and k for the numerical check, state independent Bernoulli success probability p, and require both the general expression and the evaluated check."
+            }
+          ],
+          "source_anchors": []
+        }
+      ],
+      "counts": {
+        "total": 3,
+        "pass": 1,
+        "needs_repair": 2,
+        "fail": 0,
+        "blockers": 2
+      }
+    },
+    {
+      "unit_id": "lecture-22",
+      "item_results": [
+        {
+          "practice_id": "p1",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "No random variable, distribution, or expectation target is supplied; the entire example and boundary change are learner-invented.",
+              "missing_condition": "Concrete finite random variable/distribution and a named expectation to compute.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-22-material@page1",
+                "mit-6-042j-spring-2024-lecture-22-material@page2"
+              ],
+              "repair_prescription": "Give a distribution table or finite experiment, ask for E[X] and one explicitly changed probability, and require the recomputed result."
+            }
+          ],
+          "source_anchors": []
+        },
+        {
+          "practice_id": "p2",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "No event or indicator variable is specified, so the distribution rewrite has no concrete output.",
+              "missing_condition": "Named event over a supplied probability space and the indicator/distribution quantity to derive.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-22-material@page2",
+                "mit-6-042j-spring-2024-lecture-22-material@page3",
+                "mit-6-042j-spring-2024-lecture-22-material@page4"
+              ],
+              "repair_prescription": "Provide a finite event and its probability, define the indicator, and ask for its PMF/expectation before and after one stated event-probability change."
+            }
+          ],
+          "source_anchors": []
+        },
+        {
+          "practice_id": "p3",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "No finite-support random variable or tail range is supplied, so the tail-sum identity and boundary change cannot be checked.",
+              "missing_condition": "Concrete nonnegative integer-valued variable and finite/infinite support convention.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-22-material@page4",
+                "mit-6-042j-spring-2024-lecture-22-material@page5"
+              ],
+              "repair_prescription": "State the PMF and support, ask for E[X] both directly and by the specified tail sum, and name the support change to analyze."
+            }
+          ],
+          "source_anchors": []
+        },
+        {
+          "practice_id": "p4",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "The variables and coefficients needed for linearity are absent, and the requested changed condition is unspecified.",
+              "missing_condition": "Concrete X,Y (or a finite sum), coefficients, distributions, and a named modification.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-22-material@page6",
+                "mit-6-042j-spring-2024-lecture-22-material@page7",
+                "mit-6-042j-spring-2024-lecture-22-material@page8"
+              ],
+              "repair_prescription": "Provide a finite joint model and expression such as E[2X−Y], then ask for the value and the result after changing one distribution; do not imply independence is required for linearity."
+            }
+          ],
+          "source_anchors": []
+        }
+      ],
+      "counts": {
+        "total": 4,
+        "pass": 0,
+        "needs_repair": 4,
+        "fail": 0,
+        "blockers": 4
+      }
+    },
+    {
+      "unit_id": "lecture-23",
+      "item_results": [
+        {
+          "practice_id": "practice-1",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "No event indicators, probabilities, or target expectation are supplied; the learner must invent the complete example.",
+              "missing_condition": "Concrete finite probability space and named indicator variables/events.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-23-material@page1",
+                "mit-6-042j-spring-2024-lecture-23-material@page2",
+                "mit-6-042j-spring-2024-lecture-23-material@page3"
+              ],
+              "repair_prescription": "Give a finite experiment and events, ask for the indicator sum and its expectation, then specify one event-probability change."
+            }
+          ],
+          "source_anchors": []
+        },
+        {
+          "practice_id": "practice-2",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "No events or joint distribution are provided, so the product calculation and altered-independence conclusion are indeterminate.",
+              "missing_condition": "Concrete events/variables with joint and marginal probabilities.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-23-material@page4",
+                "mit-6-042j-spring-2024-lecture-23-material@page5",
+                "mit-6-042j-spring-2024-lecture-23-material@page7",
+                "mit-6-042j-spring-2024-lecture-23-material@page8"
+              ],
+              "repair_prescription": "Supply a finite joint table, ask for the relevant product expectation, and explicitly change one independence relation before recomputing."
+            }
+          ],
+          "source_anchors": []
+        },
+        {
+          "practice_id": "practice-3",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "No variables, independence assumptions, or product target are stated; the learner is asked to create the whole multiplicative-expectation case.",
+              "missing_condition": "Concrete random variables, joint model, and exact product whose expectation is requested.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-23-material@page8",
+                "mit-6-042j-spring-2024-lecture-23-material@page9",
+                "mit-6-042j-spring-2024-lecture-23-material@page10"
+              ],
+              "repair_prescription": "Define X,Y and their joint distribution, ask for E[XY] and comparison with E[X]E[Y], then name the changed dependence condition."
+            }
+          ],
+          "source_anchors": []
+        }
+      ],
+      "counts": {
+        "total": 3,
+        "pass": 0,
+        "needs_repair": 3,
+        "fail": 0,
+        "blockers": 3
+      }
+    },
+    {
+      "unit_id": "lecture-24",
+      "item_results": [
+        {
+          "practice_id": "practice-1",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "No random variables, distributions, coefficients, or numerical variance target are supplied; the learner must invent the example.",
+              "missing_condition": "Concrete independent variables and their variances (or a finite distribution) and a specified sum.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-24-material@page1",
+                "mit-6-042j-spring-2024-lecture-24-material@page2"
+              ],
+              "repair_prescription": "State independent variables and numerical variances, ask for Var of their sum and a check of the independence condition, with a specified changed-dependence case."
+            }
+          ],
+          "source_anchors": []
+        },
+        {
+          "practice_id": "practice-2",
+          "status": "needs_repair",
+          "blockers": [
+            {
+              "code": "generic_exercise_shell",
+              "reason": "The assumption to change, random variable, threshold, and proposed bound are all unspecified; no proof or counterexample is determinate.",
+              "missing_condition": "Concrete R, threshold x/c, non-negativity or variance data, and one named assumption to remove.",
+              "source_anchors": [
+                "mit-6-042j-spring-2024-lecture-24-material@page3",
+                "mit-6-042j-spring-2024-lecture-24-material@page6"
+              ],
+              "repair_prescription": "Give a finite distribution and a specific Markov/Chebyshev/Chernoff bound, explicitly remove one condition such as non-negativity or mutual independence, and ask for the numerical bound or counterexample."
+            }
+          ],
+          "source_anchors": []
+        }
+      ],
+      "counts": {
+        "total": 2,
+        "pass": 0,
+        "needs_repair": 2,
+        "fail": 0,
+        "blockers": 2
+      }
+    }
+  ],
+  "counts": {
+    "units": 12,
+    "items": 36,
+    "pass": 1,
+    "needs_repair": 35,
+    "fail": 0,
+    "blockers": 35
+  },
+  "deferred_structural_findings": [
+    {
+      "code": "evidence_plan_empty",
+      "units": [
+        "lecture-15",
+        "lecture-19",
+        "lecture-23"
+      ],
+      "reason": "01-evidence-plan.json has an empty requirements array while 03 contains practice items and 02 contains mapped-looking concepts; semantic item review therefore cannot verify a requirement mapping."
+    },
+    {
+      "code": "citation_page_not_reviewed",
+      "units": [
+        "lecture-13",
+        "lecture-17",
+        "lecture-21"
+      ],
+      "reason": "Practice citations include pages outside review-plan.actual_reviewed_pages (13: 2,4; 17: 2,3; 21: 2). This is deferred as a checkpoint/visual-review anomaly, not used as proof of semantic failure."
+    },
+    {
+      "code": "page_identity_boundary",
+      "units": [
+        "lecture-13",
+        "lecture-14",
+        "lecture-15",
+        "lecture-16",
+        "lecture-17",
+        "lecture-18",
+        "lecture-19",
+        "lecture-20",
+        "lecture-21",
+        "lecture-22",
+        "lecture-23",
+        "lecture-24"
+      ],
+      "reason": "The scan confirmed cited source chunks and page anchors exist; page existence alone was not treated as citation relevance. Hidden-text exclusion and review-plan metadata were retained as structural checks only."
+    }
+  ]
+}

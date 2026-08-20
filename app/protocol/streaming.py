@@ -16,6 +16,7 @@ def _frame(
     finish_reason: str | None = None,
     usage: dict[str, int] | None = None,
     error: dict[str, str] | None = None,
+    coursepilot_context: str | None = None,
 ) -> str:
     chunk: dict[str, object] = {
         "id": completion_id,
@@ -34,6 +35,8 @@ def _frame(
         chunk["usage"] = usage
     if error is not None:
         chunk["error"] = error
+    if coursepilot_context is not None:
+        chunk["coursepilot_context"] = coursepilot_context
     return f"data: {json.dumps(chunk, ensure_ascii=False, separators=(',', ':'))}\n\n"
 
 
@@ -48,6 +51,7 @@ async def completion_stream(
     *,
     usage: dict[str, int] | None = None,
     inject_error: bool = False,
+    coursepilot_context: str | None = None,
 ) -> AsyncIterator[str]:
     completion_usage = usage or {
         "prompt_tokens": 0,
@@ -73,6 +77,7 @@ async def completion_stream(
                 "type": "stream_error",
                 "message": "The stream ended because an internal error occurred.",
             },
+            coursepilot_context=coursepilot_context,
         )
         yield "data: [DONE]\n\n"
         return
@@ -83,6 +88,7 @@ async def completion_stream(
         {},
         finish_reason="stop",
         usage=completion_usage,
+        coursepilot_context=coursepilot_context,
     )
     yield "data: [DONE]\n\n"
 

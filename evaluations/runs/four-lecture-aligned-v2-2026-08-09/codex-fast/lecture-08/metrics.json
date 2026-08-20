@@ -1,0 +1,41 @@
+{
+  "mode": "fast",
+  "unit_id": "lecture-08",
+  "coordinator_dispatch_at": "2026-08-09T13:53:15.293481071Z",
+  "started_at": "2026-08-09T13:54:02.878491580Z",
+  "source_review_checkpoint_at": "2026-08-09T13:54:53.740801370Z",
+  "artifacts_written_checkpoint_at": "2026-08-09T13:56:30.467269368Z",
+  "completed_at": "2026-08-09T13:57:06.514500991Z",
+  "total_duration_seconds": 231.221,
+  "internal_authoring_validation_seconds": 183.636,
+  "coordinator_setup_seconds": 47.585,
+  "stage_durations_seconds": {
+    "source_review_and_evidence_planning": 50.862,
+    "learning_content_practice_audit_and_assembly": 96.726,
+    "deterministic_validation_and_equivalence_check": 36.047
+  },
+  "semantic_passes": 1,
+  "reviewed_page_count": 13,
+  "reviewed_pages": [
+    1,
+    17,
+    18,
+    29,
+    35,
+    37,
+    38,
+    39,
+    41,
+    44,
+    51,
+    52,
+    54
+  ],
+  "retries": 0,
+  "repairs": [],
+  "input_tokens": null,
+  "output_tokens": null,
+  "token_count_note": "Host did not expose per-turn token counts.",
+  "timing_note": "total_duration_seconds uses the authoritative coordinator dispatch timestamp through the final validation checkpoint; internal checkpoints are observed UTC wall-clock values, not estimates.",
+  "quality_mode": "fast"
+}

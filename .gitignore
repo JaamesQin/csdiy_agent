@@ -7,10 +7,12 @@ htmlcov/
 .env
 *:Zone.Identifier
 /.agents/
+/.codex/
 
 # Local reference materials supplied outside the source repository.
 /0720线上说明会.pptx
 /openai-compatible-agent-integration-guide.md
+/openai-compatible-agent-integration-guide (1).md
 /多模态附件对端接口文档.md
 
 # Downloaded course packages and generated source chunks are reproducible
@@ -27,3 +29,10 @@ htmlcov/
 /artifacts/
 /outputs/
 .DS_Store
+
+# Project-local frontend dependencies and test output.
+/node_modules/
+/.vite/
+/coverage/
+/playwright-report/
+/test-results/

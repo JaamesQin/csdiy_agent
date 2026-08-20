@@ -1,0 +1,31 @@
+{
+  "mode": "standard",
+  "unit_id": "lecture-08",
+  "coordinator_dispatch_at": "2026-08-09T13:57:34.496795797Z",
+  "started_at": "2026-08-09T13:57:48.882051009Z",
+  "evidence_plan_checkpoint_at": "2026-08-09T13:58:07.267379809Z",
+  "assembly_and_audit_checkpoint_at": "2026-08-09T14:00:04.513812189Z",
+  "completed_at": "2026-08-09T14:00:20.463162150Z",
+  "total_duration_seconds": 165.966,
+  "internal_authoring_validation_seconds": 151.581,
+  "coordinator_to_internal_start_seconds": 14.385,
+  "stage_durations_seconds": {
+    "protocol_source_inventory_and_evidence_plan": 18.385,
+    "visual_review_learning_content_practice_and_independent_audit": 117.246,
+    "finalize_validation_and_equivalence": 15.949
+  },
+  "semantic_passes": 4,
+  "reviewed_page_count": 29,
+  "retries": 0,
+  "repairs": [
+    {
+      "stage": "audit",
+      "action": "see 04-quality-audit.resolution.json"
+    }
+  ],
+  "input_tokens": null,
+  "output_tokens": null,
+  "token_count_note": "Per-turn token counts were not observable from the host.",
+  "timing_note": "total_duration_seconds is the observed coordinator-dispatch-to-final-validation interval required by v2; every internal checkpoint is a genuine UTC wall-clock observation.",
+  "quality_mode": "standard"
+}

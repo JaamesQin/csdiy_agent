@@ -1,0 +1,1006 @@
+studykit_version: '0.1'
+status: draft
+course_id: mit-6.7960-fall-2024
+course_version: fall-2024
+unit_id: lecture-03
+title: Lecture 3：逼近理论与深度分离
+language: zh-CN
+scope:
+  included_sources:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    title: 'Lecture 3: Approximation Theory'
+    type: pdf
+    sha256: d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e
+    local_path: /home/jamesqin/csdiy_agent/data/raw/mit-6.7960/fall-2024/site/static_resources/mit6_7960_f24_lec3.pdf
+  citation_anchor_types:
+  - page
+learning_objectives:
+- id: obj-1
+  objective: 把逼近、优化、泛化视为三个不同问题，并说明本讲结论只处理逼近。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 4
+- id: obj-2
+  objective: 用 Lipschitz 条件推导分片矩形在一维和 d 维的误差—规模关系。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 8
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 9
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 13
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 14
+- id: obj-3
+  objective: 解释三层 ReLU 网络如何构造并线性组合超矩形以逼近 Lipschitz 函数。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 10
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 15
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 16
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 17
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 18
+- id: obj-4
+  objective: 以分段线性函数的 kink 数分析宽度和深度的表达能力差异。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 27
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 30
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 31
+- id: obj-5
+  objective: 复述三角函数自复合的深度分离例子，并准确陈述它的实践边界。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 32
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 33
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 34
+prerequisites:
+- topic: ReLU 前馈网络与层/宽度/复合
+  required_level: 能读网络表达式并识别层和宽度。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 2
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 5
+- topic: 积分、范数与 Lipschitz 连续性
+  required_level: 能解释 L1 误差积分和范数。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 7
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 8
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 9
+outline:
+- order: 1
+  topic: 逼近问题与函数类
+  anchors:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 3
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 4
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 7
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 8
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 9
+  purpose: 建立问题、误差与目标函数约束。
+- order: 2
+  topic: 矩形逼近证明
+  anchors:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 10
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 11
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 12
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 13
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 15
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 16
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 17
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 18
+  purpose: 按一维、高维、ReLU 实现的顺序完成构造。
+- order: 3
+  topic: 普适逼近的局限
+  anchors:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 18
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 19
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 20
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 21
+  purpose: 把存在性和学习成功分开。
+- order: 4
+  topic: 宽度、深度和 kink
+  anchors:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 24
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 25
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 26
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 27
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 28
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 29
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 30
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 31
+  purpose: 建立深度分离的计数工具。
+- order: 5
+  topic: 深度分离与实践边界
+  anchors:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 32
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 33
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 34
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 39
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 41
+  purpose: 理解表达优势及其不能回答的问题。
+core_concepts:
+- id: cc-1
+  term: 机器学习的三块拼图
+  claim_type: source_summary
+  explanation: 逼近问模型族中是否存在合适网络；优化问能否找到它；泛化问未见数据上是否有效。本讲主要回答第一问。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 4
+- id: cc-2
+  term: Lipschitz 目标函数类
+  claim_type: source_summary
+  explanation: 函数增量由输入增量的 L 倍控制；多维输入采用 RMS 范数。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 8
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 9
+  formula:
+    status: resolved
+    latex: '|g(x+\\Delta x)-g(x)|\\le L|\\Delta x|'
+    citation:
+      source_id: mit-6.7960-f24-lecture-03-slides
+      anchor:
+        type: page
+        value: 8
+    warnings: []
+- id: cc-3
+  term: RMS 范数
+  claim_type: source_summary
+  explanation: RMS 范数是坐标平方平均后开根号，用来表示多维输入增量大小。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 9
+  formula:
+    status: resolved
+    latex: \\|x\\|_{\\mathrm{RMS}}=\\sqrt{\\frac{1}{d}\\sum_{i=1}^{d}x_i^2}
+    citation:
+      source_id: mit-6.7960-f24-lecture-03-slides
+      anchor:
+        type: page
+        value: 9
+    warnings: []
+- id: cc-4
+  term: 三层 ReLU 逼近定理
+  claim_type: source_summary
+  explanation: 任意定义在单位 d 维超立方体上的 L-Lipschitz 函数，都存在三层 ReLU 网络使积分 L1 误差小于 2ε；构造规模为
+    4d(L/ε)^d。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 10
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 18
+  formula:
+    status: resolved
+    latex: N=4d(L/\\varepsilon)^d,\\quad \\int_{[0,1]^d}|f(x)-g(x)|\\,dx<2\\varepsilon
+    citation:
+      source_id: mit-6.7960-f24-lecture-03-slides
+      anchor:
+        type: page
+        value: 10
+    warnings: []
+- id: cc-5
+  term: 一维矩形条误差
+  claim_type: source_summary
+  explanation: N 条等宽区间内，Lipschitz 条件把单条误差限制在面积 L/(2N²) 的三角形内，总误差不超过 L/(2N)。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 12
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 13
+  formula:
+    status: resolved
+    latex: \\int |f(x)-g(x)|\\,dx\\le N\\frac{L}{2N^2}=\\frac{L}{2N}
+    citation:
+      source_id: mit-6.7960-f24-lecture-03-slides
+      anchor:
+        type: page
+        value: 13
+    warnings: []
+- id: cc-6
+  term: 高维推广与维数代价
+  claim_type: source_summary
+  explanation: N 个超矩形各边长 N^{-1/d}，总误差不超过 L/N^{1/d}；达到 ε 需 (L/ε)^d 个超矩形，数量对维数指数增长。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 18
+  formula:
+    status: resolved
+    latex: N=(L/\\varepsilon)^d
+    citation:
+      source_id: mit-6.7960-f24-lecture-03-slides
+      anchor:
+        type: page
+        value: 14
+    warnings: []
+- id: cc-7
+  term: ReLU 矩形模块
+  claim_type: source_summary
+  explanation: 四个平移、缩放的 ReLU 经系数 [1,-1,-1,1] 组合，在 c→∞ 时趋近区间 [0,1] 的矩形函数；偏置可水平平移它。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 15
+  formula:
+    status: resolved
+    latex: f_c(x)=[1,-1,-1,1]^\\top\\operatorname{ReLU}([cx,cx-1,c(x-1)-2,c(x-1)-3]^\\top)
+    citation:
+      source_id: mit-6.7960-f24-lecture-03-slides
+      anchor:
+        type: page
+        value: 15
+    warnings: []
+- id: cc-8
+  term: 超矩形与线性组合
+  claim_type: source_summary
+  explanation: 把各坐标的一维矩形相加并在 d−1 处施加 ReLU 阈值，可近似 d 维超矩形；再对平移后的超矩形做线性组合即可逼近目标曲面。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 16
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 17
+- id: cc-9
+  term: 存在性构造的局限
+  claim_type: source_summary
+  explanation: 该构造在维数上耗费指数多神经元，而且按训练点形成矩形的表示未必泛化；普适逼近本身也不是学习成功的充分条件。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 18
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 19
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 21
+- id: cc-10
+  term: ReLU 网络是分段线性的
+  claim_type: source_summary
+  explanation: ReLU、分段线性函数的和、标量乘法与复合仍为分段线性，可用梯度改变的位置 kink 衡量复杂度。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 27
+- id: cc-11
+  term: kink 数递推
+  claim_type: source_summary
+  explanation: 宽度为 n 的一层至多把上一层的最大 kink 数乘以 2n，因此深度 L 的上界为 (2n)^L：对固定深度是宽度的多项式，对固定宽度则随深度指数增长。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 28
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 29
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 30
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 31
+  formula:
+    status: resolved
+    latex: \\mathrm{KINKS}_L\\le2n\\,\\mathrm{KINKS}_{L-1}\\le(2n)^L
+    citation:
+      source_id: mit-6.7960-f24-lecture-03-slides
+      anchor:
+        type: page
+        value: 30
+    warnings: []
+- id: cc-12
+  term: 深度分离
+  claim_type: source_summary
+  explanation: 宽度 2 的三角函数每次自复合都使线性区域数翻倍；复合 500 次产生 2^500−1 个 kinks，而三层网络要匹配需约 7×10^49
+    的宽度。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 32
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 33
+  formula:
+    status: resolved
+    latex: g(x)=\\operatorname{ReLU}(2\\operatorname{ReLU}(x)-4\\operatorname{ReLU}(x-\\tfrac12))
+    citation:
+      source_id: mit-6.7960-f24-lecture-03-slides
+      anchor:
+        type: page
+        value: 32
+    warnings: []
+- id: cc-13
+  term: 深度分离的边界
+  claim_type: source_summary
+  explanation: 深度分离只支持关于逼近表达效率的结论，不能推出极深网络容易优化或泛化良好。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 34
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 41
+glossary:
+- term: 普适函数逼近
+  definition: 模型族能以给定误差逼近目标函数类的存在性性质。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 3
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 20
+- term: kink
+  definition: 分段线性函数梯度改变的位置。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 27
+- term: 深度分离
+  definition: 某些深网紧凑表示的函数需要浅网用指数更多单元表示。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 25
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 33
+common_misconceptions:
+- misconception: 普适逼近保证梯度训练能找到网络。
+  correction: 定理只说明网络存在。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 4
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 34
+- misconception: 三层足够表示三层总是高效。
+  correction: 该构造随维数需要指数多单元。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 18
+- misconception: 深度分离保证深网络易训练且泛化好。
+  correction: 材料明确说它不支持这两个推论。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 34
+learning_sequence:
+- step: 1
+  activity: 建立逼近问题并完成 ex-1。
+  duration_minutes: 20
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 3
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 4
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 7
+- step: 2
+  activity: 学习 Lipschitz 条件和一维矩形误差，完成 ex-2。
+  duration_minutes: 35
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 8
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 9
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 12
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 13
+- step: 3
+  activity: 推广到高维并拆解三层 ReLU 构造，完成 ex-3、ex-4。
+  duration_minutes: 50
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 15
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 16
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 17
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 18
+- step: 4
+  activity: 讨论存在性构造在规模、训练和泛化上的局限。
+  duration_minutes: 20
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 18
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 19
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 21
+- step: 5
+  activity: 学习分段线性与 kink 递推，完成 ex-5。
+  duration_minutes: 30
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 27
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 28
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 29
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 30
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 31
+- step: 6
+  activity: 学习深度分离构造，完成 ex-6 并回顾结论边界。
+  duration_minutes: 25
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 32
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 33
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 34
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 41
+limitations:
+- 源材料为板书式幻灯片；本包只保留已从可见页面核对的公式。
+- 逼近定理和深度分离均为表达能力结论，不提供训练算法、收敛速度或泛化界。
+- 第 38–39 页只用于提醒实践结果可能受训练管线混杂因素影响，本包不扩展未在材料中给出的经验定律。
+practice:
+- id: ex-1
+  level: 基础
+  question: 分别用一句话定义逼近、优化和泛化，并判断本讲定理回答哪一项。
+  hint: 使用第 4 页的三块拼图。
+  deliverable: 三行定义和一行判断。
+  expected_evidence:
+  - 三者边界清楚
+  - 只选择逼近
+  evaluation:
+    criteria:
+    - 不把存在性写成训练保证
+    - 引用准确
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 4
+- id: ex-2
+  level: 基础
+  question: 从宽 1/N、高 L/N 的误差三角形推导一维总 L1 误差。
+  hint: 先求单个三角形面积，再乘 N。
+  deliverable: 三步公式推导。
+  expected_evidence:
+  - 单条 L/(2N²)
+  - 总误差 L/(2N)
+  - N=L/(2ε)
+  evaluation:
+    criteria:
+    - 代数正确
+    - 量纲一致
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 13
+- id: ex-3
+  level: 进阶
+  question: 解释 d 维中为何需要 (L/ε)^d 个超矩形，并指出这个结果揭示的主要限制。
+  hint: 每格边长为 N^{-1/d}。
+  deliverable: 150–250 字推导。
+  expected_evidence:
+  - 误差 L/N^{1/d}
+  - 解出 N
+  - 指出维数指数增长
+  evaluation:
+    criteria:
+    - 推导闭合
+    - 限制解释准确
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 18
+- id: ex-4
+  level: 进阶
+  question: 画出从一维矩形模块到 d 维超矩形，再到任意 Lipschitz 曲面的三模块图。
+  hint: 依次使用第 15、16、17 页。
+  deliverable: 模块图与每模块一句说明。
+  expected_evidence:
+  - 四 ReLU 线性组合
+  - 各坐标相加后阈值
+  - 平移超矩形线性组合
+  evaluation:
+    criteria:
+    - 模块顺序正确
+    - 没有虚构优化过程
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 15
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 16
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 17
+- id: ex-5
+  level: 挑战
+  question: 用归纳法从 KINKS_l≤2n·KINKS_{l−1} 推出 (2n)^L，并比较固定深度加宽与固定宽度加深。
+  hint: 从第一层一个 kink 开始。
+  deliverable: 归纳证明和增长率比较。
+  expected_evidence:
+  - 基例
+  - 递推应用
+  - 多项式/指数区别
+  evaluation:
+    criteria:
+    - 证明有效
+    - 符号定义明确
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 30
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 31
+- id: ex-6
+  level: 挑战
+  question: 计算三角函数复合 500 次的 kink 数和浅层宽度下界数量级，再列出不能由此推出的两个结论。
+  hint: 结合第 33、34 页。
+  deliverable: 数值表与两条边界。
+  expected_evidence:
+  - 2^500−1
+  - 约 7×10^49
+  - 不保证易优化
+  - 不保证好泛化
+  evaluation:
+    criteria:
+    - 数字与幻灯片一致
+    - 边界完整
+  citations:
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 32
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 33
+  - source_id: mit-6.7960-f24-lecture-03-slides
+    anchor:
+      type: page
+      value: 34
+citations:
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 3
+  citation_id: page-3
+  supports: 支持本学习包引用的第 3 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 4
+  citation_id: page-4
+  supports: 支持本学习包引用的第 4 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 7
+  citation_id: page-7
+  supports: 支持本学习包引用的第 7 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 8
+  citation_id: page-8
+  supports: 支持本学习包引用的第 8 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 9
+  citation_id: page-9
+  supports: 支持本学习包引用的第 9 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 10
+  citation_id: page-10
+  supports: 支持本学习包引用的第 10 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 11
+  citation_id: page-11
+  supports: 支持本学习包引用的第 11 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 12
+  citation_id: page-12
+  supports: 支持本学习包引用的第 12 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 13
+  citation_id: page-13
+  supports: 支持本学习包引用的第 13 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 14
+  citation_id: page-14
+  supports: 支持本学习包引用的第 14 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 15
+  citation_id: page-15
+  supports: 支持本学习包引用的第 15 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 16
+  citation_id: page-16
+  supports: 支持本学习包引用的第 16 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 17
+  citation_id: page-17
+  supports: 支持本学习包引用的第 17 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 18
+  citation_id: page-18
+  supports: 支持本学习包引用的第 18 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 19
+  citation_id: page-19
+  supports: 支持本学习包引用的第 19 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 20
+  citation_id: page-20
+  supports: 支持本学习包引用的第 20 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 21
+  citation_id: page-21
+  supports: 支持本学习包引用的第 21 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 24
+  citation_id: page-24
+  supports: 支持本学习包引用的第 24 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 25
+  citation_id: page-25
+  supports: 支持本学习包引用的第 25 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 26
+  citation_id: page-26
+  supports: 支持本学习包引用的第 26 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 27
+  citation_id: page-27
+  supports: 支持本学习包引用的第 27 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 28
+  citation_id: page-28
+  supports: 支持本学习包引用的第 28 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 29
+  citation_id: page-29
+  supports: 支持本学习包引用的第 29 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 30
+  citation_id: page-30
+  supports: 支持本学习包引用的第 30 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 31
+  citation_id: page-31
+  supports: 支持本学习包引用的第 31 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 32
+  citation_id: page-32
+  supports: 支持本学习包引用的第 32 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 33
+  citation_id: page-33
+  supports: 支持本学习包引用的第 33 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 34
+  citation_id: page-34
+  supports: 支持本学习包引用的第 34 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 39
+  citation_id: page-39
+  supports: 支持本学习包引用的第 39 页材料。
+- source_id: mit-6.7960-f24-lecture-03-slides
+  anchor:
+    type: page
+    value: 41
+  citation_id: page-41
+  supports: 支持本学习包引用的第 41 页材料。
+review:
+  generator_review_status: reviewed
+  audit_findings: []

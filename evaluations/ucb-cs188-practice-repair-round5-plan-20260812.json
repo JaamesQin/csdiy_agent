@@ -1,0 +1,15 @@
+{
+  "schema_version": "selective-repair-residual-plan-v1",
+  "plan_id": "ucb-cs188-round5-lecture10-audit-refresh-20260812",
+  "created_at": "2026-08-12T22:16:00+08:00",
+  "policy": {"parent_snapshot_must_match_declared_baseline": true, "max_targeted_repairs_per_stage": 1, "fresh_independent_per_practice_audit_required": true},
+  "courses": [{
+    "course_id": "ucb-cs188-spring-2026",
+    "baseline_build_id": "6e0fbf4f7ddbc28c32aec83262680206dca3eb2e285779df78a3f8c3dad5c01b",
+    "repair_units": [{
+      "unit_id": "lecture-10",
+      "stages": ["structural"],
+      "required_repairs": ["preserve learner content", "record a fresh current-build per-practice audit", "refresh canonical review validation without reviving superseded historical blockers"]
+    }]
+  }]
+}

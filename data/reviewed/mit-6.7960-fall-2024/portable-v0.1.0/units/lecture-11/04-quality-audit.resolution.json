@@ -1,9 +1,0 @@
-{
-  "unit_id": "lecture-11",
-  "outcome": "accepted_with_documented_limitations",
-  "resolved_issue_ids": [],
-  "unresolved_warning_ids": ["w1", "w2"],
-  "changes": [],
-  "note": "候选已采用评价维度与假设措辞，保留人工发布复核门槛。",
-  "semantic_reaudit_performed": false
-}

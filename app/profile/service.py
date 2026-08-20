@@ -13,7 +13,7 @@ from typing import Iterable
 
 from pydantic import ValidationError
 
-from app.agent.contracts import CourseContext
+from app.agent.contracts import CourseContext, ProfileOperation
 from app.agent.model_support import normalized_usage
 from app.generation.model import ModelError, StructuredModel
 from app.profile.contracts import (
@@ -34,7 +34,6 @@ PROFILE_SIGNAL = re.compile(
     r"偏好|喜欢.*讲|先讲例子|系统方向|机器学习|深度学习|算法|安全|前端|后端",
     re.IGNORECASE,
 )
-FENCED_CODE = re.compile(r"```[^\n]*\n.*?```", re.DOTALL)
 
 
 class ProfileAction(str, Enum):
@@ -273,13 +272,135 @@ class ProfileService:
             persistence_error=persistence_error,
         )
 
+    def apply_operations(
+        self,
+        *,
+        user_id: str | None,
+        text: str,
+        current: LearnerProfile,
+        operations: list[ProfileOperation],
+        course_context: CourseContext | None = None,
+    ) -> ObservationResult:
+        """Apply model-understood profile mutations after local grounding checks."""
+
+        profile = current.model_copy(deep=True)
+        added: list[ProfileFact] = []
+        notices: list[str] = []
+        persistence_error = False
+        for operation in operations:
+            quote = (operation.evidence_quote or "").strip()
+            if not quote or quote not in text:
+                continue
+            field = operation.field_name
+            if operation.action == "delete":
+                if user_id:
+                    try:
+                        count = self.repository.delete_field(user_id, field)
+                        profile = self.repository.get_profile(user_id)
+                    except (OSError, sqlite3.Error, RuntimeError):
+                        persistence_error = True
+                        count = 0
+                else:
+                    before = len(profile.facts)
+                    profile.facts = [fact for fact in profile.facts if fact.field_name != field]
+                    count = before - len(profile.facts)
+                notices.append(f"已删除{self._label(field)}（{count} 条）")
+                continue
+
+            value = operation.value
+            candidate_course = course_context
+            if field in {"active_course", "active_unit"}:
+                if candidate_course is None:
+                    continue
+                value = (
+                    candidate_course.course_id
+                    if field == "active_course"
+                    else candidate_course.unit_id
+                )
+                if value is None:
+                    continue
+            candidate = ProfileCandidate(
+                field_name=field,
+                value=value,
+                status=(
+                    FactStatus.INFERRED
+                    if operation.action == "infer"
+                    else FactStatus.CONFIRMED
+                ),
+                confidence=0.7 if operation.action == "infer" else 1.0,
+                evidence_quote=quote,
+                course_id=candidate_course.course_id if candidate_course else None,
+                course_version=candidate_course.course_version if candidate_course else None,
+                unit_id=(
+                    candidate_course.unit_id
+                    if candidate_course and field == "active_unit"
+                    else None
+                ),
+            )
+            normalized = self._normalize_candidates([candidate], text, profile)
+            if not normalized:
+                continue
+            candidate = normalized[0]
+            replace = operation.action == "replace" or field in {
+                "weekly_minutes",
+                "preferred_explanation_style",
+                "active_course",
+                "active_unit",
+            }
+            if user_id:
+                try:
+                    fact = self.repository.add_fact(
+                        user_id=user_id,
+                        field_name=candidate.field_name,
+                        value=candidate.value,
+                        status=candidate.status,
+                        confidence=candidate.confidence,
+                        evidence_excerpt=candidate.evidence_quote,
+                        course_id=candidate.course_id,
+                        course_version=candidate.course_version,
+                        unit_id=candidate.unit_id,
+                        expires_at=(
+                            datetime.now(UTC) + timedelta(days=INFERENCE_TTL_DAYS)
+                            if candidate.status is FactStatus.INFERRED
+                            else None
+                        ),
+                        replace=replace,
+                    )
+                    profile = self.repository.get_profile(user_id)
+                except (OSError, sqlite3.Error, RuntimeError):
+                    persistence_error = True
+                    fact = self._candidate_to_fact(candidate, None)
+                    profile.facts = self._merge_transient(profile.facts, fact)
+            else:
+                fact = self._candidate_to_fact(candidate, None)
+                if replace:
+                    profile.facts = [
+                        item for item in profile.facts if item.field_name != field
+                    ]
+                profile.facts = self._merge_transient(profile.facts, fact)
+            added.append(fact)
+
+        if user_id and not persistence_error:
+            profile = self.repository.get_profile(user_id)
+        notice = self._notice(added, persisted=bool(user_id) and not persistence_error)
+        if notices:
+            suffix = "；".join(notices) + "。"
+            notice = f"{notice}；{suffix}" if notice else suffix
+        return ObservationResult(
+            profile=profile,
+            added=added,
+            notice=notice,
+            usage=normalized_usage(),
+            persistence_error=persistence_error,
+        )
+
     def render(self, profile: LearnerProfile) -> str:
         confirmed = [fact for fact in profile.facts if fact.status is FactStatus.CONFIRMED]
         inferred = profile.inferred()
         if not confirmed and not inferred:
             persistence = "提供 `user` 标识后可以跨会话保存。" if not profile.persisted else ""
             return (
-                "当前没有足够的学习画像。请告诉我你想学习的 CS 方向、已有基础，"
+                "当前没有足够的学习画像。请告诉我你想学习的 CS 方向、学习背景，"
                 f"以及每周可投入的时间。{persistence}"
             )
         lines = ["### 当前学习画像"]
@@ -318,8 +439,37 @@ class ProfileService:
 
     @staticmethod
     def _prose_only(text: str) -> str:
-        without_fences = FENCED_CODE.sub(" ", text)
-        without_traceback = re.split(r"Traceback \(most recent call last\):", without_fences, maxsplit=1)[0]
+        without_fences = re.sub(r"```.*?```", " ", text, flags=re.DOTALL)
+
+        def looks_like_code(candidate: str) -> bool:
+            return sum(
+                (
+                    ";" in candidate,
+                    "{" in candidate or "}" in candidate,
+                    bool(re.search(r"#?\s*include\s*<[^>]+>", candidate, re.I)),
+                    bool(re.search(r"\b(?:def|class|int|void|fn)\s+\w+\s*\(", candidate)),
+                )
+            ) >= 2
+
+        def remove_code_quote(match: re.Match[str]) -> str:
+            return " " if looks_like_code(match.group(1)) else match.group(0)
+
+        without_quotes = re.sub(
+            r"[“\"「『](.*?)[”\"」』]",
+            remove_code_quote,
+            without_fences,
+            flags=re.DOTALL,
+        )
+        code_tail = re.search(
+            r"(?:这段|以下|下面的?).{0,8}代码.{0,16}?[：:]",
+            without_quotes,
+            re.IGNORECASE,
+        )
+        if code_tail and looks_like_code(without_quotes[code_tail.end() :].strip("“”\"'")):
+            without_quotes = without_quotes[: code_tail.start()]
+        without_traceback = re.split(
+            r"Traceback \(most recent call last\):", without_quotes, maxsplit=1
+        )[0]
         return re.sub(r"\s+", " ", without_traceback).strip()[:4000]
 
     def _deterministic_candidates(self, prose: str) -> list[ProfileCandidate]:
@@ -445,6 +595,20 @@ class ProfileService:
             for value in values:
                 item = candidate.model_copy(deep=True)
                 item.value = self._canonical_value(item.field_name, value)
+                if (
+                    item.field_name == "learning_directions"
+                    and item.value
+                    not in {
+                        "systems",
+                        "ml_ai",
+                        "algorithms",
+                        "security",
+                        "web_frontend",
+                        "web_backend",
+                        "theory",
+                    }
+                ):
+                    continue
                 if item.value not in {None, ""}:
                     expanded_candidates.append(item)
 
@@ -526,7 +690,9 @@ class ProfileService:
         if field_name == "learning_directions":
             if re.search(r"机器学习|深度学习|人工智能|transformer|\bai\b|\bml\b", lowered):
                 return "ml_ai"
-            if re.search(r"系统方向|计算机系统|操作系统|体系结构|systems?", lowered):
+            if cleaned == "系统" or re.search(
+                r"系统方向|计算机系统|操作系统|体系结构|systems?", lowered
+            ):
                 return "systems"
             if "算法" in lowered or "algorithm" in lowered:
                 return "algorithms"
@@ -549,6 +715,21 @@ class ProfileService:
                 return "concept_first"
         if field_name == "background":
             cleaned = re.sub(r"(?:基础|经验|入门)$", "", cleaned).strip()
+            aliases = {
+                "python": "Python",
+                "python3": "Python",
+                "c++": "C++",
+                "cpp": "C++",
+                "java": "Java",
+                "javascript": "JavaScript",
+                "typescript": "TypeScript",
+                "rust": "Rust",
+                "golang": "Go",
+                "go": "Go",
+                "git": "Git",
+                "pytorch": "PyTorch",
+            }
+            return aliases.get(cleaned.casefold(), cleaned)
         return cleaned
 
     @staticmethod
@@ -630,7 +811,7 @@ class ProfileService:
         return {
             "learning_directions": "学习方向",
             "goals": "学习目标",
-            "background": "已有基础",
+            "background": "学习背景",
             "weekly_minutes": "每周时间",
             "preferred_explanation_style": "讲解偏好",
             "active_course": "当前课程",

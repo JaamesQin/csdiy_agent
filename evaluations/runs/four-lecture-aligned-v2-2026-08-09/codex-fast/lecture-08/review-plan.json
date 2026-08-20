@@ -1,0 +1,102 @@
+{
+  "mode": "fast",
+  "semantic_pass_limit": 2,
+  "semantic_passes_used": 1,
+  "review_scope": [
+    {
+      "kind": "identity",
+      "pages": [
+        1
+      ]
+    },
+    {
+      "kind": "final_formula",
+      "pages": [
+        17,
+        18,
+        29,
+        37,
+        38,
+        41,
+        44
+      ]
+    },
+    {
+      "kind": "theorem_or_strong_claim",
+      "pages": [
+        35,
+        41,
+        51,
+        52,
+        54
+      ]
+    },
+    {
+      "kind": "detected_risk",
+      "pages": [
+        39
+      ]
+    }
+  ],
+  "reviewed_pages": [
+    1,
+    17,
+    18,
+    29,
+    35,
+    37,
+    38,
+    39,
+    41,
+    44,
+    51,
+    52,
+    54
+  ],
+  "notes": [
+    "视觉核验最终公式和强声明；未将隐藏/乱码文本作为证据。"
+  ],
+  "quality_mode": "fast",
+  "page_selector_version": "review-pages-v1",
+  "selected_pages": [
+    1,
+    17,
+    18,
+    29,
+    35,
+    37,
+    38,
+    39,
+    41,
+    44,
+    51,
+    52,
+    54
+  ],
+  "required_final_formula_pages": [
+    17,
+    18,
+    29,
+    37,
+    38,
+    41,
+    44
+  ],
+  "actual_reviewed_pages": [
+    1,
+    17,
+    18,
+    29,
+    35,
+    37,
+    38,
+    39,
+    41,
+    44,
+    51,
+    52,
+    54
+  ],
+  "independent_audit": false,
+  "blockers_after_reaudit": []
+}

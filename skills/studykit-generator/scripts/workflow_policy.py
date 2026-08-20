@@ -13,8 +13,16 @@ from typing import Any, Iterable
 QUALITY_MODES = ("fast", "standard", "strict")
 DELIVERY_POLICIES = ("draft", "publish")
 PAGE_SELECTOR_VERSION = "review-pages-v1"
-PIPELINE_VERSION = "0.2.0"
+PIPELINE_VERSION = "0.2.1"
+MAX_UNIT_WORKERS_PER_COORDINATOR = 4
 BUILTIN_DECISION = Path(__file__).resolve().parents[1] / "references/default-mode-decision.json"
+STAGE_ORDER = (
+    "01-evidence-plan",
+    "02-learning-content",
+    "03-practice-flow",
+    "04-quality-audit",
+    "05-studykit",
+)
 
 
 def resolve_options(
@@ -65,10 +73,20 @@ def _page(item: dict[str, Any]) -> int | None:
 
 
 def _has_risk(item: dict[str, Any]) -> bool:
-    text = json.dumps(item, ensure_ascii=False).lower()
+    warning_values: list[Any] = []
+    for key in ("parse_warnings", "warnings", "risk", "status", "formula"):
+        value = item.get(key)
+        if value:
+            warning_values.append(value)
+    text = json.dumps(warning_values, ensure_ascii=False).lower()
     return any(token in text for token in (
-        "hidden_text", "hidden text", "garbled", "replacement", "�",
+        "hidden_text", "hidden text", "garbled", "replacement", "replaced_invalid_unicode", "�",
+        # The production PDF parser emits ``low_extracted_text``.  Keep the
+        # older ``low_extraction`` spelling for compatibility with hand-built
+        # candidates and older ingestion reports.
+        "low_extracted_text", "low extracted text",
         "low_extraction", "low extraction", "formula_unresolved",
+        "empty_or_unstructured_text", "empty_page",
     )) or bool(item.get("risk"))
 
 
@@ -149,6 +167,57 @@ def build_fingerprint(inventory: Any, quality_mode: str, **versions: str) -> str
     return hashlib.sha256(raw.encode()).hexdigest()
 
 
+def validate_stage_checkpoints(stage_dir: Path, quality_mode: str) -> list[dict[str, str]]:
+    """Check the offline, ordered stage handoff without reading registry state.
+
+    A checkpoint is deliberately just an existing JSON artifact. Content
+    validation belongs to the artifact validator; this function prevents a
+    standard run from silently skipping or reordering 01..05.
+    """
+    if quality_mode not in QUALITY_MODES:
+        raise ValueError(f"unknown quality mode: {quality_mode}")
+    issues: list[dict[str, str]] = []
+    seen_missing = False
+    for stage in STAGE_ORDER:
+        path = stage_dir / f"{stage}.json"
+        if not path.is_file():
+            seen_missing = True
+            issues.append({"code": "checkpoint_missing", "stage": stage, "location": str(path)})
+        elif seen_missing:
+            issues.append({"code": "checkpoint_order_violation", "stage": stage, "location": str(path)})
+        else:
+            try:
+                value = json.loads(path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError) as exc:
+                issues.append({"code": "checkpoint_invalid_json", "stage": stage, "location": str(path), "message": str(exc)})
+                continue
+            if not isinstance(value, dict):
+                issues.append({"code": "checkpoint_not_object", "stage": stage, "location": str(path)})
+    return issues
+
+
+def coordinator_slot_budget(session_slots: int, coordinator_count: int, global_coordinator_reserve: int = 1) -> int:
+    """Return an equal slot budget for each isolated build coordinator.
+
+    ``session_slots`` is the whole-session limit.  One global coordinator slot
+    is reserved by default; each build coordinator's own slot is included in
+    its budget, so ``worker_count`` subtracts one again when choosing unit
+    workers.  The function does not raise the per-coordinator four-worker
+    safety ceiling.
+    """
+
+    if session_slots < 1:
+        raise ValueError("session_slots must be positive")
+    if coordinator_count < 1:
+        raise ValueError("coordinator_count must be positive")
+    if global_coordinator_reserve < 0:
+        raise ValueError("global_coordinator_reserve cannot be negative")
+    usable = session_slots - global_coordinator_reserve
+    if usable < coordinator_count:
+        raise ValueError("session_slots cannot reserve one slot for every build coordinator")
+    return usable // coordinator_count
+
+
 def worker_count(unit_count: int, parallel_units: str | int, available_slots: int | None = None, supports_subtasks: bool = True) -> int:
     if unit_count < 0:
         raise ValueError("unit_count cannot be negative")
@@ -158,15 +227,15 @@ def worker_count(unit_count: int, parallel_units: str | int, available_slots: in
         return 1
     if parallel_units == "auto":
         capacity = 2 if available_slots is None else max(1, available_slots - 1)
-        return min(unit_count, capacity, 4)
+        return min(unit_count, capacity, MAX_UNIT_WORKERS_PER_COORDINATOR)
     try:
         requested = int(parallel_units)
     except (TypeError, ValueError) as exc:
-        raise ValueError("parallel_units must be auto, off, or 1..4") from exc
-    if not 1 <= requested <= 4:
-        raise ValueError("parallel_units must be auto, off, or 1..4")
+        raise ValueError(f"parallel_units must be auto, off, or 1..{MAX_UNIT_WORKERS_PER_COORDINATOR} per coordinator") from exc
+    if not 1 <= requested <= MAX_UNIT_WORKERS_PER_COORDINATOR:
+        raise ValueError(f"parallel_units must be auto, off, or 1..{MAX_UNIT_WORKERS_PER_COORDINATOR} per coordinator")
     capacity = requested if available_slots is None else max(1, available_slots - 1)
-    return min(unit_count, requested, capacity, 4)
+    return min(unit_count, requested, capacity, MAX_UNIT_WORKERS_PER_COORDINATOR)
 
 
 def summarize_batch(units: list[dict[str, Any]], parallel_units: str | int, workers: int) -> dict[str, Any]:

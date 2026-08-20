@@ -1,0 +1,292 @@
+{
+  "unit_id": "lecture-03",
+  "quality_mode": "standard",
+  "source_id": "mit-6.7960-f24-lecture-03-slides",
+  "requirements": [
+    {
+      "id": "L3-O1",
+      "learning_requirement": "区分逼近、优化与泛化，并把本讲结论定位为表达存在性结论。",
+      "chunk_ids": [
+        "mit-6.7960-f24-lecture-03-slides-p004",
+        "mit-6.7960-f24-lecture-03-slides-p034"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        }
+      ]
+    },
+    {
+      "id": "L3-O2",
+      "learning_requirement": "从 Lipschitz 约束推导一维矩形条及 d 维超矩形的积分误差。",
+      "chunk_ids": [
+        "mit-6.7960-f24-lecture-03-slides-p008",
+        "mit-6.7960-f24-lecture-03-slides-p009",
+        "mit-6.7960-f24-lecture-03-slides-p012",
+        "mit-6.7960-f24-lecture-03-slides-p013",
+        "mit-6.7960-f24-lecture-03-slides-p014"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 12
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 13
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 14
+          }
+        }
+      ]
+    },
+    {
+      "id": "L3-O3",
+      "learning_requirement": "拆解用 ReLU 近似一维矩形、d 维超矩形与任意 Lipschitz 曲面的三层构造。",
+      "chunk_ids": [
+        "mit-6.7960-f24-lecture-03-slides-p010",
+        "mit-6.7960-f24-lecture-03-slides-p015",
+        "mit-6.7960-f24-lecture-03-slides-p016",
+        "mit-6.7960-f24-lecture-03-slides-p017",
+        "mit-6.7960-f24-lecture-03-slides-p018"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 10
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 15
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 16
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 17
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        }
+      ]
+    },
+    {
+      "id": "L3-O4",
+      "learning_requirement": "利用分段线性与 kink 计数比较宽度、深度对表达复杂度的影响。",
+      "chunk_ids": [
+        "mit-6.7960-f24-lecture-03-slides-p024",
+        "mit-6.7960-f24-lecture-03-slides-p025",
+        "mit-6.7960-f24-lecture-03-slides-p027",
+        "mit-6.7960-f24-lecture-03-slides-p028",
+        "mit-6.7960-f24-lecture-03-slides-p029",
+        "mit-6.7960-f24-lecture-03-slides-p030",
+        "mit-6.7960-f24-lecture-03-slides-p031"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 24
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 25
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 27
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 28
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 29
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 30
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 31
+          }
+        }
+      ]
+    },
+    {
+      "id": "L3-O5",
+      "learning_requirement": "复现三角形函数自复合的深度分离，并陈述其对训练与泛化不作保证。",
+      "chunk_ids": [
+        "mit-6.7960-f24-lecture-03-slides-p032",
+        "mit-6.7960-f24-lecture-03-slides-p033",
+        "mit-6.7960-f24-lecture-03-slides-p034",
+        "mit-6.7960-f24-lecture-03-slides-p041"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 32
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 33
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 41
+          }
+        }
+      ]
+    }
+  ],
+  "source_order_blocks": [
+    {
+      "pages": [
+        3,
+        4,
+        7,
+        8,
+        9
+      ],
+      "topic": "问题与函数类"
+    },
+    {
+      "pages": [
+        10,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        21
+      ],
+      "topic": "普适逼近构造及局限"
+    },
+    {
+      "pages": [
+        24,
+        25,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        39,
+        41
+      ],
+      "topic": "宽深、深度分离与实践边界"
+    }
+  ],
+  "final_formula_pages": [
+    8,
+    9,
+    10,
+    13,
+    14,
+    15,
+    17,
+    30,
+    32,
+    33
+  ],
+  "excluded_claims": [
+    "优化收敛率",
+    "泛化误差界",
+    "现实任务的最优宽深比"
+  ]
+}

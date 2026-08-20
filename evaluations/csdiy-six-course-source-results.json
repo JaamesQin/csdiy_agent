@@ -1,0 +1,111 @@
+{
+  "version": "0.1",
+  "audited_at": "2026-08-11",
+  "status": "passed",
+  "courses": [
+    {
+      "course_id": "ucb-cs61a-spring-2026",
+      "units": 28,
+      "primary_chunks": 930,
+      "supplemental_chunks": 419,
+      "pages": 930,
+      "warnings": 235,
+      "empty": 0,
+      "errors": [],
+      "source_gaps": []
+    },
+    {
+      "course_id": "ucb-cs188-spring-2026",
+      "units": 28,
+      "primary_chunks": 1204,
+      "supplemental_chunks": 187,
+      "pages": 1204,
+      "warnings": 452,
+      "empty": 21,
+      "errors": [],
+      "source_gaps": [
+        {
+          "unit_id": "lecture-22",
+          "code": "slides_absent",
+          "fallback": "scheduled online textbook section 9.2 pages 146-150"
+        }
+      ]
+    },
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "units": 24,
+      "primary_chunks": 217,
+      "supplemental_chunks": 0,
+      "pages": 217,
+      "warnings": 71,
+      "empty": 0,
+      "errors": [],
+      "source_gaps": [
+        {
+          "unit_id": "lecture-23",
+          "code": "lecture_notes_absent",
+          "fallback": "official recording transcript PDF"
+        },
+        {
+          "unit_id": "textbook",
+          "code": "encrypted_text_extraction_unsupported",
+          "action": "preserved but not chunked; no bypass attempted"
+        }
+      ]
+    },
+    {
+      "course_id": "ucb-cs168-spring-2026",
+      "units": 26,
+      "primary_chunks": 1890,
+      "supplemental_chunks": 605,
+      "pages": 1890,
+      "warnings": 512,
+      "empty": 4,
+      "errors": [],
+      "source_gaps": []
+    },
+    {
+      "course_id": "ucb-cs186-spring-2026",
+      "units": 20,
+      "primary_chunks": 293,
+      "supplemental_chunks": 0,
+      "pages": 0,
+      "warnings": 0,
+      "empty": 0,
+      "errors": [],
+      "source_gaps": [
+        {
+          "code": "lecture_slides_authentication_required",
+          "affected_link_count": 25,
+          "fallback": "20 public supplementary notes"
+        }
+      ]
+    },
+    {
+      "course_id": "ucb-cs61c-spring-2026",
+      "units": 35,
+      "primary_chunks": 1240,
+      "supplemental_chunks": 0,
+      "pages": 0,
+      "warnings": 0,
+      "empty": 0,
+      "errors": [],
+      "source_gaps": [
+        {
+          "unit_id": "lecture-01",
+          "code": "staff_notes_absent",
+          "action": "recorded source gap"
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "courses": 6,
+    "units": 161,
+    "primary_chunks": 5774,
+    "supplemental_chunks": 1211,
+    "pages": 4241,
+    "warnings": 1270,
+    "empty": 25
+  }
+}

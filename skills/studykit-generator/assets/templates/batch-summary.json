@@ -2,6 +2,8 @@
   "status": "partial",
   "parallel_units": "auto",
   "worker_count": 1,
+  "coordinator_id": "coordinator-1",
+  "coordinator_scope": "single-build",
   "units": [],
   "succeeded_units": [],
   "failed_units": []

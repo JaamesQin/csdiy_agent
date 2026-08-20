@@ -1,0 +1,15 @@
+{
+  "schema_version": "selective-repair-residual-plan-v1",
+  "plan_id": "ucb-cs186-round5-note07-parity-20260812",
+  "created_at": "2026-08-12T23:25:00+08:00",
+  "policy": {"parent_snapshot_must_match_declared_baseline": true, "max_targeted_repairs_per_stage": 1, "fresh_independent_per_practice_audit_required": true},
+  "courses": [{
+    "course_id": "ucb-cs186-spring-2026",
+    "baseline_build_id": "a962c912299e162f24266b4aa9a22a56463aeac7261d387c5d319dd3b6441e0b",
+    "repair_units": [{
+      "unit_id": "note-07",
+      "stages": ["practice", "structural"],
+      "required_repairs": ["preserve all independently passing practice semantics", "make p2, p4, and p5 exactly equal across 03/candidate/final", "keep one current-build attempt and all other practices unchanged"]
+    }]
+  }]
+}

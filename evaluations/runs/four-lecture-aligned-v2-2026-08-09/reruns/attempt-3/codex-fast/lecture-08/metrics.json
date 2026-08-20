@@ -1,0 +1,23 @@
+{
+  "quality_mode": "fast",
+  "unit_id": "lecture-08",
+  "attempt": 3,
+  "started_at": "2026-08-09T14:19:04.334690392Z",
+  "visual_review_checkpoint_at": "2026-08-09T14:19:13.025832479Z",
+  "candidate_validation_checkpoint_at": "2026-08-09T14:20:30.154615722Z",
+  "completed_at": "2026-08-09T14:20:39.555775634Z",
+  "total_duration_seconds": 95.221,
+  "stage_durations_seconds": {
+    "source_inventory_and_targeted_visual_review": 8.691,
+    "independent_authoring_targeted_audit_and_candidate_validation": 77.129,
+    "finalization_review_revalidation_and_equivalence_preparation": 9.401
+  },
+  "semantic_passes": 1,
+  "reviewed_page_count": 11,
+  "retries": 0,
+  "repairs": [],
+  "input_tokens": null,
+  "output_tokens": null,
+  "token_count_note": "The host did not expose per-turn token counts.",
+  "timing_note": "All timestamps are genuine UTC checkpoints and all stage durations are positive differences between those checkpoints."
+}

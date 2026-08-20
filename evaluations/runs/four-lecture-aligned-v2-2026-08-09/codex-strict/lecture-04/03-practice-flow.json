@@ -1,0 +1,266 @@
+{
+  "target_minutes": 180,
+  "progression": [
+    "基础辨析",
+    "结构重建",
+    "多因素分析",
+    "架构设计",
+    "证据审计"
+  ],
+  "practice": [
+    {
+      "id": "Q1",
+      "level": "基础",
+      "question": "画出输入平移前后，逐像素标签图与全图分类标签应如何变化，并分别标注等变或不变。",
+      "hint": "空间输出保留位置；全图标签不保留位置。",
+      "deliverable": "两组图和定义。",
+      "expected_evidence": [
+        "标签图随输入移动",
+        "分类标签保持",
+        "术语不混淆"
+      ],
+      "evaluation": {
+        "criteria": [
+          "定义",
+          "图示",
+          "证据"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 22
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 23
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 50
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q2",
+      "level": "结构",
+      "question": "画出三输入通道到两个输出特征图的局部卷积连接，区分跨位置共享与跨输出通道不共享的参数。",
+      "hint": "先只画一个输出位置和一个输出通道，再扩展。",
+      "deliverable": "连接图、参数分组和文字说明。",
+      "expected_evidence": [
+        "跨输入通道组合",
+        "同一滤波器跨位置复用",
+        "不同输出通道使用不同滤波器"
+      ],
+      "evaluation": {
+        "criteria": [
+          "通道正确",
+          "共享正确",
+          "局部性正确"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 29
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 31
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 41
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q3",
+      "level": "分析",
+      "question": "任务要求细边界且显存有限。比较步幅 2、扩张卷积、空间池化和普通卷积堆叠，并指出哪些选择有混叠或分辨率代价。",
+      "hint": "把输出采样密度与核采样密度分开。",
+      "deliverable": "四方案矩阵和选择理由。",
+      "expected_evidence": [
+        "步幅下采样",
+        "扩张核覆盖",
+        "混叠风险",
+        "计算权衡"
+      ],
+      "evaluation": {
+        "criteria": [
+          "比较完整",
+          "事实可追溯",
+          "推荐一致"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 50
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 58
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 59
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 60
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 62
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q4",
+      "level": "设计",
+      "question": "设计一个图像到细粒度分割图的网络：说明瓶颈路径、镜像 U-Net 跳跃和可选 ResNet 块各解决什么问题，并标注拼接或相加。",
+      "hint": "不要用“skip”一词代替具体融合算子。",
+      "deliverable": "带张量路径的架构图与 250 字论证。",
+      "expected_evidence": [
+        "上下采样路径",
+        "U-Net 拼接",
+        "ResNet 相加",
+        "细节与上下文角色"
+      ],
+      "evaluation": {
+        "criteria": [
+          "结构有效",
+          "融合明确",
+          "论证基于来源"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 67
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 68
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 69
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 70
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 71
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q5",
+      "level": "综合",
+      "question": "为任意连续坐标处查询颜色的任务制定决策：何时用普通卷积、何时注入位置、何时采用神经场？把课堂事实、合理推断和未知项分别标注。",
+      "hint": "先判断固定网格、绝对位置和连续查询三项需求。",
+      "deliverable": "决策树、推荐架构和证据边界表。",
+      "expected_evidence": [
+        "位置依赖处理正确",
+        "连续坐标输入明确",
+        "不扩展未给出的论文机制"
+      ],
+      "evaluation": {
+        "criteria": [
+          "需求映射",
+          "证据边界",
+          "推荐自洽"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 76
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 77
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 78
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 79
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 80
+          }
+        }
+      ]
+    }
+  ]
+}

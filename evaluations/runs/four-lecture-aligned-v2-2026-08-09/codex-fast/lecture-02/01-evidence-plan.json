@@ -1,0 +1,249 @@
+{
+  "stage": "01-evidence-plan",
+  "unit_id": "lecture-02",
+  "topics": [
+    {
+      "topic": "优化目标与梯度方法",
+      "anchors": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 25
+          }
+        }
+      ]
+    },
+    {
+      "topic": "计算图和矩阵链式法则",
+      "anchors": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 26
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 35
+          }
+        }
+      ]
+    },
+    {
+      "topic": "通用层、线性层和批量",
+      "anchors": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 36
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 52
+          }
+        }
+      ]
+    },
+    {
+      "topic": "DAG、参数共享与可微编程",
+      "anchors": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 53
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 70
+          }
+        }
+      ]
+    },
+    {
+      "topic": "完整数值案例",
+      "anchors": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 72
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 80
+          }
+        }
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "id": "lo-1",
+      "objective": "比较梯度下降、SGD、动量以及梯度裁剪的更新信息和适用问题。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 10
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 22
+          }
+        }
+      ]
+    },
+    {
+      "id": "lo-2",
+      "objective": "把多层网络表示成计算图，并按前向、反向、更新三个阶段解释训练。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 26
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 42
+          }
+        }
+      ]
+    },
+    {
+      "id": "lo-3",
+      "objective": "用 Jacobian 维度检查链式法则，并推导通用层与线性层的局部反向规则。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 41
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 46
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 48
+          }
+        }
+      ]
+    },
+    {
+      "id": "lo-4",
+      "objective": "处理 DAG 分支与参数共享中的梯度累加。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 53
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 55
+          }
+        }
+      ]
+    },
+    {
+      "id": "lo-5",
+      "objective": "说明反向传播如何用于优化输入，并完成讲义中的一次数值反向传播。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 61
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 66
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 72
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 80
+          }
+        }
+      ]
+    }
+  ],
+  "excluded": [
+    "外部网页内容",
+    "未视觉核验的公式"
+  ]
+}

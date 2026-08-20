@@ -1,0 +1,22 @@
+{
+  "mode": "fast",
+  "started_at": "2026-08-09T13:51:13.177706Z",
+  "completed_at": "2026-08-09T13:53:28.143862Z",
+  "total_duration_seconds": 134.966156,
+  "stage_duration_seconds": {
+    "source_inventory": 8.808434485,
+    "fast_risk_review": 27.471950381,
+    "authoring_and_audit": 75.339675064,
+    "deterministic_finalize": 0.194250438,
+    "schema_anchor_validation": 7.240240616,
+    "review_validation_and_metrics": 15.91160501600001
+  },
+  "retries": 0,
+  "repairs": [],
+  "reviewed_page_count": 27,
+  "semantic_passes": 2,
+  "input_tokens": null,
+  "output_tokens": null,
+  "token_observability": "not_observable",
+  "quality_mode": "fast"
+}

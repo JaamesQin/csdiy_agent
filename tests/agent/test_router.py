@@ -17,15 +17,18 @@ def _messages(text: str) -> list[ChatMessage]:
     ("text", "intent"),
     [
         ("推荐一门课程", Intent.COURSE_NAVIGATION),
+        ("查看 MIT 6.7960", Intent.COURSE_NAVIGATION),
+        ("查询 UCB CS61B", Intent.COURSE_NAVIGATION),
         ("查看这讲的 StudyKit", Intent.STUDYKIT_LOOKUP),
+        ("查看 MIT 6.7960 第 2 讲", Intent.STUDYKIT_LOOKUP),
         ("讲义里第 8 页说了什么", Intent.MATERIAL_QUESTION),
         ("解释什么是反向传播", Intent.CONCEPT_EXPLANATION),
         ("给我一道练习", Intent.PRACTICE_SELECTION),
         ("点评我的练习答案", Intent.PRACTICE_FEEDBACK),
         ("```python\nprint(1)\n``` 帮我调试", Intent.CODE_TUTORING),
         ("查看我的画像", Intent.PROFILE_ANALYSIS),
-        ("帮我做学习复盘", Intent.LEARNING_REVIEW),
-        ("查看生成状态", Intent.GENERATION_STATUS),
+        ("帮我做学习复盘", Intent.GENERAL_ASSISTANCE),
+        ("查看生成状态", Intent.GENERAL_ASSISTANCE),
         ("运行生成器后台生成", Intent.ADMIN_GENERATE_STUDYKIT),
         ("/help", Intent.CAPABILITY_HELP),
         ("你好", Intent.FALLBACK_CLARIFICATION),
@@ -56,6 +59,8 @@ async def test_code_rule_has_priority_over_profile_sidecar_signal() -> None:
         ("/help code", CapabilityId.CODE_TUTORING),
         ("代码辅导 --help", CapabilityId.CODE_TUTORING),
         ("你的代码辅导支持什么语言", CapabilityId.CODE_TUTORING),
+        ("你可以进行代码辅导吗？", CapabilityId.CODE_TUTORING),
+        ("你能使用课程导航吗？", CapabilityId.COURSE_NAVIGATION),
         ("学习画像是什么", CapabilityId.PROFILE_ANALYSIS),
         ("课程导航是什么", CapabilityId.COURSE_NAVIGATION),
     ],
@@ -88,6 +93,16 @@ async def test_programming_concept_question_is_not_capability_help() -> None:
     result = await router.route(_messages("C++ 中什么是 virtual"))
 
     assert result.decision.intent is Intent.CONCEPT_EXPLANATION
+
+
+async def test_code_request_with_actual_code_is_not_capability_help() -> None:
+    router = IntentRouter(ReviewedFileStudyKitStore())
+
+    result = await router.route(
+        _messages("你可以进行代码辅导吗？代码如下：```cpp\nint main(){}\n```")
+    )
+
+    assert result.decision.intent is Intent.CODE_TUTORING
 
 
 async def test_low_confidence_model_route_becomes_clarification() -> None:
@@ -129,3 +144,24 @@ async def test_model_cannot_invent_course_context() -> None:
 
     assert result.decision.intent is Intent.FALLBACK_CLARIFICATION
     assert result.decision.reason == "unvalidated_course_context"
+
+
+async def test_model_cannot_route_to_unavailable_capability() -> None:
+    model = FakeStructuredModel(
+        {
+            "intent": "learning_review",
+            "confidence": 0.95,
+            "course_id": None,
+            "course_version": None,
+            "unit_id": None,
+            "required_context": [],
+            "clarifying_question": None,
+        }
+    )
+    router = IntentRouter(ReviewedFileStudyKitStore(), model=model)
+
+    result = await router.route(_messages("帮我回顾近期的学习。"))
+
+    assert result.decision.intent is Intent.GENERAL_ASSISTANCE
+    assert result.decision.reason == "unavailable_capability_fallback"
+    assert result.decision.capability_id is CapabilityId.LEARNING_REVIEW

@@ -14,8 +14,14 @@ from app.agent.contracts import (
     RouteDecision,
     RouteOutcome,
 )
-from app.agent.capabilities import CAPABILITIES, match_capability_help
+from app.agent.capabilities import (
+    available_capabilities,
+    capability_for_intent,
+    match_capability_help,
+    match_unavailable_capability_request,
+)
 from app.agent.model_support import normalized_usage
+from app.agent.understanding import understand_user_texts
 from app.catalog.studykits import StudyKitStore
 from app.generation.model import ModelError, StructuredModel
 from app.protocol.schemas import ChatMessage
@@ -70,7 +76,8 @@ class IntentRouter:
                     confidence=0.4,
                     course_context=course_context,
                     clarifying_question=(
-                        "你希望我帮你整理学习画像，还是分析一段代码？"
+                        "你希望我做课程导航、查询 StudyKit、讲解材料与练习，"
+                        "还是整理学习画像或分析代码？"
                     ),
                     reason="model_unavailable",
                 ),
@@ -86,14 +93,17 @@ class IntentRouter:
                 ),
                 user_prompt=json.dumps(
                     {
-                        "intents": [intent.value for intent in Intent],
+                        "intents": [
+                            capability.intent.value
+                            for capability in available_capabilities()
+                        ],
                         "capabilities": [
                             {
                                 "id": item.capability_id.value,
                                 "title": item.title,
                                 "availability": item.availability,
                             }
-                            for item in CAPABILITIES
+                            for item in available_capabilities()
                         ],
                         "latest_user_message": latest[:10000],
                         "known_context": (
@@ -124,7 +134,9 @@ class IntentRouter:
                     intent=Intent.FALLBACK_CLARIFICATION,
                     confidence=0.0,
                     course_context=course_context,
-                    clarifying_question="请补充你要完成的学习任务或需要分析的代码。",
+                    clarifying_question=(
+                        "请补充课程、讲次和学习任务，或贴出需要静态分析的代码。"
+                    ),
                     reason="classifier_failed",
                 ),
                 usage=normalized_usage(),
@@ -158,13 +170,25 @@ class IntentRouter:
                     required_context=candidate.required_context,
                     clarifying_question=(
                         candidate.clarifying_question
-                        or "请说明你希望进行画像分析还是代码辅导。"
+                        or "请说明你希望进行课程学习、画像分析还是代码辅导。"
                     ),
                     reason="low_confidence",
                 ),
                 usage=usage,
             )
         intent = candidate.intent
+        capability = capability_for_intent(intent)
+        if capability is not None and capability.availability == "unavailable":
+            return RouteOutcome(
+                decision=RouteDecision(
+                    intent=Intent.GENERAL_ASSISTANCE,
+                    confidence=candidate.confidence,
+                    course_context=resolved_context,
+                    capability_id=capability.capability_id,
+                    reason="unavailable_capability_fallback",
+                ),
+                usage=usage,
+            )
         if intent is Intent.ADMIN_GENERATE_STUDYKIT:
             return RouteOutcome(
                 decision=RouteDecision(
@@ -221,14 +245,41 @@ class IntentRouter:
                 course_context=course_context,
                 reason="admin_rule",
             )
+        unavailable = match_unavailable_capability_request(text)
+        if unavailable is not None:
+            return RouteDecision(
+                intent=Intent.GENERAL_ASSISTANCE,
+                confidence=1.0,
+                course_context=course_context,
+                capability_id=unavailable.capability_id,
+                reason="unavailable_capability_fallback",
+            )
 
+        practice_feedback_signal = bool(
+            re.search(r"练习.*反馈|点评.*答案|批改|答案.*反馈", lowered)
+            or (
+                re.search(r"practice-[a-z0-9-]+", lowered)
+                and re.search(r"点评|批改|反馈|我的答案", lowered)
+            )
+        )
+        if practice_feedback_signal:
+            return RouteDecision(
+                intent=Intent.PRACTICE_FEEDBACK,
+                confidence=0.96,
+                course_context=course_context,
+                required_context=["practice_id", "current_answer"],
+                reason="practice_feedback_rule",
+            )
+
+        understanding = understand_user_texts([text])
+        extracted_code = understanding.code
         code_signal = bool(
-            "```" in text
+            understanding.code_requested
+            or extracted_code.content
             or re.search(r"traceback \(most recent call last\)|syntaxerror|typeerror|cuda error", lowered)
-            or re.search(r"代码辅导|帮我调试|debug|报错|审阅.*代码|代码.*问题", lowered)
         )
         if code_signal:
-            has_code = "```" in text
+            has_code = bool(extracted_code.content)
             required = [] if has_code else ["user_code"]
             return RouteDecision(
                 intent=Intent.CODE_TUTORING,
@@ -238,7 +289,7 @@ class IntentRouter:
                 clarifying_question=(
                     None
                     if has_code
-                    else "请用 Markdown 代码围栏粘贴最小相关代码，并附上报错。"
+                    else "请粘贴需要分析的最小相关代码；普通文本或 Markdown 形式都可以。"
                 ),
                 reason="code_rule",
             )
@@ -249,7 +300,7 @@ class IntentRouter:
         profile_statement = bool(
             re.search(r"每(?:周|星期).*?(?:小时|分钟)|想学|准备学|学习方向|我的目标|有.*基础|学过|偏好", lowered)
         )
-        if profile_action or profile_statement:
+        if profile_action:
             return RouteDecision(
                 intent=Intent.PROFILE_ANALYSIS,
                 confidence=0.96,
@@ -264,21 +315,43 @@ class IntentRouter:
                 course_context=course_context,
                 reason="studykit_rule",
             )
-        if re.search(r"推荐.*课程|选课|学习路线|学什么课", lowered):
+        if (
+            course_context is not None
+            and course_context.unit_id is not None
+            and re.search(r"^(?:查看|查询|打开).*(?:第\s*\d+\s*讲|lecture)", lowered)
+        ):
+            return RouteDecision(
+                intent=Intent.STUDYKIT_LOOKUP,
+                confidence=0.91,
+                course_context=course_context,
+                reason="studykit_context_rule",
+            )
+        exact_course_query = bool(
+            re.search(
+                r"(?:查看|查询|介绍|了解).{0,40}(?:"
+                r"[a-z]{2,}\s+(?:[a-z]{0,3})?\d[\w.-]*|\d+\.[a-z0-9]+|课程)",
+                lowered,
+                re.IGNORECASE,
+            )
+        )
+        if re.search(
+            r"推荐.*课程|课程.*推荐|选课|学习路线|学什么课|有哪些课程|课程列表|列出.{0,4}课程",
+            lowered,
+        ) or exact_course_query:
             return RouteDecision(
                 intent=Intent.COURSE_NAVIGATION,
                 confidence=0.9,
                 course_context=course_context,
                 reason="course_navigation_rule",
             )
-        if re.search(r"练习.*反馈|点评.*答案|批改", lowered):
+        if profile_statement:
             return RouteDecision(
-                intent=Intent.PRACTICE_FEEDBACK,
-                confidence=0.9,
+                intent=Intent.PROFILE_ANALYSIS,
+                confidence=0.96,
                 course_context=course_context,
-                reason="practice_feedback_rule",
+                reason="profile_rule",
             )
-        if re.search(r"给我.*练习|选择.*练习|做道题", lowered):
+        if re.search(r"给我.*练习|选择.*练习|推荐.*练习|做道题", lowered):
             return RouteDecision(
                 intent=Intent.PRACTICE_SELECTION,
                 confidence=0.9,

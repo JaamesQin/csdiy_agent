@@ -1,0 +1,22 @@
+{
+  "mode": "standard",
+  "started_at": "2026-08-09T13:54:25.070121Z",
+  "completed_at": "2026-08-09T13:56:28.679890Z",
+  "total_duration_seconds": 123.609769,
+  "stage_duration_seconds": {
+    "protocol_source_inventory_standard_review_and_separate_01_04_authoring": 87.655630155,
+    "stage_materialization_and_05_assembly": 8.848843954,
+    "deterministic_finalize": 0.192386022,
+    "schema_anchor_validation": 0.121634522,
+    "review_validation_and_metrics": 26.791274346999998
+  },
+  "retries": 0,
+  "repairs": [],
+  "reviewed_page_count": 39,
+  "semantic_passes": 4,
+  "input_tokens": null,
+  "output_tokens": null,
+  "token_observability": "not_observable",
+  "coordinator_dispatch_at": "2026-08-09T13:54:07.961649837Z",
+  "quality_mode": "standard"
+}

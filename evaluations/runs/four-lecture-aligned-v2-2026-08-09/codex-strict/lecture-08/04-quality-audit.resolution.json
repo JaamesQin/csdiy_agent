@@ -1,0 +1,20 @@
+{
+  "stage": "04-quality-audit.resolution",
+  "status": "repaired",
+  "repairs": [
+    {
+      "finding_id": "B1",
+      "artifact": "02-learning-content.json",
+      "action": "位置码表述限定为附加，并明确第44页示例拼接 p=[p_x;p_y]。",
+      "repair_count_for_artifact": 1
+    }
+  ],
+  "blocker_reaudit": {
+    "status": "pass",
+    "remaining_blockers": 0,
+    "checks": [
+      "学习内容与最终组装均使用修复后的表述",
+      "公式与可见第44页一致"
+    ]
+  }
+}

@@ -1,0 +1,2107 @@
+{
+  "studykit_version": "0.1",
+  "status": "draft",
+  "course_id": "mit-6.7960-fall-2024",
+  "course_version": "fall-2024",
+  "unit_id": "lecture-04",
+  "title": "第 4 讲：网格架构",
+  "language": "zh-CN",
+  "scope": {
+    "included_sources": [
+      {
+        "source_id": "mit-6.7960-f24-lecture-04-slides",
+        "title": "Lecture 4: Architectures for Grids",
+        "type": "pdf",
+        "sha256": "d96fe101e57c5104ab5d89d598348d18f6c9ff22a7aacb20223acbc4a9b90a02"
+      }
+    ],
+    "citation_anchor_types": [
+      "page"
+    ]
+  },
+  "learning_objectives": [
+    {
+      "id": "L1",
+      "objective": "评估架构约束如何改变假设空间、样本需求与外推行为。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 6
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        }
+      ]
+    },
+    {
+      "id": "L2",
+      "objective": "从密集语义分割需求推导重叠局部处理、权重共享和平移等变。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 19
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 22
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 23
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 24
+          }
+        }
+      ]
+    },
+    {
+      "id": "L3",
+      "objective": "使用滤波、块处理、受约束线性层、参数共享和可变尺寸输入五种视角解释卷积。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 25
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 32
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 36
+          }
+        }
+      ]
+    },
+    {
+      "id": "L4",
+      "objective": "分析池化、步幅、扩张和深度对感受野、空间分辨率、混叠与计算量的取舍。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 52
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 58
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 59
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 60
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 62
+          }
+        }
+      ]
+    },
+    {
+      "id": "L5",
+      "objective": "为分类、密集预测与连续坐标任务选择编码器—解码器、U-Net、ResNet、位置编码或神经场。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 66
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 67
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 70
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 71
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 76
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 79
+          }
+        }
+      ]
+    }
+  ],
+  "prerequisites": [
+    {
+      "topic": "线性映射与逐点激活",
+      "required_level": "能读懂全连接层的输入、权重、偏置和激活流程。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 26
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 28
+          }
+        }
+      ]
+    },
+    {
+      "topic": "二维数组和通道",
+      "required_level": "能区分空间轴、输入通道、输出通道和类别轴。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 22
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 31
+          }
+        }
+      ]
+    },
+    {
+      "topic": "函数复合",
+      "required_level": "理解多层网络由各层函数顺序复合。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 54
+          }
+        }
+      ]
+    }
+  ],
+  "outline": [
+    {
+      "order": 1,
+      "topic": "架构为什么重要",
+      "anchors": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 6
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        }
+      ],
+      "purpose": "连接归纳偏置、数据量和分布外泛化"
+    },
+    {
+      "order": 2,
+      "topic": "密集网格任务导出卷积",
+      "anchors": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 19
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 20
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 22
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 23
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 24
+          }
+        }
+      ],
+      "purpose": "从逐像素分类到共享滑窗"
+    },
+    {
+      "order": 3,
+      "topic": "卷积层的结构",
+      "anchors": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 25
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 27
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 28
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 31
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 32
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 36
+          }
+        }
+      ],
+      "purpose": "理解局部连接、共享核和多通道特征图"
+    },
+    {
+      "order": 4,
+      "topic": "堆叠、池化与尺度",
+      "anchors": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 37
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 42
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 50
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 52
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 53
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 56
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 58
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 59
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 60
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 62
+          }
+        }
+      ],
+      "purpose": "追踪感受野"
+    },
+    {
+      "order": 5,
+      "topic": "分类与空间输出架构",
+      "anchors": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 65
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 66
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 67
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 68
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 69
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 70
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 71
+          }
+        }
+      ],
+      "purpose": "组织编码器—解码器、U-Net、ResNet"
+    },
+    {
+      "order": 6,
+      "topic": "坐标、位置编码、神经场",
+      "anchors": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 73
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 76
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 77
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 78
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 79
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 80
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 82
+          }
+        }
+      ],
+      "purpose": "识别平移假设不合适的任务"
+    }
+  ],
+  "core_concepts": [
+    {
+      "id": "C1",
+      "term": "受约束假设空间",
+      "claim_type": "source_summary",
+      "explanation": "架构把所有可想象映射限制为更小的可表示集合。若真实映射仍在集合中，结构约束可与增加数据一样帮助排除不合适解；但架构也要可优化、可并行且计算可承受。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 6
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        }
+      ]
+    },
+    {
+      "id": "C2",
+      "term": "逼近与优化的实验耦合",
+      "claim_type": "source_summary",
+      "explanation": "课堂展示不同网络拟合图像的差异，同时明确提醒：结果可能来自逼近能力，也可能来自优化能力，实际实验通常无法把二者完全拆开。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        }
+      ]
+    },
+    {
+      "id": "C3",
+      "term": "语义分割的局部上下文矛盾",
+      "claim_type": "source_summary",
+      "explanation": "逐像素输出要求高空间分辨率，而过小图块又缺少辨认物体所需的上下文。较大、重叠且共享处理的窗口兼顾密集输出和上下文。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 19
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 22
+          }
+        }
+      ]
+    },
+    {
+      "id": "C4",
+      "term": "平移等变",
+      "claim_type": "source_summary",
+      "explanation": "若每个位置都应用相同局部函数，移动输入后所得输出会相应移动。它描述输入变化如何传递到输出，不表示输出数值或位置保持不变。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 23
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 36
+          }
+        }
+      ]
+    },
+    {
+      "id": "C5",
+      "term": "卷积即受约束线性层",
+      "claim_type": "source_summary",
+      "explanation": "卷积核对邻域做共享加权组合；从矩阵角度看，这是一种具有重复结构的受约束线性层，因此参数少于任意稠密连接。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 24
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 25
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 32
+          }
+        }
+      ]
+    },
+    {
+      "id": "C6",
+      "term": "多输入与多输出通道",
+      "claim_type": "source_summary",
+      "explanation": "神经网络卷积把各输入通道的局部响应组合起来，并用一组滤波器产生多个输出特征图；每个输出通道对应一个学习到的响应图。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 31
+          }
+        }
+      ]
+    },
+    {
+      "id": "C7",
+      "term": "五种卷积视角",
+      "claim_type": "source_summary",
+      "explanation": "卷积可同时理解为平移等变映射、滑动块处理、图像滤波、参数共享，以及处理可变尺寸张量的方法。这些不是五种不同操作，而是同一结构的五种解释。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 36
+          }
+        }
+      ]
+    },
+    {
+      "id": "C8",
+      "term": "感受野随深度扩大",
+      "claim_type": "source_summary",
+      "explanation": "卷积单元只看局部输入，但层层复合会让更深单元依赖更大的原始区域；逐点非线性不改变空间依赖范围，下采样会更快扩大相对感受野。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 37
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 62
+          }
+        }
+      ]
+    },
+    {
+      "id": "C9",
+      "term": "两类池化",
+      "claim_type": "source_summary",
+      "explanation": "空间池化可降低对局部平移的敏感度并常伴随降采样；跨通道池化可以把不同方向等特征响应合并，从而获得另一类不变性。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 50
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 52
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 53
+          }
+        }
+      ]
+    },
+    {
+      "id": "C10",
+      "term": "步幅与混叠",
+      "claim_type": "source_summary",
+      "explanation": "步幅操作把卷积或池化和下采样合在一起，可降低内存与计算；页面示例也显示步幅增大可能引入混叠并损失边界。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 58
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 59
+          }
+        }
+      ]
+    },
+    {
+      "id": "C11",
+      "term": "扩张卷积",
+      "claim_type": "source_summary",
+      "explanation": "扩张卷积拉开滤波器采样点而不是稀疏输出位置，因此用较少参数覆盖较大的感受野，并与步幅下采样形成不同取舍。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 60
+          }
+        }
+      ]
+    },
+    {
+      "id": "C12",
+      "term": "空间输出与 U-Net",
+      "claim_type": "source_summary",
+      "explanation": "编码器通过卷积和下采样提炼压缩表示，解码器上采样生成空间输出。U-Net 把镜像尺度的早期激活按通道拼接到解码端，以补充瓶颈丢失的高频细节。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 67
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 68
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 69
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 70
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 71
+          }
+        }
+      ]
+    },
+    {
+      "id": "C13",
+      "term": "ResNet 残差路径",
+      "claim_type": "source_summary",
+      "explanation": "ResNet 把跳跃输入与变换块输出相加，使块表示对输入的修正；若维度不一致可在线性映射后相加。它不同于 U-Net 的跨尺度拼接。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 71
+          }
+        }
+      ]
+    },
+    {
+      "id": "C14",
+      "term": "位置编码与神经场",
+      "claim_type": "source_summary",
+      "explanation": "当绝对位置决定输出时，可不用平移不变架构，或把位置加入卷积输入。神经场进一步以连续坐标查询颜色等值；NeRF 页面把更高维坐标映射为颜色和体密度。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 76
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 77
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 78
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 79
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 80
+          }
+        }
+      ]
+    }
+  ],
+  "glossary": [
+    {
+      "term": "假设空间",
+      "definition": "某一架构能够表示的候选函数集合。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 6
+          }
+        }
+      ]
+    },
+    {
+      "term": "平移等变",
+      "definition": "输入发生平移时输出按同样方式平移。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 23
+          }
+        }
+      ]
+    },
+    {
+      "term": "权重共享",
+      "definition": "在不同空间位置复用同一局部权重。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 27
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 29
+          }
+        }
+      ]
+    },
+    {
+      "term": "特征图",
+      "definition": "一个学习滤波器在各空间位置形成的响应通道。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 31
+          }
+        }
+      ]
+    },
+    {
+      "term": "感受野",
+      "definition": "能够影响指定输出单元的输入位置集合。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 37
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 62
+          }
+        }
+      ]
+    },
+    {
+      "term": "步幅操作",
+      "definition": "以大于一的位置间隔应用卷积或池化，并同时下采样。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 58
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 59
+          }
+        }
+      ]
+    },
+    {
+      "term": "扩张卷积",
+      "definition": "让核内采样点间隔增大、以扩大覆盖范围的卷积。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 60
+          }
+        }
+      ]
+    },
+    {
+      "term": "位置编码",
+      "definition": "把位置信息作为额外输入，使模型能够响应绝对位置。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 76
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 77
+          }
+        }
+      ]
+    },
+    {
+      "term": "神经场",
+      "definition": "输入连续坐标并返回该坐标处场值的神经表示。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 78
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 79
+          }
+        }
+      ]
+    }
+  ],
+  "common_misconceptions": [
+    {
+      "misconception": "卷积会自动让任何输出对平移不变。",
+      "correction": "卷积首先提供平移等变；池化或任务读出才可能形成某种不变性。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 23
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 52
+          }
+        }
+      ]
+    },
+    {
+      "misconception": "图块越小，语义分割越好。",
+      "correction": "小图块提高定位分辨率但削弱语义上下文，因此需要重叠窗口或多尺度表示。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 19
+          }
+        }
+      ]
+    },
+    {
+      "misconception": "步幅卷积和扩张卷积都只是扩大感受野，所以可互换。",
+      "correction": "步幅稀疏输出并降低分辨率；扩张稀疏核采样位置，二者的混叠与输出网格不同。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 58
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 59
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 60
+          }
+        }
+      ]
+    },
+    {
+      "misconception": "U-Net 与 ResNet 的 skip connection 融合方式相同。",
+      "correction": "U-Net 跨镜像尺度按通道拼接；ResNet 在块旁采用加性残差路径。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 71
+          }
+        }
+      ]
+    }
+  ],
+  "learning_sequence": [
+    {
+      "step": 1,
+      "activity": "依据假设空间图写出数据量与结构约束的两条缩小解集路径，并标出适用前提。",
+      "duration_minutes": 20,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 6
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        }
+      ]
+    },
+    {
+      "step": 2,
+      "activity": "从鸟/天空逐像素分类重建“大且重叠窗口 + 共享局部函数”的推导链。",
+      "duration_minutes": 25,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 19
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 22
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 23
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 24
+          }
+        }
+      ]
+    },
+    {
+      "step": 3,
+      "activity": "制作卷积五视角互证表，并在小网格上画局部连接与共享参数。",
+      "duration_minutes": 30,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 27
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 32
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 36
+          }
+        }
+      ]
+    },
+    {
+      "step": 4,
+      "activity": "追踪三层局部卷积的感受野，再加入下采样比较空间依赖。",
+      "duration_minutes": 25,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 37
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 62
+          }
+        }
+      ]
+    },
+    {
+      "step": 5,
+      "activity": "比较空间池化、跨通道池化、步幅和扩张的目标及副作用。",
+      "duration_minutes": 25,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 50
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 52
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 53
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 58
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 59
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 60
+          }
+        }
+      ]
+    },
+    {
+      "step": 6,
+      "activity": "并排画分类 CNN、编码器—解码器、U-Net 和残差块，标注输出拓扑与融合算子。",
+      "duration_minutes": 30,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 66
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 67
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 68
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 70
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 71
+          }
+        }
+      ]
+    },
+    {
+      "step": 7,
+      "activity": "为位置敏感且可连续查询的场任务比较位置输入和神经场。",
+      "duration_minutes": 15,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 76
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 78
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 79
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 80
+          }
+        }
+      ]
+    },
+    {
+      "step": 8,
+      "activity": "完成综合练习并逐项做证据边界审核。",
+      "duration_minutes": 10,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 82
+          }
+        }
+      ]
+    }
+  ],
+  "practice": [
+    {
+      "id": "P1",
+      "level": "概念",
+      "question": "给一个输入平移两格的例子，分别画出等变映射与不变分类读出的输出，并解释差异。",
+      "hint": "等变输出保留空间拓扑；不变读出只保留整体类别。",
+      "deliverable": "两组输入输出图与 100 字解释。",
+      "expected_evidence": [
+        "等变输出同向平移",
+        "不变读出保持类别",
+        "明确二者对应不同任务"
+      ],
+      "evaluation": {
+        "criteria": [
+          "概念准确",
+          "图示一致",
+          "引用充分"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 23
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 52
+          }
+        }
+      ]
+    },
+    {
+      "id": "P2",
+      "level": "结构",
+      "question": "为三通道输入、两个输出特征图画出局部卷积连接。说明哪些权重跨位置共享、哪些参数属于不同输出通道。",
+      "hint": "先画一个输出位置，再复制到相邻位置。",
+      "deliverable": "带颜色标记的连接图和参数说明。",
+      "expected_evidence": [
+        "输入通道被组合",
+        "输出滤波器彼此区分",
+        "相对空间位置权重共享"
+      ],
+      "evaluation": {
+        "criteria": [
+          "通道关系",
+          "共享关系",
+          "局部性"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 27
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 29
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 31
+          }
+        }
+      ]
+    },
+    {
+      "id": "P3",
+      "level": "分析",
+      "question": "在细边界分割任务中比较步幅 2、扩张卷积和普通卷积堆叠。列出感受野、输出分辨率、混叠风险和计算成本的相对变化。",
+      "hint": "不要把核采样稀疏与输出采样稀疏混为一谈。",
+      "deliverable": "四列比较表及推荐方案。",
+      "expected_evidence": [
+        "步幅会下采样",
+        "扩张保持输出位置网格",
+        "指出步幅示例的混叠风险"
+      ],
+      "evaluation": {
+        "criteria": [
+          "维度完整",
+          "推理对应证据",
+          "推荐自洽"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 58
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 59
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 60
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 62
+          }
+        }
+      ]
+    },
+    {
+      "id": "P4",
+      "level": "设计",
+      "question": "设计一个保留细小物体边界的图像到分割图网络。比较纯编码器—解码器、U-Net 和残差块组合，并明确每条跳跃路径是拼接还是相加。",
+      "hint": "用瓶颈路径表达上下文，用镜像跳跃传递高分辨率信息。",
+      "deliverable": "架构图、每个路径的张量作用和 200 字理由。",
+      "expected_evidence": [
+        "包含上下采样",
+        "U-Net 镜像拼接正确",
+        "残差加法位置明确"
+      ],
+      "evaluation": {
+        "criteria": [
+          "结构正确",
+          "任务匹配",
+          "融合算子清楚"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 67
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 68
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 70
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 71
+          }
+        }
+      ]
+    },
+    {
+      "id": "P5",
+      "level": "综合",
+      "question": "任务要求任意连续二维坐标处返回颜色，而且颜色取决于绝对位置。比较 MLP、带位置输入的卷积和神经场表述；把课堂支持与个人设计推断分别标注。",
+      "hint": "先判断是否存在固定输入网格，再判断是否需要绝对位置。",
+      "deliverable": "决策树、方案表和证据/推断标签。",
+      "expected_evidence": [
+        "连续坐标需求被识别",
+        "位置输入目的正确",
+        "未扩展课堂未给出的训练结论"
+      ],
+      "evaluation": {
+        "criteria": [
+          "决策清晰",
+          "证据边界",
+          "方案适配"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 76
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 77
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 78
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 79
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 80
+          }
+        }
+      ]
+    }
+  ],
+  "citations": [
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 4
+      },
+      "citation_id": "S004",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 5
+      },
+      "citation_id": "S005",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 6
+      },
+      "citation_id": "S006",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 8
+      },
+      "citation_id": "S008",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 9
+      },
+      "citation_id": "S009",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 18
+      },
+      "citation_id": "S018",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 19
+      },
+      "citation_id": "S019",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 20
+      },
+      "citation_id": "S020",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 22
+      },
+      "citation_id": "S022",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 23
+      },
+      "citation_id": "S023",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 24
+      },
+      "citation_id": "S024",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 25
+      },
+      "citation_id": "S025",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 26
+      },
+      "citation_id": "S026",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 27
+      },
+      "citation_id": "S027",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 28
+      },
+      "citation_id": "S028",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 29
+      },
+      "citation_id": "S029",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 31
+      },
+      "citation_id": "S031",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 32
+      },
+      "citation_id": "S032",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 34
+      },
+      "citation_id": "S034",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 36
+      },
+      "citation_id": "S036",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 37
+      },
+      "citation_id": "S037",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 42
+      },
+      "citation_id": "S042",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 50
+      },
+      "citation_id": "S050",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 52
+      },
+      "citation_id": "S052",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 53
+      },
+      "citation_id": "S053",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 54
+      },
+      "citation_id": "S054",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 56
+      },
+      "citation_id": "S056",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 58
+      },
+      "citation_id": "S058",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 59
+      },
+      "citation_id": "S059",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 60
+      },
+      "citation_id": "S060",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 62
+      },
+      "citation_id": "S062",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 65
+      },
+      "citation_id": "S065",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 66
+      },
+      "citation_id": "S066",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 67
+      },
+      "citation_id": "S067",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 68
+      },
+      "citation_id": "S068",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 69
+      },
+      "citation_id": "S069",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 70
+      },
+      "citation_id": "S070",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 71
+      },
+      "citation_id": "S071",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 73
+      },
+      "citation_id": "S073",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 76
+      },
+      "citation_id": "S076",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 77
+      },
+      "citation_id": "S077",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 78
+      },
+      "citation_id": "S078",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 79
+      },
+      "citation_id": "S079",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 80
+      },
+      "citation_id": "S080",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-04-slides",
+      "anchor": {
+        "type": "page",
+        "value": 82
+      },
+      "citation_id": "S082",
+      "supports": "支持本学习包引用该页的学习目标、概念、活动或练习。"
+    }
+  ],
+  "review": {
+    "generator_review_status": "standard_reviewed",
+    "audit_findings": [
+      {
+        "severity": "warning",
+        "artifact": "02-learning-content.json",
+        "code": "formula_archive_gap",
+        "message": "本地归档 PDF 为讲课转录，不含可与 slide chunks 对齐的公式图像；复杂公式未进入成品。",
+        "repairable": false
+      }
+    ]
+  },
+  "limitations": [
+    "本地原始 PDF 是讲课转录，而固定可引用来源为 84 页 slide chunks；页引用均对应 chunks。",
+    "复杂公式的抽取文本排版不能由归档 PDF 的可见页面逐式核验，因此未转写为最终公式元数据。",
+    "课堂中的第三方图像和论文示例不在学习包内复制，且不据此扩展未明示的实验结论。"
+  ]
+}
