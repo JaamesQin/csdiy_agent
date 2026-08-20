@@ -1,0 +1,343 @@
+{
+  "stage": "01-evidence-plan",
+  "mode": "strict",
+  "unit_id": "lecture-08",
+  "source": {
+    "source_id": "mit-6.7960-f24-lecture-08-slides",
+    "title": "Lecture 8: Transformers",
+    "type": "pdf",
+    "sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca"
+  },
+  "target_minutes": 180,
+  "vision_required_pages": [
+    3,
+    10,
+    11,
+    12,
+    13,
+    15,
+    19,
+    22,
+    23,
+    25,
+    29,
+    32,
+    33,
+    35,
+    38,
+    40,
+    42,
+    44,
+    48,
+    49,
+    52
+  ],
+  "final_formula_pages": [
+    14,
+    17,
+    18,
+    29,
+    34,
+    35,
+    37,
+    38,
+    41,
+    44
+  ],
+  "evidence_groups": [
+    {
+      "id": "G1",
+      "topic": "局部性问题与架构路线",
+      "requirements": [
+        "说明浅 CNN 的远距信息路径限制",
+        "列出 tokens、attention、positional codes"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        }
+      ]
+    },
+    {
+      "id": "G2",
+      "topic": "从输入到 token net",
+      "requirements": [
+        "定义 token 和 T 的行式表示",
+        "覆盖图像/文本/声音切块后投影的共同策略",
+        "区分跨 token 线性混合和逐 token MLP",
+        "联系 GNN aggregate/update"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 11
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 14
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 15
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 17
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 20
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 22
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 23
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 24
+          }
+        }
+      ]
+    },
+    {
+      "id": "G3",
+      "topic": "动态注意力与自注意力",
+      "requirements": [
+        "解释 A 与自由参数 W 的差异",
+        "视觉核验 Q/K/V 及 scaled dot product",
+        "说明 self-attention 的输入输出 token 集一致"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 20
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 29
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 30
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 33
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 35
+          }
+        }
+      ]
+    },
+    {
+      "id": "G4",
+      "topic": "多头与 ViT block",
+      "requirements": [
+        "核验 head 拼接和投影维度",
+        "核验 norm/MSA/MLP/residual 顺序"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 37
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 38
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 39
+          }
+        }
+      ]
+    },
+    {
+      "id": "G5",
+      "topic": "等变性与位置",
+      "requirements": [
+        "区分置换等变与不变",
+        "说明位置输入如何破除内容置换的歧义",
+        "仅保留可见 sine 位置公式"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 41
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 42
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 43
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 44
+          }
+        }
+      ]
+    },
+    {
+      "id": "G6",
+      "topic": "自回归和图像到文本",
+      "requirements": [
+        "说明训练/采样关系",
+        "验证多层因果 mask",
+        "区分 image self-attn、text causal self-attn、cross-attn"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 48
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 49
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 51
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 52
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 54
+          }
+        }
+      ]
+    }
+  ],
+  "unsupported_exclusions": [
+    {
+      "pages": [
+        3,
+        10,
+        25,
+        40
+      ],
+      "reason": "视觉仅为章节/过渡标题，不据此增加事实。"
+    },
+    {
+      "pages": [
+        45,
+        46,
+        47
+      ],
+      "reason": "不从论文截图推断完整外部方法。"
+    }
+  ]
+}

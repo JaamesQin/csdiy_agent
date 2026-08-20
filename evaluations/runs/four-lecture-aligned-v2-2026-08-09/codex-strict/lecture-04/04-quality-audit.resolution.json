@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "repairs": [],
+  "warning_resolutions": [
+    {
+      "code": "pdf_slide_mismatch",
+      "resolution": "限制中明示归档差异，不保留任何无法视觉核验的公式对象。"
+    }
+  ],
+  "blocker_reaudit": {
+    "performed": true,
+    "at": "2026-08-09T14:02:37.455152Z",
+    "original_blockers": [],
+    "remaining_blockers": [],
+    "status": "passed"
+  }
+}

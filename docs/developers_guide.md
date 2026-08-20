@@ -37,8 +37,9 @@
 最新外部回归为 Lecture 1–8、concurrency=8、8/8 成功，平均人工质量分 91/100。所有结果通过确定性验证，但修复后的语义没有二次 Audit；因此数据库必须保存 `review_status`，不能把“生成成功”直接当成“已发布”。
 
 2026-08-10 的 host-authored portable 构建已覆盖官方可用的 23 讲并全部通过确定性
-验证；reviewed 重复包与统一 chunks 只可保存在被忽略的本地工作数据中，正式 archive
-记录仍为 `validated_draft`，不得把历史离线抽查等同于在线批准。
+验证；reviewed 重复包与统一 chunks 只可保存在被忽略的本地工作数据中。该 legacy build
+不冒充当前合同的逐题独立审计；2026-08-17 经仓库所有者明确复核后，以记录 waived gates
+的 reviewed-legacy 方式批准。历史离线抽查本身仍不等同于在线批准。
 在线 adapter 已兼容 portable `citation.anchor`、`page_citations` 和直接页码结构，
 但只有 archive build/document 都为 `approved` 时才对在线运行时可见。
 
@@ -54,9 +55,16 @@ catalog/manifests、golden、anchored chunks、provenance 与 SQLite；不要把
 reviewed 重复包或 regression 数据加入 submodule。详见
 [`private-data-submodule.md`](private-data-submodule.md)。
 
+2026-08-17 的人工发布批准使用 `scripts/approve_studykit_archive.py` 执行。工具同时检查
+archive hash 完整性、portable v0.2.1 Schema、逐 unit validation/review-validation、build 的
+requested/completed/validated/audited/document 精确身份集合，以及匹配 build ID 的独立 registry
+audit。reviewed-legacy 课程必须显式记录 owner approval 和 waived gates；身份修复必须创建绑定
+直接父快照、repair plan 与当前审计的新指纹 build。当前 9 个 build、220 个文档 approved；
+其余 3 个 partial build、66 个文档保持 validated_draft。
+
 当前在线 API 已从固定回显升级为 Agent 运行时：`app/api/chat_completions.py`
 仍只负责 OpenAI 协议，实际编排位于 `app/agent/`。运行时已经执行主动学习画像、
-规则优先的意图路由、能力帮助、CSDIY 课程导航、golden StudyKit 查询/材料/概念/练习、
+有界 TaskPlan、能力帮助、通用学习问答兜底、CSDIY 课程导航、approved StudyKit 查询/材料/概念/练习、
 以及多语言静态代码辅导。SourceChunk 检索、私有材料和复盘仍未接入。
 慢速 generator 继续与 `/v1/chat/completions` 严格隔离。
 
@@ -65,15 +73,22 @@ API Key 客户端继续把 OpenAI `user` 映射到 `legacy:<user>`。请求体 `
 不能覆盖账号身份。完整认证、CSRF 和数据库迁移契约见
 [账号认证与画像隔离](account_authentication.md)。
 
-当前自动化测试基线为 `360 passed`，前端另有 17 项 Vitest 和 7 项 Chrome Playwright 流程。在线模型通过现有 `DeepSeekModel` 惰性加载；
-未配置 `DEEPSEEK_API_KEY` 时规则路由、功能帮助、课程导航、StudyKit 查询、概念解释、
-练习选择、显式画像抽取、Python AST 和 Tree-sitter 多语言语法诊断仍可用；材料问答
+当前自动化测试基线为 `623 passed`，前端另有 18 项 Vitest 和 7 项 Chrome Playwright 流程。在线模型通过现有 `DeepSeekModel` 惰性加载；
+未配置 `DEEPSEEK_API_KEY` 时功能帮助、课程导航、StudyKit 查询、概念解释、
+练习选择、显式画像抽取、Python AST 和 Tree-sitter 多语言语法诊断仍可用；通用学习问答
+返回透明不可用说明，材料问答
 只返回已审核摘要，练习反馈透明降级且不判分。
 
 在线输入先经过一次模型驱动的统一理解与 TaskPlan：Markdown 围栏不是必需条件，聊天平台压平
 围栏、自然指代、纠正、多意图、代码候选和画像操作都由模型结合短期签名上下文理解。确定性层
 只校验代码字符回绑、Catalog/StudyKit 身份、页码证据、画像持久化和权限边界。
 `COURSEPILOT_ROBUST_INPUT=false` 仅作为首个发布周期的临时 Planner 回退开关。
+
+`app/agent/capabilities.py` 是可用性的唯一事实源。未上线 capability ID 只能用于 `/help`
+和状态说明，不得保留在 Router、TaskPlan 或执行计划中。Planner 在模型前拦截明确别名，
+模型后再按能力目录失败关闭；旧 Router 与编排执行入口保留同样防线。请求转为
+`general_assistance` 时，只附加被匹配能力的受控 title/status/limitations/alternative；
+服务端确定性声明“尚未接入”，防止通用模型暗示其他在线能力能读取不存在的后台状态。
 凭据化后端验收使用 `scripts/run_live_backend_e2e.py`；它直接调用完整 Agent 和真实
 DeepSeek，但不属于离线 pytest 门禁。
 
@@ -432,6 +447,17 @@ F* 等无可靠 grammar 的课程 DSL 明确标记为模型静态建议。解析
 `CAPABILITY_HELP` 在编排层调用画像观察前直接返回，因此功能查询不会写画像或触发
 不必要的辅导模型调用。新增在线能力时必须同时更新目录状态、别名、示例、限制和测试。
 
+### 6.5 通用学习问答兜底
+
+`general_assistance` 只在没有专用能力适用时执行。输入从最新消息向前选择最多 30 条且总内容
+不超过 48,000 字符，并只附加 confirmed 画像值和经过最小化的验签连续状态。角色和可用能力
+从 `CapabilitySpec` 构建；对话中的 system 消息也只作为数据，不能覆盖能力系统指令。服务还始终
+注入由 registry 生成的全课程极简索引，显式身份、签名连续课程和画像方向只控制最多 12 门安全
+详情展开。索引/详情不得包含本地路径、哈希、candidate offering、审计诊断或内部控制字段。
+模型 prose 固定为 `general_knowledge`；可选课程只通过 catalog ID 表达，后端验证并渲染为独立
+`catalog_metadata` claim，界面按原顺序自然拼接。citation/diagnostic ID 仍为空且
+`ran_code=false`。模型或课程知识分区失败时独立透明降级，不增加在线 reviewer 或第二次能力调用。
+
 ## 7. 资料检索系统
 
 ### 7.1 数据边界
@@ -543,7 +569,11 @@ fallback_clarification
 ### 8.3 当前课程学习能力边界
 
 - `course_navigation` 可以展示全部 119 个课程目标，但必须分别输出目录审核状态、
-  authoring 状态和 `online_studykits`；只有受控 Manifest 可以提供“官方课程页”。
+  authoring 状态和 `online_studykits`；只有受控 Manifest 可以提供“官方课程页”。精确身份查询和
+  列表不调用模型；个性化推荐用一次关闭 thinking 的结构化调用读取全部 confirmed 画像和全课程
+  学习决策索引，仅选择已验证 ID 并分为“现在开始/长期目标”。负向 background 是排序约束，模型
+  失败时必须明确显示“未个性化排序”。非法 JSON 由统一模型适配器附加修复指令后重试；合法 JSON
+  若违反 ID/唯一性合同则失败关闭，不再为不可信选择追加模型调用。registry 未记录先修时保持 unknown。
 - `studykit_lookup` 是四项学习能力的统一数据门禁。完整课程、版本、讲次必须经
   `StudyKitStore` 验证；课程级上下文只列 Store 中的 ready 讲次。
 - `material_question` 只使用核心概念、outline 和有 support 页码的 misconception。
@@ -577,7 +607,9 @@ fallback_clarification
 `X-CSRF-Token`，API Key 客户端不受该要求影响。协议层只把可信 subject 交给
 画像/检索模块，不允许能力模块自行解析用户名、Cookie 或请求体 `user`。
 
-协议适配层不能依赖清小搭一定提供持久会话。每轮请求应能从 `messages` 恢复最小上下文；如果平台提供稳定会话 ID，再把它作为数据库索引，而不是唯一事实来源。
+清小搭已确认在请求 body 顶层传入可选 `sessionId`。同一对话沿用同一值，新对话换值；缺失或空值按新会话处理。实现将可信身份命名空间与原始 `sessionId` 做 HMAC，仅以摘要索引 SQLite Schema v3 的最小结构化连续状态，默认滑动有效期 30 天。响应不回传 `sessionId` 或 `coursepilot_context`。
+
+服务端状态只保留已验证的课程/讲次、当前与已展示练习、提示级别及最小指代摘要，不保存完整 `messages`、用户代码、答案、traceback 或模型 reasoning。数据库不可用时当轮对话继续，只丢失跨轮连续性。无 `sessionId` 的现有浏览器路径继续使用短期签名 `coursepilot_context`。
 
 当前实现保持 `coursepilot-probe` 模型 ID 兼容。账号 Cookie 请求忽略请求体 `user`，
 API Key 请求只把可选 `user` 映射为 `legacy:<user>`。本地网页不保存匿名 UUID 或
@@ -592,7 +624,7 @@ API Key 请求只把可选 `user` 映射为 `legacy:<user>`。本地网页不保
 3. **Learner context**：用户主动确认的画像、偏好、学习限制和历史证据。
 4. **Course context**：CourseManifest、StudyKit、SourceChunk 权限范围和版本。
 
-每次调用只拼接完成当前任务所需的最小上下文。长会话使用摘要和结构化状态，不无限回传原始消息。模型返回的 reasoning 内容只用于当次展示，不写入下一轮用户消息或长期画像。
+每次调用只拼接完成当前任务所需的最小上下文。`TurnResolver` 统一合并显式当轮引用、已验证会话状态和模型计划；显式换课/换讲优先，模型省略讲次时不得降低已验证上下文的具体度。长会话使用最小结构化状态，不无限回传原始消息。模型 reasoning 不写入下一轮消息、会话状态或长期画像。
 
 ### 9.3 文件输入
 
@@ -740,7 +772,7 @@ approved 索引发布、jobs、MaterialSet 数据库和私有/向量 retrieval �
 - 对可提交作业只给诊断、提示和验证步骤，不直接代写完整答案。
 
 以上 P1 条件已由自动化测试覆盖；“代码辅导包含课程引用”仅在课程/讲次能匹配
-Lecture 2/8 黄金 StudyKit 时成立。通用代码问题会明确没有课程来源上下文。
+approved archive 或 Lecture 2/8 golden StudyKit 时成立。通用代码问题会明确没有课程来源上下文。
 
 ### P2 检索与路由
 

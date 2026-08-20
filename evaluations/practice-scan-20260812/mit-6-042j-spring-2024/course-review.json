@@ -1,0 +1,401 @@
+{
+  "schema_version": "practice-course-review-v1",
+  "course_id": "mit-6-042j-spring-2024",
+  "build_id": "89a0616b96b49b2060735c20c2ba17616905b29c357aa0d8c4daa42f624ba485",
+  "reviewed_range_reports": [
+    {
+      "report": "evaluations/practice-scan-20260812/mit-6-042j-spring-2024/range-01-12.json",
+      "report_schema_version": "practice-semantic-scan-v1",
+      "auditor_id": "luna-medium-unit-range-01-12",
+      "unit_ids": [
+        "lecture-01",
+        "lecture-02",
+        "lecture-03",
+        "lecture-04",
+        "lecture-05",
+        "lecture-06",
+        "lecture-07",
+        "lecture-08",
+        "lecture-09",
+        "lecture-10",
+        "lecture-11",
+        "lecture-12"
+      ],
+      "raw_count_keys": {
+        "items": 35,
+        "pass": 0,
+        "needs_repair": 35,
+        "fail": 0,
+        "blockers": 36
+      },
+      "normalized_counts": {
+        "total": 35,
+        "pass": 0,
+        "needs_repair": 35,
+        "blocker_items": 35,
+        "blocker_findings": 36
+      },
+      "coverage_check": {
+        "manifest_unit_count": 12,
+        "reported_unit_count": 12,
+        "current_build_unit_directory_count": 12,
+        "missing_unit_ids": [],
+        "extra_unit_ids": [],
+        "duplicate_unit_ids": [],
+        "duplicate_item_ids": [],
+        "directly_inspected_items": 35,
+        "direct_confirmation": "All 35 needs_repair items were checked against current 03-practice-flow.json, current 05-studykit.json, and their cited current chunks."
+      }
+    },
+    {
+      "report": "evaluations/practice-scan-20260812/mit-6-042j-spring-2024/range-13-24.json",
+      "report_schema_version": "practice-semantic-scan-v1",
+      "auditor_id": "luna-medium-unit-range-13-24",
+      "unit_ids": [
+        "lecture-13",
+        "lecture-14",
+        "lecture-15",
+        "lecture-16",
+        "lecture-17",
+        "lecture-18",
+        "lecture-19",
+        "lecture-20",
+        "lecture-21",
+        "lecture-22",
+        "lecture-23",
+        "lecture-24"
+      ],
+      "raw_count_keys": {
+        "total": 36,
+        "pass": 1,
+        "needs_repair": 35,
+        "fail": 0,
+        "blockers": 35
+      },
+      "normalized_counts": {
+        "total": 36,
+        "pass": 1,
+        "needs_repair": 35,
+        "blocker_items": 35,
+        "blocker_findings": 35
+      },
+      "coverage_check": {
+        "manifest_unit_count": 12,
+        "reported_unit_count": 12,
+        "current_build_unit_directory_count": 12,
+        "missing_unit_ids": [],
+        "extra_unit_ids": [],
+        "duplicate_unit_ids": [],
+        "duplicate_item_ids": [],
+        "directly_inspected_items": 36,
+        "direct_confirmation": "All 35 needs_repair items were checked against current 03-practice-flow.json, current 05-studykit.json, and their cited current chunks; the one reported pass was independently rechecked."
+      }
+    }
+  ],
+  "manifest_unit_count": 24,
+  "scanned_unit_count": 24,
+  "item_counts": {
+    "total": 71,
+    "pass": 1,
+    "needs_repair": 70,
+    "blocker_items": 70,
+    "blocker_findings": 71
+  },
+  "coverage_gaps": {
+    "manifest_unit_ids_missing_from_reports": [],
+    "reported_unit_ids_not_in_manifest": [],
+    "duplicate_unit_ids_across_reports": [],
+    "duplicate_item_ids_within_or_across_reports": [],
+    "reported_items_missing_from_current_03_or_05": [],
+    "current_build_practice_items_not_reported": [],
+    "current_build_unit_directories_missing_03_or_05": [],
+    "current_build_03_to_05_practice_id_mismatches": [],
+    "current_build_03_to_05_practice_object_mismatches": [],
+    "citation_chunk_reference_gaps": [],
+    "citation_review_scope": {
+      "directly_checked_blocker_item_citation_occurrences": 165,
+      "unique_current_unit_page_pairs_checked": 150,
+      "all_cited_source_ids_and_page_anchors_resolved": true
+    },
+    "pass_sampling": {
+      "range-01-12": {
+        "reported_pass_items": 0,
+        "sampled_pass_items": 0,
+        "note": "No reported pass item existed in this range; pass sampling was not applicable and no pass was fabricated."
+      },
+      "range-13-24": {
+        "reported_pass_items": 1,
+        "sampled_pass_items": ["lecture-21/p-01"],
+        "sample_coverage": "100% of reported pass items"
+      }
+    }
+  },
+  "independently_confirmed_findings": [
+    {
+      "finding_type": "semantic_blocker_reconciliation",
+      "status": "confirmed",
+      "reported_needs_repair_items": 70,
+      "independently_confirmed_needs_repair_items": 70,
+      "basis": "Every reported needs_repair item was read in the current 03-practice-flow.json and assembled current 05-studykit.json, then checked against its cited current source chunks. The cited pages support the named concept or method, but do not supply the learner inputs omitted by the practice prompt."
+    },
+    {
+      "code": "generic_exercise_shell",
+      "status": "confirmed",
+      "finding_count": 60,
+      "exact_item_ids": [
+        "lecture-01/p-01",
+        "lecture-01/p-02",
+        "lecture-02/p1",
+        "lecture-02/p2",
+        "lecture-02/p3",
+        "lecture-02/p4",
+        "lecture-03/practice-1",
+        "lecture-03/practice-2",
+        "lecture-03/practice-3",
+        "lecture-05/p-03",
+        "lecture-06/p1",
+        "lecture-06/p2",
+        "lecture-06/p3",
+        "lecture-06/p4",
+        "lecture-07/practice-1",
+        "lecture-07/practice-2",
+        "lecture-07/practice-3",
+        "lecture-08/practice-1",
+        "lecture-09/p-02",
+        "lecture-09/p-03",
+        "lecture-10/p1",
+        "lecture-10/p2",
+        "lecture-10/p3",
+        "lecture-10/p4",
+        "lecture-11/practice-1",
+        "lecture-11/practice-2",
+        "lecture-11/practice-3",
+        "lecture-12/practice-1",
+        "lecture-13/p-01",
+        "lecture-13/p-02",
+        "lecture-14/p1",
+        "lecture-14/p2",
+        "lecture-14/p3",
+        "lecture-14/p4",
+        "lecture-15/practice-1",
+        "lecture-15/practice-2",
+        "lecture-15/practice-3",
+        "lecture-16/practice-1",
+        "lecture-16/practice-2",
+        "lecture-17/p-01",
+        "lecture-17/p-02",
+        "lecture-18/p1",
+        "lecture-18/p2",
+        "lecture-18/p3",
+        "lecture-18/p4",
+        "lecture-19/practice-1",
+        "lecture-19/practice-2",
+        "lecture-19/practice-3",
+        "lecture-20/practice-1",
+        "lecture-20/practice-2",
+        "lecture-21/p-02",
+        "lecture-22/p1",
+        "lecture-22/p2",
+        "lecture-22/p3",
+        "lecture-22/p4",
+        "lecture-23/practice-1",
+        "lecture-23/practice-2",
+        "lecture-23/practice-3",
+        "lecture-24/practice-1",
+        "lecture-24/practice-2"
+      ],
+      "reason": "The learner is asked to construct the whole setting or example, rather than being given concrete objects, inputs, states, conditions, operations, goals, and an observable result. This includes generic requests to construct a micro-situation, graph, recurrence, cryptographic instance, probability model, or counterexample."
+    },
+    {
+      "code": "underspecified_setting",
+      "status": "confirmed",
+      "finding_count": 9,
+      "exact_item_ids": [
+        "lecture-04/practice-1",
+        "lecture-04/practice-2",
+        "lecture-05/p-02",
+        "lecture-08/practice-2",
+        "lecture-09/p-01",
+        "lecture-12/practice-2",
+        "lecture-13/p-03",
+        "lecture-17/p-03",
+        "lecture-21/p-03"
+      ],
+      "reason": "The prompt names a concept and a desired proof or calculation but omits enough concrete data, conditions, ranges, transitions, or target quantities to make the task directly solvable and its result uniquely checkable."
+    },
+    {
+      "code": "lecture_specific_dependency",
+      "status": "confirmed",
+      "finding_count": 1,
+      "exact_item_ids": ["lecture-05/p-01"],
+      "reason": "The task replays the lecture's 1+2+...+n Gauss perturbation example without a changed input or condition, so success can come from reproducing the worked example rather than demonstrating transferable method use."
+    },
+    {
+      "code": "citation_mismatch",
+      "status": "confirmed",
+      "finding_count": 1,
+      "exact_item_ids": ["lecture-04/practice-2"],
+      "reason": "The page-5 citation supports the simple-sort state machine's inversion potential and termination, not the unspecified invariant/reachability counterfactual asked by the practice item."
+    },
+    {
+      "finding_type": "reported_pass_independent_check",
+      "status": "independently_confirmed_pass",
+      "exact_item_ids": ["lecture-21/p-01"],
+      "criteria": {
+        "concrete_setting": "Three fair independent coin flips give a finite sample space.",
+        "necessary_conditions_repeated": true,
+        "transferable_concept_replacement_check": "The task defines a count and an indicator on the stated sample space; it is not dependent on recalling a special lecture answer.",
+        "observable_result": "A learner can list the sample space, map outcomes to both variables, and name an event.",
+        "hint_expected_evidence_evaluation_aligned": true,
+        "relevant_anchor": "mit-6-042j-spring-2024-lecture-21-material@page1",
+        "formative_no_assessed_answer": true
+      }
+    }
+  ],
+  "repair_priority": [
+    {
+      "priority": 1,
+      "code": "generic_exercise_shell",
+      "affected_item_count": 60,
+      "exact_item_ids": [
+        "lecture-01/p-01",
+        "lecture-01/p-02",
+        "lecture-02/p1",
+        "lecture-02/p2",
+        "lecture-02/p3",
+        "lecture-02/p4",
+        "lecture-03/practice-1",
+        "lecture-03/practice-2",
+        "lecture-03/practice-3",
+        "lecture-05/p-03",
+        "lecture-06/p1",
+        "lecture-06/p2",
+        "lecture-06/p3",
+        "lecture-06/p4",
+        "lecture-07/practice-1",
+        "lecture-07/practice-2",
+        "lecture-07/practice-3",
+        "lecture-08/practice-1",
+        "lecture-09/p-02",
+        "lecture-09/p-03",
+        "lecture-10/p1",
+        "lecture-10/p2",
+        "lecture-10/p3",
+        "lecture-10/p4",
+        "lecture-11/practice-1",
+        "lecture-11/practice-2",
+        "lecture-11/practice-3",
+        "lecture-12/practice-1",
+        "lecture-13/p-01",
+        "lecture-13/p-02",
+        "lecture-14/p1",
+        "lecture-14/p2",
+        "lecture-14/p3",
+        "lecture-14/p4",
+        "lecture-15/practice-1",
+        "lecture-15/practice-2",
+        "lecture-15/practice-3",
+        "lecture-16/practice-1",
+        "lecture-16/practice-2",
+        "lecture-17/p-01",
+        "lecture-17/p-02",
+        "lecture-18/p1",
+        "lecture-18/p2",
+        "lecture-18/p3",
+        "lecture-18/p4",
+        "lecture-19/practice-1",
+        "lecture-19/practice-2",
+        "lecture-19/practice-3",
+        "lecture-20/practice-1",
+        "lecture-20/practice-2",
+        "lecture-21/p-02",
+        "lecture-22/p1",
+        "lecture-22/p2",
+        "lecture-22/p3",
+        "lecture-22/p4",
+        "lecture-23/practice-1",
+        "lecture-23/practice-2",
+        "lecture-23/practice-3",
+        "lecture-24/practice-1",
+        "lecture-24/practice-2"
+      ],
+      "repair_requirement": "Revise the practice prompt/checkpoint to state a concrete, source-supported setting with all necessary inputs, initial state, constraints, operations, target, and observable result. Keep the transfer explicit where the setting is new, and make hint, expected_evidence, evaluation, and citations refer to that same task."
+    },
+    {
+      "priority": 2,
+      "code": "underspecified_setting",
+      "affected_item_count": 9,
+      "exact_item_ids": [
+        "lecture-04/practice-1",
+        "lecture-04/practice-2",
+        "lecture-05/p-02",
+        "lecture-08/practice-2",
+        "lecture-09/p-01",
+        "lecture-12/practice-2",
+        "lecture-13/p-03",
+        "lecture-17/p-03",
+        "lecture-21/p-03"
+      ],
+      "repair_requirement": "Fill in the missing values, definitions, ranges, assumptions, transitions, and checkable target before asking for the proof, computation, or counterfactual."
+    },
+    {
+      "priority": 3,
+      "code": "lecture_specific_dependency",
+      "affected_item_count": 1,
+      "exact_item_ids": ["lecture-05/p-01"],
+      "repair_requirement": "Replace the exact Gauss worked example with a new concrete arithmetic sequence or changed finite range, while retaining the perturbation method and requiring an observable verification."
+    },
+    {
+      "priority": 4,
+      "code": "citation_mismatch",
+      "affected_item_count": 1,
+      "exact_item_ids": ["lecture-04/practice-2"],
+      "repair_requirement": "Either cite the relevant invariant/reachability source page for a fully specified state machine, or change the task to the page-5 sorting termination/potential-function problem and provide its concrete input."
+    }
+  ],
+  "deferred_structural_findings": [
+    {
+      "separate_from_semantic_blockers": true,
+      "finding": "Structural findings are tracked separately from semantic practice blockers. They do not erase, downgrade, or convert any confirmed semantic blocker to pass."
+    },
+    {
+      "code": "count_key_variation",
+      "status": "normalized_no_gap",
+      "finding": "range-01-12.json uses items while range-13-24.json uses total; both were normalized to total, pass, needs_repair, blocker_items, and blocker_findings."
+    },
+    {
+      "code": "checkpoint_semantic_conflict",
+      "scope": "lecture-01..lecture-12",
+      "finding": "Prior review-plan/independent-audit pass labels do not establish item-level self-containedness and are superseded for this practice-quality review only."
+    },
+    {
+      "code": "practice_mapping_metadata_gap",
+      "scope": ["lecture-03", "lecture-07", "lecture-11"],
+      "finding": "The evidence-plan topic IDs and learning-content concept IDs are not explicitly mapped in the practice artifact; semantic mappings in the range report are auditor mappings, not artifact fields."
+    },
+    {
+      "code": "evidence_plan_empty",
+      "scope": ["lecture-15", "lecture-19", "lecture-23"],
+      "finding": "The evidence-plan requirements array is empty although practice items and learning-content concepts exist; this is a checkpoint metadata gap, separate from the semantic findings above."
+    },
+    {
+      "code": "citation_page_not_reviewed",
+      "scope": ["lecture-13", "lecture-17", "lecture-21"],
+      "finding": "Some cited pages fall outside the prior review-plan actual_reviewed_pages metadata. Current chunk anchors were nevertheless read for this offline semantic audit; page-review metadata remains deferred structural work."
+    },
+    {
+      "code": "source_scope_and_page_identity_boundary",
+      "scope": "all assigned units",
+      "finding": "Cited source IDs and page anchors resolve in the current chunk files. Page existence and prior visual-review metadata were not substituted for semantic relevance, and no hidden-text evidence was used."
+    }
+  ],
+  "auditor_id": "luna-xhigh-course-independent-practice-auditor",
+  "offline_only": true,
+  "next_action": {
+    "status": "repair_required_hold",
+    "action": "Repair the grouped practice prompts/checkpoints, then create a new fingerprinted build and independently re-audit every changed practice item under the calibration protocol.",
+    "release_decision": "Do not promote this build as semantically practice-ready.",
+    "preserve_prior_artifacts": true,
+    "network_provider_model_calls_made": false
+  }
+}

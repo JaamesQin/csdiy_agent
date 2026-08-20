@@ -1,0 +1,52 @@
+{
+  "schema_version": "selective-repair-residual-plan-v1",
+  "plan_id": "ucb-cs188-practice-repair-round4-clean-parent-20260812",
+  "created_at": "2026-08-12T22:40:00+08:00",
+  "fresh_build_nonce": "retry-after-parent-snapshot-copy-fix-20260812T2250+0800",
+  "superseded_existing_roots": [
+    "3a60107abce4b03fd68a0a5c057d16b7f915a019534c718ee41b63206bf42015",
+    "224a7d34e93ac367737bb89c12e44d8e39cdb2f6d62887111af56c11f1750079"
+  ],
+  "policy": {
+    "scope": "replay the four Round-3 residual repairs from the declared clean Round-2 parent after stale-parent detection",
+    "parent_snapshot_must_match_declared_baseline": true,
+    "max_targeted_repairs_per_stage": 1,
+    "fresh_independent_per_practice_audit_required": true,
+    "termination": "zero semantic, lineage, and validator blockers"
+  },
+  "courses": [{
+    "course_id": "ucb-cs188-spring-2026",
+    "baseline_build_id": "24660da2d6acfe384d4a20e5ad8316c0268fe8031ceb0bac0a386c10b678651c",
+    "repair_units": [
+      {
+        "unit_id": "lecture-17",
+        "stages": ["practice", "structural"],
+        "blocked_practice_ids": ["p1", "p5"],
+        "required_repairs": [
+          "preserve p2, p3, and p4 byte/semantic equivalence with the declared direct parent",
+          "give p1 numerical conditional probabilities and deterministic draws so the Gibbs trace is uniquely solvable",
+          "make p5 expected/evaluation agree with independently recomputed m3(rain)=0.0138915",
+          "keep exact 03/candidate/final practice semantics and clean one-attempt lineage"
+        ]
+      },
+      {
+        "unit_id": "lecture-24",
+        "stages": ["practice", "structural"],
+        "blocked_practice_ids": ["p3"],
+        "required_repairs": ["make the prediction agree with lake=12 > lakes=8 and preserve every other practice"]
+      },
+      {
+        "unit_id": "lecture-27",
+        "stages": ["practice", "structural"],
+        "blocked_practice_ids": ["practice-1"],
+        "required_repairs": ["state complete initial geometry for a unique collision result and remove the answer-leaking hint"]
+      },
+      {
+        "unit_id": "lecture-28",
+        "stages": ["practice", "structural"],
+        "blocked_practice_ids": ["practice-2"],
+        "required_repairs": ["remove both filtering answers from the learner-facing deliverable"]
+      }
+    ]
+  }]
+}

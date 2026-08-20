@@ -1,0 +1,67 @@
+{
+  "schema_version": "practice-semantic-scan-v1",
+  "course_id": "ucb-cs61a-summer-2026",
+  "build_id": "db465e2135a7d4c31a27b046b9378cb8476f12dd3a9813ca5ab6df402179d966",
+  "unit_ids": ["lecture-01", "lecture-02", "lecture-03", "lecture-04", "lecture-05", "lecture-06", "lecture-07", "lecture-08", "lecture-09", "lecture-10", "lecture-11", "lecture-12", "lecture-13", "lecture-14"],
+  "scanned_at": "2026-08-12T00:00:00+08:00",
+  "auditor_id": "luna-medium-unit-range-01-14-20260812",
+  "offline_only": true,
+  "scope": {
+    "build_root": "outputs/ucb-cs61a-summer-2026/db465e2135a7d4c31a27b046b9378cb8476f12dd3a9813ca5ab6df402179d966",
+    "artifacts_read": ["01-evidence-plan.json", "02-learning-content.json", "03-practice-flow.json", "05-studykit.json", "review-plan.json"],
+    "source_chunks": "data/sources/ucb-cs61a-summer-2026/lecture-XX/chunks.jsonl",
+    "network_calls": 0,
+    "provider_or_model_calls": 0,
+    "content_modified": false
+  },
+  "units": [
+    {"unit_id":"lecture-01","item_results":[
+      {"practice_id":"practice-01","verdict":"pass","blockers":[]},{"practice_id":"practice-02","verdict":"pass","blockers":[]},{"practice_id":"practice-03","verdict":"pass","blockers":[]},{"practice_id":"practice-04","verdict":"pass","blockers":[]},{"practice_id":"practice-05","verdict":"pass","blockers":[]},{"practice_id":"practice-06","verdict":"pass","blockers":[]},{"practice_id":"practice-07","verdict":"pass","blockers":[]}
+    ],"counts":{"total":7,"pass":7,"needs_repair":0,"fail":0,"blockers":0},"source_check":{"cited_chunks_read":true,"citation_mismatches":0}},
+    {"unit_id":"lecture-02","item_results":[
+      {"practice_id":"p-boolean-classify","verdict":"pass","blockers":[]},{"practice_id":"p-short-circuit","verdict":"pass","blockers":[]},{"practice_id":"p-condition-trace","verdict":"pass","blockers":[]},{"practice_id":"p-while-invariant","verdict":"pass","blockers":[]},{"practice_id":"p-fizzbuzz-boundary","verdict":"pass","blockers":[]},{"practice_id":"p-digit-loop","verdict":"pass","blockers":[]}
+    ],"counts":{"total":6,"pass":6,"needs_repair":0,"fail":0,"blockers":0},"source_check":{"cited_chunks_read":true,"citation_mismatches":0}},
+    {"unit_id":"lecture-03","item_results":[
+      {"practice_id":"P1","verdict":"pass","blockers":[]},{"practice_id":"P2","verdict":"pass","blockers":[]},{"practice_id":"P3","verdict":"pass","blockers":[]},{"practice_id":"P4","verdict":"pass","blockers":[]},{"practice_id":"P5","verdict":"pass","blockers":[]},{"practice_id":"P6","verdict":"pass","blockers":[]},{"practice_id":"P7","verdict":"pass","blockers":[]}
+    ],"counts":{"total":7,"pass":7,"needs_repair":0,"fail":0,"blockers":0},"source_check":{"cited_chunks_read":true,"citation_mismatches":0}},
+    {"unit_id":"lecture-04","item_results":[
+      {"practice_id":"practice-01","verdict":"pass","blockers":[]},{"practice_id":"practice-02","verdict":"pass","blockers":[]},{"practice_id":"practice-03","verdict":"pass","blockers":[]},{"practice_id":"practice-04","verdict":"pass","blockers":[]}
+    ],"counts":{"total":4,"pass":4,"needs_repair":0,"fail":0,"blockers":0},"source_check":{"cited_chunks_read":true,"citation_mismatches":0}},
+    {"unit_id":"lecture-05","item_results":[
+      {"practice_id":"practice-01","verdict":"pass","blockers":[]},{"practice_id":"practice-02","verdict":"pass","blockers":[]},{"practice_id":"practice-03","verdict":"pass","blockers":[]},{"practice_id":"practice-04","verdict":"pass","blockers":[]},{"practice_id":"practice-05","verdict":"pass","blockers":[]}
+    ],"counts":{"total":5,"pass":5,"needs_repair":0,"fail":0,"blockers":0},"source_check":{"cited_chunks_read":true,"citation_mismatches":0}},
+    {"unit_id":"lecture-06","item_results":[
+      {"practice_id":"p1","verdict":"pass","blockers":[]},{"practice_id":"p2","verdict":"pass","blockers":[]},{"practice_id":"p3","verdict":"pass","blockers":[]},{"practice_id":"p4","verdict":"pass","blockers":[]}
+    ],"counts":{"total":4,"pass":4,"needs_repair":0,"fail":0,"blockers":0},"source_check":{"cited_chunks_read":true,"citation_mismatches":0}},
+    {"unit_id":"lecture-07","item_results":[
+      {"practice_id":"p1","verdict":"pass","blockers":[]},{"practice_id":"p2","verdict":"pass","blockers":[]},{"practice_id":"p3","verdict":"pass","blockers":[]},{"practice_id":"p4","verdict":"pass","blockers":[]}
+    ],"counts":{"total":4,"pass":4,"needs_repair":0,"fail":0,"blockers":0},"source_check":{"cited_chunks_read":true,"citation_mismatches":0}},
+    {"unit_id":"lecture-08","item_results":[
+      {"practice_id":"practice-01","verdict":"pass","blockers":[]},{"practice_id":"practice-02","verdict":"pass","blockers":[]},{"practice_id":"practice-03","verdict":"pass","blockers":[]},{"practice_id":"practice-04","verdict":"pass","blockers":[]},{"practice_id":"practice-05","verdict":"pass","blockers":[]}
+    ],"counts":{"total":5,"pass":5,"needs_repair":0,"fail":0,"blockers":0},"source_check":{"cited_chunks_read":true,"citation_mismatches":0}},
+    {"unit_id":"lecture-09","item_results":[
+      {"practice_id":"p1","verdict":"pass","blockers":[]},{"practice_id":"p2","verdict":"pass","blockers":[]},{"practice_id":"p3","verdict":"pass","blockers":[]},{"practice_id":"p4","verdict":"pass","blockers":[]},{"practice_id":"p5","verdict":"pass","blockers":[]}
+    ],"counts":{"total":5,"pass":5,"needs_repair":0,"fail":0,"blockers":0},"source_check":{"cited_chunks_read":true,"citation_mismatches":0}},
+    {"unit_id":"lecture-10","item_results":[
+      {"practice_id":"practice-01","verdict":"pass","blockers":[]},{"practice_id":"practice-02","verdict":"pass","blockers":[]},{"practice_id":"practice-03","verdict":"pass","blockers":[]},{"practice_id":"practice-04","verdict":"pass","blockers":[]},{"practice_id":"practice-05","verdict":"pass","blockers":[]},{"practice_id":"practice-06","verdict":"pass","blockers":[]}
+    ],"counts":{"total":6,"pass":6,"needs_repair":0,"fail":0,"blockers":0},"source_check":{"cited_chunks_read":true,"citation_mismatches":0}},
+    {"unit_id":"lecture-11","item_results":[
+      {"practice_id":"practice-01","verdict":"pass","blockers":[]},{"practice_id":"practice-02","verdict":"pass","blockers":[]},{"practice_id":"practice-03","verdict":"pass","blockers":[]},{"practice_id":"practice-04","verdict":"pass","blockers":[]},{"practice_id":"practice-05","verdict":"pass","blockers":[]}
+    ],"counts":{"total":5,"pass":5,"needs_repair":0,"fail":0,"blockers":0},"source_check":{"cited_chunks_read":true,"citation_mismatches":0}},
+    {"unit_id":"lecture-12","item_results":[
+      {"practice_id":"practice-01-doctest","verdict":"pass","blockers":[]},{"practice_id":"practice-02-okpy","verdict":"pass","blockers":[]},{"practice_id":"practice-03-pytest","verdict":"pass","blockers":[]},{"practice_id":"practice-04-boundary","verdict":"pass","blockers":[]}
+    ],"counts":{"total":4,"pass":4,"needs_repair":0,"fail":0,"blockers":0},"source_check":{"cited_chunks_read":true,"citation_mismatches":0}},
+    {"unit_id":"lecture-13","item_results":[
+      {"practice_id":"practice-01-oop","verdict":"pass","blockers":[]},{"practice_id":"practice-02-instance","verdict":"pass","blockers":[]},{"practice_id":"practice-03-class-attr","verdict":"pass","blockers":[]},{"practice_id":"practice-04-lookup","verdict":"pass","blockers":[]},{"practice_id":"practice-05-rebinding","verdict":"pass","blockers":[]},{"practice_id":"practice-06-equality","verdict":"pass","blockers":[]},{"practice_id":"practice-07-inspection-design","verdict":"pass","blockers":[]}
+    ],"counts":{"total":7,"pass":7,"needs_repair":0,"fail":0,"blockers":0},"source_check":{"cited_chunks_read":true,"citation_mismatches":0}},
+    {"unit_id":"lecture-14","item_results":[
+      {"practice_id":"practice-01-relationship-map","verdict":"pass","blockers":[]},{"practice_id":"practice-02-super-trace","verdict":"pass","blockers":[]},{"practice_id":"practice-03-composed-registry","verdict":"pass","blockers":[]},{"practice_id":"practice-04-lookup-type","verdict":"pass","blockers":[]},{"practice_id":"practice-05-string-pair","verdict":"pass","blockers":[]},{"practice_id":"practice-06-integrated-refactor","verdict":"pass","blockers":[]}
+    ],"counts":{"total":6,"pass":6,"needs_repair":0,"fail":0,"blockers":0},"source_check":{"cited_chunks_read":true,"citation_mismatches":0}}
+  ],
+  "counts":{"units":14,"items":75,"pass":75,"needs_repair":0,"fail":0,"blockers":0},
+  "deferred_structural_findings":[
+    {"code":"review_page_set_mismatch","location":"lecture-04/review-plan.json","detail":"selected_pages has 15 pages while actual_reviewed_pages has 19; semantic item review is unaffected."},
+    {"code":"missing_quality_audit_resolution_checkpoint","location":"lecture-01 through lecture-14","detail":"04-quality-audit.resolution.json is absent in each assigned unit; 04-quality-audit.json records no blockers/repairs. Deferred because this scan is read-only semantic practice review."},
+    {"code":"practice_schema_variants","location":"lecture-01 through lecture-14","detail":"Practice collection keys vary (practices, activities, practice); all 75 items were enumerated and reviewed."}
+  ]
+}

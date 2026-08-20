@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from app.agent.context_token import ContextTokenSigner
+from app.agent.context_token import ContextTokenSigner, ConversationState
 from app.agent.contracts import StudyKitCourseIdentity
 
 
@@ -73,3 +73,20 @@ def test_context_token_carries_only_bounded_semantic_continuity() -> None:
     assert verified.selected_catalog_id == "course-a"
     assert verified.last_concept == "backpropagation"
     assert "learner_answer" not in token
+
+
+def test_context_token_and_server_state_share_the_same_continuity() -> None:
+    signer = ContextTokenSigner(b"x" * 32, ttl_seconds=60)
+    state = ConversationState(
+        course=StudyKitCourseIdentity(
+            course_id="course", course_version="v1", unit_id="lecture-02"
+        ),
+        displayed_practice_ids=["ex-1"],
+        last_concept="gradients",
+    )
+
+    token = signer.issue_state(plan={"tasks": ["practice"]}, state=state, now=100)
+    verified = signer.verify(token, now=120)
+
+    assert verified is not None
+    assert verified.to_state() == state

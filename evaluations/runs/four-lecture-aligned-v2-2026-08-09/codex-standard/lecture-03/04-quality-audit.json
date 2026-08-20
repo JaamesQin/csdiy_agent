@@ -1,0 +1,24 @@
+{
+  "unit_id": "lecture-03",
+  "quality_mode": "standard",
+  "auditor": "independent audit pass, separate from authoring passes",
+  "checks": {
+    "identity": "pass",
+    "source_order": "pass",
+    "learning_coverage": "pass",
+    "citation_resolution": "pass",
+    "formula_visual_fidelity": "pass",
+    "strong_claim_support": "pass",
+    "practice_progression": "pass",
+    "timing_180_minutes": "pass",
+    "copyright": "pass",
+    "academic_integrity": "pass"
+  },
+  "blockers": [],
+  "warnings": [
+    "仅使用课堂幻灯片的可见内容；板书抽取含噪声的公式均经页面图像核对。",
+    "定理处理表达存在性，不提供优化收敛、训练算法或泛化误差界。",
+    "第 38–39 页只支持“训练管线细节可能改变经验结论”的提醒，不支持额外定量缩放律。"
+  ],
+  "repair_required": false
+}

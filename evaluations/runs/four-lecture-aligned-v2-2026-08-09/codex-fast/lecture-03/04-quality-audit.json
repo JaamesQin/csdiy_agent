@@ -1,0 +1,23 @@
+{
+  "unit_id": "lecture-03",
+  "quality_mode": "fast",
+  "semantic_pass": 2,
+  "checks": {
+    "identity": "pass",
+    "source_order": "pass",
+    "coverage": "pass",
+    "citation_resolution": "pass",
+    "formula_visual_fidelity": "pass",
+    "strong_claim_support": "pass",
+    "timing_180_minutes": "pass",
+    "copyright": "pass",
+    "academic_integrity": "pass"
+  },
+  "blockers": [],
+  "warnings": [
+    "源材料为板书式幻灯片；本包只保留已从可见页面核对的公式。",
+    "逼近定理和深度分离均为表达能力结论，不提供训练算法、收敛速度或泛化界。",
+    "第 38–39 页只用于提醒实践结果可能受训练管线混杂因素影响，本包不扩展未在材料中给出的经验定律。"
+  ],
+  "repair_required": false
+}

@@ -1,0 +1,61 @@
+{
+  "stage": "04-quality-audit",
+  "mode": "fast",
+  "status": "passed",
+  "semantic_passes": 2,
+  "checks": {
+    "identity": "passed",
+    "coverage": "passed",
+    "citation_anchors": "passed",
+    "formula_fidelity": "passed_no_formula_metadata_retained",
+    "strong_claims": "passed",
+    "source_order": "passed",
+    "learning_time_minutes": 180,
+    "copyright": "passed",
+    "academic_integrity": "passed"
+  },
+  "reviewed_pages": [
+    1,
+    2,
+    6,
+    8,
+    18,
+    19,
+    22,
+    23,
+    24,
+    27,
+    28,
+    32,
+    34,
+    36,
+    37,
+    52,
+    58,
+    59,
+    60,
+    62,
+    67,
+    68,
+    70,
+    71,
+    76,
+    78,
+    79,
+    80,
+    82,
+    84
+  ],
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "archive_mismatch",
+      "message": "原始归档为讲课转录 PDF，固定页锚点来自 84 页 chunks。"
+    },
+    {
+      "severity": "warning",
+      "code": "formula_omission",
+      "message": "复杂公式排版无法从归档转录视觉核验，最终包不保留公式元数据。"
+    }
+  ]
+}

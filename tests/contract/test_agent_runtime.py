@@ -17,14 +17,23 @@ class CapturingAgent:
         self.fail = fail
         self.user_id: str | None = None
         self.messages: list[ChatMessage] = []
+        self.session_id: str | None = None
+        self.continuity_namespace: str | None = None
 
     async def handle(
-        self, *, messages: list[ChatMessage], user_id: str | None
+        self,
+        *,
+        messages: list[ChatMessage],
+        user_id: str | None,
+        session_id: str | None = None,
+        continuity_namespace: str | None = None,
     ) -> AgentReply:
         if self.fail:
             raise RuntimeError("secret internal failure")
         self.user_id = user_id
         self.messages = messages
+        self.session_id = session_id
+        self.continuity_namespace = continuity_namespace
         return AgentReply(
             answer="测试 Agent 回复",
             usage={"prompt_tokens": 7, "completion_tokens": 3, "total_tokens": 10},
@@ -81,6 +90,29 @@ def test_agent_usage_is_forwarded_to_stream_stop_frame(
         "completion_tokens": 3,
         "total_tokens": 10,
     }
+
+
+@pytest.mark.parametrize("stream", [False, True])
+def test_session_id_reaches_agent_and_is_not_returned(
+    client: ASGITestClient,
+    auth_headers: dict[str, str],
+    override_agent: CapturingAgent,
+    stream: bool,
+) -> None:
+    response = client.post(
+        "/v1/chat/completions",
+        headers=auth_headers,
+        json={
+            "messages": [{"role": "user", "content": "hello"}],
+            "sessionId": "  gateway-conversation-1  ",
+            "stream": stream,
+        },
+    )
+
+    assert response.status_code == 200
+    assert override_agent.session_id == "gateway-conversation-1"
+    assert override_agent.continuity_namespace == "legacy:qingxiaoda-gateway"
+    assert "coursepilot_context" not in response.text
 
 
 def test_optional_coursepilot_context_round_trips_only_on_stream_stop_frame(

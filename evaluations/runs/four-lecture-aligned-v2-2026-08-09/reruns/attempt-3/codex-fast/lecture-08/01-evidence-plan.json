@@ -1,0 +1,207 @@
+{
+  "stage": "01-evidence-plan",
+  "quality_mode": "fast",
+  "unit_id": "lecture-08",
+  "target_minutes": 180,
+  "source": {
+    "source_id": "mit-6.7960-f24-lecture-08-slides",
+    "title": "Lecture 8: Transformers",
+    "type": "pdf",
+    "sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca"
+  },
+  "topics": [
+    {
+      "id": "e1",
+      "topic": "局部计算的限制",
+      "requirements": [
+        "从浅层卷积连接解释远距离 patch 难以交互",
+        "识别 tokens、attention、positional codes"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        }
+      ]
+    },
+    {
+      "id": "e2",
+      "topic": "Token 表示与两种基本运算",
+      "requirements": [
+        "说明 patch 到 d 维 token",
+        "用 W 左乘表达跨 token 混合",
+        "区分逐 token MLP"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 14
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 17
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 20
+          }
+        }
+      ]
+    },
+    {
+      "id": "e3",
+      "topic": "Self-attention",
+      "requirements": [
+        "由 Q/K/V 产生动态 attention matrix",
+        "检查 QK^T、softmax 与 AV 的形状"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 30
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        }
+      ]
+    },
+    {
+      "id": "e4",
+      "topic": "Multihead 与 ViT",
+      "requirements": [
+        "解释多个 heads 的拼接和输出投影",
+        "追踪归一化、attention、MLP 和残差"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 37
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 39
+          }
+        }
+      ]
+    },
+    {
+      "id": "e5",
+      "topic": "置换等变与位置",
+      "requirements": [
+        "区别 equivariance 与 invariance",
+        "说明向 token code 添加位置"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 41
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 43
+          }
+        }
+      ]
+    },
+    {
+      "id": "e6",
+      "topic": "因果生成与跨模态",
+      "requirements": [
+        "解释 causal mask 的并行训练",
+        "区分 image self-attention、text causal self-attention 与 cross-attention"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 48
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 51
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 54
+          }
+        }
+      ]
+    }
+  ],
+  "evidence_policy": "只使用无 hidden 警告的原始 chunk 锚点；视觉页面不自动成为可引用文本。",
+  "excluded": [
+    {
+      "pages": [
+        3,
+        10,
+        25,
+        40
+      ],
+      "reason": "仅为过渡标题。"
+    },
+    {
+      "pages": [
+        45,
+        46,
+        47
+      ],
+      "reason": "不扩写外部论文截图。"
+    }
+  ]
+}

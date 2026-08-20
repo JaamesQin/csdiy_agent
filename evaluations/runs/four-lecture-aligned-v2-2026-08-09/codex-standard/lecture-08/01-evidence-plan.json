@@ -1,0 +1,344 @@
+{
+  "stage": "01-evidence-plan",
+  "mode": "standard",
+  "unit_id": "lecture-08",
+  "target_minutes": 180,
+  "source": {
+    "source_id": "mit-6.7960-f24-lecture-08-slides",
+    "title": "Lecture 8: Transformers",
+    "type": "pdf",
+    "sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca"
+  },
+  "topics": [
+    {
+      "id": "E1",
+      "topic": "局部感受野与长距离关系",
+      "learning_requirements": [
+        "用两层小卷积核示例解释远距 patch 无共同上层节点",
+        "把问题动机连接到动态全局信息汇聚"
+      ],
+      "chunks": [
+        "mit-6.7960-f24-lecture-08-slides-p004",
+        "mit-6.7960-f24-lecture-08-slides-p005"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "E2",
+      "topic": "Token 表示与 token net",
+      "learning_requirements": [
+        "定义向量值 token 与 N×d 行式表示",
+        "解释图像 patch 线性投影",
+        "区分 token 混合和逐 token 非线性",
+        "联系 GNN 的 aggregate/update 视角"
+      ],
+      "chunks": [
+        "mit-6.7960-f24-lecture-08-slides-p011",
+        "mit-6.7960-f24-lecture-08-slides-p014",
+        "mit-6.7960-f24-lecture-08-slides-p017",
+        "mit-6.7960-f24-lecture-08-slides-p018",
+        "mit-6.7960-f24-lecture-08-slides-p020",
+        "mit-6.7960-f24-lecture-08-slides-p023",
+        "mit-6.7960-f24-lecture-08-slides-p024"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 11
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 14
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 17
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 20
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 23
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 24
+          }
+        }
+      ]
+    },
+    {
+      "id": "E3",
+      "topic": "数据依赖的注意力与 QKV self-attention",
+      "learning_requirements": [
+        "比较固定 W 与由输入构造的 A",
+        "说明 Q/K 匹配及 V 汇聚",
+        "检查矩阵维度与缩放 softmax"
+      ],
+      "chunks": [
+        "mit-6.7960-f24-lecture-08-slides-p020",
+        "mit-6.7960-f24-lecture-08-slides-p027",
+        "mit-6.7960-f24-lecture-08-slides-p029",
+        "mit-6.7960-f24-lecture-08-slides-p030",
+        "mit-6.7960-f24-lecture-08-slides-p032",
+        "mit-6.7960-f24-lecture-08-slides-p034"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 20
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 27
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 29
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 30
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 32
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        }
+      ]
+    },
+    {
+      "id": "E4",
+      "topic": "多头注意力与完整 ViT 块",
+      "learning_requirements": [
+        "追踪各 head、拼接和输出投影",
+        "解释 norm、MSA、MLP 与两条 residual"
+      ],
+      "chunks": [
+        "mit-6.7960-f24-lecture-08-slides-p037",
+        "mit-6.7960-f24-lecture-08-slides-p038",
+        "mit-6.7960-f24-lecture-08-slides-p039"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 37
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 38
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 39
+          }
+        }
+      ]
+    },
+    {
+      "id": "E5",
+      "topic": "置换等变性与位置编码",
+      "learning_requirements": [
+        "严格区分 equivariance 与 invariance",
+        "用 Fourier 位置向量说明如何恢复坐标信息"
+      ],
+      "chunks": [
+        "mit-6.7960-f24-lecture-08-slides-p035",
+        "mit-6.7960-f24-lecture-08-slides-p041",
+        "mit-6.7960-f24-lecture-08-slides-p043",
+        "mit-6.7960-f24-lecture-08-slides-p044"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 35
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 41
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 43
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 44
+          }
+        }
+      ]
+    },
+    {
+      "id": "E6",
+      "topic": "自回归、因果 mask 与图像到文本",
+      "learning_requirements": [
+        "说明 next-token 学习与并行因果训练",
+        "说明 image self-attention、text causal self-attention 和 cross-attention 的连接"
+      ],
+      "chunks": [
+        "mit-6.7960-f24-lecture-08-slides-p048",
+        "mit-6.7960-f24-lecture-08-slides-p049",
+        "mit-6.7960-f24-lecture-08-slides-p051",
+        "mit-6.7960-f24-lecture-08-slides-p052",
+        "mit-6.7960-f24-lecture-08-slides-p054"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 48
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 49
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 51
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 52
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 54
+          }
+        }
+      ]
+    }
+  ],
+  "deterministic_hash_sample": {
+    "method": "按 SHA-256(chunk_id) 十六进制升序取前5项",
+    "pages": [
+      27,
+      31,
+      32,
+      34,
+      14
+    ]
+  },
+  "excluded": [
+    {
+      "scope": "第45–47页外部位置编码论文的技术细节",
+      "reason": "幻灯片只有论文摘录，不能据此重建完整方法。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 45
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 46
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 47
+          }
+        }
+      ]
+    }
+  ]
+}

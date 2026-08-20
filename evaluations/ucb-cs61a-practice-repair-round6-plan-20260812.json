@@ -1,0 +1,15 @@
+{
+  "schema_version": "selective-repair-residual-plan-v1",
+  "plan_id": "ucb-cs61a-round6-lineage-and-markdown-20260812",
+  "created_at": "2026-08-13T00:05:00+08:00",
+  "policy": {"parent_snapshot_must_match_declared_baseline": true, "max_targeted_repairs_per_stage": 1, "fresh_independent_per_practice_audit_required": true},
+  "courses": [{
+    "course_id": "ucb-cs61a-summer-2026",
+    "baseline_build_id": "b59fb3d2c6df8b1c655a524643955e48cacf53f8d63ab1ffaf4ba625d4a03848",
+    "repair_units": [{
+      "unit_id": "lecture-28",
+      "stages": ["content", "structural"],
+      "required_repairs": ["preserve all four independently passing practices", "bind metrics and one-attempt metadata to the current build", "remove internal audit-status text from learner-facing limitations and rerender Markdown", "preserve legitimate learner limitations"]
+    }]
+  }]
+}

@@ -133,6 +133,22 @@ async def test_specific_code_help_lists_languages(tmp_path) -> None:
     ) in reply.answer
 
 
+async def test_code_capability_availability_question_short_circuits_tutoring(
+    tmp_path,
+) -> None:
+    agent = _agent(tmp_path)
+
+    reply = await agent.handle(
+        messages=[ChatMessage(role="user", content="你可以进行代码辅导吗？")],
+        user_id=None,
+    )
+
+    assert "## 多语言静态代码辅导" in reply.answer
+    assert "### 支持语言" in reply.answer
+    assert "### 观察" not in reply.answer
+    assert "未收到可静态分析的代码" not in reply.answer
+
+
 async def test_available_course_navigation_help_reports_usage(tmp_path) -> None:
     agent = _agent(tmp_path)
 

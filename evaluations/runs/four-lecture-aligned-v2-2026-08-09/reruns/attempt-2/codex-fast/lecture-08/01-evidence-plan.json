@@ -1,0 +1,247 @@
+{
+  "stage": "01-evidence-plan",
+  "quality_mode": "fast",
+  "unit_id": "lecture-08",
+  "target_minutes": 180,
+  "source": {
+    "source_id": "mit-6.7960-f24-lecture-08-slides",
+    "title": "Lecture 8: Transformers",
+    "type": "pdf",
+    "sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca"
+  },
+  "topics": [
+    {
+      "id": "T1",
+      "topic": "从 CNN 局部性到 Transformer",
+      "requirements": [
+        "解释远距离 patch 交互问题",
+        "识别三项关键创新"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        }
+      ]
+    },
+    {
+      "id": "T2",
+      "topic": "Tokens 与 token nets",
+      "requirements": [
+        "解释 patch tokenization 和 N×d 表示",
+        "区分 token mixing 与 token-wise nonlinearity"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 14
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 14
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 17
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 20
+          }
+        }
+      ]
+    },
+    {
+      "id": "T3",
+      "topic": "QKV self-attention",
+      "requirements": [
+        "说明数据依赖 A",
+        "核验 scaled dot-product 与 value 汇聚"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 20
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 30
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        }
+      ]
+    },
+    {
+      "id": "T4",
+      "topic": "Multihead 与 ViT block",
+      "requirements": [
+        "说明 head 合并",
+        "追踪 norm/MSA/MLP/residual"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 37
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 39
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 39
+          }
+        }
+      ]
+    },
+    {
+      "id": "T5",
+      "topic": "置换等变与位置编码",
+      "requirements": [
+        "区分等变和不变",
+        "解释 Fourier 位置码"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 41
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 43
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 43
+          }
+        }
+      ]
+    },
+    {
+      "id": "T6",
+      "topic": "自回归与图像到文本",
+      "requirements": [
+        "说明 causal mask 的训练作用",
+        "区分 self/cross-attention"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 48
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 51
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 51
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 54
+          }
+        }
+      ]
+    }
+  ],
+  "excluded": [
+    {
+      "pages": [
+        3,
+        10,
+        25,
+        40
+      ],
+      "reason": "视觉为过渡标题，不能支持额外材料性陈述。"
+    },
+    {
+      "pages": [
+        45,
+        46,
+        47
+      ],
+      "reason": "不从外部论文截图推断完整方法。"
+    }
+  ]
+}

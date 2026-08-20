@@ -1,0 +1,48 @@
+{
+  "mode": "standard",
+  "started_at": "2026-08-09T13:57:13.537520691Z",
+  "completed_at": "2026-08-09T13:59:13.940814Z",
+  "total_duration_seconds": 120.403294,
+  "timing_authority": "coordinator dispatch/completion is authoritative for benchmark comparison",
+  "checkpoints": [
+    {
+      "event": "dispatch",
+      "at": "2026-08-09T13:57:13.537520691Z"
+    },
+    {
+      "event": "protocol_source_pass_complete",
+      "at": "2026-08-09T13:59:13.665586Z"
+    },
+    {
+      "event": "stage_01_written",
+      "at": "2026-08-09T13:59:13.666067Z"
+    },
+    {
+      "event": "stage_02_written",
+      "at": "2026-08-09T13:59:13.667029Z"
+    },
+    {
+      "event": "stage_03_written",
+      "at": "2026-08-09T13:59:13.667244Z"
+    },
+    {
+      "event": "stage_04_independent_audit_written",
+      "at": "2026-08-09T13:59:13.667560Z"
+    },
+    {
+      "event": "stage_05_candidate_assembled",
+      "at": "2026-08-09T13:59:13.668791Z"
+    },
+    {
+      "event": "schema_anchor_validation_completed",
+      "at": "2026-08-09T13:59:13.883099Z"
+    }
+  ],
+  "retries": 0,
+  "repairs": [],
+  "reviewed_page_count": 46,
+  "semantic_passes": 4,
+  "input_tokens": null,
+  "output_tokens": null,
+  "quality_mode": "standard"
+}

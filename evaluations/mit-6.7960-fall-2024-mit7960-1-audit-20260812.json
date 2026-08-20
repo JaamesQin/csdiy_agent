@@ -1,0 +1,95 @@
+{
+  "audit_id": "mit-6.7960-fall-2024-mit7960-1-audit-20260812",
+  "audit_date": "2026-08-12",
+  "worker_scope": ["lecture-01", "lecture-02", "lecture-03", "lecture-04", "lecture-05", "lecture-06"],
+  "source_scope": {
+    "reviewed_root": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0",
+    "unit_raw_chunks": "data/sources/mit-6.7960-fall-2024/lecture-XX/chunks.jsonl",
+    "validation_anchor_chunks": "data/sources/mit-6.7960-fall-2024/full-course-v0.1.0/chunks.jsonl",
+    "manifest": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/manifest.yaml",
+    "read_only_review": true
+  },
+  "overall_verdict": "fail_for_current-v0.2.1-migration",
+  "overall_summary": "6/6 units have succeeded portable validation and JSON/YAML semantic equality, but none has recorded independent-auditor provenance or a current v0.2.1 fingerprint. The v0.1 package is therefore historical evidence only; practice semantic findings remain deferred and are not counted as passes.",
+  "common_findings": {
+    "validation": "All six validation.json files say succeeded with zero issues; their reported chunk_count is the shared full-course count 1420, not the unit-local raw/chunk count.",
+    "yaml_equality": "All six final 05-studykit.json and studykit.yaml documents are semantically equal after YAML decoding.",
+    "provenance": "No author identity is recorded in run.json or the unit artifacts, and no independent-audit sidecar with a distinct auditor exists for any of the six units. Existing 04-quality-audit files are author-side audit checkpoints.",
+    "version_mismatch": "The package records studikit-v0.1/pipeline studykit-generator-v0.1.0, while the repository-local skill is version 0.2.1. No current v0.2.1 build/fingerprint or migration handoff exists.",
+    "migration_next_action": "Create a new isolated portable-v0.2.1 build from the matching raw sources, recompute the manifest/build fingerprint, regenerate review-plan and metrics, then run a distinct independent auditor over every requested unit and re-audit repaired blockers. Do not edit or relabel portable-v0.1.0 in place."
+  },
+  "units": [
+    {
+      "unit_id": "lecture-01",
+      "verdict": "fail_for_migration",
+      "counts": {"raw_chunks": 81, "raw_pages": 81, "validation_chunks_reported": 1420, "validation_citations": 74, "final_citation_objects": 74, "final_unique_citation_pages": 27},
+      "artifacts": {"final_json": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-01/05-studykit.json", "yaml": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-01/studykit.yaml", "validation": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-01/validation.json", "audit": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-01/04-quality-audit.json"},
+      "validation_yaml": {"validation_status": "succeeded", "validation_issue_count": 0, "json_yaml_semantically_equal": true, "citation_source_ids_exist_in_full_course_chunks": true},
+      "visible_formula_review_evidence": {"audit_verdict": "pass", "formula_review_records": 2, "formula_review_statuses": ["visually_verified", "visually_verified"], "reviewed_pages_recorded": 40, "hidden_text_exclusion": "explicit in audit summary and limitations"},
+      "provenance": {"author": null, "auditor": null, "independent_audit": false, "auditor_distinctness": "not_verifiable"},
+      "fingerprint_version": {"observed_build_id": "4f758f6f76878aac08ccea9683b9f20fe1f040bd02d153d801606309ecf71882", "observed_input_fingerprint": "b5f8b4963964a5873c022b904fc9d3cf8cf27d0a49046e09a2895c449938514a", "observed_studykit_version": "v0.1", "observed_pipeline_version": "studykit-generator-v0.1.0", "target": "v0.2.1", "mismatch": true, "mismatch_reason": "legacy v0.1 artifact; no v0.2.1 fingerprint"},
+      "deferred_practice_semantic_issues": [],
+      "next_action": "Rebuild as v0.2.1, preserve the two formula review records and 40-page evidence, then obtain a distinct independent audit before migration."
+    },
+    {
+      "unit_id": "lecture-02",
+      "verdict": "fail_for_migration",
+      "counts": {"raw_chunks": 81, "raw_pages": 81, "validation_chunks_reported": 1420, "validation_citations": 86, "final_citation_objects": 86, "final_unique_citation_pages": 29},
+      "artifacts": {"final_json": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-02/05-studykit.json", "yaml": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-02/studykit.yaml", "validation": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-02/validation.json", "audit": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-02/04-quality-audit.json"},
+      "validation_yaml": {"validation_status": "succeeded", "validation_issue_count": 0, "json_yaml_semantically_equal": true, "citation_source_ids_exist_in_full_course_chunks": true},
+      "visible_formula_review_evidence": {"audit_verdict": "pass", "formula_review_records": 6, "formula_review_statuses": ["visually_verified", "visually_verified", "visually_verified", "visually_verified", "visually_verified", "visually_verified"], "reviewed_pages_recorded": 52, "hidden_text_exclusion": "explicit in checks and limitations"},
+      "provenance": {"author": null, "auditor": null, "independent_audit": false, "auditor_distinctness": "not_verifiable"},
+      "fingerprint_version": {"observed_build_id": "4f758f6f76878aac08ccea9683b9f20fe1f040bd02d153d801606309ecf71882", "observed_input_fingerprint": "b5f8b4963964a5873c022b904fc9d3cf8cf27d0a49046e09a2895c449938514a", "observed_studykit_version": "v0.1", "observed_pipeline_version": "studykit-generator-v0.1.0", "target": "v0.2.1", "mismatch": true, "mismatch_reason": "legacy v0.1 artifact; no v0.2.1 fingerprint"},
+      "deferred_practice_semantic_issues": [{"id": "lecture-02-ex5-setting", "practice_id": "ex-5", "severity": "deferred", "issue": "The split-path/shared-parameter prompt specifies the abstract relation but no concrete graph, operations, or values to draw; its gradient-sum rule is source-grounded but the learner setting is underspecified.", "action": "Supply a concrete two-branch graph and three parameter-use sites, then independently recheck hint, expected_evidence, evaluation, and citations."}],
+      "next_action": "Rebuild as v0.2.1, retain row-gradient formula evidence, concretize ex-5 during authoring, and obtain a distinct independent audit."
+    },
+    {
+      "unit_id": "lecture-03",
+      "verdict": "fail_for_migration",
+      "counts": {"raw_chunks": 43, "raw_pages": 43, "validation_chunks_reported": 1420, "validation_citations": 130, "final_citation_objects": 130, "final_unique_citation_pages": 31},
+      "artifacts": {"final_json": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-03/05-studykit.json", "yaml": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-03/studykit.yaml", "validation": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-03/validation.json", "audit": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-03/04-quality-audit.json"},
+      "validation_yaml": {"validation_status": "succeeded", "validation_issue_count": 0, "json_yaml_semantically_equal": true, "citation_source_ids_exist_in_full_course_chunks": true},
+      "visible_formula_review_evidence": {"audit_verdict": "pass_with_documented_limitations", "formula_review_records": 0, "formula_review_statuses": [], "reviewed_pages_recorded": 0, "formula_fidelity_claim": "pass asserted in checks but no page-level formula review record is retained", "limitations_include_formula_unresolved": "yes, pages 15 and 17", "hidden_text_exclusion": "not recorded as an explicit visible-vs-hidden statement in the audit checks"},
+      "provenance": {"author": null, "auditor": null, "independent_audit": false, "auditor_distinctness": "not_verifiable"},
+      "fingerprint_version": {"observed_build_id": "4f758f6f76878aac08ccea9683b9f20fe1f040bd02d153d801606309ecf71882", "observed_input_fingerprint": "b5f8b4963964a5873c022b904fc9d3cf8cf27d0a49046e09a2895c449938514a", "observed_studykit_version": "v0.1", "observed_pipeline_version": "studykit-generator-v0.1.0", "target": "v0.2.1", "mismatch": true, "mismatch_reason": "legacy v0.1 artifact; no v0.2.1 fingerprint"},
+      "deferred_practice_semantic_issues": [],
+      "next_action": "Rebuild as v0.2.1 with page-specific formula_unresolved records and an explicit visible-source boundary, populate actual reviewed pages, then independently audit all seven practices."
+    },
+    {
+      "unit_id": "lecture-04",
+      "verdict": "fail_for_migration",
+      "counts": {"raw_chunks": 84, "raw_pages": 84, "validation_chunks_reported": 1420, "validation_citations": 153, "final_citation_objects": 153, "final_unique_citation_pages": 40},
+      "artifacts": {"final_json": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-04/05-studykit.json", "yaml": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-04/studykit.yaml", "validation": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-04/validation.json", "audit": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-04/04-quality-audit.json"},
+      "validation_yaml": {"validation_status": "succeeded", "validation_issue_count": 0, "json_yaml_semantically_equal": true, "citation_source_ids_exist_in_full_course_chunks": true},
+      "visible_formula_review_evidence": {"audit_verdict": "pass_with_documented_limitations", "formula_review_records": 0, "formula_review_statuses": [], "reviewed_pages_recorded": 0, "formula_fidelity_claim": "pass asserted in checks but no page-level formula review record is retained", "limitations_include_visible_ambiguities": "yes, pages 23, 39-40, 59-60, 70, 79-80", "hidden_text_exclusion": "explicit in limitations but not backed by actual reviewed-page list"},
+      "provenance": {"author": null, "auditor": null, "independent_audit": false, "auditor_distinctness": "not_verifiable"},
+      "fingerprint_version": {"observed_build_id": "4f758f6f76878aac08ccea9683b9f20fe1f040bd02d153d801606309ecf71882", "observed_input_fingerprint": "b5f8b4963964a5873c022b904fc9d3cf8cf27d0a49046e09a2895c449938514a", "observed_studykit_version": "v0.1", "observed_pipeline_version": "studykit-generator-v0.1.0", "target": "v0.2.1", "mismatch": true, "mismatch_reason": "legacy v0.1 artifact; no v0.2.1 fingerprint"},
+      "deferred_practice_semantic_issues": [],
+      "next_action": "Rebuild as v0.2.1, record formula/page review evidence for the retained convolution and equivariance notation, then independently audit all nine practices."
+    },
+    {
+      "unit_id": "lecture-05",
+      "verdict": "fail_for_migration",
+      "counts": {"raw_chunks": 47, "raw_pages": 47, "validation_chunks_reported": 1420, "validation_citations": 32, "final_citation_objects": 32, "final_unique_citation_pages": 10},
+      "artifacts": {"final_json": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-05/05-studykit.json", "yaml": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-05/studykit.yaml", "validation": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-05/validation.json", "audit": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-05/04-quality-audit.json"},
+      "validation_yaml": {"validation_status": "succeeded", "validation_issue_count": 0, "json_yaml_semantically_equal": true, "citation_source_ids_exist_in_full_course_chunks": true},
+      "visible_formula_review_evidence": {"audit_verdict": "pass_with_warnings", "formula_review_records": 0, "formula_review_statuses": [], "reviewed_pages_recorded": 0, "unresolved_warnings": ["w1 formula_fidelity core_concepts.c2-c5", "w2 visual_content pages 30-31,37-39"], "resolution": "accepted_with_documented_limitations; no semantic re-audit", "hidden_text_exclusion": "not recorded"},
+      "provenance": {"author": null, "auditor": null, "independent_audit": false, "auditor_distinctness": "not_verifiable"},
+      "fingerprint_version": {"observed_build_id": "4f758f6f76878aac08ccea9683b9f20fe1f040bd02d153d801606309ecf71882", "observed_input_fingerprint": "b5f8b4963964a5873c022b904fc9d3cf8cf27d0a49046e09a2895c449938514a", "observed_studykit_version": "v0.1", "observed_pipeline_version": "studykit-generator-v0.1.0", "target": "v0.2.1", "mismatch": true, "mismatch_reason": "legacy v0.1 artifact; no v0.2.1 fingerprint"},
+      "deferred_practice_semantic_issues": [{"id": "lecture-05-p1-setting", "practice_id": "p1", "severity": "deferred", "issue": "Asks the learner to invent one input-output example for each task; it does not provide a concrete graph, labels, or prediction target, so it is a generic shell under the content-grounded practice contract.", "action": "Provide one fixed graph/task setting with explicit prediction objects and observable outputs."}, {"id": "lecture-05-p5-setting", "practice_id": "p5", "severity": "deferred", "issue": "The non-isomorphic-graph prompt asks for an explanation and an enhancement direction without specifying a concrete pair of graphs or a bounded claim to test.", "action": "Supply a concrete graph pair or a source-defined counterexample and make the expected result falsifiable."}],
+      "next_action": "Rebuild as v0.2.1; visually review the warning pages/formulas, repair the two deferred practice settings, re-audit them with a distinct auditor, and do not treat accepted_with_documented_limitations as migration approval."
+    },
+    {
+      "unit_id": "lecture-06",
+      "verdict": "fail_for_migration",
+      "counts": {"raw_chunks": 66, "raw_pages": 66, "validation_chunks_reported": 1420, "validation_citations": 45, "final_citation_objects": 45, "final_unique_citation_pages": 13},
+      "artifacts": {"final_json": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-06/05-studykit.json", "yaml": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-06/studykit.yaml", "validation": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-06/validation.json", "audit": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0/units/lecture-06/04-quality-audit.json"},
+      "validation_yaml": {"validation_status": "succeeded", "validation_issue_count": 0, "json_yaml_semantically_equal": true, "citation_source_ids_exist_in_full_course_chunks": true},
+      "visible_formula_review_evidence": {"audit_verdict": "pass_with_warnings", "formula_review_records": 0, "formula_review_statuses": [], "unresolved_warnings": ["w1 formula_fidelity core_concepts.c1", "w2 evidence_scope core_concepts.c3-c5"], "resolution": "accepted_with_documented_limitations; no semantic re-audit", "reviewed_pages_recorded": 0, "hidden_text_exclusion": "not recorded"},
+      "provenance": {"author": null, "auditor": null, "independent_audit": false, "auditor_distinctness": "not_verifiable"},
+      "fingerprint_version": {"observed_build_id": "4f758f6f76878aac08ccea9683b9f20fe1f040bd02d153d801606309ecf71882", "observed_input_fingerprint": "b5f8b4963964a5873c022b904fc9d3cf8cf27d0a49046e09a2895c449938514a", "observed_studykit_version": "v0.1", "observed_pipeline_version": "studykit-generator-v0.1.0", "target": "v0.2.1", "mismatch": true, "mismatch_reason": "legacy v0.1 artifact; no v0.2.1 fingerprint"},
+      "deferred_practice_semantic_issues": [{"id": "lecture-06-p1-setting", "practice_id": "p1", "severity": "deferred", "issue": "The prompt only says to distinguish three definitions; it supplies no dataset, loss, or bounded answer format beyond generic definitions.", "action": "Give a concrete train/distribution setting and require the learner to label the three quantities."}, {"id": "lecture-06-p5-setting", "practice_id": "p5", "severity": "deferred", "issue": "The five-bias comparison has no concrete model/data situation or falsifiable changed condition, so it is an underspecified transfer task.", "action": "Specify a fixed model/data change and an observable generalization claim to compare."}],
+      "next_action": "Rebuild as v0.2.1; visually review and qualify the warning formulas/empirical figures, repair the deferred practice settings, then run an independent semantic audit and re-audit any repaired blockers."
+    }
+  ]
+}

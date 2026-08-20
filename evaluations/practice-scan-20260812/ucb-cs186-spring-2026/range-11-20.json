@@ -1,0 +1,42 @@
+{
+  "schema_version": "practice-semantic-scan-v1",
+  "course_id": "ucb-cs186-spring-2026",
+  "build_id": "aadb0606a7f2fd9a5920e2340bfcc42d6522e06628a12124e8e74d1a5fd277",
+  "inspected_build_id": "aadb0606a7f2fd9a5920e2340bf30cc42d6522e06628a12124e8e74d1a5fd277",
+  "unit_ids": ["note-11", "note-12", "note-13", "note-14", "note-15", "note-16", "note-17", "note-18", "note-19", "note-20"],
+  "scanned_at": "2026-08-12",
+  "auditor_id": "luna-medium-unit-range-11-20",
+  "offline_only": true,
+  "protocol": "docs/studykit-quality-calibration-protocol.md",
+  "source_chunks_inspected": [
+    "data/sources/ucb-cs186-spring-2026/note-11/chunks.jsonl",
+    "data/sources/ucb-cs186-spring-2026/note-12/chunks.jsonl",
+    "data/sources/ucb-cs186-spring-2026/note-13/chunks.jsonl",
+    "data/sources/ucb-cs186-spring-2026/note-14/chunks.jsonl",
+    "data/sources/ucb-cs186-spring-2026/note-15/chunks.jsonl",
+    "data/sources/ucb-cs186-spring-2026/note-16/chunks.jsonl",
+    "data/sources/ucb-cs186-spring-2026/note-17/chunks.jsonl",
+    "data/sources/ucb-cs186-spring-2026/note-18/chunks.jsonl",
+    "data/sources/ucb-cs186-spring-2026/note-19/chunks.jsonl",
+    "data/sources/ucb-cs186-spring-2026/note-20/chunks.jsonl"
+  ],
+  "units": [
+    {"unit_id":"note-11","item_results":[{"practice_id":"p1","status":"pass","mapping_id":"req-01"},{"practice_id":"p2","status":"pass","mapping_id":"req-02"},{"practice_id":"p3","status":"pass","mapping_id":"req-03"},{"practice_id":"p4","status":"pass","mapping_id":"req-04"},{"practice_id":"p5","status":"pass","mapping_id":"req-05"},{"practice_id":"p6","status":"pass","mapping_id":"req-06"}],"counts":{"items":6,"pass":6,"blockers":0},"source_anchor_inventory":["introduction","transactions","concurrency-control","conflict-serializability","conflict-dependency-graph","view-serializability"]},
+    {"unit_id":"note-12","item_results":[{"practice_id":"p1","status":"pass","mapping_id":"req-01"},{"practice_id":"p2","status":"pass","mapping_id":"req-02"},{"practice_id":"p3","status":"pass","mapping_id":"req-03"},{"practice_id":"p4","status":"pass","mapping_id":"req-03"},{"practice_id":"p5","status":"pass","mapping_id":"req-04"},{"practice_id":"p6","status":"pass","mapping_id":"req-05"}],"counts":{"items":6,"pass":6,"blockers":0},"source_anchor_inventory":["two-phase-locking","lock-management","queue-skipping-not-allowed","queue-skipping-allowed","avoidance","detection","lock-granularity","multiple-granularity-locking-protocol","appendix"]},
+    {"unit_id":"note-13","item_results":[{"practice_id":"p1","status":"pass","mapping_id":"r1"},{"practice_id":"p2","status":"pass","mapping_id":"r2"},{"practice_id":"p3","status":"pass","mapping_id":"r3"},{"practice_id":"p4","status":"pass","mapping_id":"r4"},{"practice_id":"p5","status":"pass","mapping_id":"r5"},{"practice_id":"p6","status":"pass","mapping_id":"r6"}],"counts":{"items":6,"pass":6,"blockers":0},"source_anchor_inventory":["entity-relationship-models","relationship-constraints","fds-and-normalization","bcnf-decomposition","lossless-decomposition","dependency-preserving-decompositions"]},
+    {"unit_id":"note-14","item_results":[{"practice_id":"p1","status":"pass","mapping_id":"r1"},{"practice_id":"p2","status":"pass","mapping_id":"r2"},{"practice_id":"p3","status":"pass","mapping_id":"r3"},{"practice_id":"p4","status":"pass","mapping_id":"r4"},{"practice_id":"p5","status":"pass","mapping_id":"r5"},{"practice_id":"p6","status":"pass","mapping_id":"r6"},{"practice_id":"p7","status":"pass","mapping_id":"r7"}],"counts":{"items":7,"pass":7,"blockers":0},"source_anchor_inventory":["forceno-force","stealno-steal","steal-no-force","wal-requirements","update-log-record","wal-implementation","recovery-data-structures","analysis-phase","redo-phase","undo-phase","aries-recovery-algorithm","appendix-1-undo-details","appendix-2-lsn-list"]},
+    {"unit_id":"note-15","item_results":[{"practice_id":"p1","status":"pass","mapping_id":"op1"},{"practice_id":"p2","status":"pass","mapping_id":"op2"},{"practice_id":"p3","status":"pass","mapping_id":"op3"},{"practice_id":"p4","status":"pass","mapping_id":"op4"},{"practice_id":"p5","status":"pass","mapping_id":"op5"},{"practice_id":"p6","status":"pass","mapping_id":"op6"}],"counts":{"items":6,"pass":6,"blockers":0},"source_anchor_inventory":["parallel-architectures","types-of-intra-query-parallelism","types-of-inter-operator-parallelism","hash-partitioning","range-partitioning","parallel-sort-merge-join","broadcast-join","symmetric-hash-join"]},
+    {"unit_id":"note-16","item_results":[{"practice_id":"p1","status":"pass","mapping_id":"op1"},{"practice_id":"p2","status":"pass","mapping_id":"op2"},{"practice_id":"p3","status":"pass","mapping_id":"op3"},{"practice_id":"p4","status":"pass","mapping_id":"op4"},{"practice_id":"p5","status":"pass","mapping_id":"op5"},{"practice_id":"p6","status":"pass","mapping_id":"op5"}],"counts":{"items":6,"pass":6,"blockers":0},"source_anchor_inventory":["distributed-locking","two-phase-commit-2-pc","distributed-recovery-2pc","distributed-recovery-2pc-with-presumed-abort"]},
+    {"unit_id":"note-17","item_results":[{"practice_id":"p1","status":"pass","mapping_id":null},{"practice_id":"p2","status":"pass","mapping_id":null},{"practice_id":"p3","status":"pass","mapping_id":null},{"practice_id":"p4","status":"pass","mapping_id":null},{"practice_id":"p5","status":"pass","mapping_id":null}],"counts":{"items":5,"pass":5,"blockers":0},"source_anchor_inventory":["oltp-and-olap","partitioning","replication","cap-theorem","key-value-stores","wide-column-stores","document-stores","converting-between-json-and-relational","semi-structured-data"]},
+    {"unit_id":"note-18","item_results":[{"practice_id":"p1","status":"pass","mapping_id":null},{"practice_id":"p2","status":"pass","mapping_id":null},{"practice_id":"p3","status":"pass","mapping_id":null},{"practice_id":"p4","status":"pass","mapping_id":null}],"counts":{"items":4,"pass":4,"blockers":0},"source_anchor_inventory":["word-count-example","selection-group-by-join","fault-tolerance","history-and-motivation","programming","persistence"]},
+    {"unit_id":"note-19","item_results":[{"practice_id":"p1","status":"pass","mapping_id":null},{"practice_id":"p2","status":"pass","mapping_id":null},{"practice_id":"p3","status":"pass","mapping_id":null},{"practice_id":"p4","status":"pass","mapping_id":null},{"practice_id":"p5","status":"pass","mapping_id":null}],"counts":{"items":5,"pass":5,"blockers":0},"source_anchor_inventory":["spatial-and-vector-indexes","astronomy","graphics","k-d-tree","tree-construction","cost-of-operations","equality-search","range-search","insertion","nearest-neighbor-search","nearest-neighbor-example"]},
+    {"unit_id":"note-20","item_results":[{"practice_id":"p1","status":"pass","mapping_id":null},{"practice_id":"p2","status":"pass","mapping_id":null},{"practice_id":"p3","status":"pass","mapping_id":null},{"practice_id":"p4","status":"pass","mapping_id":null}],"counts":{"items":4,"pass":4,"blockers":0},"source_anchor_inventory":["system-model","phase-1-proposer-election","phase-2-proposer-introduces-bill","phase-3-bill-signed-into-law","paxos-summary","simple-paxos-example","consenus-definition"]}
+  ],
+  "counts": {"units":10,"items":55,"pass":55,"blockers":0,"units_with_blockers":0},
+  "deferred_structural_findings": [
+    {"code":"build_id_path_mismatch","scope":"build","detail":"The literal requested build directory aadb0606…bfcc42… was absent; the inspected complete directory was aadb0606…bf30cc42… . No artifact was modified."},
+    {"code":"mixed_checkpoint_schema","scope":"note-15,note-16","detail":"These units use a later 03-practice-flow shape with items rather than practice; note-15 item shells omit question/hint/etc. in 03, while the aligned complete practice appears in 05-studykit.json."},
+    {"code":"missing_explicit_practice_mapping_id","scope":"note-17,note-18,note-19,note-20","detail":"03-practice-flow items lack requirement_id, concept_id, opportunity_id, or evidence-item IDs; semantic checks were grounded against 01 evidence_items, 02 core_concepts, and the cited chunks, but the explicit mapping is not recorded in the item."},
+    {"code":"review_checkpoint_anomaly","scope":"note-13,note-18,note-20","detail":"Review-plan fields are not uniform: note-13 records zero actual_reviewed_pages while recording reviewed anchors/practice IDs; note-18 and note-20 omit a complete independent-audit/re-audit record. This scan does not convert those structural issues into practice blockers."}
+  ]
+}

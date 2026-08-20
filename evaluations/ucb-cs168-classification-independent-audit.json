@@ -1,0 +1,40 @@
+{
+  "canonical_course_id": "ucb-cs168",
+  "auditor": "cs168-classification-sidecar",
+  "audit_scope": "independent catalog classification audit",
+  "pinned_upstream_commit": "81d874ee0fb37b2289839847026ba7651f3725d5",
+  "guide_evidence": {
+    "source_markdown_path": "data/raw/catalog-sources/cs-self-learning/81d874ee0fb37b2289839847026ba7651f3725d5/docs/计算机网络/CS168.md",
+    "public_page_url": "https://csdiy.wiki/docs/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/CS168",
+    "page_sha256": "7ebf2609ee6095d1cd428ecd1bd86e1a877ac32b5d093b4be7883a2c18c0a1a6",
+    "nav_category": "计算机网络",
+    "nav_title": "UCB CS168: Introduction to the Internet: Architecture and Protocols",
+    "course_number": "CS168",
+    "institution": "University of California, Berkeley",
+    "substantive_evidence": [
+      {
+        "line": 10,
+        "claim": "The course covers Internet layering, addressing, intra- and inter-domain routing, reliable transport, congestion control, and TCP, UDP, IP, DNS, and HTTP protocols."
+      },
+      {
+        "line": 17,
+        "claim": "The guide places the course under the computer-networks navigation category and links an official course site."
+      },
+      {
+        "line": 19,
+        "claim": "The guide links the course textbook at textbook.cs168.io."
+      }
+    ]
+  },
+  "major_direction": "networks",
+  "direction_evidence": [
+    "The pinned navigation category is 计算机网络 (computer networks), which takes precedence over generic title keywords.",
+    "The guide's substantive description is centered on Internet architecture, routing, transport, congestion control, and application-layer protocols.",
+    "The official course identity is CS 168: Introduction to the Internet: Architecture and Protocols."
+  ],
+  "secondary_directions": [
+    "architecture"
+  ],
+  "conclusion": "pass: networks is primary; architecture is secondary only",
+  "audited_at": "2026-08-12T00:00:00+08:00"
+}

@@ -9,6 +9,7 @@ export interface CompletionDeltaEvent {
   error?: {
     message?: unknown;
   };
+  coursepilot_context?: unknown;
 }
 
 export interface CompletionResponse {
@@ -17,11 +18,26 @@ export interface CompletionResponse {
       content?: unknown;
     };
   }>;
+  coursepilot_context?: string;
+}
+
+export interface CompletionStreamResult {
+  content: string;
+  coursepilotContext?: string;
 }
 
 export const MAX_SSE_FRAME_CHARS = 256 * 1024;
 export const MAX_COMPLETION_CHARS = 256 * 1024;
 export const MAX_COMPLETION_JSON_CHARS = 1024 * 1024;
+export const MAX_COURSEPILOT_CONTEXT_CHARS = 16 * 1024;
+
+function parseCoursepilotContext(value: unknown): string | undefined {
+  if (value === undefined) return undefined;
+  if (typeof value !== "string" || value.length > MAX_COURSEPILOT_CONTEXT_CHARS) {
+    throw new Error("服务返回了无效的对话连续状态。");
+  }
+  return value;
+}
 
 export function parseSseBlock(block: string): CompletionDeltaEvent | "[DONE]" | null {
   const data = block
@@ -59,7 +75,13 @@ export async function readCompletionJson(response: Response): Promise<Completion
       }
       if (done) break;
     }
-    return JSON.parse(body) as CompletionResponse;
+    const parsed = JSON.parse(body) as CompletionResponse & {
+      coursepilot_context?: unknown;
+    };
+    const coursepilotContext = parseCoursepilotContext(parsed.coursepilot_context);
+    if (coursepilotContext === undefined) delete parsed.coursepilot_context;
+    else parsed.coursepilot_context = coursepilotContext;
+    return parsed as CompletionResponse;
   } finally {
     if (!reachedEof) {
       try {
@@ -75,7 +97,7 @@ export async function readCompletionJson(response: Response): Promise<Completion
 export async function readCompletionStream(
   response: Response,
   onContent: (content: string) => void,
-): Promise<string> {
+): Promise<CompletionStreamResult> {
   if (!response.body) {
     throw new Error("浏览器未收到可读取的响应流。");
   }
@@ -84,6 +106,7 @@ export async function readCompletionStream(
   const decoder = new TextDecoder();
   let buffer = "";
   let content = "";
+  let coursepilotContext: string | undefined;
   let completed = false;
   let reachedEof = false;
 
@@ -98,6 +121,9 @@ export async function readCompletionStream(
       const message = event.error.message;
       throw new Error(typeof message === "string" ? message : "流式响应中断");
     }
+
+    const nextContext = parseCoursepilotContext(event.coursepilot_context);
+    if (nextContext !== undefined) coursepilotContext = nextContext;
 
     const delta = event.choices?.[0]?.delta;
     if (typeof delta?.content === "string") {
@@ -137,7 +163,10 @@ export async function readCompletionStream(
     if (!completed) {
       throw new Error("响应流未以 [DONE] 正常结束。");
     }
-    return content;
+    return {
+      content,
+      ...(coursepilotContext === undefined ? {} : { coursepilotContext }),
+    };
   } finally {
     if (!reachedEof) {
       try {

@@ -1,0 +1,22 @@
+{
+  "schema_version": "selective-repair-residual-plan-v1",
+  "plan_id": "mit-6-042j-round6-final-residual-gates-20260812",
+  "created_at": "2026-08-12T22:16:00+08:00",
+  "policy": {"parent_snapshot_must_match_declared_baseline": true, "max_targeted_repairs_per_stage": 1, "fresh_independent_per_practice_audit_required": true},
+  "courses": [{
+    "course_id": "mit-6-042j-spring-2024",
+    "baseline_build_id": "5f8d62fa1c1c1cda34c1fe1a7f28f7f6ce0b6aabfa210ff21631e35f9aa738c1",
+    "repair_units": [
+      {"unit_id": "lecture-01", "stages": ["structural"], "required_repairs": ["preserve corrected practices", "use the repository artifact_tree_digest for parent lineage", "record a fresh current-build audit and review validation"]},
+      {"unit_id": "lecture-03", "stages": ["structural"], "required_repairs": ["preserve corrected n>=28 theorem and n=14 counterexample", "use the repository artifact_tree_digest for parent lineage", "record a fresh current-build audit and review validation"]},
+      {"unit_id": "lecture-05", "stages": ["structural"], "required_repairs": ["preserve learner content", "record fresh audit and review validation"]},
+      {"unit_id": "lecture-06", "stages": ["structural"], "required_repairs": ["preserve learner content", "record fresh audit and review validation"]},
+      {"unit_id": "lecture-08", "stages": ["structural"], "required_repairs": ["preserve learner content", "record fresh audit and review validation"]},
+      {"unit_id": "lecture-10", "stages": ["structural"], "required_repairs": ["preserve learner content", "record fresh audit and review validation"]},
+      {"unit_id": "lecture-11", "stages": ["structural"], "required_repairs": ["preserve practice semantics", "restore candidate/final/YAML/Markdown parity", "record fresh audit"]},
+      {"unit_id": "lecture-12", "stages": ["evidence", "content", "structural"], "required_repairs": ["correct concept citations for matching definitions and Gale-Shapley rules/termination", "preserve the two passing practices", "rerender all formats and record fresh audit"]},
+      {"unit_id": "lecture-13", "stages": ["structural"], "required_repairs": ["preserve practice semantics", "restore candidate/final/YAML/Markdown parity", "record fresh audit"]},
+      {"unit_id": "lecture-15", "stages": ["structural"], "required_repairs": ["preserve practice semantics", "restore candidate/final/YAML/Markdown parity", "record fresh audit"]}
+    ]
+  }]
+}

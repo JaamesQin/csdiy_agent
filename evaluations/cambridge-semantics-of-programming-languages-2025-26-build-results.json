@@ -1,0 +1,68 @@
+{
+  "course_id": "cambridge-semantics-of-programming-languages-2025-26",
+  "course_version": "2025-26",
+  "build_id": "ff5d60747dbcc5327685c3d81764165550c388874a7472ed478882443ead9c01",
+  "build_root": "outputs/cambridge-semantics-of-programming-languages-2025-26/ff5d60747dbcc5327685c3d81764165550c388874a7472ed478882443ead9c01",
+  "parameters": {
+    "quality_mode": "standard",
+    "delivery_policy": "draft",
+    "language": "zh-CN",
+    "target_minutes": 180,
+    "parallel_units": "auto",
+    "coordinator_id": "cambridge-sopl-2025-26-coordinator",
+    "worker_count": 2,
+    "provider_client_used": false,
+    "model_api_calls": 0,
+    "network_used": false
+  },
+  "inputs": {
+    "catalog_manifest": "data/manifests/cambridge-semantics-of-programming-languages-2025-26.yaml",
+    "unit_count": 12,
+    "current_chunk_count": 96,
+    "source_namespace": "data/sources/cambridge-semantics-of-programming-languages",
+    "prepared_source_pages": 96
+  },
+  "execution_plan": {
+    "path": "outputs/cambridge-semantics-of-programming-languages-2025-26/ff5d60747dbcc5327685c3d81764165550c388874a7472ed478882443ead9c01/execution-plan.json",
+    "worker_1": ["lecture-01", "lecture-03", "lecture-05", "lecture-07", "lecture-09", "lecture-11"],
+    "worker_2": ["lecture-02", "lecture-04", "lecture-06", "lecture-08", "lecture-10", "lecture-12"]
+  },
+  "unit_completion": {
+    "requested": 12,
+    "completed": 12,
+    "portable_validated": 12,
+    "independently_audited": 12,
+    "independent_audit_practices": 60,
+    "failed": 0,
+    "pending": 0,
+    "audit_deferred": 0
+  },
+  "portable_validators": {
+    "stage_schema_files": {"checked": 48, "passed": 48, "failed": 0},
+    "validate_artifacts_candidate": {"checked": 12, "passed": 12, "failed": 0},
+    "finalize_studykit": {"checked": 12, "passed": 12, "failed": 0},
+    "validate_artifacts_final": {"checked": 12, "passed": 12, "failed": 0},
+    "validate_review": {"checked": 12, "passed": 12, "failed": 0},
+    "verify_unit_outputs": {"checked": 12, "passed": 12, "failed": 0},
+    "ordered_standard_checkpoints": {"checked": 12, "passed": 12, "failed": 0},
+    "candidate_final_yaml_semantic_equality": {"checked": 12, "passed": 12, "failed": 0},
+    "root_reconcile": {"requested": 12, "completed": 12, "validated": 12, "audited": 12, "failed": 0, "pending": 0}
+  },
+  "root_validator_separate": {
+    "command": ".venv/bin/python scripts/validate_studykit.py <unit>/studykit.yaml --chunks <build>/ingestion/chunks.jsonl",
+    "checked": 12,
+    "passed": 0,
+    "failed": 12,
+    "status": "legacy_schema_incompatible_with_portable_build",
+    "reason": "The legacy root schema expects prerequisites as an object with items and page citations, while portable-v0.2 final YAML uses the portable contract with prerequisite arrays and anchor citations. This result is not merged into portable validator status."
+  },
+  "quality_blockers": [],
+  "root_artifacts": {
+    "result": "outputs/cambridge-semantics-of-programming-languages-2025-26/ff5d60747dbcc5327685c3d81764165550c388874a7472ed478882443ead9c01/result.json",
+    "run": "outputs/cambridge-semantics-of-programming-languages-2025-26/ff5d60747dbcc5327685c3d81764165550c388874a7472ed478882443ead9c01/run.json",
+    "batch_summary": "outputs/cambridge-semantics-of-programming-languages-2025-26/ff5d60747dbcc5327685c3d81764165550c388874a7472ed478882443ead9c01/batch-summary.json",
+    "course_summary": "outputs/cambridge-semantics-of-programming-languages-2025-26/ff5d60747dbcc5327685c3d81764165550c388874a7472ed478882443ead9c01/course-summary.json",
+    "coordinator_handoff": "outputs/cambridge-semantics-of-programming-languages-2025-26/ff5d60747dbcc5327685c3d81764165550c388874a7472ed478882443ead9c01/coordinator-handoff.json",
+    "finalization_report": "outputs/cambridge-semantics-of-programming-languages-2025-26/ff5d60747dbcc5327685c3d81764165550c388874a7472ed478882443ead9c01/finalization-report.json"
+  }
+}

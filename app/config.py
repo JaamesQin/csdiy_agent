@@ -47,6 +47,7 @@ PRACTICE_REWRITE_ENABLED = _load_bool(
 )
 ROBUST_INPUT_ENABLED = _load_bool("COURSEPILOT_ROBUST_INPUT", default=True)
 SESSION_TTL_HOURS = _load_positive_int("COURSEPILOT_SESSION_TTL_HOURS", 12)
+CONVERSATION_TTL_DAYS = _load_positive_int("COURSEPILOT_CONVERSATION_TTL_DAYS", 30)
 SESSION_COOKIE_NAME = "coursepilot_session"
 ALLOWED_ORIGINS = {
     origin.strip().rstrip("/")

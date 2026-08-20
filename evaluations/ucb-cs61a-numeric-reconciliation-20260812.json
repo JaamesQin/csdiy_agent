@@ -1,0 +1,148 @@
+{
+  "schema_version": "numeric-reconciliation-v1",
+  "audit_id": "ucb-cs61a-numeric-reconciliation-20260812",
+  "auditor": "codex-read-only-numeric-audit",
+  "audited_at": "2026-08-12",
+  "offline_only": true,
+  "provider_or_model_called": false,
+  "course_id": "ucb-cs61a-spring-2026",
+  "root": {
+    "build_id": "cdcdeec7d13ce7404a8e858bf13ebd99c5b147e44096692a5c8710277c126079",
+    "path": "outputs/ucb-cs61a-spring-2026/cdcdeec7d13ce7404a8e858bf13ebd99c5b147e44096692a5c8710277c126079",
+    "selection_basis": "data/catalog/csdiy-course-registry.yaml coverage.build_id and output_index",
+    "quality_mode": "standard",
+    "pipeline_version": "portable-studykit-pipeline-v0.2.1"
+  },
+  "sources_checked": [
+    "data/manifests/ucb-cs61a-spring-2026.yaml",
+    "outputs/ucb-cs61a-spring-2026/cdcdeec7d13ce7404a8e858bf13ebd99c5b147e44096692a5c8710277c126079/manifest.yaml",
+    "outputs/ucb-cs61a-spring-2026/cdcdeec7d13ce7404a8e858bf13ebd99c5b147e44096692a5c8710277c126079/run.json",
+    "outputs/ucb-cs61a-spring-2026/cdcdeec7d13ce7404a8e858bf13ebd99c5b147e44096692a5c8710277c126079/result.json",
+    "outputs/ucb-cs61a-spring-2026/cdcdeec7d13ce7404a8e858bf13ebd99c5b147e44096692a5c8710277c126079/batch-summary.json",
+    "outputs/ucb-cs61a-spring-2026/cdcdeec7d13ce7404a8e858bf13ebd99c5b147e44096692a5c8710277c126079/course-summary.json",
+    "outputs/ucb-cs61a-spring-2026/cdcdeec7d13ce7404a8e858bf13ebd99c5b147e44096692a5c8710277c126079/courses/ucb-cs61a-spring-2026/units/*",
+    "data/sources/ucb-cs61a-spring-2026/lecture-*/chunks.jsonl",
+    "data/catalog/csdiy-course-registry.yaml"
+  ],
+  "root_recorded_counts": {
+    "run.json": {"requested": 28, "completed": 25, "validated": 28, "audited": 25, "failed": 3, "pending": 0},
+    "result.json": {"requested": 28, "completed": 25, "validated": 28, "audited": 25, "failed": 3, "pending": 0},
+    "batch-summary.json": {"requested": 28, "completed": 25, "validated": 28, "audited": 25, "failed": 3, "pending": 0},
+    "course-summary.json": {"requested": 28, "completed": 25, "validated": 28, "audited": 25, "failed": 3, "pending": 0}
+  },
+  "recomputed_counts_from_current_checkpoints": {
+    "requested": 28,
+    "completed": 27,
+    "validated": 28,
+    "audited": 27,
+    "failed": 1,
+    "pending": 0,
+    "completed_definition": "final exists, validation.json succeeded, review-validation.json succeeded, and independent-audit.json result is pass",
+    "validated_definition": "validation.json exists with status succeeded",
+    "audited_definition": "independent-audit.json exists with result pass",
+    "failed_definition": "not completed under the release-gated definition; current blocking unit is lecture-03",
+    "pending_definition": "no manifest unit is missing its current final/checkpoint set"
+  },
+  "unit_id_reconciliation": {
+    "manifest_count": 28,
+    "manifest_ids": [
+      "lecture-01", "lecture-02", "lecture-03", "lecture-04", "lecture-05", "lecture-06", "lecture-07", "lecture-08", "lecture-09", "lecture-10", "lecture-11", "lecture-12", "lecture-13", "lecture-14", "lecture-15", "lecture-16", "lecture-17", "lecture-18", "lecture-19", "lecture-20", "lecture-21", "lecture-22", "lecture-23", "lecture-24", "lecture-25", "lecture-26", "lecture-27", "lecture-28"
+    ],
+    "chunk_directory_count": 28,
+    "output_unit_directory_count": 28,
+    "missing_chunk_units": [],
+    "extra_chunk_units": [],
+    "missing_output_units": [],
+    "extra_output_units": [],
+    "manifest_identity_check": "pass",
+    "manifest_note": "The catalog manifest carries the ordered unit/source/material-set identity; page and chunk totals were recomputed from the anchored JSONL and validation checkpoints."
+  },
+  "aggregate_material_numbers": {
+    "chunk_count": 930,
+    "page_count": 930,
+    "chunk_page_relation": "pass: pdf-page-v0.2 emits one one-based page chunk per page",
+    "validation_chunk_count_sum": 930,
+    "registry_coverage_chunk_count": 930,
+    "registry_coverage_page_count": 930,
+    "citation_count": 3547,
+    "validation_citation_count_sum": 3547,
+    "final_json_citation_count": 3547,
+    "candidate_json_citation_count": 3547,
+    "yaml_citation_count": 3547,
+    "citation_equality": "pass",
+    "actual_reviewed_page_entries": 518,
+    "actual_reviewed_unique_pages_per_unit_sum": 518,
+    "metrics_reviewed_page_count_sum": 518,
+    "review_page_count_equality": "pass",
+    "registry_coverage_warning_count": 235,
+    "registry_coverage_empty_count": 0,
+    "registry_coverage_supplemental_chunk_count": 419
+  },
+  "per_unit_numbers": [
+    {"unit_id":"lecture-01","chunks":43,"pages":43,"citations":265,"reviewed_pages":3,"validation":"succeeded","review":"succeeded","audit":"pass"},
+    {"unit_id":"lecture-02","chunks":32,"pages":32,"citations":32,"reviewed_pages":17,"validation":"succeeded","review":"succeeded","audit":"pass"},
+    {"unit_id":"lecture-03","chunks":31,"pages":31,"citations":123,"reviewed_pages":22,"validation":"succeeded","review":"failed","audit":"block"},
+    {"unit_id":"lecture-04","chunks":21,"pages":21,"citations":54,"reviewed_pages":13,"validation":"succeeded","review":"succeeded","audit":"pass"},
+    {"unit_id":"lecture-05","chunks":33,"pages":33,"citations":247,"reviewed_pages":7,"validation":"succeeded","review":"succeeded","audit":"pass"},
+    {"unit_id":"lecture-06","chunks":29,"pages":29,"citations":54,"reviewed_pages":14,"validation":"succeeded","review":"succeeded","audit":"pass"},
+    {"unit_id":"lecture-07","chunks":34,"pages":34,"citations":136,"reviewed_pages":34,"validation":"succeeded","review":"succeeded","audit":"pass"},
+    {"unit_id":"lecture-08","chunks":40,"pages":40,"citations":106,"reviewed_pages":26,"validation":"succeeded","review":"succeeded","audit":"pass"},
+    {"unit_id":"lecture-09","chunks":29,"pages":29,"citations":205,"reviewed_pages":3,"validation":"succeeded","review":"succeeded","audit":"pass"},
+    {"unit_id":"lecture-10","chunks":39,"pages":39,"citations":69,"reviewed_pages":21,"validation":"succeeded","review":"succeeded","audit":"pass"},
+    {"unit_id":"lecture-11","chunks":39,"pages":39,"citations":147,"reviewed_pages":39,"validation":"succeeded","review":"succeeded","audit":"pass"},
+    {"unit_id":"lecture-12","chunks":10,"pages":10,"citations":46,"reviewed_pages":8,"validation":"succeeded","review":"succeeded","audit":"pass"},
+    {"unit_id":"lecture-13","chunks":26,"pages":26,"citations":194,"reviewed_pages":3,"validation":"succeeded","review":"succeeded","audit":"pass"},
+    {"unit_id":"lecture-14","chunks":30,"pages":30,"citations":66,"reviewed_pages":20,"validation":"succeeded","review":"succeeded","audit":"pass"},
+    {"unit_id":"lecture-15","chunks":27,"pages":27,"citations":146,"reviewed_pages":27,"validation":"succeeded","review":"succeeded","audit":"pass"},
+    {"unit_id":"lecture-16","chunks":26,"pages":26,"citations":97,"reviewed_pages":20,"validation":"succeeded","review":"succeeded","audit":"pass"},
+    {"unit_id":"lecture-17","chunks":31,"pages":31,"citations":196,"reviewed_pages":3,"validation":"succeeded","review":"succeeded","audit":"pass"},
+    {"unit_id":"lecture-18","chunks":38,"pages":38,"citations":68,"reviewed_pages":29,"validation":"succeeded","review":"succeeded","audit":"pass"},
+    {"unit_id":"lecture-19","chunks":31,"pages":31,"citations":123,"reviewed_pages":31,"validation":"succeeded","review":"succeeded","audit":"pass"},
+    {"unit_id":"lecture-20","chunks":30,"pages":30,"citations":94,"reviewed_pages":21,"validation":"succeeded","review":"succeeded","audit":"pass"},
+    {"unit_id":"lecture-21","chunks":42,"pages":42,"citations":283,"reviewed_pages":3,"validation":"succeeded","review":"succeeded","audit":"pass"},
+    {"unit_id":"lecture-22","chunks":41,"pages":41,"citations":72,"reviewed_pages":23,"validation":"succeeded","review":"succeeded","audit":"pass"},
+    {"unit_id":"lecture-23","chunks":34,"pages":34,"citations":140,"reviewed_pages":34,"validation":"succeeded","review":"succeeded","audit":"pass"},
+    {"unit_id":"lecture-24","chunks":45,"pages":45,"citations":100,"reviewed_pages":26,"validation":"succeeded","review":"succeeded","audit":"pass"},
+    {"unit_id":"lecture-25","chunks":43,"pages":43,"citations":297,"reviewed_pages":3,"validation":"succeeded","review":"succeeded","audit":"pass"},
+    {"unit_id":"lecture-26","chunks":62,"pages":62,"citations":91,"reviewed_pages":42,"validation":"succeeded","review":"succeeded","audit":"pass"},
+    {"unit_id":"lecture-27","chunks":6,"pages":6,"citations":39,"reviewed_pages":6,"validation":"succeeded","review":"succeeded","audit":"pass"},
+    {"unit_id":"lecture-28","chunks":38,"pages":38,"citations":57,"reviewed_pages":20,"validation":"succeeded","review":"succeeded","audit":"pass"}
+  ],
+  "structural_discrepancies": [
+    {
+      "code": "ROOT_SUMMARY_STALE",
+      "severity": "high",
+      "message": "run.json, result.json, batch-summary.json, and course-summary.json agree with each other but are stale relative to current unit checkpoints.",
+      "recorded": {"completed":25,"audited":25,"failed":3},
+      "recomputed": {"completed":27,"audited":27,"failed":1},
+      "affected_units": ["lecture-18","lecture-22"],
+      "evidence": ["lecture-18/independent-audit.json result=pass and review-validation.json status=succeeded", "lecture-22/independent-audit.json result=pass and review-validation.json status=succeeded"]
+    },
+    {
+      "code": "BATCH_UNIT_RECORD_STALE",
+      "severity": "high",
+      "message": "batch-summary unit_records retain old release-gate/audit values for lecture-18 and lecture-22.",
+      "affected_units": ["lecture-18","lecture-22"],
+      "current_checkpoint": "both are validation succeeded, review succeeded, independent-audit pass"
+    },
+    {
+      "code": "LECTURE_03_RELEASE_BLOCK",
+      "severity": "blocking",
+      "message": "lecture-03 remains numerically present and schema-valid but is not release-complete because review-validation failed and its current independent audit is block.",
+      "affected_units": ["lecture-03"]
+    }
+  ],
+  "semantic_practice_issues_deferred": {
+    "not_a_numeric_repair": true,
+    "lecture_03": "Current independent-audit.json records a practice p2 grounding/answerability blocker; it is reported, not changed.",
+    "lecture_18": "Current checkpoint passes; historical repair notes mention deferred practice-scope context, which is not reinterpreted or repaired here.",
+    "lecture_22": "Current checkpoint passes; historical repair notes mention prior generic-practice blockers, which are not reinterpreted or repaired here.",
+    "policy": "Practice semantic issues are separate from numeric reconciliation. No practice, manifest, registry, docs, or output unit content was modified."
+  },
+  "conclusion": {
+    "structural_numbers": "FAIL_RECONCILIATION_REQUIRED",
+    "reason": "The current unit checkpoints recompute to 28 requested, 27 completed, 28 validated, 27 audited, 1 failed, 0 pending, while all four root summaries still report 25 completed, 25 audited, 3 failed.",
+    "recommended_next_action": "Global coordinator should reconcile the fingerprinted root summaries from current unit checkpoints, preserving lecture-03 as failed/block and not changing practice content.",
+    "files_modified": ["evaluations/ucb-cs61a-numeric-reconciliation-20260812.json"]
+  }
+}

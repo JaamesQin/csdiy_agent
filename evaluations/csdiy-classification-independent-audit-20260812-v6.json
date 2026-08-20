@@ -1,0 +1,148 @@
+{
+  "schema_version": "6.0",
+  "audit_id": "csdiy-classification-independent-audit-20260812-v6",
+  "auditor_id": "independent-classification-auditor-v6",
+  "result": "pass",
+  "release_decision": {
+    "decision": "pass",
+    "blocking_findings": []
+  },
+  "offline_only": true,
+  "scope": {
+    "registry": "data/catalog/csdiy-course-registry.yaml",
+    "snapshot": "data/raw/catalog-sources/cs-self-learning/81d874ee0fb37b2289839847026ba7651f3725d5",
+    "discovery_script": "scripts/discover_csdiy_courses.py",
+    "historical_report": "evaluations/csdiy-classification-independent-audit-20260812-v3.json"
+  },
+  "counts": {
+    "nav_leaf_count": 135,
+    "course_nav_leaf_count": 112,
+    "course_target_count": 119,
+    "canonical_id_duplicates": 0
+  },
+  "checks": {
+    "nav_leaf_count": {
+      "status": "pass",
+      "observed": 135,
+      "expected": 135
+    },
+    "course_nav_leaf_count": {
+      "status": "pass",
+      "observed": 112,
+      "expected": 112
+    },
+    "course_target_count": {
+      "status": "pass",
+      "observed": 119,
+      "expected": 119
+    },
+    "canonical_ids_unique": {
+      "status": "pass",
+      "observed": 0,
+      "expected": 0
+    },
+    "ucb_cs168_direction": {
+      "status": "pass",
+      "observed": {
+        "major_direction": "networks",
+        "secondary_directions": [
+          "architecture"
+        ]
+      },
+      "expected": {
+        "major_direction": "networks",
+        "secondary_directions": [
+          "architecture"
+        ]
+      }
+    },
+    "mit_6_046_target_type": {
+      "status": "pass",
+      "observed": "course",
+      "expected": "course"
+    },
+    "cambridge_identity": {
+      "status": "pass",
+      "observed": {
+        "institution": "University of Cambridge",
+        "id": "cambridge-semantics-of-programming-languages"
+      },
+      "expected": {
+        "institution": "University of Cambridge",
+        "id": "cambridge-semantics-of-programming-languages"
+      }
+    },
+    "princeton_algorithms": {
+      "status": "pass",
+      "observed": [
+        "princeton-algorithms-i",
+        "princeton-algorithms-ii"
+      ],
+      "expected": [
+        "princeton-algorithms-i",
+        "princeton-algorithms-ii"
+      ]
+    },
+    "eecs_crosslisted": {
+      "status": "pass",
+      "observed": {
+        "target_ids": [
+          "umich-eecs498-007"
+        ],
+        "course_numbers": [
+          "EECS498-007",
+          "EECS598-005"
+        ]
+      },
+      "expected": {
+        "one_target": true,
+        "numbers": [
+          "EECS498-007",
+          "EECS598-005"
+        ]
+      }
+    },
+    "cs229m_crosslisted": {
+      "status": "pass",
+      "observed": {
+        "target_ids": [
+          "stanford-cs229m"
+        ],
+        "course_numbers": [
+          "CS229M",
+          "STATS214"
+        ]
+      },
+      "expected": {
+        "one_target": true,
+        "numbers": [
+          "CS229M",
+          "STATS214"
+        ]
+      }
+    },
+    "llm_nlp_ai": {
+      "status": "pass",
+      "observed": [
+        {
+          "path": "docs/深度生成模型/大语言模型/CMU11-667.md",
+          "direction": "artificial_intelligence"
+        },
+        {
+          "path": "docs/深度生成模型/大语言模型/CMU11-711.md",
+          "direction": "artificial_intelligence"
+        },
+        {
+          "path": "docs/深度生成模型/大语言模型/CMU11-868.md",
+          "direction": "artificial_intelligence"
+        }
+      ],
+      "expected": "all artificial_intelligence"
+    }
+  },
+  "test_run": {
+    "command": "PYTHONDONTWRITEBYTECODE=1 .venv/bin/pytest -q tests/catalog/test_discovery.py",
+    "result": "21 passed in 0.13s"
+  },
+  "method": "Minimal offline independent YAML/mkdocs structural count and identity audit; v3 read as historical context only."
+}

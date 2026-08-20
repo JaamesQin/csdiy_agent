@@ -1,0 +1,1458 @@
+{
+  "studykit_version": "0.1",
+  "status": "draft",
+  "course_id": "mit-6.7960-fall-2024",
+  "course_version": "fall-2024",
+  "unit_id": "lecture-02",
+  "title": "Lecture 2：如何训练神经网络",
+  "language": "zh-CN",
+  "scope": {
+    "included_sources": [
+      {
+        "source_id": "mit-6.7960-f24-lecture-02-slides",
+        "title": "Lecture 2: How to Train a Neural Net",
+        "type": "pdf",
+        "sha256": "a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006"
+      }
+    ],
+    "citation_anchor_types": [
+      "page"
+    ]
+  },
+  "learning_objectives": [
+    {
+      "id": "obj-1",
+      "objective": "从目标函数出发，比较全批量梯度下降、SGD、动量和梯度裁剪。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 10
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 22
+          }
+        }
+      ]
+    },
+    {
+      "id": "obj-2",
+      "objective": "识别损失地形中的局部极小值、梯度消失、零梯度和梯度爆炸，并解释它们为何阻碍优化。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 14
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 20
+          }
+        }
+      ]
+    },
+    {
+      "id": "obj-3",
+      "objective": "把多层网络表达为计算图，使用 Jacobian 链式法则说明前向传播和反向传播。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 26
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 29
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 42
+          }
+        }
+      ]
+    },
+    {
+      "id": "obj-4",
+      "objective": "推导通用层、线性层、数据批次、DAG 分支和参数共享的反向规则。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 38
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 45
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 46
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 48
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 53
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 55
+          }
+        }
+      ]
+    },
+    {
+      "id": "obj-5",
+      "objective": "区分优化模型参数与优化输入，并独立完成讲义给出的数值反向传播案例。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 61
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 66
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 72
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 80
+          }
+        }
+      ]
+    }
+  ],
+  "prerequisites": [
+    {
+      "topic": "一阶微积分",
+      "required_level": "能应用标量链式法则",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        }
+      ]
+    },
+    {
+      "topic": "线性代数",
+      "required_level": "能完成矩阵乘法并检查维度",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 32
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        }
+      ]
+    },
+    {
+      "topic": "神经网络组件",
+      "required_level": "理解层、参数、激活、预测和标量损失",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 29
+          }
+        }
+      ]
+    }
+  ],
+  "outline": [
+    {
+      "order": 1,
+      "topic": "训练目标、GD/SGD 与动量",
+      "anchors": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 11
+          }
+        }
+      ],
+      "purpose": "明确参数更新的信息来源与批量差异"
+    },
+    {
+      "order": 2,
+      "topic": "损失地形、梯度故障与损失节点选择",
+      "anchors": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 12
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 25
+          }
+        }
+      ],
+      "purpose": "诊断基于梯度的优化何时困难"
+    },
+    {
+      "order": 3,
+      "topic": "计算图、向量导数与链式法则",
+      "anchors": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 26
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 35
+          }
+        }
+      ],
+      "purpose": "建立局部导数组合与形状检查"
+    },
+    {
+      "order": 4,
+      "topic": "反向传播算法、批次和线性层",
+      "anchors": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 36
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 52
+          }
+        }
+      ],
+      "purpose": "从共享计算构造完整网络训练算法"
+    },
+    {
+      "order": 5,
+      "topic": "DAG、参数共享和可微编程",
+      "anchors": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 53
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 70
+          }
+        }
+      ],
+      "purpose": "扩展到分支图与输入变量优化"
+    },
+    {
+      "order": 6,
+      "topic": "一次完整数值反向传播",
+      "anchors": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 72
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 80
+          }
+        }
+      ],
+      "purpose": "核验计算顺序、维度、数值和符号"
+    }
+  ],
+  "core_concepts": [
+    {
+      "id": "cc-1",
+      "term": "经验损失目标",
+      "claim_type": "source_summary",
+      "explanation": "训练目标把每个样本经过模型后的损失汇总，并在参数空间中寻找极小值。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        }
+      ],
+      "formula": {
+        "status": "resolved",
+        "latex": "\\theta^*=\\arg\\min_\\theta\\sum_{i=1}^{N}\\mathcal L(f_\\theta(x^{(i)}),y^{(i)})",
+        "citation": {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        },
+        "warnings": []
+      }
+    },
+    {
+      "id": "cc-2",
+      "term": "梯度下降更新",
+      "claim_type": "source_summary",
+      "explanation": "梯度下降使用一阶导数；每步从当前参数沿负梯度方向移动，η 是学习率。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        }
+      ],
+      "formula": {
+        "status": "resolved",
+        "latex": "\\theta^{k+1}=\\theta^k-\\eta\\nabla_\\theta J(\\theta^k)",
+        "citation": {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        },
+        "warnings": []
+      }
+    },
+    {
+      "id": "cc-3",
+      "term": "SGD 与 batch",
+      "claim_type": "source_summary",
+      "explanation": "SGD 用一个数据子集估计总体梯度。batch=1 时逐样本更新，batch=N 时等于标准梯度下降；小批量更快但方向噪声更大。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        }
+      ]
+    },
+    {
+      "id": "cc-4",
+      "term": "动量",
+      "claim_type": "source_summary",
+      "explanation": "动量把上一更新方向带入当前步；其强度是超参数，讲义明确说明它可能有帮助也可能有害。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 10
+          }
+        }
+      ],
+      "formula": {
+        "status": "resolved",
+        "latex": "\\theta^{t+1}=\\theta^t-\\eta\\nabla f(\\theta^t)-\\alpha m^t",
+        "citation": {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 10
+          }
+        },
+        "warnings": []
+      }
+    },
+    {
+      "id": "cc-5",
+      "term": "优化故障模式",
+      "claim_type": "source_summary",
+      "explanation": "局部极小值影响终点；梯度消失或为零使进展停滞；梯度爆炸导致不稳定和越界。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 14
+          }
+        }
+      ]
+    },
+    {
+      "id": "cc-6",
+      "term": "梯度裁剪",
+      "claim_type": "source_summary",
+      "explanation": "若梯度分量超过阈值 m，讲义用 clip 把它限制在区间内，以缓解爆炸梯度造成的不稳定。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 22
+          }
+        }
+      ],
+      "formula": {
+        "status": "resolved",
+        "latex": "\\theta^{k+1}=\\theta^k-\\eta[\\operatorname{clip}(v_1,-m,m),\\ldots,\\operatorname{clip}(v_M,-m,m)]^\\top",
+        "citation": {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 22
+          }
+        },
+        "warnings": []
+      }
+    },
+    {
+      "id": "cc-7",
+      "term": "ReLU 与可微要求",
+      "claim_type": "source_summary",
+      "explanation": "ReLU 连续但在零点并非通常意义下可微，也不处处光滑；讲义以它说明实用节点不必满足“处处光滑”。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 24
+          }
+        }
+      ],
+      "formula": {
+        "status": "resolved",
+        "latex": "\\operatorname{ReLU}(z)=\\max(0,z)",
+        "citation": {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 24
+          }
+        },
+        "warnings": []
+      }
+    },
+    {
+      "id": "cc-8",
+      "term": "计算图",
+      "claim_type": "source_summary",
+      "explanation": "深度学习主要使用由可微函数节点组成的有向无环计算图；多层网络的前向过程沿依赖方向计算到标量损失。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 26
+          }
+        }
+      ]
+    },
+    {
+      "id": "cc-9",
+      "term": "Jacobian 链式法则",
+      "claim_type": "source_summary",
+      "explanation": "讲义把标量对列向量的导数写作行向量、向量对向量的导数写作 Jacobian；复合映射按维度匹配的顺序相乘。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        }
+      ],
+      "formula": {
+        "status": "resolved",
+        "latex": "\\frac{\\partial z}{\\partial x}=\\frac{\\partial z}{\\partial u}\\frac{\\partial u}{\\partial x}",
+        "citation": {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        },
+        "warnings": []
+      }
+    },
+    {
+      "id": "cc-10",
+      "term": "反向传播复用",
+      "claim_type": "source_summary",
+      "explanation": "不同参数的链式展开共享靠近损失端的导数项；反向传播只计算共享项一次，再从输出向输入传播。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 36
+          }
+        }
+      ]
+    },
+    {
+      "id": "cc-11",
+      "term": "通用层局部反向",
+      "claim_type": "source_summary",
+      "explanation": "对层 x_out=f(x_in,θ)，输出侧梯度分别与输入 Jacobian 和参数 Jacobian 组合，得到输入梯度与参数梯度。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 41
+          }
+        }
+      ],
+      "formula": {
+        "status": "resolved",
+        "latex": "g_{in}=g_{out}L^x,\\qquad \\frac{\\partial J}{\\partial\\theta}=g_{out}L^\\theta",
+        "citation": {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 41
+          }
+        },
+        "warnings": []
+      }
+    },
+    {
+      "id": "cc-12",
+      "term": "批次平均梯度",
+      "claim_type": "source_summary",
+      "explanation": "平均数据损失对参数的梯度，就是各数据点损失梯度的平均。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 45
+          }
+        }
+      ],
+      "formula": {
+        "status": "resolved",
+        "latex": "\\frac{\\partial J}{\\partial\\theta}=\\frac1N\\sum_{i=1}^N\\frac{\\partial J_i(x^i,\\theta)}{\\partial\\theta}",
+        "citation": {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 45
+          }
+        },
+        "warnings": []
+      }
+    },
+    {
+      "id": "cc-13",
+      "term": "线性层反向",
+      "claim_type": "source_summary",
+      "explanation": "对 x_out=W x_in，在讲义的行梯度约定下，输入梯度是 g_out W；权重梯度由输入列向量与输出侧行梯度组成外积。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 46
+          }
+        }
+      ],
+      "formula": {
+        "status": "resolved",
+        "latex": "x_{out}=Wx_{in},\\qquad g_{in}=g_{out}W",
+        "citation": {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 46
+          }
+        },
+        "warnings": []
+      }
+    },
+    {
+      "id": "cc-14",
+      "term": "DAG 分支与共享参数",
+      "claim_type": "source_summary",
+      "explanation": "同一上游量沿多个分支影响损失时，各路径梯度在回到该量时相加；同一参数多次使用时也汇总全部使用点的贡献。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 55
+          }
+        }
+      ],
+      "formula": {
+        "status": "resolved",
+        "latex": "\\frac{\\partial J}{\\partial x}=\\sum_i\\frac{\\partial J}{\\partial x^i}",
+        "citation": {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 55
+          }
+        },
+        "warnings": []
+      }
+    },
+    {
+      "id": "cc-15",
+      "term": "对输入求梯度",
+      "claim_type": "source_summary",
+      "explanation": "反向传播可对计算图中的节点或边相对于任意标量代价求导。单元可视化固定网络，沿输入梯度上升并加入正则项。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 66
+          }
+        }
+      ],
+      "formula": {
+        "status": "resolved",
+        "latex": "x^{k+1}=x^k+\\eta\\left.\\frac{\\partial(y_j(x)+\\lambda R(x))}{\\partial x}\\right|_{x=x^k}",
+        "citation": {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 66
+          }
+        },
+        "warnings": []
+      }
+    }
+  ],
+  "glossary": [
+    {
+      "term": "梯度",
+      "definition": "标量目标对各变量分量的一阶导数集合。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 6
+          }
+        }
+      ]
+    },
+    {
+      "term": "Jacobian",
+      "definition": "向量输出各分量对向量输入各分量的偏导矩阵。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 32
+          }
+        }
+      ]
+    },
+    {
+      "term": "计算图",
+      "definition": "用函数节点和依赖边表示计算的有向图。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 26
+          }
+        }
+      ]
+    },
+    {
+      "term": "反向传播",
+      "definition": "从标量损失端逆向复用链式法则共享项的算法。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 36
+          }
+        }
+      ]
+    },
+    {
+      "term": "参数共享",
+      "definition": "同一参数在图中多处使用，反向时累加各处贡献。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 55
+          }
+        }
+      ]
+    }
+  ],
+  "common_misconceptions": [
+    {
+      "misconception": "反向传播本身会更新参数。",
+      "correction": "反向传播产生梯度；更新是随后使用梯度的独立阶段。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 42
+          }
+        }
+      ]
+    },
+    {
+      "misconception": "每个节点必须处处光滑。",
+      "correction": "ReLU 在零点不光滑，讲义仍将它作为可用节点。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 24
+          }
+        }
+      ]
+    },
+    {
+      "misconception": "批量总梯度需要先把样本拼成一个新公式。",
+      "correction": "平均损失的梯度就是各样本梯度的平均。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 45
+          }
+        }
+      ]
+    },
+    {
+      "misconception": "分支只沿一条路径回传。",
+      "correction": "影响同一上游量的所有路径贡献都要相加。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 53
+          }
+        }
+      ]
+    },
+    {
+      "misconception": "只能对权重求梯度。",
+      "correction": "任意节点或边都可相对于标量代价求导，包括输入。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 61
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 66
+          }
+        }
+      ]
+    }
+  ],
+  "learning_sequence": [
+    {
+      "step": 1,
+      "activity": "从目标函数出发，建立 GD、SGD 和动量的更新比较表。",
+      "duration_minutes": 25,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 10
+          }
+        }
+      ]
+    },
+    {
+      "step": 2,
+      "activity": "逐图判断可微性和优化难点，归纳梯度故障与裁剪的作用边界。",
+      "duration_minutes": 20,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 12
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 22
+          }
+        }
+      ]
+    },
+    {
+      "step": 3,
+      "activity": "把 MLP 改写为带参数、激活和损失的计算图。",
+      "duration_minutes": 20,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 26
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 30
+          }
+        }
+      ]
+    },
+    {
+      "step": 4,
+      "activity": "按讲义约定复习向量导数和 Jacobian，并用形状检查链式法则。",
+      "duration_minutes": 25,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 32
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        }
+      ]
+    },
+    {
+      "step": 5,
+      "activity": "沿链式图执行 forward、backward、update，说明反向传播的共享计算。",
+      "duration_minutes": 30,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 36
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 44
+          }
+        }
+      ]
+    },
+    {
+      "step": 6,
+      "activity": "推导批次平均、线性层、DAG 分支和参数共享规则。",
+      "duration_minutes": 25,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 45
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 55
+          }
+        }
+      ]
+    },
+    {
+      "step": 7,
+      "activity": "比较优化参数与优化输入，解释单元可视化的目标与正则项。",
+      "duration_minutes": 15,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 61
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 66
+          }
+        }
+      ]
+    },
+    {
+      "step": 8,
+      "activity": "独立完成数值反向传播，再逐页对照讲义解答检查中间量和更新。",
+      "duration_minutes": 20,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 72
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 80
+          }
+        }
+      ]
+    }
+  ],
+  "practice": [
+    {
+      "id": "ex-1",
+      "level": "基础",
+      "question": "分别说明 batch=1、小批量和 batch=N 时一次 SGD 更新使用什么数据。",
+      "hint": "先找第 9 页明确给出的两个边界。",
+      "deliverable": "三行比较表。",
+      "expected_evidence": [
+        "batch=1 逐样本",
+        "batch=N 为全批量",
+        "小批量是总梯度的带噪近似"
+      ],
+      "evaluation": {
+        "criteria": [
+          "三种情形都正确"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        }
+      ]
+    },
+    {
+      "id": "ex-2",
+      "level": "基础",
+      "question": "为第 29 页的链式图写出一次训练迭代的前向、反向、更新顺序，并说明为什么不能先更新。",
+      "hint": "参数梯度依赖已计算的损失和激活。",
+      "deliverable": "步骤图和两句解释。",
+      "expected_evidence": [
+        "先前向",
+        "再从损失端反向",
+        "最后统一更新"
+      ],
+      "evaluation": {
+        "criteria": [
+          "顺序和因果关系正确"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 29
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 42
+          }
+        }
+      ]
+    },
+    {
+      "id": "ex-3",
+      "level": "进阶",
+      "question": "设 |x|=n、|u|=p、|z|=m，标出 ∂z/∂u、∂u/∂x 和乘积的形状。",
+      "hint": "使用第 34 页的 Jacobian 排布。",
+      "deliverable": "带形状的链式法则。",
+      "expected_evidence": [
+        "m×p",
+        "p×n",
+        "乘积 m×n"
+      ],
+      "evaluation": {
+        "criteria": [
+          "乘法顺序与形状一致"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        }
+      ]
+    },
+    {
+      "id": "ex-4",
+      "level": "进阶",
+      "question": "对 x_out=W x_in，推导 g_in，并用分量关系解释权重梯度为何是外积形状。",
+      "hint": "先使用 ∂x_out_i/∂x_in_j=W_ij。",
+      "deliverable": "公式、分量推导、形状表。",
+      "expected_evidence": [
+        "g_in=g_out W",
+        "权重梯度每项由输入分量和输出梯度分量相乘",
+        "形状正确"
+      ],
+      "evaluation": {
+        "criteria": [
+          "符合讲义行梯度约定"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 46
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 48
+          }
+        }
+      ]
+    },
+    {
+      "id": "ex-5",
+      "level": "挑战",
+      "question": "一个变量分成两条路径，又有同一参数在三处使用。分别写回到变量与参数的梯度汇总规则。",
+      "hint": "把每个下游使用点视为独立贡献，再相加。",
+      "deliverable": "两条求和公式与路径图。",
+      "expected_evidence": [
+        "变量分支梯度相加",
+        "三处参数贡献全部相加"
+      ],
+      "evaluation": {
+        "criteria": [
+          "路径无遗漏",
+          "区分变量分支和参数共享"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 53
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 55
+          }
+        }
+      ]
+    },
+    {
+      "id": "ex-6",
+      "level": "挑战",
+      "question": "仅看第 72 页，完成一次前向和反向传播，给出两个权重梯度及更新后权重；完成后再用第 75–80 页核对。",
+      "hint": "先重画成线性—tanh—线性—平方损失模块。",
+      "deliverable": "完整计算表，注明矩阵形状和舍入。",
+      "expected_evidence": [
+        "前向激活正确",
+        "tanh Jacobian 为对角形式",
+        "两个权重梯度形状正确",
+        "使用题中 η=-0.2 的正增量约定"
+      ],
+      "evaluation": {
+        "criteria": [
+          "过程可复核",
+          "最终值接近讲义两位小数结果"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 72
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 75
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 80
+          }
+        }
+      ]
+    }
+  ],
+  "citations": [
+    {
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "anchor": {
+        "type": "page",
+        "value": 5
+      },
+      "citation_id": "p05",
+      "supports": "训练目标"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "anchor": {
+        "type": "page",
+        "value": 8
+      },
+      "citation_id": "p08",
+      "supports": "GD"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "anchor": {
+        "type": "page",
+        "value": 9
+      },
+      "citation_id": "p09",
+      "supports": "SGD"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "anchor": {
+        "type": "page",
+        "value": 10
+      },
+      "citation_id": "p10",
+      "supports": "动量"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "anchor": {
+        "type": "page",
+        "value": 14
+      },
+      "citation_id": "p14",
+      "supports": "优化难点"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "anchor": {
+        "type": "page",
+        "value": 22
+      },
+      "citation_id": "p22",
+      "supports": "裁剪"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "anchor": {
+        "type": "page",
+        "value": 24
+      },
+      "citation_id": "p24",
+      "supports": "ReLU"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "anchor": {
+        "type": "page",
+        "value": 26
+      },
+      "citation_id": "p26",
+      "supports": "计算图"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "anchor": {
+        "type": "page",
+        "value": 32
+      },
+      "citation_id": "p32",
+      "supports": "Jacobian"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "anchor": {
+        "type": "page",
+        "value": 34
+      },
+      "citation_id": "p34",
+      "supports": "链式法则"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "anchor": {
+        "type": "page",
+        "value": 36
+      },
+      "citation_id": "p36",
+      "supports": "复用"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "anchor": {
+        "type": "page",
+        "value": 41
+      },
+      "citation_id": "p41",
+      "supports": "通用层"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "anchor": {
+        "type": "page",
+        "value": 42
+      },
+      "citation_id": "p42",
+      "supports": "完整算法"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "anchor": {
+        "type": "page",
+        "value": 45
+      },
+      "citation_id": "p45",
+      "supports": "批次"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "anchor": {
+        "type": "page",
+        "value": 46
+      },
+      "citation_id": "p46",
+      "supports": "线性层输入梯度"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "anchor": {
+        "type": "page",
+        "value": 48
+      },
+      "citation_id": "p48",
+      "supports": "权重梯度"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "anchor": {
+        "type": "page",
+        "value": 53
+      },
+      "citation_id": "p53",
+      "supports": "DAG"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "anchor": {
+        "type": "page",
+        "value": 55
+      },
+      "citation_id": "p55",
+      "supports": "参数共享"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "anchor": {
+        "type": "page",
+        "value": 61
+      },
+      "citation_id": "p61",
+      "supports": "可微编程"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "anchor": {
+        "type": "page",
+        "value": 66
+      },
+      "citation_id": "p66",
+      "supports": "输入优化"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "anchor": {
+        "type": "page",
+        "value": 72
+      },
+      "citation_id": "p72",
+      "supports": "数值题"
+    },
+    {
+      "source_id": "mit-6.7960-f24-lecture-02-slides",
+      "anchor": {
+        "type": "page",
+        "value": 80
+      },
+      "citation_id": "p80",
+      "supports": "数值更新"
+    }
+  ],
+  "review": {
+    "generator_review_status": "passed",
+    "audit_findings": []
+  },
+  "limitations": [
+    "仅依据指定 chunks 和本地原始 PDF；没有访问讲义中的外部链接。",
+    "第 48、72、76、80 页用正增量写更新，并在数值题中令 η=-0.2；本包保留该符号约定。",
+    "第 31、35、74 页是低文本过渡页，不承担实质性结论。"
+  ]
+}

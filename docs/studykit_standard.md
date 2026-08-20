@@ -127,6 +127,13 @@ StudyKit 的 `course_id` 和 `course_version` 在用户未知资料模式可以�
 
 `expected_evidence` 和 `evaluation` 是内部审核字段，不得出现在默认学习者渲染版。
 
+练习的“具体”不是固定要求某一种题型，而是要求题目直接给出可作答的
+内容设定。设定可以是数值、代码、对象状态、算法输入、图/集合、概率空间、
+定理条件或其他与学科相符的结构。不能只要求学习者“围绕某概念设计一个例子”；
+如果是迁移题，题干必须同时给出新的完整情境、操作/推理步骤和可核验结果。
+每道题都必须能回溯到 `EvidencePlan` 的 requirement/concept/opportunity，且
+`hint`、`expected_evidence`、`evaluation` 与题干检查同一项学习成果。
+
 ### 6.2 题型要求
 
 - 可用题型包括 `concept`、`symbolic_derivation`、`shape_reasoning`、`transfer`、`implementation`、`code_reading`、`debugging`、`interpretation`、`comparison` 和 `application`。

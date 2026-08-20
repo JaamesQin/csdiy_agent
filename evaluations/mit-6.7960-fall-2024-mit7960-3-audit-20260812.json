@@ -1,0 +1,131 @@
+{
+  "audit_id": "mit-6.7960-fall-2024-mit7960-3-audit-20260812",
+  "worker_role": "MIT 6.7960 reviewed-package audit worker",
+  "audited_units": ["lecture-13", "lecture-14", "lecture-15", "lecture-16", "lecture-17", "lecture-18"],
+  "audit_scope": {
+    "reviewed_root": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0",
+    "raw_root": "data/raw/mit-6.7960/fall-2024",
+    "chunks_root": "data/sources/mit-6.7960-fall-2024",
+    "read_only_targets": ["reviewed package", "StudyKit content", "registry", "root"],
+    "skill_contract": "skills/studykit-generator/SKILL.md plus contract/formats/examples/quality-modes/parallelism",
+    "audit_basis": "standard semantic and representation gates; existing practice semantic issues are deferred and are not counted as passes"
+  },
+  "package_facts": {
+    "manifest_build_id": "4f758f6f76878aac08ccea9683b9f20fe1f040bd02d153d801606309ecf71882",
+    "manifest_input_fingerprint": "b5f8b4963964a5873c022b904fc9d3cf8cf27d0a49046e09a2895c449938514a",
+    "manifest_pipeline_version": "studykit-generator-v0.1.0",
+    "manifest_prompt_version": "host-authoring-v0.1.0",
+    "manifest_schema_version": "studykit-v0.1",
+    "manifest_generation_policy": "draft",
+    "root_validation_chunk_count": 1420,
+    "source_hash_check": "pass: all six raw lecture PDF sha256 values equal the reviewed manifest entries",
+    "current_target": {
+      "skill_version": "0.2.1",
+      "required_action": "create a new v0.2.1 build; do not resume or mutate portable-v0.1.0 in place",
+      "mismatch": ["pipeline v0.1.0 versus current skill v0.2.1", "StudyKit artifacts v0.1 versus current v0.2.1 target", "quality_mode is not recorded in the reviewed manifest"]
+    }
+  },
+  "overall_disposition": {
+    "status": "deferred_not_migratable_as_is",
+    "reason": "Structural validation is clean, but the package is a v0.1.0 draft with missing artifact-level provenance, no finalization authorization in the affected resolutions, and deferred content-grounded practice issues. It must be revalidated/re-authored in a fresh current v0.2.1 build.",
+    "next_action": "Use the matching raw PDFs and per-lecture chunks to author a fresh v0.2.1 build, explicitly record quality_mode, author/auditor provenance and fingerprint, repair every deferred practice item with a complete solvable setting, then run independent semantic audit, formula/visible-review checks, validate_review, and only publish units whose finalization gate is authorized."
+  },
+  "units": [
+    {
+      "unit_id": "lecture-13",
+      "title": "Architectural Bias on Representations",
+      "source": {"pdf": "data/raw/mit-6.7960/fall-2024/site/static_resources/mit6_7960_f24_lec13.pdf", "source_id": "mit-6.7960-f24-lecture-13-slides", "page_count": 28, "sha256_manifest_and_raw": "db998b131ffff28fb2583c206e269925bda04d8443b54f6d8729cc2f6614bf43"},
+      "counts": {"local_chunk_count": 28, "chunk_page_count": 28, "chunk_pages": "1-28", "validation_chunk_count": 1420, "citation_object_count_recursive": 42, "unique_citation_count": 21, "unique_cited_pages": 14, "reviewed_pages": 18, "visual_reviewed_pages": 8},
+      "checks": {"validation": "succeeded; issues=[]", "final_yaml_semantic_equal": true, "final_status": "draft", "audit_status": "passed_with_resolution", "resolution_finalization_authorized": false, "formula_evidence": {"count_explicit_formula_metadata": 0, "visible_formula_review": "audit says passed; visual findings pages 9,17,18,25; page 25 complex closed form deliberately not transcribed", "formula_unresolved_record": "not found as structured final metadata; limitation is prose only"}, "visible_review_evidence": "reviewed_pages and visual_reviewed_pages are present; learner-facing visible-only boundary is not explicitly stated", "assessment_evidence": "no assessment-safety finding"},
+      "provenance": {"author": "not declared in final artifact", "auditor": "not independently attributable; generator_review_status=passed and no auditor identity/run ID", "external_model_calls_root": 0},
+      "fingerprint_version": {"source_fingerprint": "match", "artifact_fingerprint": "missing from final JSON/YAML", "current_v0_2_1": "mismatch: v0.1 pipeline/artifact and unrecorded quality_mode"},
+      "practice_semantic_deferred": [
+        {"item_ids": ["ex-1"], "issue": "asks for a generic representation path without concrete input, layers, or target setting; learner must invent the scenario"},
+        {"item_ids": ["ex-2"], "issue": "self-selected coefficients and centers make the expected result under-specified"},
+        {"item_ids": ["ex-4"], "issue": "says 'given four inputs' but supplies neither inputs nor a joint/marginal test setting"},
+        {"item_ids": ["ex-7"], "issue": "compares two unspecified random networks and asks for a hypothesis rather than a concrete falsifiable instance"}
+      ],
+      "next_action": "Fresh v0.2.1 authoring: retain the page-25 uncertainty as a page-specific formula_unresolved record, state visible-only evidence explicitly, and repair ex-1/ex-2/ex-4/ex-7 with concrete values, architectures and observable outputs before independent practice audit."
+    },
+    {
+      "unit_id": "lecture-14",
+      "title": "Deep Generative Models I",
+      "source": {"pdf": "data/raw/mit-6.7960/fall-2024/site/static_resources/mit6_7960_f24_lec14.pdf", "source_id": "mit-6.7960-f24-lecture-14-slides", "page_count": 60, "sha256_manifest_and_raw": "cdb640b02e8f7c92f69d96adc96f3c1654c9f418d92239bab6208bfdb633165f"},
+      "counts": {"local_chunk_count": 60, "chunk_page_count": 60, "chunk_pages": "1-60", "validation_chunk_count": 1420, "citation_object_count_recursive": 52, "unique_citation_count": 27, "unique_cited_pages": 18, "reviewed_pages": 28, "visual_reviewed_pages": 12},
+      "checks": {"validation": "succeeded; issues=[]", "final_yaml_semantic_equal": true, "final_status": "draft", "audit_status": "passed_with_resolution", "resolution_finalization_authorized": false, "formula_evidence": {"count_explicit_formula_metadata": 0, "visible_formula_review": "audit says passed; visual findings pages 8,30,38,45,47,53,58", "formula_unresolved_record": "not found as structured final metadata"}, "visible_review_evidence": "visual pages recorded; pages 49-50 assignment exclusion is recorded", "assessment_evidence": "pass: review explicitly excludes course assignment pages 49-50"},
+      "provenance": {"author": "not declared in final artifact", "auditor": "not independently attributable; generator_review_status=passed and no auditor identity/run ID", "external_model_calls_root": 0},
+      "fingerprint_version": {"source_fingerprint": "match", "artifact_fingerprint": "missing from final JSON/YAML", "current_v0_2_1": "mismatch: v0.1 pipeline/artifact and unrecorded quality_mode"},
+      "practice_semantic_deferred": [
+        {"item_ids": ["ex-2"], "issue": "routes and sampling steps are named abstractly without concrete models or distributions"},
+        {"item_ids": ["ex-7"], "issue": "asks for a broad comparison and an unspecified bottleneck; no fixed model/data setting makes the expected result non-falsifiable"}
+      ],
+      "next_action": "Fresh v0.2.1 build must preserve the 49-50 exclusion and independently audit practice; instantiate ex-2 and ex-7 with named finite examples and observable comparison outputs, then re-run finalization/validate_review."
+    },
+    {
+      "unit_id": "lecture-15",
+      "title": "Deep Generative Models II",
+      "source": {"pdf": "data/raw/mit-6.7960/fall-2024/site/static_resources/mit6_7960_f24_lec15.pdf", "source_id": "mit-6.7960-f24-lecture-15-slides", "page_count": 42, "sha256_manifest_and_raw": "1b6adcad794363138261078476f35c473c101e020b4d327811908dbed18635a1"},
+      "counts": {"local_chunk_count": 42, "chunk_page_count": 42, "chunk_pages": "1-42", "validation_chunk_count": 1420, "citation_object_count_recursive": 106, "unique_citation_count": 30, "unique_cited_pages": 15, "reviewed_pages": "not encoded in final review; formula pages 10,13,18,22,25 explicitly audited", "visual_reviewed_pages": "formula evidence says five formulas checked against page-images"},
+      "checks": {"validation": "succeeded; issues=[]", "final_yaml_semantic_equal": true, "final_status": "draft", "audit_status": "pass_with_documented_limitations", "resolution_finalization_authorized": false, "formula_evidence": {"count_explicit_formula_metadata": 5, "formula_pages": [10,13,18,22,25], "visible_formula_review": "explicit five-formula page-image review", "formula_unresolved_record": "reparameterization detail is omitted and documented in limitations, but no structured formula_unresolved object found"}, "visible_review_evidence": "formula review is explicit; visible-only/hidden-layer boundary is not an explicit final field", "assessment_evidence": "audit says no graded answer reproduced"},
+      "provenance": {"author": "not declared in final artifact", "auditor": "not independently attributable; audit artifact has no auditor identity/run ID", "external_model_calls_root": 0},
+      "fingerprint_version": {"source_fingerprint": "match", "artifact_fingerprint": "missing from final JSON/YAML", "current_v0_2_1": "mismatch: v0.1 pipeline/artifact and unrecorded quality_mode"},
+      "practice_semantic_deferred": [
+        {"item_ids": ["practice-1"], "issue": "arrows are answerable conceptually but the task provides no concrete representation/model instance"},
+        {"item_ids": ["practice-6"], "issue": "diagnostic design leaves variables, outputs and failure cases to learner invention; no bounded test setting"},
+        {"item_ids": ["practice-7"], "issue": "training-step ordering omits a concrete graph/loss instance needed for an observable result"}
+      ],
+      "next_action": "Treat as draft-only. In a new v0.2.1 build preserve the posterior/disentanglement limitations, add structured formula_unresolved for omitted ambiguous reparameterization formula if still omitted, add explicit visible-only evidence statement, and bound the three design/order tasks with finite variables and expected observations."
+    },
+    {
+      "unit_id": "lecture-16",
+      "title": "Deep Generative Models III",
+      "source": {"pdf": "data/raw/mit-6.7960/fall-2024/site/static_resources/mit6_7960_f24_lec16.pdf", "source_id": "mit-6.7960-f24-lecture-16-slides", "page_count": 84, "sha256_manifest_and_raw": "388654100754de282b02b6be9eb6a6e3b262879965fc98e3516ea37fe8c5a7b3"},
+      "counts": {"local_chunk_count": 84, "chunk_page_count": 84, "chunk_pages": "1-84", "validation_chunk_count": 1420, "citation_object_count_recursive": 168, "unique_citation_count": 48, "unique_cited_pages": 24, "reviewed_pages": "not encoded in final review; formula pages 20,31 explicitly audited", "visual_reviewed_pages": "formula and selected visual evidence recorded"},
+      "checks": {"validation": "succeeded; issues=[]", "final_yaml_semantic_equal": true, "final_status": "draft", "audit_status": "pass_with_documented_limitations", "resolution_finalization_authorized": false, "formula_evidence": {"count_explicit_formula_metadata": 2, "formula_pages": [20,31], "visible_formula_review": "explicit page-image review for discriminator and combined objective", "formula_unresolved_record": "not found"}, "visible_review_evidence": "review records visual checks and third-party visual exclusion, but no explicit hidden-overlay boundary field", "assessment_evidence": "audit says no graded answer reproduced"},
+      "provenance": {"author": "not declared in final artifact", "auditor": "not independently attributable; audit artifact has no auditor identity/run ID", "external_model_calls_root": 0},
+      "fingerprint_version": {"source_fingerprint": "match", "artifact_fingerprint": "missing from final JSON/YAML", "current_v0_2_1": "mismatch: v0.1 pipeline/artifact and unrecorded quality_mode"},
+      "practice_semantic_deferred": [
+        {"item_ids": ["practice-1"], "issue": "asks for an abstract counterexample without specifying a finite prediction/structure setting"},
+        {"item_ids": ["practice-4"], "issue": "learner must construct the three-output distribution; expected comparison is not tied to supplied values"},
+        {"item_ids": ["practice-7"], "issue": "asks for a review table without a fixed experiment, metrics or candidate outputs"},
+        {"item_ids": ["practice-8"], "issue": "asks for a broad claim audit and three assumptions without specifying the bounded task/data context"}
+      ],
+      "next_action": "Fresh v0.2.1 build: retain the reversed discriminator-label warning and unpaired-data limitation, explicitly record visible-only evidence, and convert the four deferred exercises into bounded finite cases with falsifiable outputs before independent audit."
+    },
+    {
+      "unit_id": "lecture-17",
+      "title": "Out-of-Distribution Generalization",
+      "source": {"pdf": "data/raw/mit-6.7960/fall-2024/site/static_resources/mit6_7960_f24_lec17.pdf", "source_id": "mit-6.7960-f24-lecture-17-slides", "page_count": 63, "sha256_manifest_and_raw": "44d46a8cc80baa225ac8133ba0556b8fec33194fa81c1a95c8395f63742f304f"},
+      "counts": {"local_chunk_count": 63, "chunk_page_count": 63, "chunk_pages": "1-63", "validation_chunk_count": 1420, "citation_object_count_recursive": 39, "unique_citation_count": 20, "unique_cited_pages": 11, "reviewed_pages": "not encoded; audit names formula pages 22,24,50,51 and experiment pages 37-38", "visual_reviewed_pages": "formula/experiment review asserted in review"},
+      "checks": {"validation": "succeeded; issues=[]", "final_yaml_semantic_equal": true, "final_status": "draft", "audit_status": "passed_with_warnings", "publication_gate": "human_review_required", "formula_evidence": {"count_explicit_formula_metadata": 0, "visible_formula_review": "review states pages 22,24,50,51 visually checked", "formula_unresolved_record": "not found"}, "visible_review_evidence": "source warnings and experiment scope are recorded; no explicit visible-only/hidden-overlay statement", "assessment_evidence": "no assessment finding"},
+      "provenance": {"author": "not declared in final artifact", "auditor": "not independently attributable; review status only, no auditor identity/run ID", "external_model_calls_root": 0},
+      "fingerprint_version": {"source_fingerprint": "match", "artifact_fingerprint": "missing from final JSON/YAML", "current_v0_2_1": "mismatch: v0.1 pipeline/artifact and unrecorded quality_mode"},
+      "practice_semantic_deferred": [
+        {"item_ids": ["p1"], "issue": "requires the learner to invent the train/deploy case and shift type"},
+        {"item_ids": ["p4"], "issue": "requires designing a toy OOD test without supplying the feature values or labels"},
+        {"item_ids": ["p5"], "issue": "asks for a DRO plan and extrapolation limits for an unspecified class-imbalance dataset"}
+      ],
+      "next_action": "New v0.2.1 build must keep experiment/DRO conditions and human-review gate, then instantiate p1/p4/p5 with a supplied finite dataset, perturbation set and measurable expected outcomes; independent semantic audit is mandatory before publication."
+    },
+    {
+      "unit_id": "lecture-18",
+      "title": "Transfer Learning I",
+      "source": {"pdf": "data/raw/mit-6.7960/fall-2024/site/static_resources/mit6_7960_f24_lec18.pdf", "source_id": "mit-6.7960-f24-lecture-18-slides", "page_count": 77, "sha256_manifest_and_raw": "4295ed4e56a37c518e516915e4266c279167d8fe529274b5eb5fed32622d1dde"},
+      "counts": {"local_chunk_count": 77, "chunk_page_count": 77, "chunk_pages": "1-77", "validation_chunk_count": 1420, "citation_object_count_recursive": 41, "unique_citation_count": 19, "unique_cited_pages": 10, "reviewed_pages": "not encoded; review lists 8,11,18,21,32,39,46,57,68,76", "visual_reviewed_pages": 10},
+      "checks": {"validation": "succeeded; issues=[]", "final_yaml_semantic_equal": true, "final_status": "draft", "audit_status": "passed_with_warnings", "publication_gate": "human_review_required", "formula_evidence": {"count_explicit_formula_metadata": 0, "visible_formula_review": "diagram/experiment review asserted on ten named pages", "formula_unresolved_record": "not found"}, "visible_review_evidence": "review lists visual pages and source warnings; no explicit visible-only/hidden-overlay statement", "assessment_evidence": "no assessment finding"},
+      "provenance": {"author": "not declared in final artifact", "auditor": "not independently attributable; review status only, no auditor identity/run ID", "external_model_calls_root": 0},
+      "fingerprint_version": {"source_fingerprint": "match", "artifact_fingerprint": "missing from final JSON/YAML", "current_v0_2_1": "mismatch: v0.1 pipeline/artifact and unrecorded quality_mode"},
+      "practice_semantic_deferred": [
+        {"item_ids": ["p3"], "issue": "asks the learner to select three strategies for an unspecified small-data task and supplies no concrete validation observations"},
+        {"item_ids": ["p5"], "issue": "asks the learner to choose a resource-constrained adaptation plan for an unspecified task and invent its supervision/risk/validation setup"}
+      ],
+      "next_action": "New v0.2.1 build must preserve representative-validation, UDA-unlabeled-target and non-zero-data limitations, then bound p3/p5 with a supplied task, budget, data split and observable validation criteria; keep human semantic review as a publication gate."
+    }
+  ],
+  "non_mutation_record": {
+    "written_file_only": "evaluations/mit-6.7960-fall-2024-mit7960-3-audit-20260812.json",
+    "reviewed_content_modified": false,
+    "registry_modified": false,
+    "root_modified": false
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "schema_version": "practice-semantic-scan-v1",
+  "course_id": "ucb-cs61a-summer-2026",
+  "build_id": "db465e2135a7d4c31a27b046b9378cb8476f12dd3a9813ca5ab6df402179d966",
+  "unit_ids": ["lecture-15", "lecture-16", "lecture-17", "lecture-18", "lecture-19", "lecture-20", "lecture-21", "lecture-22", "lecture-23", "lecture-24", "lecture-25", "lecture-26", "lecture-27", "lecture-28"],
+  "scanned_at": "2026-08-12",
+  "auditor_id": "luna-medium-range-15-28",
+  "offline_only": true,
+  "units": [
+    {"unit_id":"lecture-15","item_results":[
+      {"practice_id":"practice-01-inheritance-lookup","status":"pass"},{"practice_id":"practice-02-iterator","status":"pass"},{"practice_id":"practice-03-custom-exception","status":"pass"},{"practice_id":"practice-04-special-methods","status":"pass"},{"practice_id":"practice-05-tree-class","status":"pass"},{"practice_id":"practice-06-tree-mutation","status":"pass"},{"practice_id":"practice-07-fib-tree","status":"pass"}],"counts":{"pass":7,"blocker":0}},
+    {"unit_id":"lecture-16","item_results":[
+      {"practice_id":"practice-01-structure-trace","status":"pass"},{"practice_id":"practice-02-length-state","status":"pass"},{"practice_id":"practice-03-double-aliasing","status":"pass"},{"practice_id":"practice-04-filter-link-design","status":"pass"},{"practice_id":"practice-05-insert-boundary","status":"pass"}],"counts":{"pass":5,"blocker":0}},
+    {"unit_id":"lecture-17","item_results":[
+      {"practice_id":"practice-01-exp-trace","status":"pass"},{"practice_id":"practice-02-fib-compare","status":"pass"},{"practice_id":"practice-03-bonk-analysis","status":"pass"},{"practice_id":"practice-04-search-prime","status":"pass"}],"counts":{"pass":4,"blocker":0}},
+    {"unit_id":"lecture-18","item_results":[
+      {"practice_id":"practice-01-classify-evaluate","status":"pass"},{"practice_id":"practice-02-prefix-trace","status":"pass"},{"practice_id":"practice-03-let-scope","status":"pass"},{"practice_id":"practice-04-short-circuit-control","status":"pass"},{"practice_id":"practice-05-summation","status":"pass"},{"practice_id":"practice-06-sum-even","status":"pass"}],"counts":{"pass":6,"blocker":0}},
+    {"unit_id":"lecture-19","item_results":[
+      {"practice_id":"p1-pair-trace","status":"pass"},{"practice_id":"p2-higher-order","status":"pass"},{"practice_id":"p3-evaluation","status":"pass"},{"practice_id":"p4-equality","status":"pass"},{"practice_id":"p5-reverse-mountain-tests","status":"pass"}],"counts":{"pass":5,"blocker":0}},
+    {"unit_id":"lecture-20","item_results":[
+      {"practice_id":"p1-parse-pipeline","status":"pass"},{"practice_id":"p2-calculator-trace","status":"pass"},{"practice_id":"p3-errors","status":"pass"},{"practice_id":"p4-scope-trace","status":"pass"}],"counts":{"pass":4,"blocker":0}},
+    {"unit_id":"lecture-21","item_results":[
+      {"practice_id":"p1-tail-context","status":"pass"},{"practice_id":"p2-reverse-map","status":"pass"},{"practice_id":"p3-macro-expand","status":"pass"},{"practice_id":"p4-for-macro","status":"pass"}],"counts":{"pass":4,"blocker":0}},
+    {"unit_id":"lecture-22","item_results":[
+      {"practice_id":"p1-single-table","status":"pass"},{"practice_id":"p2-pattern-order","status":"pass"},{"practice_id":"p3-join","status":"pass"},{"practice_id":"p4-query-design","status":"pass"}],"counts":{"pass":4,"blocker":0}},
+    {"unit_id":"lecture-23","item_results":[
+      {"practice_id":"p1-dynamic-scope","status":"pass"},{"practice_id":"p2-macro","status":"pass"},{"practice_id":"p3-group-aggregate","status":"pass"},{"practice_id":"p4-having-order","status":"pass"}],"counts":{"pass":4,"blocker":0}},
+    {"unit_id":"lecture-24","item_results":[
+      {"practice_id":"p1-tool-map","status":"pass"},{"practice_id":"p2-llm-boundary","status":"pass"},{"practice_id":"p3-safe-prompt","status":"pass"},{"practice_id":"p4-ethics-memo","status":"pass"}],"counts":{"pass":4,"blocker":0}},
+    {"unit_id":"lecture-25","item_results":[
+      {"practice_id":"p1-stack-dao","status":"pass"},{"practice_id":"p2-route-api","status":"pass"},{"practice_id":"p3-seeded-daylist","status":"pass"},{"practice_id":"p4-title-boundary","status":"pass"}],"counts":{"pass":4,"blocker":0}},
+    {"unit_id":"lecture-26","item_results":[
+      {"practice_id":"p1-threat-model","status":"pass"},{"practice_id":"p2-principles","status":"pass"},{"practice_id":"p3-sqli","status":"pass"},{"practice_id":"p4-xss","status":"pass"},{"practice_id":"p5-ai-quantum","status":"pass"}],"counts":{"pass":5,"blocker":0}},
+    {"unit_id":"lecture-27","item_results":[
+      {"practice_id":"p1-review-budget","status":"pass"},{"practice_id":"p2-phoenician-navigation","status":"pass"},{"practice_id":"p3-treequality-navigation","status":"pass"},{"practice_id":"p4-ratios-navigation","status":"pass"}],"counts":{"pass":4,"blocker":0}},
+    {"unit_id":"lecture-28","item_results":[
+      {"practice_id":"p1-learning-map","status":"pass"},{"practice_id":"p2-course-record","status":"pass"},{"practice_id":"p3-next-steps","status":"pass"},
+      {"practice_id":"p4-ama-triage","status":"blocker","blocker_codes":["lecture_specific_dependency"],"reason":"The question asks the learner to select and classify at least six AMA questions from page 23, but does not reproduce the question list or otherwise identify six selectable items. The learner must recover missing lecture text before the task is answerable; the page citation cannot substitute for the missing setting.","missing_condition":"The actual page-23 AMA question texts (including the required cross-school question) and their selectable boundaries.","source_anchors":["ucb-cs61a-summer-2026-lecture-23-material-p023 (page 23)","ucb-cs61a-summer-2026-lecture-23-material-p034 (page 34)"],"repair_prescription":"Embed at least six page-23 question texts in the prompt, including the cross-school item, or provide a bounded excerpt/list. Retain the page-34 Berkeley-speaker caveat as a supplied boundary, then recheck classification, evidence gaps, and non-overreaching follow-ups."}
+    ],"counts":{"pass":3,"blocker":1}}
+  ],
+  "counts":{"units":14,"items":64,"pass":63,"blocker":1},
+  "deferred_structural_findings":[
+    {"code":"source_chunks_unavailable_in_build_root","scope":"lecture-15..lecture-28","finding":"The corrected build has an empty ingestion directory and no build-local chunks.jsonl/source-chunk file. Evidence plans and practice citations contain source/chunk IDs and page anchors (source_chunk_count is present for lectures 15-23 and 26), but the cited chunk bodies could not be independently opened from this build root during the offline scan.","impact":"Semantic judgments used the supplied practice fields, evidence-plan mappings, learning-content, final StudyKit practice copies, and cited page/chunk metadata; source-body verification remains deferred until the approved chunk store is made available."},
+    {"code":"review_checkpoint_status_anomaly","scope":"lecture-15..lecture-20","finding":"review-plan.json reports pending_current_build_review for these units despite complete requested artifacts; lectures 21-28 report reused exact-input visual evidence/pass-with-warnings states.","impact":"Deferred as structural/checkpoint evidence, not converted into practice blockers."},
+    {"code":"practice_anchor_shape_inconsistency","scope":"lecture-21 and lecture-28","finding":"Practice items use source_pages rather than per-item citations, while neighboring units use citation objects; several older items also omit requirement_ids or concept_ids even though their task/content alignment is inspectable.","impact":"Deferred as a representation/traceability finding; no semantic blocker was added where the page anchors were explicit and the task was directly answerable."}
+  ]
+}

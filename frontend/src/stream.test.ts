@@ -42,9 +42,9 @@ describe("OpenAI-compatible SSE parsing", () => {
       "data: [DONE]\n\n",
     ]);
 
-    await expect(readCompletionStream(response, (delta) => deltas.push(delta))).resolves.toBe(
-      "# 你好",
-    );
+    await expect(
+      readCompletionStream(response, (delta) => deltas.push(delta)),
+    ).resolves.toEqual({ content: "# 你好" });
     expect(deltas).toEqual(["# 你", "好"]);
   });
 
@@ -80,7 +80,9 @@ describe("OpenAI-compatible SSE parsing", () => {
       }),
     );
 
-    await expect(readCompletionStream(response, () => undefined)).resolves.toBe("");
+    await expect(readCompletionStream(response, () => undefined)).resolves.toEqual({
+      content: "",
+    });
     expect(cancelled).toBe(true);
   });
 
@@ -122,12 +124,29 @@ describe("OpenAI-compatible SSE parsing", () => {
 
   it("reads a bounded non-stream completion response", async () => {
     const response = new Response(
-      JSON.stringify({ choices: [{ message: { content: "## 完成" } }] }),
+      JSON.stringify({
+        choices: [{ message: { content: "## 完成" } }],
+        coursepilot_context: "signed-json-context",
+      }),
       { headers: { "Content-Type": "application/json" } },
     );
 
     await expect(readCompletionJson(response)).resolves.toEqual({
       choices: [{ message: { content: "## 完成" } }],
+      coursepilot_context: "signed-json-context",
+    });
+  });
+
+  it("returns a bounded context from the SSE stop frame", async () => {
+    const response = streamingResponse([
+      'data: {"choices":[{"delta":{"content":"完成"}}]}\n\n',
+      'data: {"choices":[{"delta":{},"finish_reason":"stop"}],"coursepilot_context":"signed-stream-context"}\n\n',
+      "data: [DONE]\n\n",
+    ]);
+
+    await expect(readCompletionStream(response, () => undefined)).resolves.toEqual({
+      content: "完成",
+      coursepilotContext: "signed-stream-context",
     });
   });
 

@@ -394,19 +394,22 @@ class StudyKitLookupService:
             return self._reply(unavailable)
         practices = [item for item in document.get("practice", []) if isinstance(item, dict)]
         latest = _latest_user_text(messages)
-        explicit = next(
-            (item for item in practices if str(item.get("id", "")) in latest),
-            None,
-        )
+        explicit = _match_explicit_practice(practices, latest)
         if explicit is not None:
             selected = explicit
         else:
+            ordinal = _requested_practice_ordinal(latest)
+            if ordinal is not None:
+                if ordinal > len(practices):
+                    return self._reply(
+                        f"本讲只有 {len(practices)} 道练习，无法显示第 {ordinal} 道。"
+                    )
+                selected = practices[ordinal - 1]
+            else:
+                selected = None
+        if explicit is None and selected is None:
             requested = self._requested_practice_type(latest)
-            displayed = {
-                str(item.get("id"))
-                for item in practices
-                if any(str(item.get("id", "")) in message.content for message in messages)
-            }
+            displayed = _displayed_practice_ids(messages, practices)
             candidates = [item for item in practices if str(item.get("id")) not in displayed]
             if requested:
                 candidates = [item for item in candidates if self._practice_matches(item, requested)]
@@ -1157,6 +1160,66 @@ class StudyKitLookupService:
 
 def _latest_user_text(messages: list[ChatMessage]) -> str:
     return next(message.content for message in reversed(messages) if message.role == "user")
+
+
+def _match_explicit_practice(
+    practices: list[dict[str, Any]], text: str
+) -> dict[str, Any] | None:
+    """Match a reviewed practice identity across harmless separator variations."""
+
+    for item in practices:
+        practice_id = str(item.get("id") or "").strip()
+        if practice_id and _practice_id_occurs(practice_id, text):
+            return item
+    return None
+
+
+def _requested_practice_ordinal(text: str) -> int | None:
+    """Resolve ordinals and display aliases such as ``第七道习题`` or ``ex-7``."""
+
+    match = re.search(
+        r"第\s*([零〇一二两三四五六七八九十百千\d]{1,8})\s*"
+        r"(?:道|个)?\s*(?:习题|练习|题)",
+        text,
+        re.IGNORECASE,
+    )
+    if match:
+        return parse_positive_int(match.group(1))
+    alias = re.search(
+        r"(?<![a-z0-9])(?:ex(?:ercise)?|practice|p)[\s._-]*(\d+)(?![a-z0-9])",
+        text,
+        re.IGNORECASE,
+    )
+    return parse_positive_int(alias.group(1)) if alias else None
+
+
+def _displayed_practice_ids(
+    messages: list[ChatMessage], practices: list[dict[str, Any]]
+) -> set[str]:
+    """Read presentation state without mistaking a StudyKit index for a presentation."""
+
+    presentation_messages = [
+        message.content
+        for message in messages
+        if message.role == "assistant"
+        and ("practice ID:" in message.content or "已展示 practice IDs：" in message.content)
+    ]
+    return {
+        practice_id
+        for item in practices
+        if (practice_id := str(item.get("id") or ""))
+        and any(_practice_id_occurs(practice_id, content) for content in presentation_messages)
+    }
+
+
+def _practice_id_occurs(practice_id: str, text: str) -> bool:
+    parts = [part for part in re.split(r"[\s._-]+", practice_id) if part]
+    if not parts:
+        return False
+    pattern = r"(?<![a-z0-9])" + r"[\s._-]*".join(
+        re.escape(part) for part in parts
+    ) + r"(?![a-z0-9])"
+    return bool(re.search(pattern, text, re.IGNORECASE))
 
 
 def _unwrap(output: dict[str, Any]) -> dict[str, Any]:

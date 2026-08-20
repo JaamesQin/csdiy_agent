@@ -1,0 +1,28 @@
+{
+  "schema_version": "selective-repair-clean-replay-plan-v1",
+  "plan_id": "mit-6-042j-round4-clean-parent-20260812",
+  "created_at": "2026-08-12T23:10:00+08:00",
+  "policy": {"parent_snapshot_must_match_declared_baseline": true, "max_targeted_repairs_per_stage": 1, "fresh_independent_per_practice_audit_required": true, "termination": "zero semantic, citation, learner-output, lineage, and validator blockers"},
+  "courses": [{
+    "course_id": "mit-6-042j-spring-2024",
+    "baseline_build_id": "13c0b4c1c67259f6caf45e71e9fe2aaf8bcab19c04bd5785ba396765f8ec02bf",
+    "repair_units": [
+      {"unit_id": "lecture-01", "stages": ["practice", "structural"], "required_repairs": ["synchronize p-02 on one n value across 03/candidate/final/evaluation; use n=8"]},
+      {"unit_id": "lecture-02", "stages": ["evidence", "practice", "structural"], "required_repairs": ["retain passed induction grounding", "make p3 explicitly replace the sequence by 2+4+...+2n"]},
+      {"unit_id": "lecture-03", "stages": ["practice", "structural"], "required_repairs": ["retain corrected parity semantics", "synchronize deliverable to require both n=1 and n=2 checks"]},
+      {"unit_id": "lecture-04", "stages": ["content", "practice", "structural"], "required_repairs": ["retain passed state-machine practice", "remove internal audit-status text from learner-facing limitations while preserving legitimate limitations"]},
+      {"unit_id": "lecture-05", "stages": ["evidence", "practice", "structural"], "required_repairs": ["replay the independently passed Round-3 result"]},
+      {"unit_id": "lecture-06", "stages": ["evidence", "practice", "structural"], "required_repairs": ["replay the independently passed Round-3 result"]},
+      {"unit_id": "lecture-08", "stages": ["evidence", "practice", "structural"], "required_repairs": ["replay the independently passed Round-3 result"]},
+      {"unit_id": "lecture-10", "stages": ["evidence", "content", "practice", "structural"], "required_repairs": ["replay the independently passed Round-3 result"]},
+      {"unit_id": "lecture-11", "stages": ["evidence", "content", "practice", "structural"], "required_repairs": ["retain the supported graph task and cite page 3 for degree/edge-bound claims"]},
+      {"unit_id": "lecture-12", "stages": ["evidence", "content", "practice", "structural"], "required_repairs": ["retain corrected Gale-Shapley mappings", "synchronize practice-1 citations across 03/05", "remove internal audit-status text from learner-facing limitations"]},
+      {"unit_id": "lecture-13", "stages": ["evidence", "practice", "structural"], "required_repairs": ["replay the independently passed Round-3 result"]},
+      {"unit_id": "lecture-15", "stages": ["evidence", "practice", "structural"], "required_repairs": ["correct the function-versus-total-function claim and evaluation"]},
+      {"unit_id": "lecture-16", "stages": ["practice", "structural"], "required_repairs": ["replay the independently passed Round-3 result"]},
+      {"unit_id": "lecture-19", "stages": ["practice", "structural"], "required_repairs": ["correct P(B) to 3/5 and all dependent expected/evaluation values"]},
+      {"unit_id": "lecture-23", "stages": ["evidence", "practice", "structural"], "required_repairs": ["replay the independently passed Round-3 result"]},
+      {"unit_id": "lecture-24", "stages": ["evidence", "practice", "structural"], "required_repairs": ["replay the independently passed Round-3 result"]}
+    ]
+  }]
+}

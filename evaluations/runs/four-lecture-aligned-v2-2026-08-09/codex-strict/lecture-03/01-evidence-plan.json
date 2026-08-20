@@ -1,0 +1,142 @@
+{
+  "stage": "01-evidence-plan",
+  "quality_mode": "strict",
+  "unit_id": "lecture-03",
+  "language": "zh-CN",
+  "target_minutes": 180,
+  "source_policy": "仅使用指定 chunks.jsonl 与其对应原始 PDF；文本抽取失真处以逐页视觉核验为准。",
+  "sources": [
+    {
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "title": "MIT 6.7960 Lecture 3: Approximation Theory",
+      "type": "pdf",
+      "sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "chunks_sha256": "4e8d557d267710069ee6f1adc0751acf12d53df1757eacef36ef649aa5371c72"
+    }
+  ],
+  "evidence_groups": [
+    {
+      "topic": "问题框架与误差",
+      "pages": [
+        3,
+        4,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "topic": "Lipschitz 逼近构造",
+      "pages": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+      ]
+    },
+    {
+      "topic": "UFA 的边界",
+      "pages": [
+        19,
+        20,
+        21
+      ]
+    },
+    {
+      "topic": "宽度、深度与折点",
+      "pages": [
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34
+      ]
+    },
+    {
+      "topic": "实践解释与总结",
+      "pages": [
+        37,
+        38,
+        39,
+        41,
+        42
+      ]
+    }
+  ],
+  "required_final_formula_pages": [
+    8,
+    9,
+    10,
+    13,
+    14,
+    15,
+    17,
+    30,
+    32,
+    33
+  ],
+  "vision_policy": {
+    "needs_host_vision_pages": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43
+    ],
+    "reason": "严格模式；PDF 含大量图示、手写公式且抽取文本明显失真。"
+  },
+  "excluded_claims": [
+    "不从逼近结论推出可优化性或泛化性",
+    "不把展示的折点构造解释为所有任务上的深度优势",
+    "不补充讲义未证明的外部定理细节"
+  ]
+}

@@ -35,6 +35,10 @@ def test_store_resolves_only_known_course_context() -> None:
     assert store.resolve_context(course_id="invented-course") is None
     assert store.match_context(["请看第 99 讲"]) is None
 
+    chinese_number = store.match_context(["请看 MIT 6.7960 第二讲"])
+    assert chinese_number is not None
+    assert chinese_number.unit_id == "lecture-02"
+
 
 def test_page_reference_is_not_mistaken_for_a_unit() -> None:
     store = ReviewedFileStudyKitStore()

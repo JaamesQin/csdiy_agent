@@ -1,0 +1,37 @@
+{
+  "schema_version": "selective-repair-residual-plan-v1",
+  "plan_id": "ucb-cs61c-practice-repair-round3-20260812",
+  "created_at": "2026-08-12T22:15:00+08:00",
+  "policy": {
+    "scope": "only residual blockers from the fresh round-2 Luna xhigh audits",
+    "max_targeted_repairs_per_stage": 1,
+    "fresh_independent_per_practice_audit_required": true,
+    "termination": "zero blockers and all deterministic portable validators pass"
+  },
+  "courses": [{
+    "course_id": "ucb-cs61c-spring-2026",
+    "baseline_build_id": "a359fbcc6819def1c7ffb7158c77990ed55603249775a393e39dc64d3ad8567d",
+    "repair_units": [
+      {
+        "unit_id": "lecture-33",
+        "stages": ["practice", "structural"],
+        "blocked_practice_ids": ["P1", "P5", "P7"],
+        "required_repairs": [
+          "remove P1 ambiguity and answer leakage while retaining sufficient conditions",
+          "preserve P5 citations exactly from stage 03 through candidate/final",
+          "replace P7's answer-leaking hint with a strategy-only hint",
+          "make 03/candidate/final practice semantics exactly equal"
+        ]
+      },
+      {
+        "unit_id": "lecture-36",
+        "stages": ["practice", "structural"],
+        "blocked_practice_ids": [],
+        "required_repairs": [
+          "preserve mapped_requirement_ids and mapped_concept_ids consistently across 03/candidate/final for every practice",
+          "normalize metrics to exactly one current-round repair record and current build lineage without changing learner semantics"
+        ]
+      }
+    ]
+  }]
+}

@@ -400,7 +400,7 @@ class ProfileService:
         if not confirmed and not inferred:
             persistence = "提供 `user` 标识后可以跨会话保存。" if not profile.persisted else ""
             return (
-                "当前没有足够的学习画像。请告诉我你想学习的 CS 方向、已有基础，"
+                "当前没有足够的学习画像。请告诉我你想学习的 CS 方向、学习背景，"
                 f"以及每周可投入的时间。{persistence}"
             )
         lines = ["### 当前学习画像"]
@@ -811,7 +811,7 @@ class ProfileService:
         return {
             "learning_directions": "学习方向",
             "goals": "学习目标",
-            "background": "已有基础",
+            "background": "学习背景",
             "weekly_minutes": "每周时间",
             "preferred_explanation_style": "讲解偏好",
             "active_course": "当前课程",

@@ -4,7 +4,7 @@ Evaluation date: 2026-08-08
 
 Parser: `pdf-page-v0.1`
 
-Result: all 24 lecture units are ready for StudyKit generation
+Result: all 24 lecture units are source-prepared and have completed canonical StudyKit authoring, validation, and the fast audit/review gate
 
 ## Summary
 
@@ -68,4 +68,4 @@ For every unit, the no-model preflight checked:
 - production `build_request` and `build_evidence_bundle` acceptance;
 - absence of a CMU StudyKit output directory.
 
-No DeepSeek request, staged generation command, or lecture regression command was run.
+The canonical fast build completed all 24 units. Final course-level records are in `outputs/cmu-15.213-summer-2026/40bd4156f8432f731a6dce34d04cd3cdf7e198a7c754d1533131b7e7754938f6/`; the tracked authoring evaluation is `evaluations/cmu-15.213-summer-2026-studykit-results.md`.

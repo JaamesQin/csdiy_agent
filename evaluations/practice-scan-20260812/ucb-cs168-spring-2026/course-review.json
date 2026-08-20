@@ -1,0 +1,586 @@
+{
+  "schema_version": "practice-course-review-v1",
+  "course_id": "ucb-cs168-spring-2026",
+  "build_id": "483da4bf0bedfb48ae15e51dbdd31cbbf5490d11945be2ebefad8fa8cbf904e6",
+  "reviewed_range_reports": [
+    {
+      "report": "range-01-13.json",
+      "unit_ids": [
+        "lecture-01",
+        "lecture-02",
+        "lecture-03",
+        "lecture-04",
+        "lecture-05",
+        "lecture-06",
+        "lecture-07",
+        "lecture-08",
+        "lecture-09",
+        "lecture-10",
+        "lecture-11",
+        "lecture-12",
+        "lecture-13"
+      ],
+      "raw_counts": {
+        "total_items": 71,
+        "pass": 66,
+        "needs_repair": 5,
+        "fail": 0,
+        "blocker_count": 5
+      },
+      "normalized_counts": {
+        "total": 71,
+        "pass": 66,
+        "needs_repair": 5,
+        "blocker_items": 5,
+        "blocker_findings": 5
+      },
+      "normalization": {
+        "status_keys": {
+          "pass": "pass",
+          "needs_repair": "needs_repair",
+          "blocker": "fail or blocker_count"
+        },
+        "item_id_key": "practice_id",
+        "note": "No fail items were reported; the five needs_repair items each carried one blocker finding."
+      },
+      "identifier_check": {
+        "duplicate_unit_ids": [],
+        "missing_item_ids": [],
+        "duplicate_item_ids_within_unit": [],
+        "count_mismatches": []
+      }
+    },
+    {
+      "report": "range-14-26.json",
+      "unit_ids": [
+        "lecture-14",
+        "lecture-15",
+        "lecture-16",
+        "lecture-17",
+        "lecture-18",
+        "lecture-19",
+        "lecture-20",
+        "lecture-21",
+        "lecture-22",
+        "lecture-23",
+        "lecture-24",
+        "lecture-25",
+        "lecture-26"
+      ],
+      "raw_counts": {
+        "units": 13,
+        "items": 66,
+        "pass": 65,
+        "block": 1
+      },
+      "normalized_counts": {
+        "total": 66,
+        "pass": 65,
+        "needs_repair": 1,
+        "blocker_items": 1,
+        "blocker_findings": 1
+      },
+      "normalization": {
+        "status_keys": {
+          "pass": "pass",
+          "needs_repair": "block",
+          "blocker": "block"
+        },
+        "item_id_key": "id",
+        "note": "The raw block status is retained as a blocker and normalized to needs_repair for course totals; it is not converted to pass."
+      },
+      "identifier_check": {
+        "duplicate_unit_ids": [],
+        "missing_item_ids": [],
+        "duplicate_item_ids_within_unit": [],
+        "count_mismatches": []
+      }
+    }
+  ],
+  "manifest_unit_count": 26,
+  "scanned_unit_count": 26,
+  "item_counts": {
+    "total": 137,
+    "pass": 130,
+    "needs_repair": 7,
+    "blocker_items": 7,
+    "blocker_findings": 7
+  },
+  "coverage_gaps": {
+    "missing_manifest_units": [],
+    "extra_report_units": [],
+    "missing_actual_unit_directories": [],
+    "extra_actual_unit_directories": [],
+    "duplicate_unit_ids": [],
+    "missing_item_ids": [],
+    "duplicate_item_ids_scoped_to_unit": [],
+    "range_overlap": [],
+    "count_mismatches": [],
+    "range_union_matches_manifest": true,
+    "actual_build_unit_directories_match_manifest": true,
+    "note": "All 26 manifest units are represented once across the two reports and once in the current build. Repeated local IDs such as p1 are unique when scoped by unit_id."
+  },
+  "independently_confirmed_findings": [
+    {
+      "unit_id": "lecture-04",
+      "practice_id": "p1",
+      "reported_status": "needs_repair",
+      "status": "confirmed_blocker",
+      "code": "generic_exercise_shell",
+      "source_anchors": [9, 10, 16],
+      "cited_chunks": [
+        "ucb-cs168-spring-2026-lecture-04-material-p009",
+        "ucb-cs168-spring-2026-lecture-04-material-p010",
+        "ucb-cs168-spring-2026-lecture-04-material-p016"
+      ],
+      "finding": "The current 03 and 05 prompt asks the learner to invent both local networks, the topology, the packet path, and the headers. Pages 9, 10, and 16 support the local/global distinction and L3 interconnection principle but do not supply a learner-solvable instance or a unique verification target.",
+      "protocol_checks": {
+        "concrete_setting": false,
+        "necessary_conditions_repeated": false,
+        "transferable_replacement": false,
+        "observable_result": false,
+        "hint_expected_evaluation_aligned": true,
+        "relevant_anchors": true,
+        "formative_no_assessed_answer": true
+      },
+      "repair_prescription": "Name the two L2 domains, endpoint objects, packet/address fields, router, and exact cross-boundary decision; require a hop-by-hop L2/L3 trace."
+    },
+    {
+      "unit_id": "lecture-04",
+      "practice_id": "p2",
+      "reported_status": "needs_repair",
+      "status": "confirmed_blocker",
+      "code": "generic_exercise_shell",
+      "source_anchors": [36, 37, 43],
+      "cited_chunks": [
+        "ucb-cs168-spring-2026-lecture-04-material-p036",
+        "ucb-cs168-spring-2026-lecture-04-material-p037",
+        "ucb-cs168-spring-2026-lecture-04-material-p043"
+      ],
+      "finding": "The prompt names only a generic file transfer system and asks the learner to invent the intermediate components, failed step, message state, and retry trace. The cited material establishes the two reliability placements and receiver-side checking, but not the missing concrete failure instance.",
+      "protocol_checks": {
+        "concrete_setting": false,
+        "necessary_conditions_repeated": false,
+        "transferable_replacement": true,
+        "observable_result": false,
+        "hint_expected_evaluation_aligned": true,
+        "relevant_anchors": true,
+        "formative_no_assessed_answer": true
+      },
+      "repair_prescription": "Give a fixed sender, receiver, intermediate chain, failed hop/timing, and checksum or retry outcome; require comparison of hop-by-hop retry with endpoint check/retry."
+    },
+    {
+      "unit_id": "lecture-04",
+      "practice_id": "p3",
+      "reported_status": "needs_repair",
+      "status": "confirmed_blocker",
+      "code": "underspecified_setting",
+      "source_anchors": [49, 58, 61, 62],
+      "cited_chunks": [
+        "ucb-cs168-spring-2026-lecture-04-material-p049",
+        "ucb-cs168-spring-2026-lecture-04-material-p058",
+        "ucb-cs168-spring-2026-lecture-04-material-p061",
+        "ucb-cs168-spring-2026-lecture-04-material-p062"
+      ],
+      "finding": "The only setting is a service with 10 links and a low-error-rate goal. No link failure/error event, path placement, endpoint correctness criterion, or bounded enhancement is specified, so the requested residual-risk and overhead comparison has no determinate instance.",
+      "protocol_checks": {
+        "concrete_setting": false,
+        "necessary_conditions_repeated": false,
+        "transferable_replacement": true,
+        "observable_result": false,
+        "hint_expected_evaluation_aligned": true,
+        "relevant_anchors": true,
+        "formative_no_assessed_answer": true
+      },
+      "repair_prescription": "Specify a named path, concrete failure event, endpoint correctness test, and one bounded local-retransmission option; ask for explicit residual-risk and overhead observations."
+    },
+    {
+      "unit_id": "lecture-04",
+      "practice_id": "p4",
+      "reported_status": "needs_repair",
+      "status": "confirmed_blocker",
+      "code": "generic_exercise_shell",
+      "source_anchors": [67, 68, 69, 78],
+      "cited_chunks": [
+        "ucb-cs168-spring-2026-lecture-04-material-p067",
+        "ucb-cs168-spring-2026-lecture-04-material-p068",
+        "ucb-cs168-spring-2026-lecture-04-material-p069",
+        "ucb-cs168-spring-2026-lecture-04-material-p078"
+      ],
+      "finding": "The question explicitly asks the learner to provide a design situation. The function, actors, semantic requirement, placement choice, and observation needed to distinguish sufficient, necessary, and useful are all left to the learner.",
+      "protocol_checks": {
+        "concrete_setting": false,
+        "necessary_conditions_repeated": false,
+        "transferable_replacement": false,
+        "observable_result": false,
+        "hint_expected_evaluation_aligned": true,
+        "relevant_anchors": true,
+        "formative_no_assessed_answer": true
+      },
+      "repair_prescription": "Supply a fixed service, placement choice, and observed failure/performance result; require classification and justification under the three interpretations."
+    },
+    {
+      "unit_id": "lecture-04",
+      "practice_id": "p5",
+      "reported_status": "needs_repair",
+      "status": "confirmed_blocker",
+      "code": "generic_exercise_shell",
+      "source_anchors": [85, 86, 88, 91],
+      "cited_chunks": [
+        "ucb-cs168-spring-2026-lecture-04-material-p085",
+        "ucb-cs168-spring-2026-lecture-04-material-p086",
+        "ucb-cs168-spring-2026-lecture-04-material-p088",
+        "ucb-cs168-spring-2026-lecture-04-material-p091"
+      ],
+      "finding": "The prompt supplies only endpoints, routers, and a distributed service. It omits the state variable, dependent operations, endpoint guarantee, failure event, and concrete ISP or middlebox constraint needed for a fate-sharing and stakeholder placement decision.",
+      "protocol_checks": {
+        "concrete_setting": false,
+        "necessary_conditions_repeated": false,
+        "transferable_replacement": false,
+        "observable_result": false,
+        "hint_expected_evaluation_aligned": true,
+        "relevant_anchors": true,
+        "formative_no_assessed_answer": true
+      },
+      "repair_prescription": "Provide a fixed state and dependent operation, endpoint failure, and ISP/middlebox constraint; require a three-view placement analysis with an observable recommendation."
+    },
+    {
+      "unit_id": "lecture-21",
+      "practice_id": "p3",
+      "reported_status": "block",
+      "status": "confirmed_blocker",
+      "code": "underspecified_setting",
+      "source_anchors": [17, 18, 19],
+      "cited_chunks": [
+        "ucb-cs168-spring-2026-lecture-21-material-p017",
+        "ucb-cs168-spring-2026-lecture-21-material-p018",
+        "ucb-cs168-spring-2026-lecture-21-material-p019"
+      ],
+      "finding": "The base traffic-engineering instance is concrete, but the changed condition says only that some candidate link drops to 8 Gbps. It does not identify the top or bottom path, so the requested identity of the flow that cannot be placed is not unique. The current 05 projection remains ambiguous and is shorter still.",
+      "protocol_checks": {
+        "concrete_setting": true,
+        "necessary_conditions_repeated": true,
+        "transferable_replacement": false,
+        "observable_result": false,
+        "hint_expected_evaluation_aligned": true,
+        "relevant_anchors": true,
+        "formative_no_assessed_answer": true,
+        "boundary_case_specificity": false
+      },
+      "repair_prescription": "Name the degraded top/bottom-path link or require both conditional cases, while retaining the 8-Gbps capacity comparison."
+    },
+    {
+      "unit_id": "lecture-13",
+      "practice_id": "P3",
+      "reported_status": "pass",
+      "status": "new_blocker_from_pass_sample",
+      "code": "lecture_specific_dependency",
+      "source_anchors": [9, 10, 13, 14, 20, 21, 22, 24],
+      "cited_chunks": [
+        "ucb-cs168-spring-2026-lecture-13-material-p009",
+        "ucb-cs168-spring-2026-lecture-13-material-p010",
+        "ucb-cs168-spring-2026-lecture-13-material-p013",
+        "ucb-cs168-spring-2026-lecture-13-material-p014",
+        "ucb-cs168-spring-2026-lecture-13-material-p020",
+        "ucb-cs168-spring-2026-lecture-13-material-p021",
+        "ucb-cs168-spring-2026-lecture-13-material-p022",
+        "ucb-cs168-spring-2026-lecture-13-material-p024"
+      ],
+      "finding": "The question reproduces the lecture's exact A→E worked sequence: initial 10 Gbps, R1→R3 failure and reduction to 1 Gbps, then G→D competition and reduction to 0.5 Gbps. It asks for replay and explanation, but supplies no new path, capacity, competing-flow parameters, or altered condition from which to derive a different result.",
+      "protocol_checks": {
+        "concrete_setting": true,
+        "necessary_conditions_repeated": true,
+        "transferable_replacement": false,
+        "observable_result": true,
+        "hint_expected_evaluation_aligned": true,
+        "relevant_anchors": true,
+        "formative_no_assessed_answer": true,
+        "lecture_specific_replay": true
+      },
+      "repair_prescription": "Retain the dynamic-adjustment concept but supply a new topology or parameterized path capacities and a new competing flow; require the learner to derive the adjusted rates and justify the loop rather than copy 10→1→0.5."
+    },
+    {
+      "unit_id": "lecture-01",
+      "practice_id": "P1",
+      "sample_range": "range-01-13.json",
+      "reported_status": "pass",
+      "status": "pass_confirmed",
+      "source_anchors": [12, 17, 29],
+      "protocol_checks": {
+        "concrete_setting": true,
+        "necessary_conditions_repeated": true,
+        "transferable_replacement": true,
+        "observable_result": true,
+        "hint_expected_evaluation_aligned": true,
+        "relevant_anchors": true,
+        "formative_no_assessed_answer": true
+      },
+      "finding": "The object list and required end-host/link/switch roles make the task directly answerable. Replacing the switch technology preserves the tested distinction between infrastructure and application ecosystem and the Internet's inter-networking role."
+    },
+    {
+      "unit_id": "lecture-03",
+      "practice_id": "P5",
+      "sample_range": "range-01-13.json",
+      "reported_status": "pass",
+      "status": "pass_confirmed",
+      "source_anchors": [81, 86, 141, 143, 159, 161, 197],
+      "protocol_checks": {
+        "concrete_setting": true,
+        "necessary_conditions_repeated": true,
+        "transferable_replacement": true,
+        "observable_result": true,
+        "hint_expected_evaluation_aligned": true,
+        "relevant_anchors": true,
+        "formative_no_assessed_answer": true
+      },
+      "finding": "Although it reuses the lecture's layer names and A/R/B notation, it restates the path, layer sets, message, destination host, and port. The added-router and changed-port cases test the transferable layer and delivery distinctions rather than requiring recall of an omitted figure."
+    },
+    {
+      "unit_id": "lecture-06",
+      "practice_id": "lecture-06-p3",
+      "sample_range": "range-01-13.json",
+      "reported_status": "pass",
+      "status": "pass_confirmed",
+      "source_anchors": [45, 48, 53, 54],
+      "protocol_checks": {
+        "concrete_setting": true,
+        "necessary_conditions_repeated": true,
+        "transferable_replacement": true,
+        "observable_result": true,
+        "hint_expected_evaluation_aligned": true,
+        "relevant_anchors": true,
+        "formative_no_assessed_answer": true
+      },
+      "finding": "The R2/R3 route, cost, TTL, time points, missing advertisements, and no-confusion requirement are explicit. The answer distinguishes sender resend from receiver-side TTL expiry and remains solvable if the names or times are replaced."
+    },
+    {
+      "unit_id": "lecture-09",
+      "practice_id": "p2",
+      "sample_range": "range-01-13.json",
+      "reported_status": "pass",
+      "status": "pass_confirmed",
+      "source_anchors": [33, 39, 45],
+      "protocol_checks": {
+        "concrete_setting": true,
+        "necessary_conditions_repeated": true,
+        "transferable_replacement": true,
+        "observable_result": true,
+        "hint_expected_evaluation_aligned": true,
+        "relevant_anchors": true,
+        "formative_no_assessed_answer": true
+      },
+      "finding": "Both paths and every provider/peer relation are defined, so B/F participation and the downhill/single-peaked classification are verifiable. The item uses lecture relationship vocabulary but introduces a fully specified relation instance."
+    },
+    {
+      "unit_id": "lecture-14",
+      "practice_id": "p1",
+      "sample_range": "range-14-26.json",
+      "reported_status": "pass",
+      "status": "pass_confirmed",
+      "source_anchors": [15, 38, 42],
+      "protocol_checks": {
+        "concrete_setting": true,
+        "necessary_conditions_repeated": true,
+        "transferable_replacement": true,
+        "observable_result": true,
+        "hint_expected_evaluation_aligned": true,
+        "relevant_anchors": true,
+        "formative_no_assessed_answer": true
+      },
+      "finding": "The initial CWND/SSTHRESH/mode, ACK sequence, and no-timeout boundary are explicit. The learner derives each state transition and retransmission action; it is not a copy of the source's small numeric illustration."
+    },
+    {
+      "unit_id": "lecture-16",
+      "practice_id": "p2",
+      "sample_range": "range-14-26.json",
+      "reported_status": "pass",
+      "source_anchors": [5, 8, 9, 12, 13, 14, 18],
+      "protocol_checks": {
+        "concrete_setting": true,
+        "necessary_conditions_repeated": true,
+        "transferable_replacement": true,
+        "observable_result": true,
+        "hint_expected_evaluation_aligned": true,
+        "relevant_anchors": true,
+        "formative_no_assessed_answer": true
+      },
+      "finding": "The exact lecture POST example is fully restated, but the 201→302 and new Location condition requires a new status-behavior comparison and header-class judgment. This is acceptable use of lecture variables with a concrete transfer condition, not mere replay."
+    },
+    {
+      "unit_id": "lecture-19",
+      "practice_id": "p3",
+      "sample_range": "range-14-26.json",
+      "reported_status": "pass",
+      "status": "pass_confirmed",
+      "source_anchors": [35, 36, 37],
+      "protocol_checks": {
+        "concrete_setting": true,
+        "necessary_conditions_repeated": true,
+        "transferable_replacement": true,
+        "observable_result": true,
+        "hint_expected_evaluation_aligned": true,
+        "relevant_anchors": true,
+        "formative_no_assessed_answer": true
+      },
+      "finding": "The k=4 setting and requested counts are explicit, and the k, k/2, and (k/2)^2 hint supports recomputation for a replacement k. The current 05 artifact carries relevant page citations; the legacy 03 source_pages representation is structural only."
+    },
+    {
+      "unit_id": "lecture-21",
+      "practice_id": "p1",
+      "sample_range": "range-14-26.json",
+      "reported_status": "pass",
+      "status": "pass_confirmed",
+      "source_anchors": [3, 4, 12, 27],
+      "protocol_checks": {
+        "concrete_setting": true,
+        "necessary_conditions_repeated": true,
+        "transferable_replacement": true,
+        "observable_result": true,
+        "hint_expected_evaluation_aligned": true,
+        "relevant_anchors": true,
+        "formative_no_assessed_answer": true
+      },
+      "finding": "The specialized policy, vertical integration obstacles, controller/API/router roles, and controller-failure boundary are stated. The learner must distinguish path computation from forwarding and the effect of a changed control-plane condition."
+    },
+    {
+      "unit_id": "lecture-24",
+      "practice_id": "p3",
+      "sample_range": "range-14-26.json",
+      "reported_status": "pass",
+      "status": "pass_confirmed",
+      "source_anchors": [18, 23, 27, 28, 29],
+      "protocol_checks": {
+        "concrete_setting": true,
+        "necessary_conditions_repeated": true,
+        "transferable_replacement": true,
+        "observable_result": true,
+        "hint_expected_evaluation_aligned": true,
+        "relevant_anchors": true,
+        "formative_no_assessed_answer": true
+      },
+      "finding": "The four vectors, ReduceScatter ownership, AllGather step, final N2 result, and Gather boundary are all explicit. The changed second-stage operation provides an observable composition contrast, so the symbolic variables do not create lecture-specific dependency."
+    },
+    {
+      "unit_id": "lecture-26",
+      "practice_id": "p4",
+      "sample_range": "range-14-26.json",
+      "reported_status": "pass",
+      "status": "pass_confirmed",
+      "source_anchors": [49, 50, 56],
+      "protocol_checks": {
+        "concrete_setting": true,
+        "necessary_conditions_repeated": true,
+        "transferable_replacement": true,
+        "observable_result": true,
+        "hint_expected_evaluation_aligned": true,
+        "relevant_anchors": true,
+        "formative_no_assessed_answer": true
+      },
+      "finding": "The handover log gives concrete IP, tower, buffer, slot, database, and path failures. The learner audits four seamless invariants and constructs a minimum repair sequence, then predicts the TCP consequence of changing IP."
+    }
+  ],
+  "repair_priority": [
+    {
+      "priority": 1,
+      "pattern": "generic_exercise_shell / missing learner-solvable setting",
+      "items": [
+        "lecture-04/p1",
+        "lecture-04/p2",
+        "lecture-04/p4",
+        "lecture-04/p5"
+      ],
+      "also_related": ["lecture-04/p3"],
+      "reason": "Four of five lecture-04 practices require the learner to invent the central topology, failure case, design situation, or state-placement case; p3 is likewise underspecified. This is the dominant repeated semantic failure pattern.",
+      "action": "Repair the 03 prompts with named actors/objects, fixed inputs and states, bounded operations, and falsifiable outputs. Re-audit each repaired item against 01/02 and the cited chunks."
+    },
+    {
+      "priority": 2,
+      "pattern": "underspecified changed condition / non-unique boundary result",
+      "items": [
+        "lecture-04/p3",
+        "lecture-21/p3"
+      ],
+      "reason": "Both items ask for a performance or capacity boundary conclusion without identifying the concrete failure/link placement needed to make the result unique.",
+      "action": "Name the affected path/link and failure event, or change expected_evidence and evaluation to require all conditional cases."
+    },
+    {
+      "priority": 3,
+      "pattern": "lecture-specific worked-example replay",
+      "items": ["lecture-13/P3"],
+      "reason": "The sampled pass is a verbatim numerical/event replay of the A→E lecture example and fails the replacement check even though its setting, anchors, and local alignment are otherwise adequate.",
+      "action": "Introduce a new topology, capacity values, or competing flow and require derivation of the adjusted rate; keep the lecture variables only as explicitly redefined conditions."
+    }
+  ],
+  "deferred_structural_findings": [
+    {
+      "scope": "both range reports",
+      "code": "legacy_report_schema_variance",
+      "detail": "Range 01–13 uses needs_repair/fail and practice_id; range 14–26 uses block and id. Counts and identifiers reconcile without coverage loss. This normalization is structural and does not weaken the six semantic blockers or the independent lecture-13/P3 blocker.",
+      "semantic_separation": "separate_from_semantic_blockers"
+    },
+    {
+      "source_report": "range-01-13.json",
+      "scope": "lecture-04",
+      "code": "independent_audit_pending",
+      "detail": "The report preserves review-plan blockers_after_reaudit=[independent_audit_pending]. The five current semantic blockers were independently confirmed and remain blockers.",
+      "semantic_separation": "workflow metadata; not a pass rationale"
+    },
+    {
+      "source_report": "range-01-13.json",
+      "scope": "lecture-02, lecture-04, lecture-06, lecture-07, lecture-08, lecture-09, lecture-10, lecture-11",
+      "code": "legacy_practice_citation_metadata",
+      "detail": "Some range records omit optional chunk_id and/or explicit requirement/concept mapping fields even where page anchors resolve. This is separate from semantic blocker decisions.",
+      "semantic_separation": "separate_from_semantic_blockers"
+    },
+    {
+      "source_report": "range-01-13.json",
+      "scope": "all assigned units",
+      "code": "checkpoint_scope",
+      "detail": "The range scan states that it used 01, 02, 03, 05, review-plan, and cited chunks, but not final YAML/Markdown or non-cited source pages for item decisions. This is a review-scope record, not a semantic pass or repair decision.",
+      "semantic_separation": "separate_from_semantic_blockers"
+    },
+    {
+      "source_report": "range-14-26.json",
+      "scope": "lecture-15, lecture-17, lecture-25; also lecture-23",
+      "code": "review_plan_selection_reason_mismatch",
+      "detail": "Selected pages and actual reviewed pages are not uniformly paired one-to-one with reasons; lecture-17 and lecture-23 review more pages than selected. Deferred because it does not change item-level semantic results.",
+      "semantic_separation": "separate_from_semantic_blockers"
+    },
+    {
+      "source_report": "range-14-26.json",
+      "scope": "lecture-19, lecture-20, lecture-21, lecture-22, lecture-23, lecture-24, lecture-25",
+      "code": "checkpoint_projection_drift",
+      "detail": "05-studykit.json normalizes or omits some internal stage-03 mapping/metadata fields. The lecture-21/P3 semantic ambiguity remains a blocker; other sampled learner-facing tasks remained answerable.",
+      "semantic_separation": "separate_from_semantic_blockers"
+    },
+    {
+      "source_report": "range-14-26.json",
+      "scope": "lecture-14, lecture-15, lecture-16, lecture-17, lecture-20, lecture-21, lecture-23, lecture-24",
+      "code": "historical_audit_snapshot_stale",
+      "detail": "Pre-existing independent-audit files contain earlier pre-repair findings. Current 01/02/03/05 artifacts and cited chunks were used for the present decisions; stale snapshots were not used to erase current blockers.",
+      "semantic_separation": "separate_from_semantic_blockers"
+    },
+    {
+      "source_report": "range-14-26.json",
+      "scope": "lecture-14, lecture-17, lecture-19, lecture-21, lecture-22, lecture-25, lecture-26",
+      "code": "quality_mode_metadata_variance",
+      "detail": "Unit review plans use fast, standard, or fast-hybrid labels within a fast-root build. This is structural metadata only.",
+      "semantic_separation": "separate_from_semantic_blockers"
+    },
+    {
+      "scope": "lecture-19",
+      "code": "source_checkpoint_location_and_metrics_variance",
+      "detail": "The unit-local directory lacks chunks.jsonl although the cited source chunks resolve under data/sources; the report also records metrics citation count 30 versus nested citation-object count 60. The current 05 practice contains relevant page citations and the sampled semantic task passed.",
+      "semantic_separation": "separate_from_semantic_blockers"
+    },
+    {
+      "scope": "lecture-24/p3",
+      "code": "stage_mapping_drift",
+      "detail": "01 maps op3 to concept c4 defined as dual/composition, while 02 uses c4 for mesh/single-root/tree; current 03/05 wording and pages correctly test ReduceScatter plus AllGather composition. This identifier/projection drift should be repaired or reconciled, but it is not a semantic blocker for the independently reviewed item.",
+      "semantic_separation": "separate_from_semantic_blockers"
+    }
+  ],
+  "auditor_id": "luna-xhigh-course-level-independent-practice-auditor-ucb-cs168-spring-2026-20260812",
+  "offline_only": true,
+  "next_action": "Do not promote this course as semantically closed. Repair lecture-04/p1–p5, lecture-21/p3, and lecture-13/P3 in a new fingerprinted build; preserve the existing artifacts and reports, then have an independent auditor recheck each repaired item and reconcile the deferred structural metadata separately."
+}

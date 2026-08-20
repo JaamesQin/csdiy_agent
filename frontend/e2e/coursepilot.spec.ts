@@ -19,21 +19,30 @@ async function register(page: Page, prefix = "render"): Promise<string> {
   return username;
 }
 
-function sseBody(content: string): string {
+function sseBody(content: string, coursepilotContext?: string): string {
   const frames = [
     { choices: [{ delta: { role: "assistant" } }] },
     { choices: [{ delta: { content } }] },
-    { choices: [{ delta: {}, finish_reason: "stop" }] },
+    {
+      choices: [{ delta: {}, finish_reason: "stop" }],
+      ...(coursepilotContext === undefined
+        ? {}
+        : { coursepilot_context: coursepilotContext }),
+    },
   ];
   return `${frames.map((frame) => `data: ${JSON.stringify(frame)}`).join("\n\n")}\n\ndata: [DONE]\n\n`;
 }
 
-async function fulfillSse(route: Route, content: string): Promise<void> {
+async function fulfillSse(
+  route: Route,
+  content: string,
+  coursepilotContext?: string,
+): Promise<void> {
   await route.fulfill({
     status: 200,
     contentType: "text/event-stream; charset=utf-8",
     headers: { "Cache-Control": "no-cache" },
-    body: sseBody(content),
+    body: sseBody(content, coursepilotContext),
   });
 }
 
@@ -207,9 +216,9 @@ test("renders streamed Markdown, native MathML, highlighted code, and safe links
     '<img src=x onerror="window.__coursepilotXss = true"><script>window.__coursepilotXss = true</script>',
   ].join("\n");
 
-  let chatRequestSeen = false;
+  let chatRequestCount = 0;
   await page.route("**/v1/chat/completions", async (route) => {
-    chatRequestSeen = true;
+    chatRequestCount += 1;
     const request = route.request();
     const headers = request.headers();
     const body = request.postDataJSON() as Record<string, unknown>;
@@ -218,14 +227,23 @@ test("renders streamed Markdown, native MathML, highlighted code, and safe links
     expect(body.user).toBeUndefined();
     expect(body.model).toBe("coursepilot-probe");
     expect(body.stream).toBe(true);
-    await fulfillSse(route, richReply);
+    if (chatRequestCount === 1) {
+      expect(body.coursepilot_context).toBeUndefined();
+      await fulfillSse(route, richReply, "signed-browser-context");
+    } else if (chatRequestCount === 2) {
+      expect(body.coursepilot_context).toBe("signed-browser-context");
+      await fulfillSse(route, "## 上下文已续接");
+    } else {
+      expect(body.coursepilot_context).toBeUndefined();
+      await fulfillSse(route, "## 上下文已清空");
+    }
   });
 
   await page.getByRole("button", { name: "查看 StudyKit" }).click();
   await expect(page.locator("#messageInput")).toHaveValue(
     "查看 MIT 6.7960 第 2 讲的 StudyKit。",
   );
-  expect(chatRequestSeen).toBe(false);
+  expect(chatRequestCount).toBe(0);
   await page.locator("#chatForm").evaluate((form: HTMLFormElement) => form.requestSubmit());
 
   const reply = page.locator(".message.assistant").last();
@@ -245,6 +263,15 @@ test("renders streamed Markdown, native MathML, highlighted code, and safe links
   );
   expect(remoteRequests).toEqual([]);
   expect(consoleErrors).toEqual([]);
+
+  await page.locator("#messageInput").fill("继续当前上下文");
+  await page.locator("#chatForm").evaluate((form: HTMLFormElement) => form.requestSubmit());
+  await expect(page.locator(".message.assistant h2").last()).toHaveText("上下文已续接");
+
+  await page.locator("#clearButton").click();
+  await page.locator("#messageInput").fill("清空后重新开始");
+  await page.locator("#chatForm").evaluate((form: HTMLFormElement) => form.requestSubmit());
+  await expect(page.locator(".message.assistant h2").last()).toHaveText("上下文已清空");
 });
 
 test("keeps raw assistant Markdown in multi-turn non-streaming history", async ({ page }) => {

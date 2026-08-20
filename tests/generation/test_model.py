@@ -267,7 +267,7 @@ async def test_empty_message_content_retry_stops_after_default_retries() -> None
     ] == [True, True, True, True, True]
 
 
-async def test_invalid_json_retries_in_same_thinking_mode() -> None:
+async def test_invalid_json_retries_in_same_disabled_thinking_mode() -> None:
     payloads: list[dict[str, object]] = []
 
     def handler(request: httpx.Request) -> httpx.Response:
@@ -284,13 +284,13 @@ async def test_invalid_json_retries_in_same_thinking_mode() -> None:
     response = await model.generate_json(
         system_prompt="只输出 JSON。",
         user_prompt="生成测试对象。",
-        thinking_enabled=True,
+        thinking_enabled=False,
     )
 
     assert response.output == {"ok": True}
     assert len(payloads) == 2
     assert all(
-        payload["thinking"] == {"type": "enabled"} for payload in payloads
+        payload["thinking"] == {"type": "disabled"} for payload in payloads
     )
     assert payloads[1]["messages"][-1]["content"].endswith(
         INVALID_JSON_RETRY_SUFFIX

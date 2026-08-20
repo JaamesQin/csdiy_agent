@@ -1,0 +1,122 @@
+{
+  "schema_version": "mit7960-reviewed-package-audit-v1",
+  "audit_id": "mit-6.7960-fall-2024-mit7960-4-audit-20260812",
+  "audited_at": "2026-08-12T00:00:00+08:00",
+  "auditor": {
+    "identity": "mit7960-4-audit-worker",
+    "role": "independent reviewed-package audit",
+    "independence_basis": "Read-only audit; no reviewed package, StudyKit content, registry, or root files were modified."
+  },
+  "scope": {
+    "course_id": "mit-6.7960-fall-2024",
+    "course_version": "fall-2024",
+    "reviewed_package": "data/reviewed/mit-6.7960-fall-2024/portable-v0.1.0",
+    "units": ["lecture-19", "lecture-20", "lecture-21", "lecture-23", "lecture-24"],
+    "raw_root": "data/raw/mit-6.7960/fall-2024",
+    "chunks_root": "data/sources/mit-6.7960-fall-2024",
+    "quality_mode": "independent contract audit",
+    "network_used": false
+  },
+  "contract_evidence": {
+    "skill": "skills/studykit-generator/SKILL.md",
+    "references": [
+      "skills/studykit-generator/references/contract.md",
+      "skills/studykit-generator/references/formats.md",
+      "skills/studykit-generator/references/examples.md",
+      "skills/studykit-generator/references/quality-modes.md",
+      "skills/studykit-generator/references/parallelism.md"
+    ],
+    "current_skill_version": "0.2.1",
+    "required_gates": [
+      "citation anchors exist in the unit chunk set",
+      "candidate/final/YAML semantic equality",
+      "every final formula page is in actual_reviewed_pages",
+      "visible evidence only; hidden text cannot support claims",
+      "independent semantic review of every practice item"
+    ]
+  },
+  "result": "block_pending_current_v0.2.1_rebuild",
+  "summary": "The five legacy v0.1.0 units are source-identifiable and JSON/YAML-equivalent, but they are not migration-ready as a current v0.2.1 build: validation records the full-course chunk total for every unit, provenance/fingerprint fields are absent, and lecture-19/20 do not expose machine-checkable actual reviewed pages. Existing practice-grounding defects are deferred and are not counted as passes.",
+  "units": [
+    {
+      "unit_id": "lecture-19",
+      "source": {"pdf_pages": 52, "chunk_count": 52, "citation_count": 169, "citation_page_count": 29, "source_id": "mit-6.7960-f24-lecture-19-slides", "sha256": "057091ad6e096f4a787122c7cfac852ef1865a8479c076721f3d929830e66aa1", "chunks": "data/sources/mit-6.7960-fall-2024/lecture-19/chunks.jsonl"},
+      "artifact": {"final_status": "draft", "validation_status": "succeeded", "reported_validation_chunk_count": 1420, "reported_validation_citation_count": 169, "yaml_semantically_equal": true, "audit_status": "succeeded", "audit_verdict": "pass_with_documented_limitations"},
+      "visible_formula_and_review_evidence": {"structured_formula_count": 2, "formula_pages": [5], "declared_evidence": ["page 5 Data++ formula visually checked", "MAML pages 45-47 deliberately not guessed"], "actual_reviewed_pages_field": "absent", "formula_page_closure": "not machine-provable from the package"},
+      "provenance_and_version": {"author_provenance": "missing", "auditor_provenance": "missing", "build_id": "missing in unit artifact", "input_fingerprint": "missing in unit artifact; manifest only", "package_version": "portable-v0.1.0/studykit 0.1", "current_target": "StudyKit skill/pipeline v0.2.1", "mismatch": true},
+      "deferred_practice_semantic_issues": [
+        {"practice_id": "practice-1", "issue": "Asks for abstract examples for three transfer types without a concrete learner-solvable setting; generic shell under the content-grounded practice contract."},
+        {"practice_id": "practice-3", "issue": "Asks the learner to design four symbolic examples rather than supplying objects/operations to analyze; answerability depends on inventing the scenario."},
+        {"practice_id": "practice-4", "issue": "Requests a counterfactual review workflow but does not specify a concrete model/data/counterfactual case; transfer setting is underspecified."}
+      ],
+      "next_action": "Rebuild lecture-19 with current v0.2.1 stages and provenance; regenerate actual_reviewed_pages/review-plan, correct unit chunk_count to 52, and revise the three deferred practices into concrete source-anchored settings before migration approval."
+    },
+    {
+      "unit_id": "lecture-20",
+      "source": {"pdf_pages": 52, "chunk_count": 52, "citation_count": 205, "citation_page_count": 34, "source_id": "mit-6.7960-f24-lecture-20-slides", "sha256": "f025e970d5724f1b38d38ba0fa1540628d57687f53a611f9dff43600d050c226", "chunks": "data/sources/mit-6.7960-fall-2024/lecture-20/chunks.jsonl"},
+      "artifact": {"final_status": "draft", "validation_status": "succeeded", "reported_validation_chunk_count": 1420, "reported_validation_citation_count": 205, "yaml_semantically_equal": true, "audit_status": "succeeded", "audit_verdict": "pass_with_documented_limitations"},
+      "visible_formula_and_review_evidence": {"structured_formula_count": 8, "formula_pages": [8, 9, 13, 15, 17, 29, 34, 35], "declared_evidence": ["eight key formula groups visually reviewed", "exact exponents retain experimental-context warnings"], "actual_reviewed_pages_field": "absent", "formula_page_closure": "not machine-provable from the package"},
+      "provenance_and_version": {"author_provenance": "missing", "auditor_provenance": "missing", "build_id": "missing in unit artifact", "input_fingerprint": "missing in unit artifact; manifest only", "package_version": "portable-v0.1.0/studykit 0.1", "current_target": "StudyKit skill/pipeline v0.2.1", "mismatch": true},
+      "deferred_practice_semantic_issues": [
+        {"practice_id": "practice-5", "issue": "Requests a pre-registration design without a concrete scaling dataset/model range; much of the task is learner-invented rather than directly answerable."},
+        {"practice_id": "practice-8", "issue": "Requests a batch-size selection table but supplies no concrete candidate batches or measurements; observable task setting is incomplete."}
+      ],
+      "next_action": "Rebuild lecture-20 with current v0.2.1 validation against the 52-unit chunks, emit actual_reviewed_pages covering all formula pages, add author/auditor provenance and fingerprint, and concretize practice-5/practice-8 before migration approval."
+    },
+    {
+      "unit_id": "lecture-21",
+      "source": {"pdf_pages": 92, "chunk_count": 92, "citation_count": 48, "citation_page_count": 18, "source_id": "mit-6.7960-f24-lecture-21-slides", "sha256": "cf733935598e732ec145c17daabc3f3697b4ec180cdd8c1d9c92d85a42b23cbe", "chunks": "data/sources/mit-6.7960-fall-2024/lecture-21/chunks.jsonl"},
+      "artifact": {"final_status": "draft", "validation_status": "succeeded", "reported_validation_chunk_count": 1420, "reported_validation_citation_count": 48, "yaml_semantically_equal": true, "audit_status": "passed_with_resolution", "audit_verdict": "no unified verdict field"},
+      "visible_formula_and_review_evidence": {"structured_formula_count": 0, "formula_pages": [16, 25, 89, 91], "declared_reviewed_page_count": 36, "declared_visual_reviewed_pages": [16, 25, 36, 46, 51, 71, 81, 89, 91], "citation_pages_subset_of_declared_reviewed_pages": true, "evidence_note": "Formulae are represented in prose/Unicode rather than structured formula metadata; visible formula provenance is therefore incomplete."},
+      "provenance_and_version": {"author_provenance": "missing", "auditor_provenance": "missing", "build_id": "missing in unit artifact", "input_fingerprint": "missing in unit artifact; manifest only", "package_version": "portable-v0.1.0/studykit 0.1", "current_target": "StudyKit skill/pipeline v0.2.1", "mismatch": true},
+      "deferred_practice_semantic_issues": [
+        {"practice_id": "ex-2", "issue": "Asks the learner to invent two binary-classification examples and a test input; no concrete setting is supplied."},
+        {"practice_id": "ex-3", "issue": "The order-only experiment has a good control template but leaves task/data/model choices open; migrate as a specified finite experiment rather than a generic design prompt."},
+        {"practice_id": "ex-5", "issue": "Requests a causal chain for a broad adaptation pipeline without a concrete case; distinguish a source-grounded classification task from learner-invented causal claims."}
+      ],
+      "next_action": "Rebuild lecture-21 with v0.2.1 formula metadata/provenance and unit-local validation count 92; preserve the 36 reviewed pages, then re-audit and concretize deferred practices before migration approval."
+    },
+    {
+      "unit_id": "lecture-23",
+      "source": {"pdf_pages": 49, "chunk_count": 49, "citation_count": 52, "citation_page_count": 19, "source_id": "mit-6.7960-f24-lecture-23-slides", "sha256": "5bf8a70ae920878f7f4445f7413d6f1ed5c09af2b5881d695f8b1e5ccb8e189d", "chunks": "data/sources/mit-6.7960-fall-2024/lecture-23/chunks.jsonl"},
+      "artifact": {"final_status": "draft", "validation_status": "succeeded", "reported_validation_chunk_count": 1420, "reported_validation_citation_count": 52, "yaml_semantically_equal": true, "audit_status": "passed_with_resolution", "audit_verdict": "no unified verdict field"},
+      "visible_formula_and_review_evidence": {"structured_formula_count": 0, "formula_pages": [9, 10, 12, 13, 20, 24, 34, 39, 40, 42, 47], "declared_reviewed_page_count": 39, "declared_visual_reviewed_pages": [9, 10, 12, 13, 20, 24, 29, 34, 36, 39, 40, 42, 47], "citation_pages_subset_of_declared_reviewed_pages": true, "evidence_note": "Formula-bearing claims are cited and visually named, but no structured formula provenance is present."},
+      "provenance_and_version": {"author_provenance": "missing", "auditor_provenance": "missing", "build_id": "missing in unit artifact", "input_fingerprint": "missing in unit artifact; manifest only", "package_version": "portable-v0.1.0/studykit 0.1", "current_target": "StudyKit skill/pipeline v0.2.1", "mismatch": true},
+      "deferred_practice_semantic_issues": [
+        {"practice_id": "ex-3", "issue": "Residual-block task states algebraic labels but gives no concrete matrices/values to analyze; partially answerable but still underspecified as a learner task."},
+        {"practice_id": "ex-6", "issue": "Asks the learner to supply six classifications and page mappings without enumerating the six statements; generic audit/design shell."}
+      ],
+      "next_action": "Rebuild lecture-23 with unit-local validation count 49, current formula/notation metadata and author/auditor provenance; retain reviewed-page closure, then replace deferred generic prompts with finite source-anchored statements."
+    },
+    {
+      "unit_id": "lecture-24",
+      "source": {"pdf_pages": 56, "chunk_count": 56, "citation_count": 61, "citation_page_count": 20, "source_id": "mit-6.7960-f24-lecture-24-slides", "sha256": "64cb81754528aa46387beb8411db8debf840a72fb1550efedb44f549c9819adf", "chunks": "data/sources/mit-6.7960-fall-2024/lecture-24/chunks.jsonl"},
+      "artifact": {"final_status": "draft", "validation_status": "succeeded", "reported_validation_chunk_count": 1420, "reported_validation_citation_count": 61, "yaml_semantically_equal": true, "audit_status": "passed_with_warnings", "audit_verdict": "no unified verdict field"},
+      "visible_formula_and_review_evidence": {"structured_formula_count": 0, "formula_pages": [16, 17, 18, 20, 22, 41, 42, 43, 50, 51, 52, 54, 55], "declared_visual_evidence": "56-page unified page-image set complete; key formula and tail experiment figures visually reviewed", "actual_reviewed_pages_field": "absent", "evidence_note": "No machine-readable actual_reviewed_pages list; formula-page closure cannot be independently proven from this package."},
+      "provenance_and_version": {"author_provenance": "missing", "auditor_provenance": "missing", "build_id": "missing in unit artifact", "input_fingerprint": "missing in unit artifact; manifest only", "package_version": "portable-v0.1.0/studykit 0.1", "current_target": "StudyKit skill/pipeline v0.2.1", "mismatch": true},
+      "deferred_practice_semantic_issues": [
+        {"practice_id": "p4", "issue": "Asks the learner to design a validator and two score exploits without supplying a concrete program-output format or scoring function; generic transfer shell."},
+        {"practice_id": "p5", "issue": "Search-learning loop is broad and open-ended; concrete candidate/verifier/training records are not specified enough for falsifiable expected evidence."}
+      ],
+      "next_action": "Rebuild lecture-24 with unit-local validation count 56, explicit actual_reviewed_pages and structured formula provenance, add author/auditor fingerprint metadata, then concretize p4/p5 and re-audit."
+    }
+  ],
+  "cross_unit_blockers": [
+    {"code": "validation_chunk_count_mismatch", "severity": "blocker", "observed": "All five validation.json files report chunk_count=1420, while unit-local chunks contain 52, 52, 92, 49, and 56 records.", "expected": "Validation must use the corresponding unit chunk file and report its count.", "next_action": "Run current v0.2.1 validation separately for each unit-local chunks.jsonl."},
+    {"code": "legacy_provenance_and_fingerprint_missing", "severity": "blocker", "observed": "No author/auditor provenance, unit build_id, or unit input fingerprint is present in the final artifacts.", "expected": "Current build must record author/auditor roles, source hashes, build fingerprint, schema/pipeline/prompt versions.", "next_action": "Regenerate current v0.2.1 build metadata; do not mutate the legacy reviewed package."},
+    {"code": "audit_contract_shape_drift", "severity": "blocker", "observed": "Lecture-19/20 use checks-array/verdict audits; lecture-21/23/24 use checks-object or warnings and omit the unified verdict contract.", "expected": "A current audit should use one reviewable schema and an explicit pass/fail migration decision.", "next_action": "Normalize through a new independent v0.2.1 audit sidecar/build, preserving legacy audits as evidence."},
+    {"code": "practice_semantic_deferred", "severity": "warning", "observed": "Generic or underspecified practice shells remain in the listed items.", "expected": "Every item supplies a complete setting, observable expected result, relevant citation, and content mapping.", "next_action": "Repair only in the new v0.2.1 authoring/review run, then independently re-audit every practice item."}
+  ],
+  "migration_decision": {
+    "can_migrate_to_current_v0.2.1_build": false,
+    "reason": "Source identity and format equality are reusable evidence, but the package fails current validation/provenance/review-closure requirements and has deferred semantic practice issues.",
+    "explicit_next_action": "Create a new isolated current v0.2.1 build for the five units from the verified raw PDFs and unit-local chunks; do not edit portable-v0.1.0, registry, or root. Re-run validation, formula/notation review, visible-page closure, provenance checks, and independent practice audit before any migration is accepted."
+  },
+  "write_scope": {
+    "only_created": "evaluations/mit-6.7960-fall-2024-mit7960-4-audit-20260812.json",
+    "reviewed_package_modified": false,
+    "studykit_content_modified": false,
+    "registry_modified": false,
+    "root_modified": false
+  }
+}

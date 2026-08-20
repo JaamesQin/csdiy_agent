@@ -1,0 +1,651 @@
+{
+  "lecture_id": "lecture-08",
+  "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+  "claims": [
+    {
+      "text": "小核 CNN 依赖逐层扩大的感受野；浅层网络中相距很远的 patch 可能没有共同接收二者的节点。Transformer 用 attention 在 token 间混合信息。",
+      "anchors": [
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 4
+        },
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 5
+        }
+      ]
+    },
+    {
+      "text": "本讲把 token 视为一组神经元形成的向量，是模型各层访问和修改信息的基本单位。",
+      "anchors": [
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 11
+        }
+      ]
+    },
+    {
+      "text": "把图像裁成 patches，向量化后经可学习线性投影得到 d 维 tokens；N 个 token 作为 T 的 N 行。",
+      "anchors": [
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 14
+        }
+      ]
+    },
+    {
+      "text": "标量权重作用于整条 token 向量，因而左乘 W 改变 token 轴而保留代码维度。",
+      "anchors": [
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 17
+        }
+      ]
+    },
+    {
+      "text": "共享函数 F_θ 分别变换每一行，不与其他 token 通信；通常 F_θ 是 MLP。",
+      "anchors": [
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 18
+        }
+      ]
+    },
+    {
+      "text": "token net 交替执行节点混合与逐节点更新；课件把 GNN 的 AGGREGATE/UPDATE 对应到这两步，并把 Transformer 看作完全图上的 GNN。",
+      "anchors": [
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 20
+        },
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 23
+        },
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 24
+        }
+      ]
+    },
+    {
+      "text": "普通线性层的 W 是自由参数，而注意力矩阵 A 由输入数据经过函数 f 构造，因此是动态加权汇聚。",
+      "anchors": [
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 20
+        },
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 32
+        }
+      ]
+    },
+    {
+      "text": "每个输入 token 投影出 query、key、value；每个 query 与所有 keys 匹配，归一化权重随后混合 values，产生相同数量的输出 tokens。",
+      "anchors": [
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 29
+        },
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 30
+        },
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 34
+        }
+      ]
+    },
+    {
+      "text": "k 个 head 使用各自的 Q/K/V 函数并行产生表示，按 token 对齐拼接成 N×kv，再由 W_MSA 投影至 d 维。",
+      "anchors": [
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 37
+        }
+      ]
+    },
+    {
+      "text": "一个块采用 token norm→MSA→残差，再 token norm→逐 token MLP→残差；灰色块重复 L 次。",
+      "anchors": [
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 38
+        },
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 39
+        }
+      ]
+    },
+    {
+      "text": "若输入 token 行被置换，token-wise 层和 attention 的输出行随之作同一置换；组合后的 transformer 仍保持该性质。等变不是输出不变。",
+      "anchors": [
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 35
+        },
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 41
+        }
+      ]
+    },
+    {
+      "text": "为每个图像 token 编码 x、y 坐标在一组不同尺度正弦波上的取值，再把位置代码附加到 token 表示；第44页正文给出的方式是拼接，从而使位置可区分。",
+      "anchors": [
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 43
+        },
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 44
+        }
+      ]
+    },
+    {
+      "text": "causal mask 令某位置只能依赖允许的过去位置；同一次矩阵计算可监督多个 next-token 目标，多层连接仍保持因果路径。",
+      "anchors": [
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 48
+        },
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 51
+        },
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 52
+        }
+      ]
+    },
+    {
+      "text": "在图像到文本架构中，文本 token 发出 queries，图像 tokens 提供 keys/values；文本解码器本身同时使用 causal self-attention。",
+      "anchors": [
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 54
+        }
+      ]
+    }
+  ],
+  "formulas": [
+    {
+      "latex": "t\\in\\mathbb{R}^{d},\\qquad T\\in\\mathbb{R}^{N\\times d}",
+      "status": "resolved",
+      "anchors": [
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 14
+        }
+      ],
+      "origin": "structured"
+    },
+    {
+      "latex": "T_{out}[i,:]=\\sum_{j=1}^{N}w_{ij}T_{in}[j,:],\\qquad T_{out}=WT_{in}",
+      "status": "resolved",
+      "anchors": [
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 17
+        }
+      ],
+      "origin": "structured"
+    },
+    {
+      "latex": "T_{out}=\\begin{bmatrix}F_\\theta(T_{in}[0,:])\\\\\\vdots\\\\F_\\theta(T_{in}[N-1,:])\\end{bmatrix}",
+      "status": "resolved",
+      "anchors": [
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 18
+        }
+      ],
+      "origin": "structured"
+    },
+    {
+      "latex": "Q=T_{in}W_q^T,\\;K=T_{in}W_k^T,\\;V=T_{in}W_v^T,\\quad A=\\operatorname{softmax}\\left(\\frac{QK^T}{\\sqrt m}\\right),\\quad T_{out}=AV",
+      "status": "resolved",
+      "anchors": [
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 29
+        },
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 30
+        },
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 34
+        }
+      ],
+      "origin": "structured"
+    },
+    {
+      "latex": "T_{out}^{i}=\\operatorname{attn}^{i}(T_{in}),\\quad \\bar T_{out}\\in\\mathbb{R}^{N\\times kv},\\quad T_{out}=\\bar T_{out}W_{MSA},\\;W_{MSA}\\in\\mathbb{R}^{kv\\times d}",
+      "status": "resolved",
+      "anchors": [
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 37
+        }
+      ],
+      "origin": "structured"
+    },
+    {
+      "latex": "\\operatorname{transformer}(\\operatorname{permute}(T_{in}))=\\operatorname{permute}(\\operatorname{transformer}(T_{in}))",
+      "status": "resolved",
+      "anchors": [
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 35
+        },
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 41
+        }
+      ],
+      "origin": "structured"
+    },
+    {
+      "latex": "p_x=[\\sin(x),\\sin(x/B),\\sin(x/B^2),\\ldots,\\sin(x/B^P)]^T,\\quad p_y=[\\sin(y),\\sin(y/B),\\ldots,\\sin(y/B^P)]^T,\\quad p=[p_x;p_y]",
+      "status": "resolved",
+      "anchors": [
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 43
+        },
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 44
+        }
+      ],
+      "origin": "structured"
+    }
+  ],
+  "objectives": [
+    "诊断浅层局部 CNN 在长距离 patch 比较上的信息路径限制。",
+    "用矩阵形状描述 tokenization、跨 token 混合和逐 token 非线性。",
+    "从 Q/K/V 投影推导 scaled dot-product self-attention 的数据流。",
+    "追踪多头输出如何合并，并复原含 norm、residual 和 MLP 的 ViT 块。",
+    "用置换实验解释 transformer 的等变性以及位置码的作用。",
+    "在自回归和图像到文本系统中正确配置 causal self-attention 与 cross-attention。"
+  ],
+  "practice": [
+    {
+      "question": "一幅图被分为 6 个 patches，每个投影到 16 维。写出 T 的形状，并说明行与列分别表示什么。",
+      "hint": "课件把 token 向量放在行。",
+      "deliverable": "形状和两句解释。",
+      "expected_evidence": [
+        "T∈R^{6×16}",
+        "行对应 token",
+        "列对应代码维度"
+      ],
+      "evaluation": {
+        "criteria": [
+          "形状正确",
+          "语义对应正确"
+        ],
+        "points": 3
+      },
+      "anchors": [
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 14
+        }
+      ]
+    },
+    {
+      "question": "若 W∈R^{3×6}，计算 WT 的输出形状；说明该操作与 F_θ(T[i,:]) 的信息流差异。",
+      "hint": "前者在 j 上求和，后者一次只读一行。",
+      "deliverable": "形状推导和对照表。",
+      "expected_evidence": [
+        "WT∈R^{3×16}",
+        "W 跨 token 混合",
+        "F_θ 独立修改 token"
+      ],
+      "evaluation": {
+        "criteria": [
+          "矩阵推导",
+          "跨 token/逐 token 区分"
+        ],
+        "points": 4
+      },
+      "anchors": [
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 17
+        },
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 18
+        }
+      ]
+    },
+    {
+      "question": "用“普通线性层 vs attention”解释为什么 A 被称为数据依赖；对两个不同输入，哪些量会改变？",
+      "hint": "比较自由参数 W 与 A=f(input)。",
+      "deliverable": "不超过150字解释并画两个数据流框图。",
+      "expected_evidence": [
+        "W 是学习参数",
+        "A 由当前输入构造",
+        "Q/K/V 与权重随输入改变"
+      ],
+      "evaluation": {
+        "criteria": [
+          "数据依赖解释准确",
+          "不把 A 当成自由参数"
+        ],
+        "points": 4
+      },
+      "anchors": [
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 20
+        },
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 29
+        }
+      ]
+    },
+    {
+      "question": "设 T∈R^{5×8}，Q、K 的维度均为 4，V 的维度为 6。写出 Q、K、V、QK^T、A、AV 的形状。",
+      "hint": "五个 queries 分别与五个 keys 匹配。",
+      "deliverable": "逐步形状表。",
+      "expected_evidence": [
+        "Q,K∈R^{5×4}",
+        "V∈R^{5×6}",
+        "QK^T,A∈R^{5×5}",
+        "AV∈R^{5×6}"
+      ],
+      "evaluation": {
+        "criteria": [
+          "每步正确",
+          "能解释5×5的意义"
+        ],
+        "points": 5
+      },
+      "anchors": [
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 34
+        }
+      ]
+    },
+    {
+      "question": "把输入 (t1,t2,t3) 置换成 (t3,t1,t2)。无位置码时写出输出关系；再说明给每个 patch 固定空间位置码后，若只移动 token 内容而不移动位置码，为什么不再是同一实验。",
+      "hint": "区分“整行一起置换”和“内容换位但位置代码固定”。",
+      "deliverable": "等式和一段反例分析。",
+      "expected_evidence": [
+        "正确写出等变等式",
+        "等变不等于不变",
+        "识别内容与位置码绑定方式"
+      ],
+      "evaluation": {
+        "criteria": [
+          "概念精确",
+          "反例逻辑完整"
+        ],
+        "points": 6
+      },
+      "anchors": [
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 41
+        },
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 43
+        },
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 44
+        }
+      ]
+    },
+    {
+      "question": "画长度4的 causal attention 允许矩阵，并用跨两层的所有可达路径论证位置2不能读取位置4；指出为何训练仍可并行。",
+      "hint": "每层都删除通向未来的边，但不同输出位置仍可同批计算。",
+      "deliverable": "矩阵、两层图和100字论证。",
+      "expected_evidence": [
+        "mask 方向正确",
+        "路径保持因果",
+        "同时监督多个 next-token 目标"
+      ],
+      "evaluation": {
+        "criteria": [
+          "遮罩正确",
+          "两层论证",
+          "并行性解释"
+        ],
+        "points": 6
+      },
+      "anchors": [
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 51
+        },
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 52
+        }
+      ]
+    },
+    {
+      "question": "依据第54页设计一个图像描述 transformer：分别标注三种 attention 的 Q 来源与 K/V 来源，并指出训练和采样中保持文本因果性的模块。",
+      "hint": "文本 queries 跨注意图像 tokens；文本内部还需要 causal self-attention。",
+      "deliverable": "模块图、Q/K/V 来源表和验收清单。",
+      "expected_evidence": [
+        "image self-attention",
+        "text causal self-attention",
+        "text-to-image cross-attention",
+        "causal mask 防止未来词泄漏"
+      ],
+      "evaluation": {
+        "criteria": [
+          "三条连接正确",
+          "Q/K/V 来源正确",
+          "因果控制正确"
+        ],
+        "points": 8
+      },
+      "anchors": [
+        {
+          "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "page": 54
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "只依据 Lecture 8 幻灯片，不补写第45–47页所引论文的完整算法与实验结论。",
+    "注意力矩阵的 softmax 轴随行列约定变化；学习包保留课件的数学关系而不绑定具体框架 API。",
+    "第44页位置编码公式只保留可见的 sine 分量，不假设未显示的 cosine 设计。"
+  ],
+  "anchors": [
+    {
+      "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+      "source_id": "mit-6.7960-f24-lecture-08-slides",
+      "page": 4
+    },
+    {
+      "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+      "source_id": "mit-6.7960-f24-lecture-08-slides",
+      "page": 5
+    },
+    {
+      "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+      "source_id": "mit-6.7960-f24-lecture-08-slides",
+      "page": 9
+    },
+    {
+      "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+      "source_id": "mit-6.7960-f24-lecture-08-slides",
+      "page": 11
+    },
+    {
+      "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+      "source_id": "mit-6.7960-f24-lecture-08-slides",
+      "page": 14
+    },
+    {
+      "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+      "source_id": "mit-6.7960-f24-lecture-08-slides",
+      "page": 17
+    },
+    {
+      "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+      "source_id": "mit-6.7960-f24-lecture-08-slides",
+      "page": 18
+    },
+    {
+      "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+      "source_id": "mit-6.7960-f24-lecture-08-slides",
+      "page": 20
+    },
+    {
+      "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+      "source_id": "mit-6.7960-f24-lecture-08-slides",
+      "page": 23
+    },
+    {
+      "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+      "source_id": "mit-6.7960-f24-lecture-08-slides",
+      "page": 24
+    },
+    {
+      "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+      "source_id": "mit-6.7960-f24-lecture-08-slides",
+      "page": 29
+    },
+    {
+      "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+      "source_id": "mit-6.7960-f24-lecture-08-slides",
+      "page": 30
+    },
+    {
+      "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+      "source_id": "mit-6.7960-f24-lecture-08-slides",
+      "page": 32
+    },
+    {
+      "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+      "source_id": "mit-6.7960-f24-lecture-08-slides",
+      "page": 34
+    },
+    {
+      "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+      "source_id": "mit-6.7960-f24-lecture-08-slides",
+      "page": 35
+    },
+    {
+      "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+      "source_id": "mit-6.7960-f24-lecture-08-slides",
+      "page": 37
+    },
+    {
+      "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+      "source_id": "mit-6.7960-f24-lecture-08-slides",
+      "page": 38
+    },
+    {
+      "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+      "source_id": "mit-6.7960-f24-lecture-08-slides",
+      "page": 39
+    },
+    {
+      "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+      "source_id": "mit-6.7960-f24-lecture-08-slides",
+      "page": 41
+    },
+    {
+      "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+      "source_id": "mit-6.7960-f24-lecture-08-slides",
+      "page": 43
+    },
+    {
+      "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+      "source_id": "mit-6.7960-f24-lecture-08-slides",
+      "page": 44
+    },
+    {
+      "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+      "source_id": "mit-6.7960-f24-lecture-08-slides",
+      "page": 48
+    },
+    {
+      "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+      "source_id": "mit-6.7960-f24-lecture-08-slides",
+      "page": 51
+    },
+    {
+      "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+      "source_id": "mit-6.7960-f24-lecture-08-slides",
+      "page": 52
+    },
+    {
+      "pdf_sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca",
+      "source_id": "mit-6.7960-f24-lecture-08-slides",
+      "page": 54
+    }
+  ],
+  "duration_seconds": 165.966,
+  "reviewed_page_count": 29,
+  "semantic_passes": 4,
+  "tokens": null,
+  "anonymous_id": "sample-8c3ed9f6504a4966"
+}

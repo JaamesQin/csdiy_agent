@@ -1,0 +1,14 @@
+{
+  "schema_version": "selective-repair-clean-replay-plan-v1",
+  "plan_id": "ucb-cs61c-round4-clean-parent-20260812",
+  "created_at": "2026-08-12T23:00:00+08:00",
+  "policy": {"parent_snapshot_must_match_declared_baseline": true, "max_targeted_repairs_per_stage": 1, "fresh_independent_per_practice_audit_required": true},
+  "courses": [{
+    "course_id": "ucb-cs61c-spring-2026",
+    "baseline_build_id": "a359fbcc6819def1c7ffb7158c77990ed55603249775a393e39dc64d3ad8567d",
+    "repair_units": [
+      {"unit_id": "lecture-33", "stages": ["practice", "structural"], "required_repairs": ["replay the independently passed Round-3 result exactly from build bfc1f848d28b"]},
+      {"unit_id": "lecture-36", "stages": ["practice", "structural"], "required_repairs": ["replay the Round-3 parity/lineage result exactly from build bfc1f848d28b after its fresh audit passes"]}
+    ]
+  }]
+}

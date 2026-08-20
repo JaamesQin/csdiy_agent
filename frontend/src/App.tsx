@@ -231,6 +231,7 @@ export default function App() {
   const authBusyRef = useRef(false);
   const logoutBusyRef = useRef(false);
   const historyRef = useRef<ChatMessage[]>([]);
+  const coursepilotContextRef = useRef<string | null>(null);
   const controllerRef = useRef<AbortController | null>(null);
   const authGenerationRef = useRef(0);
   const chatGenerationRef = useRef(0);
@@ -335,6 +336,7 @@ export default function App() {
       controllerRef.current = null;
       cancelAllScheduledRenders();
       historyRef.current = [];
+      coursepilotContextRef.current = null;
       setMessages([]);
       setBusy(false);
       setDraft("");
@@ -575,6 +577,7 @@ export default function App() {
     setDraft("");
     setBusy(true);
     let outputRaw = "";
+    let nextCoursepilotContext: string | undefined;
     let richPreviewLimited = false;
 
     try {
@@ -589,6 +592,7 @@ export default function App() {
           model: "coursepilot-probe",
           messages: requestHistory,
           stream: streamEnabled,
+          coursepilot_context: coursepilotContextRef.current || undefined,
         }),
         signal: controller.signal,
       });
@@ -615,11 +619,13 @@ export default function App() {
             });
           }
         });
-        if (streamed !== outputRaw) outputRaw = streamed;
+        if (streamed.content !== outputRaw) outputRaw = streamed.content;
+        nextCoursepilotContext = streamed.coursepilotContext;
       } else {
         const body = await readCompletionJson(response);
         const content = body.choices?.[0]?.message?.content;
         outputRaw = typeof content === "string" ? content : "";
+        nextCoursepilotContext = body.coursepilot_context;
       }
 
       if (generation !== chatGenerationRef.current) return;
@@ -627,6 +633,9 @@ export default function App() {
         throw new Error("响应内容超过浏览器安全上限，请缩小问题范围后重试。");
       }
       if (!outputRaw.trim()) throw new Error("服务返回了空回复。");
+      if (nextCoursepilotContext !== undefined) {
+        coursepilotContextRef.current = nextCoursepilotContext;
+      }
       finalizeDisplayMessage(assistantMessageId, outputRaw, "markdown");
       historyRef.current = [
         ...requestHistory,
@@ -635,6 +644,7 @@ export default function App() {
       setInputHint("画像按账号隔离");
     } catch (error) {
       if (generation !== chatGenerationRef.current) return;
+      coursepilotContextRef.current = null;
       if (isAbortError(error)) {
         if (outputRaw) {
           finalizeDisplayMessage(assistantMessageId, outputRaw, "markdown");

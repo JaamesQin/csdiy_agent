@@ -1,0 +1,95 @@
+{
+  "schema_version": "current-build-unit-audit-v1",
+  "audit_id": "ucb-cs61b-spring-2024-cs61b-3-audit-20260812",
+  "audited_at": "2026-08-12",
+  "course_id": "ucb-cs61b-spring-2024",
+  "course_version": "spring-2024",
+  "build_id": "a748c428609e7a5bc9f0697a06ae0d7fbd56e2469aaaba8f5b034121f2479ab1",
+  "auditor_id": "cs61b-current-build-audit-worker-cs61b-3",
+  "scope": {
+    "units": [
+      "lecture-27", "lecture-28", "lecture-29", "lecture-30", "lecture-31",
+      "lecture-32", "lecture-33", "lecture-34", "lecture-35", "lecture-36",
+      "lecture-37", "lecture-38", "lecture-39", "lecture-40"
+    ],
+    "unit_artifact_root": "outputs/ucb-cs61b-spring-2024/a748c428609e7a5bc9f0697a06ae0d7fbd56e2469aaaba8f5b034121f2479ab1/courses/ucb-cs61b-spring-2024/units",
+    "network_used": false,
+    "provider_or_model_used": false
+  },
+  "result": "block",
+  "status": "unit_artifact_numeric_drift_and_independent_audit_coverage_pending",
+  "summary": {
+    "unit_count": 14,
+    "candidate_final_semantic_equal": 14,
+    "final_yaml_semantic_equal": 14,
+    "validation_succeeded": 14,
+    "review_validation_succeeded": 14,
+    "citation_invalid_or_type_drift_units": ["lecture-28"],
+    "independent_audit_present_and_identity_fresh": ["lecture-35", "lecture-38", "lecture-40"],
+    "independent_audit_missing": ["lecture-27", "lecture-28", "lecture-29", "lecture-30", "lecture-31", "lecture-32", "lecture-33", "lecture-34", "lecture-36", "lecture-37", "lecture-39"],
+    "practice_semantic_issues": {
+      "status": "deferred",
+      "units": ["lecture-27", "lecture-28", "lecture-29", "lecture-30", "lecture-31", "lecture-32", "lecture-33", "lecture-34", "lecture-35", "lecture-36", "lecture-37", "lecture-38", "lecture-39", "lecture-40"],
+      "note": "Existing practice semantic quality/issues were not repaired or converted into a pass by this audit. Historical resolved findings remain provenance only; no new semantic pass is asserted."
+    }
+  },
+  "checks": {
+    "candidate_final_yaml": {
+      "result": "pass",
+      "details": "All 14 units compare equal after JSON/YAML semantic loading."
+    },
+    "validation": {
+      "result": "pass",
+      "details": "All final and candidate validation reports are succeeded with empty issues; all review-validation reports are succeeded with empty issues."
+    },
+    "identity_and_provenance": {
+      "result": "pass_with_coverage_block",
+      "details": "Unit/course/version/source identities agree with the authoritative chunks and run metadata. For all 14 units, the authoritative chunks file SHA-256 matches run metadata; source SHA-256 values match the final scope/review metadata where present. lecture-35, lecture-38, and lecture-40 independent audit identities, dates (2026-08-10), course/unit identity, result=pass, and relevant source/chunk hashes agree."
+    },
+    "citation_numeric_drift": {
+      "result": "block",
+      "unit": "lecture-28",
+      "location": "courses/ucb-cs61b-spring-2024/units/lecture-28/05-studykit.json and matching candidate/YAML",
+      "exact_expected": "Every page citation anchor.value must be an integer matching the authoritative chunks.jsonl page anchor value, e.g. 17, 20, 30, 31, 34, 38, 48, 50, 54, 58.",
+      "exact_actual": "36 final citation anchors use string values instead of integers; examples are \"17\", \"20\", \"30\", \"31\", \"34\", \"38\", \"48\", \"50\", \"54\", \"58\". The validation reports still say succeeded and count 117 citations, so this is a semantic/type drift not exposed by that validator.",
+      "next_action": "Repair lecture-28 candidate/final/YAML page-anchor numeric types in the owning unit pipeline, regenerate the affected validation/review evidence as required, then rerun this gate. Do not repair it in this audit report or via a root merge."
+    },
+    "independent_audit_freshness_and_identity": {
+      "result": "block_pending_coverage",
+      "fresh_audits": {
+        "lecture-35": "2026-08-10T23:49:20+08:00; identity/hash aligned; result pass",
+        "lecture-38": "2026-08-10T23:46:29+08:00; identity/hash aligned; result pass",
+        "lecture-40": "2026-08-10T23:47:10+08:00; identity/hash aligned; result pass"
+      },
+      "missing_audits": ["lecture-27", "lecture-28", "lecture-29", "lecture-30", "lecture-31", "lecture-32", "lecture-33", "lecture-34", "lecture-36", "lecture-37", "lecture-39"],
+      "next_action": "Obtain or generate independent audit evidence for the 11 listed units under the existing audit policy; do not infer independent pass from author quality-audit or review-plan independent_audit=false."
+    },
+    "root_merge_numeric_issue": {
+      "result": "none_found",
+      "details": "No issue in this scope was only a root-merge summary number. The lecture-28 page-value drift is in unit artifacts and therefore is not root-merge-only."
+    }
+  },
+  "per_unit": {
+    "lecture-27": {"candidate_final_yaml": "pass", "validation": "pass", "chunks": 42, "citations": 120, "independent_audit": "missing", "practice_semantic": "deferred"},
+    "lecture-28": {"candidate_final_yaml": "pass", "validation": "pass", "chunks": 59, "citations": 117, "citation_page_type_drift": {"count": 36, "expected": "integer", "actual": "string"}, "independent_audit": "missing", "practice_semantic": "deferred"},
+    "lecture-29": {"candidate_final_yaml": "pass", "validation": "pass", "chunks": 95, "citations": 86, "independent_audit": "missing", "practice_semantic": "deferred"},
+    "lecture-30": {"candidate_final_yaml": "pass", "validation": "pass", "chunks": 112, "citations": 96, "independent_audit": "missing", "practice_semantic": "deferred"},
+    "lecture-31": {"candidate_final_yaml": "pass", "validation": "pass", "chunks": 51, "citations": 130, "independent_audit": "missing", "practice_semantic": "deferred"},
+    "lecture-32": {"candidate_final_yaml": "pass", "validation": "pass", "chunks": 80, "citations": 115, "independent_audit": "missing", "practice_semantic": "deferred"},
+    "lecture-33": {"candidate_final_yaml": "pass", "validation": "pass", "chunks": 76, "citations": 108, "independent_audit": "missing", "practice_semantic": "deferred"},
+    "lecture-34": {"candidate_final_yaml": "pass", "validation": "pass", "chunks": 9, "citations": 88, "independent_audit": "missing", "practice_semantic": "deferred"},
+    "lecture-35": {"candidate_final_yaml": "pass", "validation": "pass", "chunks": 79, "citations": 93, "independent_audit": "pass_fresh_identity_aligned", "practice_semantic": "deferred"},
+    "lecture-36": {"candidate_final_yaml": "pass", "validation": "pass", "chunks": 44, "citations": 115, "independent_audit": "missing", "practice_semantic": "deferred"},
+    "lecture-37": {"candidate_final_yaml": "pass", "validation": "pass", "chunks": 51, "citations": 132, "independent_audit": "missing", "practice_semantic": "deferred"},
+    "lecture-38": {"candidate_final_yaml": "pass", "validation": "pass", "chunks": 71, "citations": 106, "independent_audit": "pass_fresh_identity_aligned", "practice_semantic": "deferred"},
+    "lecture-39": {"candidate_final_yaml": "pass", "validation": "pass", "chunks": 55, "citations": 128, "independent_audit": "missing", "practice_semantic": "deferred"},
+    "lecture-40": {"candidate_final_yaml": "pass", "validation": "pass", "chunks": 36, "citations": 90, "independent_audit": "pass_fresh_identity_aligned", "practice_semantic": "deferred"}
+  },
+  "write_scope": {
+    "only_created": "evaluations/ucb-cs61b-spring-2024-cs61b-3-audit-20260812.json",
+    "canonical_unit_artifacts_modified": false,
+    "manifest_modified": false,
+    "registry_modified": false,
+    "root_summaries_modified": false
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "stage": "03-practice-flow",
+  "practice": [
+    {
+      "id": "p1",
+      "level": "基础",
+      "question": "将 5 个 patches 投影成 12 维 tokens。写出 T 的形状；若 W∈R^{3×5}，写出 WT 的形状并解释每个输出行。",
+      "hint": "tokens 是行。",
+      "deliverable": "形状和一句解释。",
+      "expected_evidence": [
+        "T为5×12",
+        "WT为3×12",
+        "输出行是输入token的加权和"
+      ],
+      "evaluation": {
+        "criteria": [
+          "形状",
+          "语义"
+        ],
+        "points": 4
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 14
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 17
+          }
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "level": "基础",
+      "question": "对照 token mixing 与 token-wise MLP，指出哪一步跨 token 读取，哪一步只读取单行。",
+      "hint": "观察求和下标和 F_θ 输入。",
+      "deliverable": "两列表。",
+      "expected_evidence": [
+        "mixing跨行",
+        "MLP逐行共享"
+      ],
+      "evaluation": {
+        "criteria": [
+          "信息流区分"
+        ],
+        "points": 3
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 17
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "level": "中级",
+      "question": "若 N=4、Q/K 维3、V维6，写出 Q、K、V、QK^T、A、AV 的形状并解释 A_ij。",
+      "hint": "每个 query 匹配四个 keys。",
+      "deliverable": "形状表。",
+      "expected_evidence": [
+        "Q/K为4×3",
+        "V为4×6",
+        "A为4×4",
+        "AV为4×6"
+      ],
+      "evaluation": {
+        "criteria": [
+          "所有形状",
+          "A元素解释"
+        ],
+        "points": 6
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "level": "中高级",
+      "question": "把输入 tokens 做置换 π。写出输出关系，并解释添加固定空间槽的位置代码后，为何“只移动内容”不再等于对完整 token 行作 π。",
+      "hint": "区分 token 内容与完整输入表示。",
+      "deliverable": "等式和反例。",
+      "expected_evidence": [
+        "等变公式",
+        "等变不等于不变",
+        "位置改变完整输入"
+      ],
+      "evaluation": {
+        "criteria": [
+          "公式",
+          "位置逻辑"
+        ],
+        "points": 6
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 41
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 43
+          }
+        }
+      ]
+    },
+    {
+      "id": "p5",
+      "level": "高级",
+      "question": "为长度4的 next-token 训练画 causal mask，说明哪些连接被遮住以及为何各位置损失仍可并行计算。",
+      "hint": "未来 token 不可见，但各行仍能同批计算。",
+      "deliverable": "4×4 mask 与说明。",
+      "expected_evidence": [
+        "未来连接遮罩",
+        "每行仅用过去",
+        "一次前向多个预测"
+      ],
+      "evaluation": {
+        "criteria": [
+          "mask方向",
+          "并行性"
+        ],
+        "points": 6
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 51
+          }
+        }
+      ]
+    },
+    {
+      "id": "p6",
+      "level": "综合",
+      "question": "在图像描述器中列出 image self-attention、text causal self-attention、cross-attention 的 Q/K/V 来源，并标出防未来词泄漏的模块。",
+      "hint": "文本 queries 读取图像 keys/values。",
+      "deliverable": "来源表和架构图。",
+      "expected_evidence": [
+        "图像内部self",
+        "文本内部causal",
+        "文本Q对图像K/V",
+        "causal mask正确"
+      ],
+      "evaluation": {
+        "criteria": [
+          "三类attention",
+          "来源",
+          "因果安全"
+        ],
+        "points": 8
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 54
+          }
+        }
+      ]
+    }
+  ]
+}

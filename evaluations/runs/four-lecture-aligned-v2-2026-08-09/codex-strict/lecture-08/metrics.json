@@ -1,0 +1,35 @@
+{
+  "mode": "strict",
+  "unit_id": "lecture-08",
+  "coordinator_dispatch_at": "2026-08-09T14:02:46.334791361Z",
+  "started_at": "2026-08-09T14:03:12.464237215Z",
+  "vision_inventory_checkpoint_at": "2026-08-09T14:03:23.841520582Z",
+  "assembly_audit_and_blocker_reaudit_checkpoint_at": "2026-08-09T14:04:59.300468539Z",
+  "completed_at": "2026-08-09T14:05:11.221706745Z",
+  "total_duration_seconds": 144.887,
+  "internal_authoring_validation_seconds": 118.757,
+  "coordinator_to_internal_start_seconds": 26.129,
+  "stage_durations_seconds": {
+    "source_and_vision_inventory": 11.377,
+    "visual_review_separate_authoring_stages_audit_and_blocker_reaudit": 95.459,
+    "finalization_validation_and_equivalence": 11.921
+  },
+  "semantic_passes": 5,
+  "needs_host_vision_page_count": 21,
+  "final_formula_page_count": 10,
+  "reviewed_unique_page_count": 37,
+  "retries": 0,
+  "repairs": [
+    {
+      "stage": "audit",
+      "action": "see 04-quality-audit.resolution.json"
+    }
+  ],
+  "remaining_blockers": 0,
+  "input_tokens": null,
+  "output_tokens": null,
+  "token_count_note": "The host did not expose per-turn token counts.",
+  "timing_note": "The v2 default total uses the authoritative coordinator dispatch through final validation; internal stage durations use genuine observed UTC checkpoints.",
+  "quality_mode": "strict",
+  "reviewed_page_count": 38
+}

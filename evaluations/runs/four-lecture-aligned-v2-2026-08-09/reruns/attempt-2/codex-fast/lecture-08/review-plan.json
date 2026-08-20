@@ -1,0 +1,47 @@
+{
+  "quality_mode": "fast",
+  "selected_pages": [
+    1,
+    14,
+    17,
+    18,
+    29,
+    34,
+    37,
+    38,
+    41,
+    44,
+    51,
+    52,
+    54
+  ],
+  "actual_reviewed_pages": [
+    1,
+    14,
+    17,
+    18,
+    29,
+    34,
+    37,
+    38,
+    41,
+    44,
+    51,
+    52,
+    54
+  ],
+  "required_final_formula_pages": [
+    14,
+    17,
+    18,
+    29,
+    34,
+    37,
+    41,
+    44
+  ],
+  "independent_audit": false,
+  "blockers_after_reaudit": [],
+  "selection_reason": "identity, all final formulas, architecture, strong claims, causal and cross-attention risk pages",
+  "page_selector_version": "review-pages-v1"
+}
