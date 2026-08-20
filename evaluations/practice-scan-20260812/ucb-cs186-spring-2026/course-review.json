@@ -1,0 +1,304 @@
+{
+  "schema_version": "practice-course-review-v1",
+  "course_id": "ucb-cs186-spring-2026",
+  "build_id": "aadb0606a7f2fd9a5920e2340bfcc42d6522e06628a12124e8e74d1a5fd277",
+  "reviewed_range_reports": [
+    {
+      "path": "evaluations/practice-scan-20260812/ucb-cs186-spring-2026/range-01-10.json",
+      "report_schema_version": "practice-semantic-scan-v1",
+      "report_build_id": "aadb0606a7f2fd9a5920e2340bf30cc42d6522e06628a12124e8e74d1a5fd277",
+      "inspected_build_id": null,
+      "unit_ids": ["note-01", "note-02", "note-03", "note-04", "note-05", "note-06", "note-07", "note-08", "note-09", "note-10"],
+      "raw_counts": {"pass": 56, "needs_repair": 2, "fail": 0, "total": 58, "units": 10},
+      "normalized_counts": {"total": 58, "pass": 56, "needs_repair": 2, "blocker_items": 2, "blocker_findings": 2},
+      "coverage_check": {
+        "unit_ids_unique": true,
+        "unit_ids_in_catalog_manifest": true,
+        "reported_item_ids_unique_within_units": true,
+        "reported_item_ids_match_current_05_studykit": true,
+        "reported_item_count": 58,
+        "current_05_studykit_item_count": 58
+      }
+    },
+    {
+      "path": "evaluations/practice-scan-20260812/ucb-cs186-spring-2026/range-11-20.json",
+      "report_schema_version": "practice-semantic-scan-v1",
+      "report_build_id": "aadb0606a7f2fd9a5920e2340bfcc42d6522e06628a12124e8e74d1a5fd277",
+      "inspected_build_id": "aadb0606a7f2fd9a5920e2340bf30cc42d6522e06628a12124e8e74d1a5fd277",
+      "unit_ids": ["note-11", "note-12", "note-13", "note-14", "note-15", "note-16", "note-17", "note-18", "note-19", "note-20"],
+      "raw_counts": {"units": 10, "items": 55, "pass": 55, "blockers": 0, "units_with_blockers": 0},
+      "normalized_counts": {"total": 55, "pass": 55, "needs_repair": 0, "blocker_items": 0, "blocker_findings": 0},
+      "coverage_check": {
+        "unit_ids_unique": true,
+        "unit_ids_in_catalog_manifest": true,
+        "reported_item_ids_unique_within_units": true,
+        "reported_item_ids_match_current_05_studykit": true,
+        "reported_item_count": 55,
+        "current_05_studykit_item_count": 55
+      }
+    }
+  ],
+  "manifest_unit_count": 20,
+  "scanned_unit_count": 20,
+  "item_counts": {
+    "total": 113,
+    "pass": 111,
+    "needs_repair": 2,
+    "blocker_items": 8,
+    "blocker_findings": 8,
+    "reported_status_counts": {"pass": 111, "needs_repair": 2, "fail": 0, "reported_blocker_items": 0},
+    "independently_confirmed_pass_sample_items": 14,
+    "count_semantics": "pass and needs_repair are normalized report statuses; blocker_items/findings are independent semantic findings and include the two reported needs_repair items plus six sampled items reported as pass, so these fields intentionally overlap rather than form a partition."
+  },
+  "coverage_gaps": [
+    {
+      "code": "requested_build_directory_missing",
+      "classification": "structural",
+      "status": "open",
+      "requested_build_id": "aadb0606a7f2fd9a5920e2340bfcc42d6522e06628a12124e8e74d1a5fd277",
+      "observed_complete_build_id": "aadb0606a7f2fd9a5920e2340bf30cc42d6522e06628a12124e8e74d1a5fd277",
+      "detail": "No output directory exists for the literal requested ID. The complete current unit tree used for direct inspection is the 64-character observed ID; range-11 records the requested ID as build_id and the observed ID as inspected_build_id."
+    },
+    {
+      "code": "manifest_unit_and_report_partition",
+      "classification": "coverage_check",
+      "status": "closed",
+      "detail": "The catalog manifest has 20 unique units; the observed complete build has exactly the same 20 unique unit directories; the two reports partition note-01..note-20 with no duplicate or missing report unit IDs."
+    },
+    {
+      "code": "practice_item_id_coverage",
+      "classification": "coverage_check",
+      "status": "closed_with_checkpoint_shape_exception",
+      "detail": "All 113 reported item IDs are unique within their units and match current 05-studykit practice IDs. note-10/03-practice-flow.json exposes practice_ids and grounding metadata but no practice/items array; its seven full items are present and matched in 05-studykit.json."
+    }
+  ],
+  "independently_confirmed_findings": [
+    {
+      "classification": "semantic_blocker",
+      "code": "underspecified_setting",
+      "practice_ids": ["note-05/q1"],
+      "report_status": "needs_repair",
+      "independent_status": "confirmed_blocker",
+      "source_anchors": [
+        {
+          "source_id": "note-05-7751092450",
+          "chunk_id": "note-05-7751092450-heading-a-href-buffer-pool-class",
+          "anchor": {"type": "heading", "value": "# <a href=\"#buffer-pool\" class=\"anchor-heading\""}
+        }
+      ],
+      "reason": "The question supplies page A, page B, and an empty frame but no pin-count or dirty-bit values, while requiring a completed metadata table containing those values. A learner cannot determine a unique answer from the stated setting.",
+      "repair": "Provide concrete metadata for all three frames, or explicitly request a symbolic table and define the allowed symbolic states; retain the frame/page mapping and state-field distinction."
+    },
+    {
+      "classification": "semantic_blocker",
+      "code": "lecture_specific_dependency",
+      "practice_ids": ["note-10/p4"],
+      "report_status": "needs_repair",
+      "independent_status": "confirmed_blocker_with_different_diagnosis",
+      "source_anchors": [
+        {
+          "source_id": "note-10-1dffa306fb",
+          "chunk_id": "note-10-1dffa306fb-heading-a-href-consideration-1-c",
+          "anchor": {"type": "heading", "value": "## <a href=\"#consideration-1\" class=\"anchor-heading\""}
+        }
+      ],
+      "reason": "The current question, values B=5/P=50/filtered P=30/T=100/filtered T=40, A=590, B=1110, and materialization comparison reproduce the cited worked example. The report's stated 600 arithmetic diagnosis is not independently confirmed: under the source's materialize-P/stream-T convention, the 1110 calculation is supported by scanning all 100 T pages for each of ceil(30/(5-2)) outer blocks. The item nevertheless remains blocked because it is a lecture-example replay with no changed input or condition.",
+      "repair": "Replace the worked-example numbers and plan with a new materialization/streaming instance, explicitly state which relation is outer and whether an unmaterialized inner selection scans all pages on every block, and require a fresh cost comparison."
+    },
+    {
+      "classification": "semantic_blocker",
+      "code": "lecture_specific_dependency",
+      "practice_ids": ["note-01/p1"],
+      "report_status": "pass",
+      "independent_status": "confirmed_blocker",
+      "source_anchors": [
+        {
+          "source_id": "note-01-a30fda45a2",
+          "chunk_id": "note-01-a30fda45a2-heading-a-href-querying-a-table-",
+          "anchor": {"type": "heading", "value": "## <a href=\"#querying-a-table\" class=\"anchor-heading\""}
+        }
+      ],
+      "reason": "The item repeats the source's exact Person table (Ace/Ada/Ben/Cho), SELECT name,num_dogs query, DISTINCT result, and nondeterministic-order example. It has observable output but does not test transfer beyond replaying the lecture example.",
+      "repair": "Use a new schema and rows, or change the duplicate/order condition, and require the learner to predict the changed result while restating the no-ORDER-BY boundary."
+    },
+    {
+      "classification": "semantic_blocker",
+      "code": "lecture_specific_dependency",
+      "practice_ids": ["note-06/note-06-p1"],
+      "report_status": "pass",
+      "independent_status": "confirmed_blocker",
+      "source_anchors": [
+        {
+          "source_id": "note-06-0570a1c4a0",
+          "chunk_id": "note-06-0570a1c4a0-heading-a-href-projection-pi-cla",
+          "anchor": {"type": "heading", "value": "# <a href=\"#projection-pi\" class=\"anchor-heading\""}
+        },
+        {
+          "source_id": "note-06-0570a1c4a0",
+          "chunk_id": "note-06-0570a1c4a0-heading-a-href-selection-sigma-c",
+          "anchor": {"type": "heading", "value": "# <a href=\"#selection-sigma\" class=\"anchor-heading\""}
+        }
+      ],
+      "reason": "The question reproduces the cited SQL SELECT name, age FROM dogs WHERE age = 12 example and asks for the same projection/selection expression and explanation. The conditions are complete, but the task is a worked-example replay rather than a transferable instance.",
+      "repair": "Change the relation, predicate, and projected columns, then require schema/row tracing and a boundary check that preserves columns needed by the predicate."
+    },
+    {
+      "classification": "semantic_blocker",
+      "code": "lecture_specific_dependency",
+      "practice_ids": ["note-07/p1"],
+      "report_status": "pass",
+      "independent_status": "confirmed_blocker",
+      "source_anchors": [
+        {
+          "source_id": "note-07-8120b91207",
+          "chunk_id": "note-07-8120b91207-heading-a-href-general-strategy-",
+          "anchor": {"type": "heading", "value": "# <a href=\"#general-strategy\" class=\"anchor-heading\""}
+        }
+      ],
+      "reason": "The item uses the source's exact two-hash-table/Brian scenario and asks for the source's exact partition invariant. No new records, hash partition, or changed condition is supplied.",
+      "repair": "Give a new finite set of keys distributed across named memory partitions and require the learner to identify the unsafe concatenation and verify a changed partition rule."
+    },
+    {
+      "classification": "semantic_blocker",
+      "code": "lecture_specific_dependency",
+      "practice_ids": ["note-11/p1"],
+      "report_status": "pass",
+      "independent_status": "confirmed_blocker",
+      "source_anchors": [
+        {
+          "source_id": "note-11-376d7b3a17",
+          "chunk_id": "note-11-376d7b3a17-heading-a-href-introduction-clas",
+          "anchor": {"type": "heading", "value": "# <a href=\"#introduction\" class=\"anchor-heading\""}
+        }
+      ],
+      "reason": "The item replays the source's toy.price=10, uncommitted write to 20, second transaction read of 20, and abort-to-10 dirty-read sequence. The transaction labels are renamed but the worked example and conclusion are unchanged.",
+      "repair": "Use a new resource, values, interleaving, or a changed commit/abort condition and require a fresh anomaly classification with a falsifiable visibility table."
+    },
+    {
+      "classification": "semantic_blocker",
+      "code": "lecture_specific_dependency",
+      "practice_ids": ["note-15/p1"],
+      "report_status": "pass",
+      "independent_status": "confirmed_blocker",
+      "source_anchors": [
+        {
+          "source_id": "note-15-1a755bcb3d",
+          "chunk_id": "note-15-1a755bcb3d-heading-a-href-parallel-architec",
+          "anchor": {"type": "heading", "value": "# <a href=\"#parallel-architectures\" class=\"anchor-heading\""}
+        },
+        {
+          "source_id": "note-15-1a755bcb3d",
+          "chunk_id": "note-15-1a755bcb3d-heading-a-href-types-of-intra-qu",
+          "anchor": {"type": "heading", "value": "## <a href=\"#types-of-intra-query-parallelism\" class=\"anchor-heading\""}
+        }
+      ],
+      "reason": "The item combines the source's shared-nothing definition (independent memory/disk and network messages) with the source's R/S sorting example and asks for the same architecture and intra-query classification. It does not introduce a changed parallel plan or decision boundary.",
+      "repair": "Specify a new multi-machine workload and a changed operator/query parallelization choice, then require classification plus an observable data-placement or execution consequence."
+    },
+    {
+      "classification": "semantic_blocker",
+      "code": "lecture_specific_dependency",
+      "practice_ids": ["note-18/p1"],
+      "report_status": "pass",
+      "independent_status": "confirmed_blocker",
+      "source_anchors": [
+        {
+          "source_id": "note-18-8659b4f314",
+          "chunk_id": "note-18-8659b4f314-heading-a-href-word-count-exampl",
+          "anchor": {"type": "heading", "value": "## <a href=\"#word-count-example\" class=\"anchor-heading\""}
+        }
+      ],
+      "reason": "The item packages the source's exact apple, banana, banana, and book word-count pairs into two documents and requests the same Map/group/Reduce outputs. It is directly solvable but provides no changed input or boundary beyond replay.",
+      "repair": "Use different documents and repeated words, or change the reducer/value rule, and require the learner to predict the new grouped values and output."
+    },
+    {
+      "classification": "sample_protocol_result",
+      "range": "01-10",
+      "sampled_pass_items": [
+        {"practice_id": "note-02/p1", "status": "pass", "protocol_checks": {"concrete_setting": true, "necessary_conditions_restated": true, "replacement_transfer": true, "observable_result": true, "hint_expected_evaluation_aligned": true, "relevant_anchors": true, "formative": true}},
+        {"practice_id": "note-03/p1", "status": "pass", "protocol_checks": {"concrete_setting": true, "necessary_conditions_restated": true, "replacement_transfer": true, "observable_result": true, "hint_expected_evaluation_aligned": true, "relevant_anchors": true, "formative": true}},
+        {"practice_id": "note-04/ex1", "status": "pass", "protocol_checks": {"concrete_setting": true, "necessary_conditions_restated": true, "replacement_transfer": true, "observable_result": true, "hint_expected_evaluation_aligned": true, "relevant_anchors": true, "formative": true}},
+        {"practice_id": "note-05/q2", "status": "pass", "protocol_checks": {"concrete_setting": true, "necessary_conditions_restated": true, "replacement_transfer": true, "observable_result": true, "hint_expected_evaluation_aligned": true, "relevant_anchors": true, "formative": true}},
+        {"practice_id": "note-08/p-two-way", "status": "pass", "protocol_checks": {"concrete_setting": true, "necessary_conditions_restated": true, "replacement_transfer": true, "observable_result": true, "hint_expected_evaluation_aligned": true, "relevant_anchors": true, "formative": true}},
+        {"practice_id": "note-09/p1", "status": "pass", "protocol_checks": {"concrete_setting": true, "necessary_conditions_restated": true, "replacement_transfer": true, "observable_result": true, "hint_expected_evaluation_aligned": true, "relevant_anchors": true, "formative": true}},
+        {"practice_id": "note-10/p1", "status": "pass", "protocol_checks": {"concrete_setting": true, "necessary_conditions_restated": true, "replacement_transfer": true, "observable_result": true, "hint_expected_evaluation_aligned": true, "relevant_anchors": true, "formative": true}}
+      ]
+    },
+    {
+      "classification": "sample_protocol_result",
+      "range": "11-20",
+      "sampled_pass_items": [
+        {"practice_id": "note-12/p1", "status": "pass", "protocol_checks": {"concrete_setting": true, "necessary_conditions_restated": true, "replacement_transfer": true, "observable_result": true, "hint_expected_evaluation_aligned": true, "relevant_anchors": true, "formative": true}},
+        {"practice_id": "note-13/p1", "status": "pass", "protocol_checks": {"concrete_setting": true, "necessary_conditions_restated": true, "replacement_transfer": true, "observable_result": true, "hint_expected_evaluation_aligned": true, "relevant_anchors": true, "formative": true}},
+        {"practice_id": "note-14/p1", "status": "pass", "protocol_checks": {"concrete_setting": true, "necessary_conditions_restated": true, "replacement_transfer": true, "observable_result": true, "hint_expected_evaluation_aligned": true, "relevant_anchors": true, "formative": true}},
+        {"practice_id": "note-16/p1", "status": "pass", "protocol_checks": {"concrete_setting": true, "necessary_conditions_restated": true, "replacement_transfer": true, "observable_result": true, "hint_expected_evaluation_aligned": true, "relevant_anchors": true, "formative": true}},
+        {"practice_id": "note-17/p1", "status": "pass", "protocol_checks": {"concrete_setting": true, "necessary_conditions_restated": true, "replacement_transfer": true, "observable_result": true, "hint_expected_evaluation_aligned": true, "relevant_anchors": true, "formative": true}},
+        {"practice_id": "note-19/p1", "status": "pass", "protocol_checks": {"concrete_setting": true, "necessary_conditions_restated": true, "replacement_transfer": true, "observable_result": true, "hint_expected_evaluation_aligned": true, "relevant_anchors": true, "formative": true}},
+        {"practice_id": "note-20/p1", "status": "pass", "protocol_checks": {"concrete_setting": true, "necessary_conditions_restated": true, "replacement_transfer": true, "observable_result": true, "hint_expected_evaluation_aligned": true, "relevant_anchors": true, "formative": true}}
+      ]
+    }
+  ],
+  "repair_priority": [
+    {
+      "priority": 1,
+      "pattern": "lecture_specific_dependency",
+      "practice_ids": ["note-01/p1", "note-06/note-06-p1", "note-07/p1", "note-10/p4", "note-11/p1", "note-15/p1", "note-18/p1"],
+      "why_first": "This is the repeated course-level failure pattern: complete settings and relevant anchors are being used to replay worked examples rather than test a replaceable course concept.",
+      "repair": "For every listed item, preserve the concept and necessary conditions but replace lecture-specific values, names, records, or plan choices; include a changed-condition or boundary consequence and make the new output independently checkable. For note-10/p4, explicitly disambiguate outer/inner relation and whether the unmaterialized inner scan reads all pages per outer block; do not merely change the expected number."
+    },
+    {
+      "priority": 2,
+      "pattern": "underspecified_setting",
+      "practice_ids": ["note-05/q1"],
+      "why": "The learner is asked to populate state fields whose values are absent, so the task cannot be uniquely started or evaluated.",
+      "repair": "Supply concrete pin-count and dirty-bit values for page A, page B, and the empty frame, or define a symbolic-table task with explicit variables and evaluation rules."
+    }
+  ],
+  "deferred_structural_findings": [
+    {
+      "code": "build_id_path_mismatch",
+      "scope": "requested_build",
+      "detail": "The requested 62-character build directory is absent; direct inspection used the complete 64-character root recorded as inspected_build_id by range-11 and as report build_id by range-01.",
+      "does_not_change_semantic_status": true
+    },
+    {
+      "code": "review_plan_scope_anomaly",
+      "scope": ["note-03"],
+      "detail": "review-plan.json has empty selected_pages and actual_reviewed_pages despite source-backed practice citations.",
+      "does_not_change_semantic_status": true
+    },
+    {
+      "code": "evidence_plan_shape_anomaly",
+      "scope": ["note-01", "note-03", "note-04", "note-05", "note-06", "note-07", "note-09", "note-10"],
+      "detail": "EvidencePlan artifacts use legacy/nonuniform keys without one normalized requirements array; semantic grounding was checked through mapped IDs or 01/02 content and current practice artifacts.",
+      "does_not_change_semantic_status": true
+    },
+    {
+      "code": "mixed_checkpoint_schema",
+      "scope": ["note-10", "note-15", "note-16"],
+      "detail": "note-10/03 exposes practice_ids/grounding metadata without full practice items; note-15 and note-16 use items rather than practice, and note-15 stage-03 shells omit learner-facing question/hint/evidence fields while aligned complete practice appears in 05.",
+      "does_not_change_semantic_status": true
+    },
+    {
+      "code": "missing_explicit_practice_mapping_id",
+      "scope": ["note-17", "note-18", "note-19", "note-20"],
+      "detail": "03-practice-flow items do not consistently carry requirement, concept, opportunity, or evidence-item IDs; the sampled semantic checks used 01/02 content and cited chunks instead.",
+      "does_not_change_semantic_status": true
+    },
+    {
+      "code": "review_checkpoint_anomaly",
+      "scope": ["note-13", "note-18", "note-20"],
+      "detail": "Review-plan fields are not uniform: note-13 records zero actual reviewed pages while recording reviewed anchors/practice IDs; note-18 and note-20 omit a complete independent-audit/re-audit record.",
+      "does_not_change_semantic_status": true
+    },
+    {
+      "code": "source_anchor_integrity",
+      "scope": "all_reported_items",
+      "detail": "The reports state, and direct lookup confirmed for inspected findings and samples, that cited source IDs/chunk IDs/heading anchors resolve. No citation mismatch was found in this review.",
+      "does_not_change_semantic_status": true
+    }
+  ],
+  "auditor_id": "luna-xhigh-course-level-independent-practice-auditor-ucb-cs186-spring-2026-20260812",
+  "offline_only": true,
+  "next_action": "hold release; do not modify this build or prior reports; create a new fingerprinted build that repairs the eight exact blocker items, then rerun an independent full-practice semantic audit and separately close the deferred structural findings, including the literal build-ID/path mismatch."
+}

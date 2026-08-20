@@ -1,0 +1,12 @@
+{
+  "stage": "04-quality-audit.resolution",
+  "status": "repaired",
+  "repairs": [
+    {
+      "finding_id": "F1",
+      "stage": "02-learning-content",
+      "action": "Redirected all flagged anchors to clean duplicate/equivalent visible pages.",
+      "verified": true
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "schema_version": "independent-visual-audit-v1",
+  "audit_id": "mit-6-042j-visual-independent-audit-20260812",
+  "course_id": "mit-6-042j-spring-2024",
+  "course_version": "spring-2024",
+  "auditor_id": "mit6042-visual-sidecar",
+  "audited_at": "2026-08-12",
+  "audit_scope": "parser-risk-pages-only",
+  "quality_mode": "fast",
+  "page_selector_version": "review-pages-v1",
+  "review_version": "risk-pages-v1",
+  "result": "pass",
+  "status": "no_parser_risk_pages",
+  "source_evidence": {
+    "catalog_manifest": "data/manifests/mit-6-042j-spring-2024.yaml",
+    "source_review": "docs/mit-6-042j-spring-2024-source-review.md",
+    "parser_results": "evaluations/mit-6-042j-spring-2024-parser-results.md",
+    "aggregate_visual_review": "evaluations/csdiy-six-course-visual-review.json",
+    "risk_page_summary": "data/raw/catalog-visual-review-v1/risk-page-summary.json",
+    "source_page_count": 217,
+    "unit_count": 24,
+    "primary_chunk_count": 217,
+    "warning_chunk_count": 71,
+    "low_text_chunk_count": 0,
+    "empty_chunk_count": 0,
+    "validation_errors": 0
+  },
+  "pages": {
+    "risk_page_count": 0,
+    "risk_pages": [],
+    "rendered_page_count": 0,
+    "actual_reviewed_page_count": 0,
+    "actual_reviewed_pages": [],
+    "contact_sheet_count": 0
+  },
+  "checks": {
+    "risk_page_summary_course_match": "pass",
+    "all_24_units_present_in_risk_summary": "pass",
+    "all_units_have_zero_risk_pages": "pass",
+    "aggregate_record_matches_course_record": "pass",
+    "parser_risk_visual_blocker": "none"
+  },
+  "limitations": [
+    "No parser-risk pages were selected, so no source page images were required for this gate.",
+    "Formula-specific visual review and final-citation-page review remain per-StudyKit-unit gates and are not asserted by this sidecar."
+  ],
+  "network_used": false,
+  "provider_or_model_used": false,
+  "write_scope": {
+    "only_created": "evaluations/mit-6-042j-visual-independent-audit.json",
+    "registry_modified": false,
+    "other_course_files_modified": false,
+    "practice_modified": false
+  }
+}

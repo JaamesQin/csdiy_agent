@@ -1,6 +1,6 @@
 # CoursePilot 项目状态
 
-更新时间：2026-08-13
+更新时间：2026-08-20
 
 这份文档是新开发者的快速入口。更完整的状态矩阵见
 [docs/project_status.md](docs/project_status.md)，生成管线说明见
@@ -15,12 +15,14 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
 学习复盘仍未接成完整闭环。
 
 2026-08-12 已将 `outputs/` 中每个课程版本的最新有效成果归档为
-`data/archive/studykits.sqlite3`：12 builds、286 个 StudyKit、12,008 个文本 checkpoint/
-审计工件，完整性复核为零问题。2026-08-13 又将 `data/` 迁移为私有
+`data/archive/studykits.sqlite3`：12 builds、286 个 StudyKit；初始 12,008 个文本 checkpoint/
+审计工件，CS186 身份修复后增加至 12,010 个，完整性复核为零问题。2026-08-13 又将 `data/` 迁移为私有
 `JaamesQin/csdiy_agent-data` submodule，并用 Git LFS 管理 SQLite 与 anchored chunks。
-数据库记录均为 `validated_draft`，未冒充人工批准或在线发布。
-在线运行时已经接入只读数据库 adapter：只有 build/document 都为 `approved` 的记录才
-可见，并保留 Lecture 2/8 人工批准 golden 回退；当前归档不会扩大在线范围。
+2026-08-17 按 Schema、引用、逐题审计、build 完整性和归档身份一致性门禁完成批量人工批准；
+MIT 6.7960 与 MIT 6.S081 另按仓库所有者的 reviewed-legacy 结论保留逐项豁免记录后批准。
+UCB CS186 由直接父快照生成新指纹身份修复 build 并重新通过 exact-set 门禁。当前 9 个 build、
+220 个 StudyKit 为 `approved`，其余 3 个 partial build、66 个 StudyKit 保持 `validated_draft`。
+组合 Store 当前提供 220 个在线 StudyKit。
 
 当前最成熟的链路是：
 
@@ -89,12 +91,12 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
 - 已提供生成 CLI、质量 profile 评估脚本和 Lecture 并发回归调度器。
 - MIT 6.7960 Fall 2024 manifest 已覆盖官方可用的 23 讲：Lecture 01–21、23、24；
   官方缺失的 Lecture 22、25 未创建占位单元。
-- 23 讲 portable StudyKit 已完成结构、引用与渲染验证；其正式 archive 记录仍为
-  `validated_draft`，不会进入在线查询。被精简 submodule 排除的 reviewed/SourceChunks
+- 23 讲 portable StudyKit 已完成结构、引用与渲染验证；其正式 archive 记录已按
+  reviewed-legacy 人工结论批准并进入在线查询。被精简 submodule 排除的 reviewed/SourceChunks
   快照只可作为 ignored 本地数据；在线运行时使用合法 approved archive，并以既有 golden 回退。
-- MIT 6.S081 Fall 2021 的 24 个有实质来源讲次也已完成 v0.2 artifact、review 和
-  输出一致性复核，并经 Lecture 07、15、17 随机语义/视觉抽查；正式 archive 仍以
-  `validated_draft` 保存，raw、chunks、页图、reviewed 重复包和完整 build 不进入精简远端。
+- MIT 6.S081 Fall 2021 的 24 个有实质来源讲次也已完成 artifact、review 和
+  输出一致性复核，并经 Lecture 07、15、17 随机语义/视觉抽查；正式 archive 已按
+  reviewed-legacy 人工结论批准，raw、chunks、页图、reviewed 重复包和完整 build 不进入精简远端。
 - Outline 页码只要求存在于本讲输入 SourceChunks，不要求每页都进入
   Content 的最小证据并集。
 - Practice 的 Prompt 仍要求 5–8 题；验证器允许合理超出，以避免模型偶发
@@ -108,7 +110,7 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
   CSRF token，并校验浏览器 Origin。
 - 账号画像 subject 固定为 `account:<uuid>`；旧 API Key 的 OpenAI `user`
   映射到 `legacy:<user>`，两个命名空间不能互访。
-- SQLite Schema v2 保留历史画像并将其迁移到 legacy 命名空间；未知数据库
+- SQLite Schema v3 保留历史画像并将其迁移到 legacy 命名空间，并增加了经 HMAC 索引的最小会话连续状态；未知数据库
   版本拒绝服务启动。
 - 当前保存用户明确提供的学习方向、目标、每周时间、技术基础和讲解偏好；
   模型推断只作为 7 天待确认候选，不保存完整对话、代码、traceback 或模型推理。
@@ -117,28 +119,36 @@ CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生�
 
 - `/v1/chat/completions` 已从固定回显切换为协议层之后的独立 Agent 编排层；
   OpenAI JSON、SSE、Bearer 和 `coursepilot-probe` 模型 ID 保持兼容。
-- 意图路由采用确定性规则优先、DeepSeek 结构化分类兜底；低置信请求先澄清，
-  普通对话不能触发后台 StudyKit 生成。
+- 在线理解生成有界 TaskPlan；专用能力优先，无法归类或规划校验失败时进入受约束的
+  `general_assistance`，不再借用生成状态或只返回固定澄清。通用能力最多读取最近 30 条、
+  48,000 字符对话及 confirmed 画像，并只输出无课程引用的一般知识。
 - 能力目录集中维护已上线和未上线能力；`/help` 当前展示画像、代码辅导、课程导航、
-  StudyKit 查询、材料问答、概念解释、练习选择和练习反馈，Help 不触发画像观察。
+  StudyKit 查询、材料问答、概念解释、练习选择、练习反馈和通用学习问答，Help 不触发画像观察。
+- 未上线能力仅作为 Help/状态 metadata，Router、TaskPlanner 和执行入口均禁止将其作为可执行任务。
+  明确的学习复盘、生成状态等自然语言请求转入 `general_assistance`，并向模型传入最小、受控的未上线能力边界。
 - Cookie 会话只向 Agent 传入 `account:<uuid>`；API Key 请求的可选 `user` 只映射为
   `legacy:<user>`。画像支持查看、纠正、单项删除和全部删除。
+- API Key 请求的可选顶层 `sessionId` 已接入 Schema v3 服务端连续状态。它仅在
+  `account:`/`legacy:` 可信命名空间内生效，原始 ID 不入库，默认滑动保留 30 天；缺失或空值按新会话处理。
+  状态只包含已验证课程/讲次、当前练习和最小指代信息，不保存 messages、代码、答案或 reasoning。
 - 代码辅导使用 Python AST 与自包含 Tree-sitter language pack；C/C++、CUDA、
   ISPC、LaTeX、Java、Go、Rust、OCaml、Verilog、汇编等进入确定性结构解析，
   课程专用 DSL 明确降级为模型静态建议。所有路径始终返回 `ran_code=false`，
   作业代写请求由规则守卫阻断。
-- 在线课程上下文只读取 Lecture 2/8 中 Schema 合法且人工批准的黄金 StudyKit；
+- 在线课程上下文读取 220 份 approved archive StudyKit，并保留 Lecture 2/8 中 Schema
+  合法且人工批准的黄金 StudyKit 回退；
   材料模型只能引用允许列表内的真实页码，学习者输出不含 `expected_evidence`、
   evaluation、rubric、审计字段或本地路径。
 - `CourseCatalogStore` 校验 119 个 CSDIY 课程目标、唯一身份、导航 provenance 和受控
-  Manifest；课程导航明确区分目录分类、离线 authoring 和在线 StudyKit 状态。
+  Manifest；安全课程知识投影把全量身份/方向/入门与后续价值提供给在线决策，同时排除路径、哈希、候选探测和审计诊断。课程导航精确查询保持确定性，个性化排序读取全部 confirmed 画像并分为“现在开始/长期目标”。
 - `StudyKitLookupService` 已实现查询、材料问答、概念解释、练习选择和当前答案反馈；
   未配置模型时材料问答返回已审核摘要，练习反馈不做粗略判分。练习答案和历史均不持久化。
-- 未配置 `DEEPSEEK_API_KEY`、模型失败或画像数据库不可用时均透明降级，服务仍能启动和响应。
+- 未配置 `DEEPSEEK_API_KEY`、模型失败或画像数据库不可用时均透明降级；个性化课程排序失败时明确标注为未结合画像的方向候选；通用问答不会进行
+  第二次生成尝试，其他确定性能力仍能启动和响应。
 
 ### 测试状态
 
-- 当前自动化测试：`303 passed`（299 项普通测试，4 项 loopback HTTP/SSE 测试）。
+- 当前自动化测试：`623 passed`，包括全课程知识投影、画像感知排序、能力可用性问句短路、未上线能力失败关闭与通用边界回答、浏览器签名与清小搭 `sessionId` 服务端连续状态、可信讲次继承与显式换课/换讲、练习 ID/位置别名、状态库故障降级、通用学习兜底和 loopback HTTP/SSE 回归。
 - 测试覆盖阶段 Schema、Evidence controls、确定性 chunk 并集、引用、
   Markdown LaTeX、模型响应重试、恢复、单次 Audit 回修、非 CS 合成单元、
   CLI、质量 profile、数据库迁移、密码/会话安全、CSRF、限流、账号隔离、
@@ -217,7 +227,7 @@ MaterialSet/权限必须先提供稳定接口，SourceChunk 检索随后增强�
 - 清小搭文件输入、稳定会话标识和文件保留能力仍需账号级实测。
 - 本地网页登录已使用服务端验证的账号身份；API Key 请求的 `user` 仍只是逻辑标识，
   不是授权凭据，在清小搭稳定身份完成实测前只适用于受信网关。
-- 在线代码辅导当前不执行代码；课程引用仅来自两份人工批准的黄金 StudyKit，
+- 在线代码辅导当前不执行代码；课程引用仅来自 approved archive 或两份人工批准的黄金 StudyKit，
   尚未接入原始 SourceChunk 检索。
 - v21 已完成新鲜模型全量回归并达到 8/8，但修复后未进行二次语义 Audit；
   外部模型结果仍需人工复核后才适合作为最终教材。

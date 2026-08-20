@@ -9,6 +9,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class CapabilityId(str, Enum):
+    GENERAL_ASSISTANCE = "general_assistance"
     PROFILE_ANALYSIS = "profile_analysis"
     CODE_TUTORING = "code_tutoring"
     COURSE_NAVIGATION = "course_navigation"
@@ -89,6 +90,7 @@ class ModelTurnUnderstanding(BaseModel):
 
 
 class Intent(str, Enum):
+    GENERAL_ASSISTANCE = "general_assistance"
     COURSE_NAVIGATION = "course_navigation"
     STUDYKIT_LOOKUP = "studykit_lookup"
     MATERIAL_QUESTION = "material_question"

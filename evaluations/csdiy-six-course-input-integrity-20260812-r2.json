@@ -1,0 +1,42 @@
+{
+  "schema_version": "csdiy-six-course-input-integrity-v1",
+  "audit_id": "csdiy-six-course-input-integrity-20260812-r2",
+  "audited_at": "2026-08-12",
+  "offline_only": true,
+  "provider_or_model_calls": 0,
+  "practice_semantic_status": "deferred_by_scope_not_repaired",
+  "scope": ["manifests", "prepared_metadata", "chunks", "current_parser_fields"],
+  "totals": {
+    "courses": 6,
+    "manifest_units": 161,
+    "units_checked": 161,
+    "identity_pass": 161,
+    "chunks_declared": 5774,
+    "chunks_actual": 5774,
+    "prepared_manifest_hash_count_anchor_pass": 161,
+    "missing_files": 0,
+    "chunk_parse_errors": 0,
+    "chunk_count_or_anchor_failures": 0,
+    "current_parser_version_drift_units": 0,
+    "cs186_prepared_metadata_transform_mismatch_units": 20
+  },
+  "findings": {
+    "cs186_prepared_metadata": {
+      "unit_count": 20,
+      "issue": "prepared-materials.json records the raw HTML path/hash and identity-copy-v1, while the catalog manifests and chunks use the derived prepared Markdown files; the transformation metadata must be corrected before release.",
+      "release_effect": "input_provenance_blocker"
+    },
+    "cs188_lecture_22": {
+      "issue": "raw/prepared hashes differ by the documented deterministic pypdf-page-slice-v1 transformation.",
+      "release_effect": "documented_and_accepted"
+    },
+    "cs61c_parser_versions": {
+      "issue": "Earlier report claimed a parser-version drift; direct current inspection finds manifest and chunk parser_version both studykit-ingest-v0.1.0.",
+      "release_effect": "reconciled_in_current_snapshot"
+    }
+  },
+  "conclusion": {
+    "status": "blocked_input_integrity",
+    "exact_result": "All 161 units and 5,774 chunks pass identity, existence, declared-count, hash, parse, and anchor checks. Release remains blocked only by the 20 CS186 prepared-materials provenance records; existing practice semantic findings remain explicitly deferred and were not used as a pass criterion."
+  }
+}

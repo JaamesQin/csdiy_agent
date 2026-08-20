@@ -86,3 +86,32 @@ def test_user_identifier_has_a_bounded_length() -> None:
                 "user": "x" * 129,
             }
         )
+
+
+def test_session_id_alias_is_trimmed_and_empty_means_new_session() -> None:
+    present = ChatCompletionRequest.model_validate(
+        {
+            "messages": [{"role": "user", "content": "hello"}],
+            "sessionId": "  conversation-1  ",
+        }
+    )
+    empty = ChatCompletionRequest.model_validate(
+        {
+            "messages": [{"role": "user", "content": "hello"}],
+            "sessionId": "   ",
+        }
+    )
+
+    assert present.session_id == "conversation-1"
+    assert empty.session_id is None
+
+
+@pytest.mark.parametrize("session_id", [123, [], {}, "x" * 257])
+def test_session_id_must_be_a_bounded_string(session_id: object) -> None:
+    with pytest.raises(ValidationError):
+        ChatCompletionRequest.model_validate(
+            {
+                "messages": [{"role": "user", "content": "hello"}],
+                "sessionId": session_id,
+            }
+        )

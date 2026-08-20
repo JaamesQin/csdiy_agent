@@ -1,0 +1,87 @@
+{
+  "schema_version": "csdiy-six-course-input-integrity-v1",
+  "audit_id": "csdiy-six-course-input-integrity-20260812",
+  "audited_at": "2026-08-12",
+  "offline_only": true,
+  "provider_or_model_calls": 0,
+  "practice_semantic_status": "deferred_by_scope_not_repaired",
+  "scope": {
+    "manifests": [
+      "data/manifests/mit-6-042j-spring-2024.yaml",
+      "data/manifests/ucb-cs168-spring-2026.yaml",
+      "data/manifests/ucb-cs186-spring-2026.yaml",
+      "data/manifests/ucb-cs188-spring-2026.yaml",
+      "data/manifests/ucb-cs61a-spring-2026.yaml",
+      "data/manifests/ucb-cs61c-spring-2026.yaml"
+    ],
+    "prepared_metadata": "data/raw/<course>/<term>/prepared-materials.json",
+    "checks": [
+      "manifest unit/source/material-set identity against every chunk",
+      "raw and prepared existence, bytes, and SHA-256",
+      "prepared bytes/SHA-256 against selected manifest",
+      "chunks JSONL existence, parseability, declared count, and actual count",
+      "page or heading anchor type, uniqueness, and page-anchor continuity"
+    ]
+  },
+  "course_results": [
+    {"course_id":"mit-6-042j-spring-2024","manifest_units":24,"units_checked":24,"chunks_declared":217,"chunks_actual":217,"identity_pass":"24/24","prepared_manifest_hash_count_anchor_pass":"24/24","raw_prepared_equal":"24/24","anchor_types":{"page":24},"issues":[]},
+    {"course_id":"ucb-cs168-spring-2026","manifest_units":26,"units_checked":26,"chunks_declared":1890,"chunks_actual":1890,"identity_pass":"26/26","prepared_manifest_hash_count_anchor_pass":"26/26","raw_prepared_equal":"26/26","anchor_types":{"page":26},"issues":[]},
+    {"course_id":"ucb-cs186-spring-2026","manifest_units":20,"units_checked":20,"chunks_declared":293,"chunks_actual":293,"identity_pass":"20/20","prepared_manifest_hash_count_anchor_pass":"20/20","raw_prepared_equal":"0/20","anchor_types":{"heading":20},"issues":["20 raw HTML/prepared Markdown SHA-256 mismatches; see findings.raw_prepared_hash_mismatch.cs186"]},
+    {"course_id":"ucb-cs188-spring-2026","manifest_units":28,"units_checked":28,"chunks_declared":1204,"chunks_actual":1204,"identity_pass":"28/28","prepared_manifest_hash_count_anchor_pass":"28/28","raw_prepared_equal":"27/28","anchor_types":{"page":28},"issues":["lecture-22 is an intentional pypdf-page-slice-v1 transformation; see findings.raw_prepared_hash_mismatch.cs188_lecture_22"]},
+    {"course_id":"ucb-cs61a-spring-2026","manifest_units":28,"units_checked":28,"chunks_declared":930,"chunks_actual":930,"identity_pass":"28/28","prepared_manifest_hash_count_anchor_pass":"28/28","raw_prepared_equal":"28/28","anchor_types":{"page":28},"issues":[]},
+    {"course_id":"ucb-cs61c-spring-2026","manifest_units":35,"units_checked":35,"chunks_declared":1240,"chunks_actual":1240,"identity_pass":"35/35","prepared_manifest_hash_count_anchor_pass":"35/35","raw_prepared_equal":"35/35","anchor_types":{"heading":35},"parser_exact_match":"0/35","issues":["all 35 units have an additional chunk parser-version suffix; see findings.parser_version_drift.cs61c"]}
+  ],
+  "findings": {
+    "raw_prepared_hash_mismatch": {
+      "cs186": {
+        "count":20,
+        "unit_ids":["note-01","note-02","note-03","note-04","note-05","note-06","note-07","note-08","note-09","note-10","note-11","note-12","note-13","note-14","note-15","note-16","note-17","note-18","note-19","note-20"],
+        "raw_path_pattern":"data/raw/ucb-cs186/spring-2026/site/notes/note-XX.html",
+        "prepared_path_pattern":"data/raw/ucb-cs186/spring-2026/prepared/note-XX.md",
+        "chunks_path_pattern":"data/sources/ucb-cs186-spring-2026/note-XX/chunks.jsonl",
+        "metadata_path":"data/raw/ucb-cs186/spring-2026/prepared-materials.json",
+        "metadata_transformation":"identity-copy-v1",
+        "finding":"Each raw HTML SHA-256 differs from its prepared Markdown SHA-256. The files exist and the prepared hash matches the selected manifest; the mismatch is a provenance/transform metadata inconsistency, not a missing input."
+      },
+      "cs188_lecture_22": {
+        "count":1,
+        "raw_path":"data/raw/ucb-cs188/spring-2026/site/lectures/lecture-22.html",
+        "prepared_path":"data/raw/ucb-cs188/spring-2026/prepared/lecture-22.pdf",
+        "chunks_path":"data/sources/ucb-cs188-spring-2026/lecture-22/chunks.jsonl",
+        "metadata_path":"data/raw/ucb-cs188/spring-2026/prepared-materials.json",
+        "transformation":"pypdf-page-slice-v1 pages 146-150",
+        "finding":"Raw/prepared hashes differ as expected for the documented deterministic slice; prepared bytes/SHA-256, 5 PDF pages, 5 page anchors, and manifest values agree."
+      }
+    },
+    "parser_version_drift": {
+      "cs61c": {
+        "count":35,
+        "unit_id_range":"lecture-02 through lecture-36",
+        "manifest_parser_version":"studykit-ingest-v0.1.0",
+        "chunk_parser_version":"studykit-ingest-v0.1.0+anchor-disambiguation-v1",
+        "chunks_path_pattern":"data/sources/ucb-cs61c-spring-2026/lecture-XX/chunks.jsonl",
+        "finding":"Identity fields, chunk counts, prepared hashes, and heading anchors pass; only the parser_version field is non-uniform relative to the manifest."
+      }
+    }
+  },
+  "totals": {
+    "courses":6,
+    "manifest_units":161,
+    "units_checked":161,
+    "identity_pass":161,
+    "chunks_declared":5774,
+    "chunks_actual":5774,
+    "prepared_manifest_hash_count_anchor_pass":161,
+    "raw_prepared_equal":140,
+    "intentional_raw_prepared_transformations":1,
+    "metadata_raw_prepared_mismatch_units":20,
+    "parser_version_drift_units":35,
+    "missing_files":0,
+    "chunk_parse_errors":0,
+    "chunk_count_or_anchor_failures":0
+  },
+  "conclusion": {
+    "status":"blocked_input_integrity",
+    "exact_result":"All 161 units and 5,774 chunks were inspected offline. Unit/source/material-set identity passed for 161/161. Prepared file existence, manifest byte/hash checks, chunk counts, and page/heading anchor checks passed for 161/161. No raw, prepared, or chunk file is missing. Release remains blocked by the 20 CS186 raw-to-prepared provenance mismatches and the 35 CS61C parser-version drifts until metadata or manifest/chunk provenance is reconciled. Existing practice semantic findings are explicitly deferred and were not repaired or treated as part of this input audit."
+  }
+}

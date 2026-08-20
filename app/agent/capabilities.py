@@ -119,8 +119,10 @@ CAPABILITIES: tuple[CapabilitySpec, ...] = (
         ),
         ("查看 MIT 6.7960 第 2 讲的 StudyKit。",),
         (
-            "当前在线仅覆盖 Lecture 2 和 Lecture 8 两份人工批准的 golden StudyKit。",
-            "离线 reviewed portable 包尚未自动导入。",
+            "当前在线覆盖 9 个 approved build、220 份 archive StudyKit；MIT 6.7960 "
+            "Lecture 2/8 golden 仍作为重复身份的安全回退。",
+            "未通过完整 build、逐题审计或身份一致性门禁的归档记录不会上线。",
+            "其余离线产物仍需修复门禁问题并重新人工批准。",
         ),
     ),
     CapabilitySpec(
@@ -192,6 +194,27 @@ CAPABILITIES: tuple[CapabilitySpec, ...] = (
         ),
     ),
     CapabilitySpec(
+        CapabilityId.GENERAL_ASSISTANCE,
+        Intent.GENERAL_ASSISTANCE,
+        "通用学习问答",
+        "available",
+        ("通用学习问答", "通用问答", "学习建议", "general assistance"),
+        "回答未被专用能力覆盖的计算机学习、学习方法、目标梳理和一般学习沟通问题。",
+        (
+            "直接用自然语言描述学习困惑，无需先选择功能或使用固定格式。",
+            "CoursePilot 会优先使用更合适的课程、材料、练习或代码专用能力。",
+        ),
+        (
+            "我最近同时学很多内容，有点乱，应该怎么调整？",
+            "怎样安排一周的复习和练习？",
+        ),
+        (
+            "通用回答只属于一般知识，不会冒充课程材料或给出虚构页码。",
+            "明显无关学习的问题会被引导回学习场景。",
+            "不会提供可直接提交的完整课程作业答案，也不会声称运行代码。",
+        ),
+    ),
+    CapabilitySpec(
         CapabilityId.LEARNING_REVIEW,
         Intent.LEARNING_REVIEW,
         "学习复盘",
@@ -238,10 +261,39 @@ _GENERAL_HELP = re.compile(
     r"what can you do|capabilit",
     re.IGNORECASE,
 )
+_CAPABILITY_AVAILABILITY_QUESTION = re.compile(
+    r"^(?:请问)?(?:你|coursepilot)?\s*"
+    r"(?:可以|可不可以|能|能不能|能够|会|会不会|是否|可否|支持)"
+    r".{0,32}(?:吗|么|呢|\?|？)$",
+    re.IGNORECASE,
+)
+_CODE_LIKE_INPUT = re.compile(r"```|[{};]|\n|traceback|\berror\b", re.IGNORECASE)
 
 
 def available_capabilities() -> list[CapabilitySpec]:
     return [item for item in CAPABILITIES if item.availability == "available"]
+
+
+def match_unavailable_capability_request(text: str) -> CapabilitySpec | None:
+    """Match an explicit unavailable capability request, excluding help/status questions."""
+
+    if match_capability_help(text).handled:
+        return None
+    normalized = text.strip().casefold().replace("_", " ").replace("-", " ")
+    aliases = sorted(
+        (
+            (alias.casefold().replace("_", " ").replace("-", " "), capability)
+            for capability in CAPABILITIES
+            if capability.availability == "unavailable"
+            for alias in (capability.capability_id.value, *capability.aliases)
+        ),
+        key=lambda item: len(item[0]),
+        reverse=True,
+    )
+    return next(
+        (capability for alias, capability in aliases if alias in normalized),
+        None,
+    )
 
 
 def capability_by_id(capability_id: CapabilityId) -> CapabilitySpec:
@@ -268,6 +320,15 @@ def match_capability_help(text: str) -> CapabilityHelpMatch:
         topic = suffix.group(1).strip()[:64]
         capability = _find_topic(topic)
         return CapabilityHelpMatch(True, capability, None if capability else topic)
+
+    if (
+        len(normalized) <= 80
+        and not _CODE_LIKE_INPUT.search(normalized)
+        and _CAPABILITY_AVAILABILITY_QUESTION.fullmatch(normalized)
+    ):
+        capability = _find_in_text(normalized)
+        if capability is not None:
+            return CapabilityHelpMatch(True, capability)
 
     if _HELP_SIGNAL.search(normalized):
         capability = _find_in_text(normalized)
@@ -352,6 +413,7 @@ def _render_overview(unknown_topic: str | None) -> str:
             CapabilityId.CONCEPT_EXPLANATION: "concept",
             CapabilityId.PRACTICE_SELECTION: "practice",
             CapabilityId.PRACTICE_FEEDBACK: "feedback",
+            CapabilityId.GENERAL_ASSISTANCE: "general",
         }.get(item.capability_id, item.capability_id.value)
         lines.extend(
             [

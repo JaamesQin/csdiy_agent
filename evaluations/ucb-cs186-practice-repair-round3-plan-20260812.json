@@ -1,0 +1,68 @@
+{
+  "schema_version": "selective-repair-residual-plan-v1",
+  "plan_id": "ucb-cs186-practice-repair-round3-20260812",
+  "created_at": "2026-08-12T21:00:00+08:00",
+  "policy": {
+    "scope": "only residual blockers from the fresh round-2 Luna xhigh audit",
+    "max_targeted_repairs_per_stage": 1,
+    "author_tier": "luna-medium",
+    "auditor_tier": "luna-xhigh",
+    "fresh_independent_per_practice_audit_required": true,
+    "termination": "zero blockers and all deterministic portable validators pass"
+  },
+  "courses": [
+    {
+      "course_id": "ucb-cs186-spring-2026",
+      "baseline_build_id": "070189d13a9045c29a85cdcc6d33d936f025f83fe2d4bb22767baa8dbe688247",
+      "repair_units": [
+        {
+          "unit_id": "note-01",
+          "stages": ["practice"],
+          "blocked_practice_ids": ["p1", "p4", "p6"],
+          "required_repairs": [
+            "make the DISTINCT input and expected result mathematically consistent",
+            "align p4 expected_evidence with GROUP BY region",
+            "replace the p6 answer-leaking hint with a strategic hint"
+          ]
+        },
+        {
+          "unit_id": "note-05",
+          "stages": ["practice"],
+          "blocked_practice_ids": ["q1", "q2", "q3", "q4", "q5"],
+          "required_repairs": [
+            "restore a note-05 03 checkpoint with q1 through q5 in the same order as candidate/final",
+            "state the unpin lifecycle needed by q4 and q5",
+            "use a new access sequence or changed condition rather than copying the source flooding example",
+            "remove the q5 answer leak"
+          ]
+        },
+        {
+          "unit_id": "note-07",
+          "stages": ["practice"],
+          "blocked_practice_ids": ["p6"],
+          "required_repairs": [
+            "make N equal the sum of first-pass partition pages, or provide the missing partition pages explicitly, then recompute all expected I/O"
+          ]
+        },
+        {
+          "unit_id": "note-10",
+          "stages": ["practice"],
+          "blocked_practice_ids": ["p4", "p6"],
+          "required_repairs": [
+            "remove final numeric answers from p4 hint and deliverable",
+            "replace p6's complete pull path and classifications with a non-leaking strategy hint"
+          ]
+        },
+        {
+          "unit_id": "note-15",
+          "stages": ["evidence", "practice"],
+          "blocked_practice_ids": ["p1"],
+          "required_repairs": [
+            "add source-backed evidence for inter-query parallelism and join redistribution",
+            "bind p1 citations to those relevant anchors"
+          ]
+        }
+      ]
+    }
+  ]
+}

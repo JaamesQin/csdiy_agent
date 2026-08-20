@@ -10,7 +10,7 @@ from app.profile.repository import SQLiteProfileRepository
 from app.storage.database import SCHEMA_VERSION, SQLiteDatabase
 
 
-def test_empty_database_initializes_v2(tmp_path) -> None:
+def test_empty_database_initializes_current_schema(tmp_path) -> None:
     database = SQLiteDatabase(tmp_path / "coursepilot.sqlite3")
     database.initialize()
 
@@ -24,7 +24,7 @@ def test_empty_database_initializes_v2(tmp_path) -> None:
         }
 
     assert version == SCHEMA_VERSION
-    assert {"users", "auth_sessions", "profile_facts"} <= tables
+    assert {"users", "auth_sessions", "profile_facts", "conversation_states"} <= tables
 
 
 def test_v1_profile_database_is_migrated_to_legacy_namespace(tmp_path) -> None:
@@ -70,6 +70,37 @@ def test_v1_profile_database_is_migrated_to_legacy_namespace(tmp_path) -> None:
         fact.value for fact in migrated_profile.confirmed("background")
     ] == ["Python"]
     assert version == SCHEMA_VERSION
+
+
+def test_v2_database_adds_conversations_without_remigrating_profiles(tmp_path) -> None:
+    path = tmp_path / "v2.sqlite3"
+    with sqlite3.connect(path) as connection:
+        SQLiteDatabase._create_profile_schema(connection)
+        SQLiteDatabase._create_auth_schema(connection)
+        connection.execute(
+            """
+            INSERT INTO profile_facts (
+                id, user_id, field_name, value_json, status, confidence,
+                evidence_excerpt, created_at
+            ) VALUES ('fact-v2', 'legacy:old-user', 'background', '"Python"',
+                      'confirmed', 1.0, 'Python', '2026-08-09T00:00:00+00:00')
+            """
+        )
+        connection.execute("PRAGMA user_version = 2")
+
+    database = SQLiteDatabase(path)
+    database.initialize()
+
+    with database.connect() as connection:
+        user_id = connection.execute(
+            "SELECT user_id FROM profile_facts WHERE id = 'fact-v2'"
+        ).fetchone()["user_id"]
+        conversation_table = connection.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='conversation_states'"
+        ).fetchone()
+
+    assert user_id == "legacy:old-user"
+    assert conversation_table is not None
 
 
 def test_unknown_database_version_is_rejected(tmp_path) -> None:

@@ -1,0 +1,1337 @@
+studykit_version: '0.1'
+status: draft
+course_id: mit-6.7960-fall-2024
+course_version: fall-2024
+unit_id: lecture-02
+title: 优化与反向传播
+language: zh-CN
+scope:
+  included_sources:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    title: MIT 6.7960 Fall 2024 Lecture 2 Slides
+    type: pdf
+    sha256: a494aaf94105a948d97ff0afa979bbf54d14fabaf63ed873451813bcec429006
+  citation_anchor_types:
+  - page
+citation_policy:
+  required_for:
+  - 概念解释
+  - 公式
+  - 例题数值
+  - 练习解答
+  anchor_format: source_id + page
+learning_objectives:
+- id: lo1
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 5
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 8
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 10
+  objective: 写出经验风险目标，并比较梯度下降、动量和自适应优化器的更新思想。
+- id: lo2
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 12
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 16
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 19
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 22
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 24
+  objective: 诊断深层网络训练中的曲率、鞍点和梯度传播问题，并选择对应缓解策略。
+- id: lo3
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 32
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 34
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 36
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 41
+  objective: 按讲义的 Jacobian 约定，把链式法则组织成可复用的反向传播接口。
+- id: lo4
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 45
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 46
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 48
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 53
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 55
+  objective: 推导线性层、批处理、分支与参数共享结构中的梯度。
+- id: lo5
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 61
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 66
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 72
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 80
+  objective: 把反向传播用于参数之外的变量，并复核讲义数值例题的一次更新。
+prerequisites:
+- citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 32
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 34
+  topic: 多元微积分：偏导、梯度、Jacobian 与链式法则。
+  required_level: 熟悉并能完成基础运算
+- citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 46
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 48
+  topic: 线性代数：矩阵乘法、向量维度与外积。
+  required_level: 熟悉并能完成基础运算
+outline:
+- order: 1
+  topic: 1. 学习目标与优化器
+  purpose: 从经验风险最小化到梯度下降、动量及按坐标调节步长的方法。
+  anchors:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 3
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 5
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 8
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 10
+- order: 2
+  topic: 2. 优化为何困难
+  purpose: 考察病态曲率、鞍点、梯度消失与爆炸。
+  anchors:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 12
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 16
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 19
+- order: 3
+  topic: 3. 稳定训练的结构与技巧
+  purpose: 连接归一化、残差连接、梯度裁剪和 ReLU 的作用。
+  anchors:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 20
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 22
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 24
+- order: 4
+  topic: 4. 计算图和链式法则
+  purpose: 固定 Jacobian 形状约定，并从局部导数组装全局梯度。
+  anchors:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 32
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 34
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 36
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 41
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 42
+- order: 5
+  topic: 5. 常见图结构的反向传播
+  purpose: 处理批均值、线性层、分支汇合和共享参数。
+  anchors:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 45
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 46
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 48
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 53
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 55
+- order: 6
+  topic: 6. 可微编程与数值演练
+  purpose: 对输入等任意节点优化，并逐步核对两层网络例题。
+  anchors:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 61
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 66
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 72
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 75
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 80
+core_concepts:
+- explanation: 训练选择参数 θ，使样本损失之和最小：θ*=argmin_θ Σ_i L(f_θ(x⁽ⁱ⁾),y⁽ⁱ⁾)。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 5
+  id: cc1
+  term: 经验风险最小化
+  claim_type: explanation
+- explanation: 第 k 步沿负梯度更新 θ：θ^(k+1)=θ^k−η∇_θJ(θ^k)。学习率 η 决定局部步长。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 8
+  id: cc2
+  term: 梯度下降
+  claim_type: explanation
+- explanation: 讲义把历史方向 m^t 加入更新：θ^(t+1)=θ^t−η∇f(θ^t)−αm^t，以平滑方向并加速一致方向。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 10
+  id: cc3
+  term: 动量
+  claim_type: explanation
+- explanation: 狭长曲率会导致振荡，鞍点附近梯度小但并非极小值；深层复合还会造成梯度消失或爆炸。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 12
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 16
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 19
+  id: cc4
+  term: 训练地形困难
+  claim_type: explanation
+- explanation: 归一化与残差连接改善信号传播；梯度裁剪限制梯度范数；ReLU 为 max(0,z)，其正区间导数不衰减。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 20
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 22
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 24
+  id: cc5
+  term: 稳定化手段
+  claim_type: explanation
+- explanation: 标量对向量的梯度写成行向量；向量输出关于向量输入的 Jacobian 为“输出维×输入维”。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 32
+  id: cc6
+  term: Jacobian 约定
+  claim_type: explanation
+- explanation: 若 x→u→z，则 dz/dx=(dz/du)(du/dx)，维度为 (m×p)(p×n)=m×n。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 34
+  id: cc7
+  term: 矩阵链式法则
+  claim_type: explanation
+- explanation: 计算图把共享的链式乘积只计算一次，再把上游梯度传给多个局部导数。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 36
+  id: cc8
+  term: 反向传播的复用
+  claim_type: explanation
+- explanation: 对层 x_out=f(x_in,θ)，先求局部 Jacobian L^x、L^θ，再计算 g_in=g_out L^x 与 dJ/dθ=g_out
+    L^θ。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 38
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 41
+  id: cc9
+  term: 层的反向接口
+  claim_type: explanation
+- explanation: 训练迭代先前向保存中间量，再反向累积梯度，最后使用优化器更新参数。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 42
+  id: cc10
+  term: 前向—反向—更新
+  claim_type: explanation
+- explanation: 批损失是样本损失的平均，相应参数梯度也是逐样本梯度的平均。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 45
+  id: cc11
+  term: 批处理梯度
+  claim_type: explanation
+- explanation: 若 x_out=W x_in，则输入梯度为 g_in=g_out W；权重梯度由上游梯度与输入形成外积。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 46
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 48
+  id: cc12
+  term: 线性层梯度
+  claim_type: explanation
+- explanation: 一个节点流向多支时，回传贡献相加；同一参数在多处使用时，其各处参数梯度也相加。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 53
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 55
+  id: cc13
+  term: 分支与参数共享
+  claim_type: explanation
+- explanation: 只要目标是标量，反向传播可计算它对计算图中任意节点或边变量的梯度，而不局限于模型参数。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 61
+  id: cc14
+  term: 可微编程
+  claim_type: explanation
+- explanation: 可固定模型并求 argmax_x(y_j+λR(x))，再按输入梯度做上升；正则项约束所求输入。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 66
+  id: cc15
+  term: 输入优化
+  claim_type: explanation
+glossary:
+- term: 上游梯度
+  definition: 损失关于当前层输出的导数 g_out。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 41
+- term: 局部 Jacobian
+  definition: 当前运算输出关于该运算输入或参数的导数矩阵。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 38
+- term: 梯度裁剪
+  definition: 当梯度范数过大时按阈值缩放梯度。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 22
+- term: 参数共享
+  definition: 计算图的多个位置引用同一参数，反向时贡献需累加。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 55
+common_misconceptions:
+- misconception: 梯度接近零就一定到了局部最小值。
+  correction: 鞍点也可能具有零梯度，需要结合曲率或邻域行为判断。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 16
+- misconception: 分支反向时任选一条路径即可。
+  correction: 同一变量经多条路径影响损失时，各路径梯度贡献必须求和。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 53
+- misconception: 共享参数的梯度只算一次使用位置。
+  correction: 每个使用位置都产生贡献，最终对同一参数累加。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 55
+- misconception: 讲义数值例题中的正号更新与通常梯度下降矛盾。
+  correction: 例题把学习率写成 η=−0.2，因此“加 η 倍梯度”与沿负梯度方向更新一致；必须连同符号约定阅读。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 72
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 80
+learning_sequence:
+- step: 1
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 5
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 8
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 10
+  activity: 建立目标与基本更新：写出经验风险目标；逐项标注梯度下降和动量公式
+  duration_minutes: 25
+- step: 2
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 12
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 16
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 19
+  activity: 诊断训练困难：用草图比较病态曲率与鞍点；追踪深层链式乘积
+  duration_minutes: 20
+- step: 3
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 20
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 22
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 24
+  activity: 匹配稳定化方法：比较归一化、残差、裁剪、ReLU 的作用位置
+  duration_minutes: 20
+- step: 4
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 32
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 34
+  activity: 固定导数形状：为每个 Jacobian 写出维度；验证矩阵链式法则乘法次序
+  duration_minutes: 25
+- step: 5
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 41
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 42
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 46
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 48
+  activity: 实现层式反向传播：写出通用层接口；推导线性层输入与权重梯度
+  duration_minutes: 30
+- step: 6
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 45
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 53
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 55
+  activity: 处理复杂图结构：推导批均值；在分支和共享参数处累加梯度
+  duration_minutes: 25
+- step: 7
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 61
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 66
+  activity: 扩展到输入优化：把输入视为待优化变量；解释正则项作用
+  duration_minutes: 15
+- step: 8
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 72
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 75
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 76
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 77
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 78
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 79
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 80
+  activity: 复核数值例题：复算前向中间量；核对反向梯度和一次权重更新
+  duration_minutes: 20
+practice:
+- id: p1
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 10
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 12
+  level: 概念检查
+  question: 解释病态曲率为何使固定学习率梯度下降发生之字形振荡，并给出一个讲义中的缓解思路。
+  hint: 先写出相关局部公式或计算图，再检查维度与符号。
+  deliverable: 一份含推导或解释的书面答案
+  expected_evidence:
+  - 不同方向曲率差异大时，稳定所需步长受陡峭方向限制，而平缓方向进展慢；动量可平滑振荡并积累一致方向。
+  evaluation:
+    criterion: 答案须与 expected_evidence 一致，并引用对应讲义页。
+- id: p2
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 34
+  level: 推导
+  question: 设 z∈R^m、u∈R^p、x∈R^n，写出 dz/dx 的链式法则和各矩阵形状。
+  hint: 先写出相关局部公式或计算图，再检查维度与符号。
+  deliverable: 一份含推导或解释的书面答案
+  expected_evidence:
+  - dz/dx=(dz/du)(du/dx)，形状为 (m×p)(p×n)=m×n。
+  evaluation:
+    criterion: 答案须与 expected_evidence 一致，并引用对应讲义页。
+- id: p3
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 46
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 48
+  level: 推导
+  question: 对 x_out=W x_in，给定行向量 g_out，写出输入梯度并描述权重梯度结构。
+  hint: 先写出相关局部公式或计算图，再检查维度与符号。
+  deliverable: 一份含推导或解释的书面答案
+  expected_evidence:
+  - g_in=g_out W；权重梯度是与 W 同形的外积，由上游梯度各输出分量与输入各分量配对。
+  evaluation:
+    criterion: 答案须与 expected_evidence 一致，并引用对应讲义页。
+- id: p4
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 53
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 55
+  level: 图分析
+  question: 同一中间变量分成两支后再汇合，且两支都使用共享参数 θ。反向传播时两类梯度如何处理？
+  hint: 先写出相关局部公式或计算图，再检查维度与符号。
+  deliverable: 一份含推导或解释的书面答案
+  expected_evidence:
+  - 对中间变量的梯度把两条路径贡献相加；对 θ 的梯度也把每个使用位置的贡献相加。
+  evaluation:
+    criterion: 答案须与 expected_evidence 一致，并引用对应讲义页。
+- id: p5
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 66
+  level: 应用
+  question: 固定分类器参数，想寻找使第 j 类得分高且不过度噪声化的输入，应写什么目标并更新哪个变量？
+  hint: 先写出相关局部公式或计算图，再检查维度与符号。
+  deliverable: 一份含推导或解释的书面答案
+  expected_evidence:
+  - 优化输入 x：argmax_x(y_j+λR(x))，根据目标关于 x 的梯度做上升；模型参数保持固定。
+  evaluation:
+    criterion: 答案须与 expected_evidence 一致，并引用对应讲义页。
+- id: p6
+  citations:
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 72
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 75
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 76
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 77
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 78
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 79
+  - source_id: mit-6.7960-f24-lecture-02-slides
+    anchor:
+      type: page
+      value: 80
+  level: 综合核验
+  question: 讲义两层网络例题从 x=(1.0,0.1) 出发。列出核验一次训练迭代的顺序，并解释 η=−0.2 的符号。
+  hint: 先写出相关局部公式或计算图，再检查维度与符号。
+  deliverable: 一份含推导或解释的书面答案
+  expected_evidence:
+  - 依次复算 x1、x2、x3 与损失，再从损失回传各层梯度，最后更新 W1、W0；例题采用加 η 倍梯度且 η 为负，因此方向仍是梯度下降。讲义给出的前向值约为
+    x1=(0.7,0.3)、x2=(0.604,0.291)、x3=0.313、损失 0.017。
+  evaluation:
+    criterion: 答案须与 expected_evidence 一致，并引用对应讲义页。
+citations:
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 1
+  citation_id: lec2-p1
+  supports: 第 1 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 2
+  citation_id: lec2-p2
+  supports: 第 2 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 3
+  citation_id: lec2-p3
+  supports: 第 3 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 4
+  citation_id: lec2-p4
+  supports: 第 4 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 5
+  citation_id: lec2-p5
+  supports: 第 5 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 6
+  citation_id: lec2-p6
+  supports: 第 6 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 7
+  citation_id: lec2-p7
+  supports: 第 7 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 8
+  citation_id: lec2-p8
+  supports: 第 8 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 9
+  citation_id: lec2-p9
+  supports: 第 9 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 10
+  citation_id: lec2-p10
+  supports: 第 10 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 11
+  citation_id: lec2-p11
+  supports: 第 11 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 12
+  citation_id: lec2-p12
+  supports: 第 12 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 13
+  citation_id: lec2-p13
+  supports: 第 13 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 14
+  citation_id: lec2-p14
+  supports: 第 14 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 15
+  citation_id: lec2-p15
+  supports: 第 15 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 16
+  citation_id: lec2-p16
+  supports: 第 16 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 17
+  citation_id: lec2-p17
+  supports: 第 17 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 18
+  citation_id: lec2-p18
+  supports: 第 18 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 19
+  citation_id: lec2-p19
+  supports: 第 19 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 20
+  citation_id: lec2-p20
+  supports: 第 20 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 21
+  citation_id: lec2-p21
+  supports: 第 21 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 22
+  citation_id: lec2-p22
+  supports: 第 22 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 23
+  citation_id: lec2-p23
+  supports: 第 23 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 24
+  citation_id: lec2-p24
+  supports: 第 24 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 25
+  citation_id: lec2-p25
+  supports: 第 25 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 26
+  citation_id: lec2-p26
+  supports: 第 26 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 27
+  citation_id: lec2-p27
+  supports: 第 27 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 28
+  citation_id: lec2-p28
+  supports: 第 28 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 29
+  citation_id: lec2-p29
+  supports: 第 29 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 30
+  citation_id: lec2-p30
+  supports: 第 30 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 31
+  citation_id: lec2-p31
+  supports: 第 31 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 32
+  citation_id: lec2-p32
+  supports: 第 32 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 33
+  citation_id: lec2-p33
+  supports: 第 33 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 34
+  citation_id: lec2-p34
+  supports: 第 34 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 35
+  citation_id: lec2-p35
+  supports: 第 35 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 36
+  citation_id: lec2-p36
+  supports: 第 36 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 37
+  citation_id: lec2-p37
+  supports: 第 37 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 38
+  citation_id: lec2-p38
+  supports: 第 38 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 39
+  citation_id: lec2-p39
+  supports: 第 39 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 40
+  citation_id: lec2-p40
+  supports: 第 40 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 41
+  citation_id: lec2-p41
+  supports: 第 41 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 42
+  citation_id: lec2-p42
+  supports: 第 42 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 43
+  citation_id: lec2-p43
+  supports: 第 43 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 44
+  citation_id: lec2-p44
+  supports: 第 44 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 45
+  citation_id: lec2-p45
+  supports: 第 45 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 46
+  citation_id: lec2-p46
+  supports: 第 46 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 47
+  citation_id: lec2-p47
+  supports: 第 47 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 48
+  citation_id: lec2-p48
+  supports: 第 48 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 49
+  citation_id: lec2-p49
+  supports: 第 49 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 50
+  citation_id: lec2-p50
+  supports: 第 50 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 51
+  citation_id: lec2-p51
+  supports: 第 51 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 52
+  citation_id: lec2-p52
+  supports: 第 52 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 53
+  citation_id: lec2-p53
+  supports: 第 53 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 54
+  citation_id: lec2-p54
+  supports: 第 54 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 55
+  citation_id: lec2-p55
+  supports: 第 55 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 56
+  citation_id: lec2-p56
+  supports: 第 56 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 57
+  citation_id: lec2-p57
+  supports: 第 57 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 58
+  citation_id: lec2-p58
+  supports: 第 58 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 59
+  citation_id: lec2-p59
+  supports: 第 59 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 60
+  citation_id: lec2-p60
+  supports: 第 60 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 61
+  citation_id: lec2-p61
+  supports: 第 61 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 62
+  citation_id: lec2-p62
+  supports: 第 62 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 63
+  citation_id: lec2-p63
+  supports: 第 63 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 64
+  citation_id: lec2-p64
+  supports: 第 64 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 65
+  citation_id: lec2-p65
+  supports: 第 65 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 66
+  citation_id: lec2-p66
+  supports: 第 66 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 67
+  citation_id: lec2-p67
+  supports: 第 67 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 68
+  citation_id: lec2-p68
+  supports: 第 68 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 69
+  citation_id: lec2-p69
+  supports: 第 69 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 70
+  citation_id: lec2-p70
+  supports: 第 70 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 71
+  citation_id: lec2-p71
+  supports: 第 71 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 72
+  citation_id: lec2-p72
+  supports: 第 72 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 73
+  citation_id: lec2-p73
+  supports: 第 73 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 74
+  citation_id: lec2-p74
+  supports: 第 74 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 75
+  citation_id: lec2-p75
+  supports: 第 75 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 76
+  citation_id: lec2-p76
+  supports: 第 76 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 77
+  citation_id: lec2-p77
+  supports: 第 77 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 78
+  citation_id: lec2-p78
+  supports: 第 78 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 79
+  citation_id: lec2-p79
+  supports: 第 79 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 80
+  citation_id: lec2-p80
+  supports: 第 80 页所支持的讲义内容
+- source_id: mit-6.7960-f24-lecture-02-slides
+  anchor:
+    type: page
+    value: 81
+  citation_id: lec2-p81
+  supports: 第 81 页所支持的讲义内容
+review:
+  generator_review_status: passed
+  audit_findings: []
+  mode: strict
+  vision_reviewed_pages:
+  - 1
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 10
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 24
+  - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 38
+  - 41
+  - 42
+  - 43
+  - 44
+  - 45
+  - 46
+  - 47
+  - 48
+  - 49
+  - 52
+  - 53
+  - 54
+  - 55
+  - 56
+  - 62
+  - 63
+  - 64
+  - 65
+  - 66
+  - 67
+  - 70
+  - 74
+  - 75
+  - 76
+  - 77
+  - 78
+  - 79
+  - 80
+  formula_pages_reviewed:
+  - 1
+  - 3
+  - 5
+  - 8
+  - 10
+  - 22
+  - 24
+  - 34
+  - 41
+  - 42
+  - 45
+  - 46
+  - 48
+  - 53
+  - 55
+  - 66
+  - 75
+  - 76
+  - 77
+  - 78
+  - 79
+  - 80
+  independent_audit: true
+  blocker_reaudit: passed
+limitations:
+- 本 StudyKit 仅依据第 2 讲讲义；对优化器的完整收敛理论和软件框架实现不作外推（第 1、3 页）。
+- 第 31、35、74 页主要是章节转换页，因此不作为独立知识主张的核心证据。
+- 数值例题使用负学习率配合加号更新；复算时必须保持讲义自己的符号约定（第 72、80 页）。

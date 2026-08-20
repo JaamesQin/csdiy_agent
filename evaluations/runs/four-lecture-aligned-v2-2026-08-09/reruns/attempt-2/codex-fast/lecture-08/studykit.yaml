@@ -1,0 +1,840 @@
+studykit_version: '0.1'
+status: draft
+course_id: mit-6.7960-fall-2024
+course_version: fall-2024
+unit_id: lecture-08
+title: Lecture 8：Transformers
+language: zh-CN
+scope:
+  included_sources:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    title: 'Lecture 8: Transformers'
+    type: pdf
+    sha256: e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca
+  citation_anchor_types:
+  - page
+learning_objectives:
+- id: O1
+  objective: 解释浅层局部 CNN 处理远距离关系的路径限制。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 4
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 5
+- id: O2
+  objective: 用矩阵形状表达 tokenization、token mixing 与逐 token MLP。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 17
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 18
+- id: O3
+  objective: 从 Q/K/V 投影推演 self-attention 的权重与输出。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 34
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 34
+- id: O4
+  objective: 复原多头 attention 与完整 ViT block。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 37
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 39
+- id: O5
+  objective: 用置换等变性说明为何要提供位置代码。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 41
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 43
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 43
+- id: O6
+  objective: 比较 causal self-attention 和 image-to-text cross-attention。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 51
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 51
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 54
+prerequisites:
+- topic: 矩阵乘法与转置
+  required_level: 可追踪矩阵形状。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 17
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 34
+- topic: MLP、卷积、残差
+  required_level: 理解局部连接、共享变换和跳跃相加。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 5
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 18
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 39
+- topic: softmax
+  required_level: 能把分数解释为归一化权重。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 34
+outline:
+- order: 1
+  topic: 局部性问题
+  anchors:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 4
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 5
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 9
+  purpose: 明确架构动机
+- order: 2
+  topic: Tokens
+  anchors:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 17
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 18
+  purpose: 建立表示与两类操作
+- order: 3
+  topic: Attention
+  anchors:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 20
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 34
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 34
+  purpose: 理解动态信息路由
+- order: 4
+  topic: ViT
+  anchors:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 37
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 39
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 39
+  purpose: 组合实际 block
+- order: 5
+  topic: 位置
+  anchors:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 41
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 43
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 43
+  purpose: 处理位置歧义
+- order: 6
+  topic: 生成与跨模态
+  anchors:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 51
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 51
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 54
+  purpose: 理解 causal 与 cross-attention
+core_concepts:
+- id: K1
+  term: 局部性限制
+  claim_type: source_summary
+  explanation: 小卷积核只连接局部邻域；浅层示例中相距很远的输入节点无法共同影响一个节点。attention 用跨 token 混合来处理此类关系。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 4
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 5
+- id: K2
+  term: Tokenization
+  claim_type: source_summary
+  explanation: token 是封装信息的向量。图像可切成 patches，每个 patch 经线性投影成为 d 维 token，N 个 tokens
+    作为矩阵 T 的行。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 14
+  formula:
+    status: resolved
+    latex: t\in\mathbb{R}^{d},\qquad T\in\mathbb{R}^{N\times d}
+    citation:
+      source_id: mit-6.7960-f24-lecture-08-slides
+      anchor:
+        type: page
+        value: 14
+    warnings: []
+- id: K3
+  term: Token mixing
+  claim_type: source_summary
+  explanation: 标量权重作用于整条 token 向量；左乘 W 对 token 行作线性组合。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 17
+  formula:
+    status: resolved
+    latex: T_{out}[i,:]=\sum_{j=1}^{N}w_{ij}T_{in}[j,:],\qquad T_{out}=WT_{in}
+    citation:
+      source_id: mit-6.7960-f24-lecture-08-slides
+      anchor:
+        type: page
+        value: 17
+    warnings: []
+- id: K4
+  term: Token-wise nonlinearity
+  claim_type: source_summary
+  explanation: 同一 F_θ 独立作用于各 token；通常 F_θ 是 MLP，此步本身不跨 token 汇聚。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 18
+  formula:
+    status: resolved
+    latex: T_{out}=\begin{bmatrix}F_\theta(T_{in}[0,:])\\\vdots\\F_\theta(T_{in}[N-1,:])\end{bmatrix}
+    citation:
+      source_id: mit-6.7960-f24-lecture-08-slides
+      anchor:
+        type: page
+        value: 18
+    warnings: []
+- id: K5
+  term: 数据依赖 attention
+  claim_type: source_summary
+  explanation: 普通线性层直接学习 W；attention 则由输入构造 A，使混合权重随当前 tokens 改变。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 20
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 34
+- id: K6
+  term: Scaled dot-product self-attention
+  claim_type: source_summary
+  explanation: 同一输入集产生 Q、K、V；QK^T 给出所有 query-key 匹配，经缩放和 softmax 得 A，随后 AV 汇聚 values。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 34
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 30
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 34
+  formula:
+    status: resolved
+    latex: Q=T_{in}W_q^T,\;K=T_{in}W_k^T,\;V=T_{in}W_v^T,\quad A=\operatorname{softmax}\left(\frac{QK^T}{\sqrt
+      m}\right),\quad T_{out}=AV
+    citation:
+      source_id: mit-6.7960-f24-lecture-08-slides
+      anchor:
+        type: page
+        value: 34
+    warnings:
+    - softmax 轴随行列约定而定；这里保留课件矩阵关系。
+- id: K7
+  term: Multihead self-attention
+  claim_type: source_summary
+  explanation: k 个 heads 分别计算 attention，按 token 行拼接为 N×kv，再用 W_MSA 投影回 d 维。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 37
+  formula:
+    status: resolved
+    latex: T_{out}^{i}=\operatorname{attn}^{i}(T_{in}),\quad \bar T_{out}\in\mathbb{R}^{N\times
+      kv},\quad T_{out}=\bar T_{out}W_{MSA},\;W_{MSA}\in\mathbb{R}^{kv\times d}
+    citation:
+      source_id: mit-6.7960-f24-lecture-08-slides
+      anchor:
+        type: page
+        value: 37
+    warnings: []
+- id: K8
+  term: ViT block
+  claim_type: source_summary
+  explanation: 课件展示的块依次使用 token norm、MSA、残差，再使用 token norm、逐 token MLP、残差，并重复 L 次。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 39
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 39
+- id: K9
+  term: Permutation equivariance
+  claim_type: source_summary
+  explanation: 输入 token 行被置换时，输出行作相同置换；这不是逐项输出不变。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 41
+  formula:
+    status: resolved
+    latex: \operatorname{transformer}(\operatorname{permute}(T_{in}))=\operatorname{permute}(\operatorname{transformer}(T_{in}))
+    citation:
+      source_id: mit-6.7960-f24-lecture-08-slides
+      anchor:
+        type: page
+        value: 41
+    warnings: []
+- id: K10
+  term: Fourier positional codes
+  claim_type: source_summary
+  explanation: 把 x、y 坐标在多尺度正弦上的值组织成位置向量并附加到 token 表示，使空间位置可区分。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 43
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 43
+  formula:
+    status: resolved
+    latex: p_x=[\sin(x),\sin(x/B),\sin(x/B^2),\ldots]^T,\quad p_y=[\sin(y),\sin(y/B),\sin(y/B^2),\ldots]^T,\quad
+      p=[p_x;p_y]
+    citation:
+      source_id: mit-6.7960-f24-lecture-08-slides
+      anchor:
+        type: page
+        value: 43
+    warnings:
+    - 只转录第44页可见的 sine 分量。
+- id: K11
+  term: Causal attention
+  claim_type: source_summary
+  explanation: causal mask 阻止当前位置依赖未来 tokens；一次前向仍能并行监督多个 next-token 位置，多层连接保持因果。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 51
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 51
+- id: K12
+  term: Cross-attention
+  claim_type: source_summary
+  explanation: 图像到文本架构用 image self-attention 编码视觉 tokens；文本侧用 causal self-attention，并让文本
+    queries 对图像 keys/values 做 cross-attention。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 54
+glossary:
+- term: query
+  definition: 表达当前 token 要匹配的信息。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 34
+- term: key
+  definition: 与 query 计算匹配的表示。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 34
+- term: value
+  definition: 被 attention 权重汇聚的内容。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 34
+- term: head
+  definition: 一套独立 Q/K/V 参数的 attention 路径。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 37
+- term: causal mask
+  definition: 遮住通向未来 token 的连接。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 51
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 51
+- term: cross-attention
+  definition: Q 与 K/V 来自不同 token 集。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 54
+common_misconceptions:
+- misconception: token 是标量。
+  correction: 本讲 token 是神经元向量。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 14
+- misconception: A 是输入无关的自由参数。
+  correction: A 由输入相关的 Q/K 匹配产生。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 20
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 34
+- misconception: 等变等于不变。
+  correction: 输出随输入作相同置换。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 41
+- misconception: causal 训练必须逐位置串行。
+  correction: mask 允许一次前向监督多个位置。
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 51
+learning_sequence:
+- step: 1
+  activity: 画出浅 CNN 远距节点路径并归纳 Transformer 的三项创新。
+  duration_minutes: 20
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 4
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 5
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 9
+- step: 2
+  activity: 完成 patch→token、WT 和逐 token MLP 的形状追踪。
+  duration_minutes: 35
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 17
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 18
+- step: 3
+  activity: 逐步构造 Q、K、V、A 和 AV，并解释其语义。
+  duration_minutes: 40
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 34
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 34
+- step: 4
+  activity: 重画多头输出合并和 ViT 残差块。
+  duration_minutes: 25
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 37
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 39
+- step: 5
+  activity: 做 token 置换与位置码对照实验。
+  duration_minutes: 25
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 41
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 43
+- step: 6
+  activity: 分析 causal mask 与图像到文本连接，完成综合练习。
+  duration_minutes: 35
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 51
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 51
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 54
+practice:
+- id: P1
+  level: 基础
+  question: 6 个 patches 各映射到 8 维 token。写出 T 的形状；若 W∈R^{4×6}，写出 WT 的形状。
+  hint: token 放在行。
+  deliverable: 形状推导。
+  expected_evidence:
+  - T为6×8
+  - WT为4×8
+  - W混合token行
+  evaluation:
+    criteria:
+    - 形状正确
+    - 解释正确
+    points: 3
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 14
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 17
+- id: P2
+  level: 基础
+  question: 比较 token mixing 和 token-wise MLP：哪一步跨 token，哪一步独立处理每行？
+  hint: 检查求和下标。
+  deliverable: 两列表。
+  expected_evidence:
+  - mixing跨行
+  - MLP逐行共享
+  evaluation:
+    criteria:
+    - 信息流区分
+    points: 2
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 17
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 18
+- id: P3
+  level: 中级
+  question: 设 N=5，Q/K 维4，V维6。列出 Q、K、V、QK^T、A、AV 的形状。
+  hint: 每个 query 对五个 keys。
+  deliverable: 形状表和 A_ij 含义。
+  expected_evidence:
+  - Q,K为5×4
+  - V为5×6
+  - A为5×5
+  - AV为5×6
+  evaluation:
+    criteria:
+    - 全部形状
+    - 权重语义
+    points: 5
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 34
+- id: P4
+  level: 中高级
+  question: 把 (t1,t2,t3) 置换为 (t3,t1,t2)。写出无位置码输出关系，并说明位置码为何能让空间槽可区分。
+  hint: 等变不等于不变。
+  deliverable: 等式和解释。
+  expected_evidence:
+  - 同一置换输出
+  - 区分等变/不变
+  - 位置进入token表示
+  evaluation:
+    criteria:
+    - 等式
+    - 解释
+    points: 5
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 41
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 43
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 43
+- id: P5
+  level: 高级
+  question: 画长度4、两层 causal attention 的允许边，并证明位置2不能读取位置4；说明训练仍如何并行。
+  hint: 每层都删除未来边。
+  deliverable: 图、路径论证、并行说明。
+  expected_evidence:
+  - mask方向正确
+  - 跨层保持因果
+  - 一次前向多个损失
+  evaluation:
+    criteria:
+    - 遮罩
+    - 证明
+    - 并行性
+    points: 7
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 51
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 51
+- id: P6
+  level: 综合
+  question: 为图像描述模型列出 image self-attn、text causal self-attn、cross-attn 的 Q/K/V 来源，并标出防未来词泄漏的位置。
+  hint: 文本查询图像。
+  deliverable: 架构图和来源表。
+  expected_evidence:
+  - 图像内部self
+  - 文本内部causal
+  - 文本Q对图像K/V
+  - causal mask正确
+  evaluation:
+    criteria:
+    - 三类连接
+    - QKV来源
+    - 因果安全
+    points: 8
+  citations:
+  - source_id: mit-6.7960-f24-lecture-08-slides
+    anchor:
+      type: page
+      value: 54
+citations:
+- source_id: mit-6.7960-f24-lecture-08-slides
+  anchor:
+    type: page
+    value: 4
+  citation_id: a2-p04
+  supports: 支持本包引用第4页的内容。
+- source_id: mit-6.7960-f24-lecture-08-slides
+  anchor:
+    type: page
+    value: 5
+  citation_id: a2-p05
+  supports: 支持本包引用第5页的内容。
+- source_id: mit-6.7960-f24-lecture-08-slides
+  anchor:
+    type: page
+    value: 9
+  citation_id: a2-p09
+  supports: 支持本包引用第9页的内容。
+- source_id: mit-6.7960-f24-lecture-08-slides
+  anchor:
+    type: page
+    value: 14
+  citation_id: a2-p14
+  supports: 支持本包引用第14页的内容。
+- source_id: mit-6.7960-f24-lecture-08-slides
+  anchor:
+    type: page
+    value: 17
+  citation_id: a2-p17
+  supports: 支持本包引用第17页的内容。
+- source_id: mit-6.7960-f24-lecture-08-slides
+  anchor:
+    type: page
+    value: 18
+  citation_id: a2-p18
+  supports: 支持本包引用第18页的内容。
+- source_id: mit-6.7960-f24-lecture-08-slides
+  anchor:
+    type: page
+    value: 20
+  citation_id: a2-p20
+  supports: 支持本包引用第20页的内容。
+- source_id: mit-6.7960-f24-lecture-08-slides
+  anchor:
+    type: page
+    value: 30
+  citation_id: a2-p30
+  supports: 支持本包引用第30页的内容。
+- source_id: mit-6.7960-f24-lecture-08-slides
+  anchor:
+    type: page
+    value: 34
+  citation_id: a2-p34
+  supports: 支持本包引用第34页的内容。
+- source_id: mit-6.7960-f24-lecture-08-slides
+  anchor:
+    type: page
+    value: 37
+  citation_id: a2-p37
+  supports: 支持本包引用第37页的内容。
+- source_id: mit-6.7960-f24-lecture-08-slides
+  anchor:
+    type: page
+    value: 39
+  citation_id: a2-p39
+  supports: 支持本包引用第39页的内容。
+- source_id: mit-6.7960-f24-lecture-08-slides
+  anchor:
+    type: page
+    value: 41
+  citation_id: a2-p41
+  supports: 支持本包引用第41页的内容。
+- source_id: mit-6.7960-f24-lecture-08-slides
+  anchor:
+    type: page
+    value: 43
+  citation_id: a2-p43
+  supports: 支持本包引用第43页的内容。
+- source_id: mit-6.7960-f24-lecture-08-slides
+  anchor:
+    type: page
+    value: 51
+  citation_id: a2-p51
+  supports: 支持本包引用第51页的内容。
+- source_id: mit-6.7960-f24-lecture-08-slides
+  anchor:
+    type: page
+    value: 54
+  citation_id: a2-p54
+  supports: 支持本包引用第54页的内容。
+review:
+  generator_review_status: fast_pass
+  audit_findings: []
+limitations:
+- 仅依据 Lecture 8 幻灯片的可见内容；隐藏提取文本未用作证据。
+- 不展开第45–47页外部论文的完整方法。
+- 第44页只转录可见 sine 位置代码，不推断未显示分量。

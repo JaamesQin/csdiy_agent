@@ -1,0 +1,132 @@
+{
+  "schema_version": "practice-semantic-scan-v1",
+  "course_id": "ucb-cs188-spring-2026",
+  "build_id": "443efc651cd290edbf7ebf368bb2a79fd314c3db49da3969de19dc2d13aa204f",
+  "unit_ids": ["lecture-01", "lecture-02", "lecture-03", "lecture-04", "lecture-05", "lecture-06", "lecture-07", "lecture-08", "lecture-09", "lecture-10", "lecture-11", "lecture-12", "lecture-13", "lecture-14"],
+  "scanned_at": "2026-08-12T00:00:00+08:00",
+  "auditor_id": "luna-medium-semantic-scan-ucb-cs188-spring-2026-range-01-14-20260812",
+  "offline_only": true,
+  "source_scope": {
+    "artifacts_read_per_unit": ["01-evidence-plan.json", "02-learning-content.json", "03-practice-flow.json", "05-studykit.json", "review-plan.json"],
+    "source_chunks_read": "all cited and unit chunks for lecture-01 through lecture-14",
+    "provider_or_model_calls": false,
+    "network_used": false,
+    "writes_outside_report": false
+  },
+  "method": {
+    "checks": ["concrete_setting_and_operations", "self_contained_answerability", "replacement_transfer", "hint_expected_evaluation_alignment", "relevant_visible_source_anchor", "new_formative_task"],
+    "pass_rule": "pass only when the current item is directly answerable and its question, hint, expected evidence, evaluation, mapped IDs, and source anchors align",
+    "heuristics_not_used_as_proof": true
+  },
+  "units": [
+    {"unit_id":"lecture-01","item_results":[
+      {"practice_id":"practice-1","result":"pass","requirement_ids":["r1"],"concept_ids":["c1"],"source_anchors":[28,41],"finding":"Concrete classification cases, changed reward condition, observable table and aligned evidence/evaluation."},
+      {"practice_id":"practice-2","result":"pass","requirement_ids":["r2"],"concept_ids":["c3"],"source_anchors":[42,45],"finding":"Finite percept/transition trace and counterfactual are directly computable without unprovided map state."},
+      {"practice_id":"practice-3","result":"pass","requirement_ids":["r3"],"concept_ids":["c4"],"source_anchors":[46],"finding":"Only observability changes; the same-current-percept/different-history test makes the memory claim observable."},
+      {"practice_id":"practice-4","result":"pass","requirement_ids":["r4"],"concept_ids":["c5"],"source_anchors":[48,51],"finding":"All legal-action inputs, rule branches, hidden-history boundary and expected sequence are specified."},
+      {"practice_id":"practice-5","result":"pass","requirement_ids":["r5"],"concept_ids":["c6"],"source_anchors":[52,53,54,55,56,57],"finding":"Three new method-selection settings have explicit input/object/output triples and transfer boundaries."}
+    ],"counts":{"items":5,"pass":5,"needs_repair":0,"blockers":0,"source_chunk_count":61}},
+    {"unit_id":"lecture-02","item_results":[
+      {"practice_id":"p1","result":"pass","source_anchors":[14,18],"finding":"Concrete graph/frontier trace with answerable queue operations and observable expansion order."},
+      {"practice_id":"p2","result":"pass","source_anchors":[25,34,39],"finding":"Search-state and frontier conditions are supplied; hint and evaluation target the same trace."},
+      {"practice_id":"p3","result":"pass","source_anchors":[37,40],"finding":"Concrete search comparison and changed condition test the mapped concept rather than a lecture-only answer."},
+      {"practice_id":"p4","result":"pass","source_anchors":[44,46,47],"finding":"Finite input, operations, goal and observable result are explicit."},
+      {"practice_id":"p5","result":"pass","source_anchors":[47,50],"finding":"Complete task setting supports direct answer and aligned evidence/evaluation."},
+      {"practice_id":"p6","result":"pass","source_anchors":[6,10,43],"finding":"Concrete boundary/transfer item has a falsifiable output and relevant anchors."}
+    ],"counts":{"items":6,"pass":6,"needs_repair":0,"blockers":0,"source_chunk_count":52}},
+    {"unit_id":"lecture-03","item_results":[
+      {"practice_id":"P1","result":"pass","source_anchors":[22,25],"finding":"Concrete graph and complete g/h/f values determine the requested one-step results."},
+      {"practice_id":"P2","result":"pass","source_anchors":[26,25],"finding":"Queue/dequeue trace and cheaper changed graph are directly solvable; final result is observable."},
+      {"practice_id":"P3","result":"pass","source_anchors":[43,45,46,47],"finding":"Repaired numeric tile/Manhattan setting defines both relaxations and excludes the blank explicitly."},
+      {"practice_id":"P4","result":"pass","source_anchors":[53,56,57],"finding":"Revisit, cost change, closed-set and inconsistent-heuristic boundary are concrete and aligned."},
+      {"practice_id":"P5","result":"pass","source_anchors":[57,60],"finding":"All consistency inequalities and the repair value are explicit and checkable."},
+      {"practice_id":"P6","result":"pass","source_anchors":[67],"finding":"IDA*/RBFS/SMA* transfer setting specifies the requested mechanism and tradeoff evidence."}
+    ],"counts":{"items":6,"pass":6,"needs_repair":0,"blockers":0,"source_chunk_count":67}},
+    {"unit_id":"lecture-04","item_results":[
+      {"practice_id":"p1","result":"pass","source_anchors":[27,29,30],"finding":"Numeric hill-climbing trace, tie rule and stopping result are deterministic."},
+      {"practice_id":"p2","result":"pass","source_anchors":[28],"finding":"Four-column state and candidate rows make the CSP/local-search calculation self-contained."},
+      {"practice_id":"p3","result":"pass","source_anchors":[31,32,35],"finding":"K=2 beam states and annealing temperatures define finite selection and acceptance checks."},
+      {"practice_id":"p4","result":"pass","source_anchors":[39,40,41],"finding":"Coordinates, assignments, objective and changed center are explicit; result is observable."}
+    ],"counts":{"items":4,"pass":4,"needs_repair":0,"blockers":0,"source_chunk_count":42}},
+    {"unit_id":"lecture-05","item_results":[
+      {"practice_id":"p1","result":"pass","source_anchors":[4,6],"finding":"Current stage-03 expected output enumerates all six base solutions and all three changed-condition solutions; no lecture-specific dependency."},
+      {"practice_id":"p2","result":"pass","source_anchors":[20,24],"finding":"Finite domains, constraints, ordering and changed-condition path are specified; current item is answerable."},
+      {"practice_id":"p3","result":"pass","source_anchors":[30,33,34],"finding":"Forward-checking input and support/recheck operation yield an observable domain result."},
+      {"practice_id":"p4","result":"pass","source_anchors":[40,42],"finding":"MRV tie, LCV deletion counts and tie-break are explicit and aligned."}
+    ],"counts":{"items":4,"pass":4,"needs_repair":0,"blockers":0,"source_chunk_count":42}},
+    {"unit_id":"lecture-06","item_results":[
+      {"practice_id":"p1","result":"pass","source_anchors":[7,8],"finding":"Current item explicitly gives all four directed arcs, propagation rule, every forced deletion and final domains."},
+      {"practice_id":"p2","result":"pass","source_anchors":[13,14],"finding":"Domains, neighbor deletions, MRV/LCV counts and tie-break make the choice observable."},
+      {"practice_id":"p3","result":"pass","source_anchors":[18,19],"finding":"Tree CSP chain, domains and inequality operations specify a direct forward/backward trace."},
+      {"practice_id":"p4","result":"pass","source_anchors":[21,22],"finding":"Both cutset assignments and the resulting contradiction are directly checkable."},
+      {"practice_id":"p5","result":"pass","source_anchors":[26,27],"finding":"Complete assignment, constraints and violation counts specify the repair step."}
+    ],"counts":{"items":5,"pass":5,"needs_repair":0,"blockers":0,"source_chunk_count":32}},
+    {"unit_id":"lecture-07","item_results":[
+      {"practice_id":"p1","result":"pass","requirement_ids":["r1"],"concept_ids":["c1"],"source_anchors":[6,7,8],"finding":"Explicit game tree and MAX/MIN selection yield an observable backed-up value."},
+      {"practice_id":"p2","result":"pass","requirement_ids":["r2"],"concept_ids":["c2"],"source_anchors":[15,17],"finding":"Concrete minimax trace and role-specific comparison are self-contained."},
+      {"practice_id":"p3","result":"pass","requirement_ids":["r3"],"concept_ids":["c3"],"source_anchors":[24,25,26],"finding":"Specified pruning bounds and node order produce a falsifiable trace."},
+      {"practice_id":"p4","result":"pass","requirement_ids":["r2","r3"],"concept_ids":["c2","c3"],"source_anchors":[20,26],"finding":"Alpha-beta state and changed ordering are explicit."},
+      {"practice_id":"p5","result":"pass","requirement_ids":["r4"],"concept_ids":["c4"],"source_anchors":[30,34,36],"finding":"Depth/utility setting and boundary comparison are answerable and aligned."}
+    ],"counts":{"items":5,"pass":5,"needs_repair":0,"blockers":0,"source_chunk_count":38}},
+    {"unit_id":"lecture-08","item_results":[
+      {"practice_id":"p1","result":"pass","requirement_ids":["r1"],"concept_ids":["c1"],"source_anchors":[3,4],"finding":"Concrete chance-node values and expectation operation are specified."},
+      {"practice_id":"p2","result":"pass","requirement_ids":["r2"],"concept_ids":["c2"],"source_anchors":[5,6],"finding":"Finite stochastic game calculation has explicit states, probabilities and result."},
+      {"practice_id":"p3","result":"pass","requirement_ids":["r3"],"concept_ids":["c3"],"source_anchors":[11,12],"finding":"Chance/expectimax comparison is directly computable."},
+      {"practice_id":"p4","result":"pass","requirement_ids":["r3"],"concept_ids":["c3"],"source_anchors":[13,14,16],"finding":"Specified values and changed condition align with hint/evaluation."},
+      {"practice_id":"p5","result":"pass","requirement_ids":["r4"],"concept_ids":["c4"],"source_anchors":[19,23,24],"finding":"Concrete approximation/decision task has observable evidence and transfer boundary."}
+    ],"counts":{"items":5,"pass":5,"needs_repair":0,"blockers":0,"source_chunk_count":38}},
+    {"unit_id":"lecture-09","item_results":[
+      {"practice_id":"p1","result":"pass","requirement_ids":["r1","r2"],"source_anchors":[8,10,11],"finding":"Current item now supplies all four nonterminal transitions and rewards; the MDP table is uniquely answerable."},
+      {"practice_id":"p2","result":"pass","requirement_ids":["r3"],"source_anchors":[19,20,21],"finding":"Numeric finite-horizon calculation is deterministic."},
+      {"practice_id":"p3","result":"pass","requirement_ids":["r2","r4"],"source_anchors":[15,17,27],"finding":"Current wording explicitly reports the tied optimal action set, removing the former ambiguity."},
+      {"practice_id":"p4","result":"pass","requirement_ids":["r4","r5"],"source_anchors":[34,49,50,51],"finding":"Concrete value-iteration updates and boundary case are observable."},
+      {"practice_id":"p5","result":"pass","requirement_ids":["r2","r5"],"source_anchors":[2,17,27,34,51],"finding":"Both diagnosis cases are constructible and the sample limitation is explicitly evaluated."}
+    ],"counts":{"items":5,"pass":5,"needs_repair":0,"blockers":0,"source_chunk_count":53}},
+    {"unit_id":"lecture-10","item_results":[
+      {"practice_id":"p1-bellman-two-action","result":"pass","requirement_ids":["req-optimal","req-bellman"],"source_anchors":[4,8,28],"finding":"Probabilities, rewards, values and changed probability determine both Bellman comparisons."},
+      {"practice_id":"p2-finite-horizon-vi","result":"pass","requirement_ids":["req-value-iteration"],"source_anchors":[15,17,19],"finding":"Current wording consistently declares a three-state MDP and terminal states; V1/V2 and gamma boundary are directly answerable."},
+      {"practice_id":"p3-fixed-policy-vs-extraction","result":"pass","requirement_ids":["req-policy"],"source_anchors":[22,23,28,29],"finding":"Fixed-policy evaluation, extraction and direct Q comparison are separated and numerically checkable."},
+      {"practice_id":"p4-policy-iteration-trace","result":"pass","requirement_ids":["req-policy-iteration"],"source_anchors":[47,48],"finding":"Policy/value/action table and tie rule yield a deterministic improvement and continuation decision."},
+      {"practice_id":"p5-known-vs-unknown-bandit","result":"pass","requirement_ids":["req-planning-learning"],"source_anchors":[51,53,56,58],"finding":"Known/unknown models, evidence, six-round branch and exploration/exploitation distinction are explicit."}
+    ],"counts":{"items":5,"pass":5,"needs_repair":0,"blockers":0,"source_chunk_count":59}},
+    {"unit_id":"lecture-11","item_results":[
+      {"practice_id":"p-classify","result":"pass","requirement_ids":["r-distinguish"],"concept_ids":["c-rl-mdp","c-direct","c-explore"],"source_anchors":[15,22,38],"finding":"Three supplied systems and changed permission condition make the classification directly observable."},
+      {"practice_id":"p-model","result":"pass","requirement_ids":["r-model-count"],"concept_ids":["c-model-based"],"source_anchors":[17,18],"finding":"Sample counts, empirical probabilities and unobserved transition boundary are explicit."},
+      {"practice_id":"p-direct","result":"pass","requirement_ids":["r-direct"],"concept_ids":["c-direct"],"source_anchors":[23,24,25],"finding":"Current expected returns agree with the two episodes and added C sample (V(C)=7/3)."},
+      {"practice_id":"p-td","result":"pass","requirement_ids":["r-td"],"concept_ids":["c-td"],"source_anchors":[33,34,35],"finding":"TD targets, old values, alpha updates and changed successor are fully specified."},
+      {"practice_id":"p-alpha","result":"pass","requirement_ids":["r-td"],"concept_ids":["c-td"],"source_anchors":[34],"finding":"Both alpha updates and second-sample comparison are directly calculable."},
+      {"practice_id":"p-q","result":"pass","requirement_ids":["r-q"],"concept_ids":["c-q","c-explore"],"source_anchors":[38,40,43],"finding":"Q-learning update, terminal boundary and insufficient-exploration caveat align."}
+    ],"counts":{"items":6,"pass":6,"needs_repair":0,"blockers":0,"source_chunk_count":43}},
+    {"unit_id":"lecture-12","item_results":[
+      {"practice_id":"p1","result":"pass","requirement_ids":["req-model-free"],"source_anchors":[2,3,4,5,6],"finding":"Concrete learners and transition records define model-based/model-free classification and fields."},
+      {"practice_id":"p2","result":"pass","requirement_ids":["req-q-learning"],"source_anchors":[5,6],"finding":"The formula is supplied as a teaching-transfer rule, with terminal convention and aligned evidence."},
+      {"practice_id":"p3","result":"pass","requirement_ids":["req-exploration"],"source_anchors":[8,9,10],"finding":"Two-action epsilon-greedy probabilities and epsilon boundary are numerically observable."},
+      {"practice_id":"p4","result":"pass","requirement_ids":["req-generalization"],"source_anchors":[12,17,18,19],"finding":"Feature vectors, weights, changed feature and exact-state tradeoff are explicit."},
+      {"practice_id":"p5","result":"pass","requirement_ids":["req-policy-search"],"source_anchors":[28,29],"finding":"Four episode samples support mean comparison and the generalization/cost limitation is explicit."}
+    ],"counts":{"items":5,"pass":5,"needs_repair":0,"blockers":0,"source_chunk_count":38}},
+    {"unit_id":"lecture-13","item_results":[
+      {"practice_id":"p1","result":"pass","requirement_ids":["r-foundations"],"concept_ids":["c-rv-joint","c-marginal-conditional"],"source_anchors":[6,9,10],"finding":"Joint table entries, marginal/conditional operations and normalization result are explicit."},
+      {"practice_id":"p2","result":"pass","requirement_ids":["r-inference"],"concept_ids":["c-chain-inference"],"source_anchors":[17,18,19],"finding":"Finite probability calculation and factorization steps are directly checkable."},
+      {"practice_id":"p3","result":"pass","requirement_ids":["r-bayes"],"concept_ids":["c-bayes"],"source_anchors":[16,22],"finding":"Concrete Bayes inputs and observable posterior result are supplied."},
+      {"practice_id":"p4","result":"pass","requirement_ids":["r-independence"],"concept_ids":["c-independence"],"source_anchors":[23,30,32],"finding":"Independence/conditional-independence setting and test are self-contained."},
+      {"practice_id":"p5","result":"pass","requirement_ids":["r-ghostbusters"],"concept_ids":["c-ghostbusters","c-independence"],"source_anchors":[29,30,31,32],"finding":"Ghostbusters inference task has explicit variables, observations, operation and checkable output."}
+    ],"counts":{"items":5,"pass":5,"needs_repair":0,"blockers":0,"source_chunk_count":35}},
+    {"unit_id":"lecture-14","item_results":[
+      {"practice_id":"p1","result":"pass","requirement_ids":["req-syntax","req-compactness"],"source_anchors":[11,12],"finding":"Visible Alarm-network nodes, factors and CPT rows are explicit; no missing graph detail is required."},
+      {"practice_id":"p2","result":"pass","requirement_ids":["req-syntax","req-compactness"],"source_anchors":[12,13],"finding":"Parameter-count setting and complexity comparison are concrete and labeled as transfer where needed."},
+      {"practice_id":"p3","result":"pass","requirement_ids":["req-semantics"],"source_anchors":[14,15],"finding":"All factor terms and numeric inputs define an observable product calculation."},
+      {"practice_id":"p4","result":"pass","requirement_ids":["req-semantics"],"source_anchors":[16,17],"finding":"Chain conditional-independence transfer explicitly supplies the graph and required judgment."},
+      {"practice_id":"p5","result":"pass","requirement_ids":["req-enumeration"],"source_anchors":[20,21,22],"finding":"Enumeration variables, hidden assignments and summation target are fully specified."}
+    ],"counts":{"items":5,"pass":5,"needs_repair":0,"blockers":0,"source_chunk_count":22}}
+  ],
+  "counts": {"units":14,"items":71,"pass":71,"needs_repair":0,"blockers":0,"deferred_structural_findings":7},
+  "deferred_structural_findings": [
+    {"code":"checkpoint_schema_shape_drift","units":["lecture-04","lecture-05","lecture-09"],"reason":"Stage-03 files use legacy practices/practice-flow shapes while current units use multiple checkpoint variants; item semantics were read from the active files, but schema/shape reconciliation is outside this semantic scan.","repair":"Reconcile checkpoint schemas in a new fingerprinted build and rerun structural validation."},
+    {"code":"candidate_assembly_parity_gap","units":["lecture-05","lecture-07","lecture-10"],"reason":"Existing current-build sidecar evidence records learner-content/candidate omissions or anchor-set drift (including lecture-07 misconception/page-36 citation and lecture-10 concept/glossary drift); these do not invalidate the directly answerable current practice items.","repair":"Compare 01/02/03 against candidate/final learner fields and restore or explicitly document every intentional omission, then rerun parity validation."},
+    {"code":"review_ledger_closure_gap","units":["lecture-04","lecture-05","lecture-06","lecture-10","lecture-11"],"reason":"Review plans contain differing selected/actual page ledgers and historical audits recorded risk-page or cited-page closure issues; this scan did not rewrite or certify those ledgers.","repair":"Reconcile selected pages, actual reviewed pages, risk pages and all cited pages in review-plan/metrics, then rerun review validation."},
+    {"code":"citation_representation_variant","units":["lecture-09","lecture-12","lecture-13","lecture-14"],"reason":"Active practice checkpoints use source_pages/source_refs rather than citation objects in some units; the cited page anchors resolve against the unit chunks, but representation parity remains structural work.","repair":"Normalize or explicitly migrate citation representation while preserving source/page provenance."},
+    {"code":"historical_audit_status_disagreement","units":["lecture-04","lecture-05","lecture-06","lecture-08","lecture-10","lecture-11","lecture-12"],"reason":"Preserved independent-audit sidecars include blocked or pre-repair verdicts that do not match the repaired current practice fields; they remain historical evidence and were not overwritten.","repair":"Run a fresh independent structural re-audit after checkpoint closure; do not treat this report as replacing those audits."},
+    {"code":"source_visual_review_boundary","units":["lecture-01","lecture-03","lecture-04","lecture-07","lecture-08","lecture-12","lecture-14"],"reason":"Chunk warnings/formula or low-extraction risk pages remain source/checkpoint concerns; this report used visible chunk anchors and did not perform or claim additional visual repair.","repair":"Complete the unit-specific visual/formula review contract and preserve page-specific unresolved records where applicable."},
+    {"code":"final_format_structural_validation_deferred","units":["lecture-01","lecture-03","lecture-04","lecture-05","lecture-06","lecture-07","lecture-08","lecture-09","lecture-10","lecture-11","lecture-12","lecture-13","lecture-14"],"reason":"This report is limited to practice semantics and does not certify candidate/final/YAML semantic equality, schema validation, or final delivery status.","repair":"Use the deterministic validators and a separate structural audit after any authorized repair."}
+  ]
+}

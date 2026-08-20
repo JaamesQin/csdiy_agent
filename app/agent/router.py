@@ -14,7 +14,12 @@ from app.agent.contracts import (
     RouteDecision,
     RouteOutcome,
 )
-from app.agent.capabilities import CAPABILITIES, match_capability_help
+from app.agent.capabilities import (
+    available_capabilities,
+    capability_for_intent,
+    match_capability_help,
+    match_unavailable_capability_request,
+)
 from app.agent.model_support import normalized_usage
 from app.agent.understanding import understand_user_texts
 from app.catalog.studykits import StudyKitStore
@@ -88,14 +93,17 @@ class IntentRouter:
                 ),
                 user_prompt=json.dumps(
                     {
-                        "intents": [intent.value for intent in Intent],
+                        "intents": [
+                            capability.intent.value
+                            for capability in available_capabilities()
+                        ],
                         "capabilities": [
                             {
                                 "id": item.capability_id.value,
                                 "title": item.title,
                                 "availability": item.availability,
                             }
-                            for item in CAPABILITIES
+                            for item in available_capabilities()
                         ],
                         "latest_user_message": latest[:10000],
                         "known_context": (
@@ -169,6 +177,18 @@ class IntentRouter:
                 usage=usage,
             )
         intent = candidate.intent
+        capability = capability_for_intent(intent)
+        if capability is not None and capability.availability == "unavailable":
+            return RouteOutcome(
+                decision=RouteDecision(
+                    intent=Intent.GENERAL_ASSISTANCE,
+                    confidence=candidate.confidence,
+                    course_context=resolved_context,
+                    capability_id=capability.capability_id,
+                    reason="unavailable_capability_fallback",
+                ),
+                usage=usage,
+            )
         if intent is Intent.ADMIN_GENERATE_STUDYKIT:
             return RouteOutcome(
                 decision=RouteDecision(
@@ -224,6 +244,15 @@ class IntentRouter:
                 confidence=1.0,
                 course_context=course_context,
                 reason="admin_rule",
+            )
+        unavailable = match_unavailable_capability_request(text)
+        if unavailable is not None:
+            return RouteDecision(
+                intent=Intent.GENERAL_ASSISTANCE,
+                confidence=1.0,
+                course_context=course_context,
+                capability_id=unavailable.capability_id,
+                reason="unavailable_capability_fallback",
             )
 
         practice_feedback_signal = bool(

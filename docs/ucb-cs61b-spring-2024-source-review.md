@@ -2,7 +2,7 @@
 
 Review date: 2026-08-09
 
-Status: source preparation is ready for StudyKit generation; generation has not started
+Status: canonical portable-v0.2 fast StudyKit build succeeded; all 40 source-supported units validated and passed the fast audit/review gate
 
 ## Course identity and scope
 
@@ -130,18 +130,10 @@ For every unit, deterministic preflight verified:
 
 All 40 request builds and all 40 evidence bundles passed. Detailed counts are in `evaluations/ucb-cs61b-spring-2024-parser-results.md`.
 
-## Pipeline boundary
+## Authoring and finalization
 
-Preparation is complete through deterministic inventory, acquisition, provenance, PDF normalization, chunk construction, schema validation, identity checks, page rendering, formula-candidate selection, and pre-generation visual QA.
+The canonical portable-v0.2 fast build succeeded for all 40 source-supported units. It contains 2,860 page chunks, 40/40 validated units, 40/40 passed fast audit/review, and 1,314 selected/actual final visual-review pages according to the per-unit metrics. Lecture 34 remains the explicitly labeled official-recording ASR fallback documented above. No provider-backed generator or network call was used.
 
-The next command would begin model-backed StudyKit authoring and was intentionally **not** run:
-
-```bash
-.venv/bin/python scripts/generate_studykit.py \
-  --chunks data/sources/ucb-cs61b-spring-2024/lecture-01/chunks.jsonl \
-  --manifest data/manifests/ucb-cs61b-spring-2024.yaml \
-  --unit-id lecture-01 \
-  --output-dir outputs/ucb-cs61b-spring-2024/lecture-01
-```
-
-No `01-evidence-plan.json`, StudyKit output, DeepSeek request, staged authoring command, or lecture-regression command was created or run.
+- Build index: `outputs/ucb-cs61b-spring-2024/a748c428609e7a5bc9f0697a06ae0d7fbd56e2469aaaba8f5b034121f2479ab1/STUDYKIT_INDEX.md`
+- Course result: `outputs/ucb-cs61b-spring-2024/a748c428609e7a5bc9f0697a06ae0d7fbd56e2469aaaba8f5b034121f2479ab1/result.json`
+- StudyKit evaluation: `evaluations/ucb-cs61b-spring-2024-studykit-results.md`

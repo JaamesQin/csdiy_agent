@@ -1,0 +1,240 @@
+{
+  "stage": "03-practice-flow",
+  "practice": [
+    {
+      "id": "P1",
+      "level": "入门",
+      "question": "一幅图被分为 6 个 patches，每个投影到 16 维。写出 T 的形状，并说明行与列分别表示什么。",
+      "hint": "课件把 token 向量放在行。",
+      "deliverable": "形状和两句解释。",
+      "expected_evidence": [
+        "T∈R^{6×16}",
+        "行对应 token",
+        "列对应代码维度"
+      ],
+      "evaluation": {
+        "criteria": [
+          "形状正确",
+          "语义对应正确"
+        ],
+        "points": 3
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 14
+          }
+        }
+      ]
+    },
+    {
+      "id": "P2",
+      "level": "基础",
+      "question": "若 W∈R^{3×6}，计算 WT 的输出形状；说明该操作与 F_θ(T[i,:]) 的信息流差异。",
+      "hint": "前者在 j 上求和，后者一次只读一行。",
+      "deliverable": "形状推导和对照表。",
+      "expected_evidence": [
+        "WT∈R^{3×16}",
+        "W 跨 token 混合",
+        "F_θ 独立修改 token"
+      ],
+      "evaluation": {
+        "criteria": [
+          "矩阵推导",
+          "跨 token/逐 token 区分"
+        ],
+        "points": 4
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 17
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        }
+      ]
+    },
+    {
+      "id": "P3",
+      "level": "中级",
+      "question": "用“普通线性层 vs attention”解释为什么 A 被称为数据依赖；对两个不同输入，哪些量会改变？",
+      "hint": "比较自由参数 W 与 A=f(input)。",
+      "deliverable": "不超过150字解释并画两个数据流框图。",
+      "expected_evidence": [
+        "W 是学习参数",
+        "A 由当前输入构造",
+        "Q/K/V 与权重随输入改变"
+      ],
+      "evaluation": {
+        "criteria": [
+          "数据依赖解释准确",
+          "不把 A 当成自由参数"
+        ],
+        "points": 4
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 20
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 29
+          }
+        }
+      ]
+    },
+    {
+      "id": "P4",
+      "level": "中级",
+      "question": "设 T∈R^{5×8}，Q、K 的维度均为 4，V 的维度为 6。写出 Q、K、V、QK^T、A、AV 的形状。",
+      "hint": "五个 queries 分别与五个 keys 匹配。",
+      "deliverable": "逐步形状表。",
+      "expected_evidence": [
+        "Q,K∈R^{5×4}",
+        "V∈R^{5×6}",
+        "QK^T,A∈R^{5×5}",
+        "AV∈R^{5×6}"
+      ],
+      "evaluation": {
+        "criteria": [
+          "每步正确",
+          "能解释5×5的意义"
+        ],
+        "points": 5
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        }
+      ]
+    },
+    {
+      "id": "P5",
+      "level": "中高级",
+      "question": "把输入 (t1,t2,t3) 置换成 (t3,t1,t2)。无位置码时写出输出关系；再说明给每个 patch 固定空间位置码后，若只移动 token 内容而不移动位置码，为什么不再是同一实验。",
+      "hint": "区分“整行一起置换”和“内容换位但位置代码固定”。",
+      "deliverable": "等式和一段反例分析。",
+      "expected_evidence": [
+        "正确写出等变等式",
+        "等变不等于不变",
+        "识别内容与位置码绑定方式"
+      ],
+      "evaluation": {
+        "criteria": [
+          "概念精确",
+          "反例逻辑完整"
+        ],
+        "points": 6
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 41
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 43
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 44
+          }
+        }
+      ]
+    },
+    {
+      "id": "P6",
+      "level": "高级",
+      "question": "画长度4的 causal attention 允许矩阵，并用跨两层的所有可达路径论证位置2不能读取位置4；指出为何训练仍可并行。",
+      "hint": "每层都删除通向未来的边，但不同输出位置仍可同批计算。",
+      "deliverable": "矩阵、两层图和100字论证。",
+      "expected_evidence": [
+        "mask 方向正确",
+        "路径保持因果",
+        "同时监督多个 next-token 目标"
+      ],
+      "evaluation": {
+        "criteria": [
+          "遮罩正确",
+          "两层论证",
+          "并行性解释"
+        ],
+        "points": 6
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 51
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 52
+          }
+        }
+      ]
+    },
+    {
+      "id": "P7",
+      "level": "综合",
+      "question": "依据第54页设计一个图像描述 transformer：分别标注三种 attention 的 Q 来源与 K/V 来源，并指出训练和采样中保持文本因果性的模块。",
+      "hint": "文本 queries 跨注意图像 tokens；文本内部还需要 causal self-attention。",
+      "deliverable": "模块图、Q/K/V 来源表和验收清单。",
+      "expected_evidence": [
+        "image self-attention",
+        "text causal self-attention",
+        "text-to-image cross-attention",
+        "causal mask 防止未来词泄漏"
+      ],
+      "evaluation": {
+        "criteria": [
+          "三条连接正确",
+          "Q/K/V 来源正确",
+          "因果控制正确"
+        ],
+        "points": 8
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 54
+          }
+        }
+      ]
+    }
+  ]
+}

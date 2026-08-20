@@ -1,0 +1,593 @@
+{
+  "schema_version": "selective-repair-round2-master-plan-v2",
+  "plan_id": "csdiy-six-course-practice-repair-round2-20260812",
+  "created_at": "2026-08-12",
+  "scope": {
+    "courses": 6,
+    "units_total": 45,
+    "semantic_units": 43,
+    "lineage_only_units": 1,
+    "structure_only_units": 1,
+    "blocked_practice_items": 116,
+    "evidence_stage_repairs": 1,
+    "source": "six existing first-round Luna xhigh audits"
+  },
+  "courses": [
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "baseline_build_id": "1db4a3a7fee047565818f331b9bc809fd00b9036ce97826a0cafcf29049c53ce",
+      "audit_tree_sha256": "0257d54a95f6bb907a60f4a583f83b3074240d756ded4e550d631da0c358832b",
+      "repair_units": [
+        {"unit_id": "lecture-01", "stages": ["practice"]},
+        {"unit_id": "lecture-02", "stages": ["practice"]},
+        {"unit_id": "lecture-03", "stages": ["practice"]},
+        {"unit_id": "lecture-04", "stages": ["practice"]},
+        {"unit_id": "lecture-05", "stages": ["practice"]},
+        {"unit_id": "lecture-06", "stages": ["practice"]},
+        {"unit_id": "lecture-07", "stages": ["practice"]},
+        {"unit_id": "lecture-08", "stages": ["practice"]},
+        {"unit_id": "lecture-09", "stages": ["practice"]},
+        {"unit_id": "lecture-10", "stages": ["practice"]},
+        {"unit_id": "lecture-11", "stages": ["practice"]},
+        {"unit_id": "lecture-12", "stages": ["practice"]},
+        {"unit_id": "lecture-13", "stages": ["practice"]},
+        {"unit_id": "lecture-14", "stages": ["practice"]},
+        {"unit_id": "lecture-15", "stages": ["practice"]},
+        {"unit_id": "lecture-16", "stages": ["practice"]},
+        {"unit_id": "lecture-17", "stages": ["practice"]},
+        {"unit_id": "lecture-18", "stages": ["practice"]},
+        {"unit_id": "lecture-19", "stages": ["practice"]},
+        {"unit_id": "lecture-20", "stages": ["practice"]},
+        {"unit_id": "lecture-21", "stages": ["practice"]},
+        {"unit_id": "lecture-22", "stages": ["practice"]},
+        {"unit_id": "lecture-23", "stages": ["practice"]},
+        {"unit_id": "lecture-24", "stages": ["practice"]}
+      ]
+    },
+    {
+      "course_id": "ucb-cs168-spring-2026",
+      "baseline_build_id": "d194c537857777cc12747610d694519d43545a1928ff50daa93f66051deaa8d0",
+      "audit_tree_sha256": "ad797ba9f8c5007cb20455ce3be1383d094cb44ffa795eb7cd895687f740c5bd",
+      "repair_units": [
+        {"unit_id": "lecture-04", "stages": ["practice", "structural"]},
+        {"unit_id": "lecture-13", "stages": ["practice"]},
+        {"unit_id": "lecture-21", "stages": ["structural"], "blocker_kind": "lineage-only"}
+      ]
+    },
+    {
+      "course_id": "ucb-cs186-spring-2026",
+      "baseline_build_id": "7e26cbe86e81324985a46ea0d9cfd694ce0d077351605da080d4eecd612c2fe0",
+      "audit_tree_sha256": "d6ac511c8d0d743809d5cf39a91bb8512f6f49278cab6f243265e9c0bedb4523",
+      "repair_units": [
+        {"unit_id": "note-01", "stages": ["practice"]},
+        {"unit_id": "note-05", "stages": ["practice"]},
+        {"unit_id": "note-06", "stages": ["practice"]},
+        {"unit_id": "note-07", "stages": ["practice"]},
+        {"unit_id": "note-10", "stages": ["practice"]},
+        {"unit_id": "note-15", "stages": ["practice"]}
+      ]
+    },
+    {
+      "course_id": "ucb-cs188-spring-2026",
+      "baseline_build_id": "132fad020d624070614235f6b2378fd5d9d5cd412a9acf00c4a6be8d6987c0f4",
+      "audit_tree_sha256": "fb18f9c95f22ce37d57e6a115eeb3c37ee3567bc028def214665be16a2f74cc3",
+      "repair_units": [
+        {"unit_id": "lecture-14", "stages": ["structural"], "blocker_kind": "structure-only"},
+        {"unit_id": "lecture-16", "stages": ["evidence", "practice"]},
+        {"unit_id": "lecture-17", "stages": ["practice"]},
+        {"unit_id": "lecture-23", "stages": ["practice"]},
+        {"unit_id": "lecture-24", "stages": ["practice"]},
+        {"unit_id": "lecture-27", "stages": ["practice"]},
+        {"unit_id": "lecture-28", "stages": ["practice"]}
+      ]
+    },
+    {
+      "course_id": "ucb-cs61a-summer-2026",
+      "baseline_build_id": "09e38a57a95cfa256b6c3270013dc6fb6bf4dcba08d2191d11a7879b43a9b933",
+      "audit_tree_sha256": "7a1ec94b3f438e62d2f5a998a3985abd53a259f0dec040e59212e320ad89e69b",
+      "repair_units": [
+        {"unit_id": "lecture-28", "stages": ["practice"]}
+      ]
+    },
+    {
+      "course_id": "ucb-cs61c-spring-2026",
+      "baseline_build_id": "12b1704ea45e2daca9b589b480185850638ca311835eede3f1cfc6ecffc82fd5",
+      "audit_tree_sha256": "96328ecda445725f2dda4b6cc864ed900adaf2cbfb96e578120759f0697212c6",
+      "repair_units": [
+        {"unit_id": "lecture-07", "stages": ["practice"]},
+        {"unit_id": "lecture-29", "stages": ["practice"]},
+        {"unit_id": "lecture-33", "stages": ["practice"]},
+        {"unit_id": "lecture-36", "stages": ["practice"]}
+      ]
+    }
+  ],
+  "baseline_round1": {
+    "courses": [
+      {
+        "course_id": "mit-6-042j-spring-2024",
+        "baseline_build_id": "89a0616b96b49b2060735c20c2ba17616905b29c357aa0d8c4daa42f624ba485",
+        "round1_repair_build_id": "1db4a3a7fee047565818f331b9bc809fd00b9036ce97826a0cafcf29049c53ce",
+        "round1_repair_plan": "outputs/mit-6-042j-spring-2024/1db4a3a7fee047565818f331b9bc809fd00b9036ce97826a0cafcf29049c53ce/repair-plan.json"
+      },
+      {
+        "course_id": "ucb-cs168-spring-2026",
+        "baseline_build_id": "483da4bf0bedfb48ae15e51dbdd31cbbf5490d11945be2ebefad8fa8cbf904e6",
+        "round1_repair_build_id": "d194c537857777cc12747610d694519d43545a1928ff50daa93f66051deaa8d0",
+        "round1_repair_plan": "outputs/ucb-cs168-spring-2026/d194c537857777cc12747610d694519d43545a1928ff50daa93f66051deaa8d0/repair-plan.json"
+      },
+      {
+        "course_id": "ucb-cs186-spring-2026",
+        "baseline_build_id": "aadb0606a7f2fd9a5920e2340bf30cc42d6522e06628a12124e8e74d1a5fd277",
+        "round1_repair_build_id": "7e26cbe86e81324985a46ea0d9cfd694ce0d077351605da080d4eecd612c2fe0",
+        "round1_repair_plan": "outputs/ucb-cs186-spring-2026/7e26cbe86e81324985a46ea0d9cfd694ce0d077351605da080d4eecd612c2fe0/repair-plan.json"
+      },
+      {
+        "course_id": "ucb-cs188-spring-2026",
+        "baseline_build_id": "443efc651cd290edbf7ebf368bb2a79fd314c3db49da3969de19dc2d13aa204f",
+        "round1_repair_build_id": "132fad020d624070614235f6b2378fd5d9d5cd412a9acf00c4a6be8d6987c0f4",
+        "round1_repair_plan": "outputs/ucb-cs188-spring-2026/132fad020d624070614235f6b2378fd5d9d5cd412a9acf00c4a6be8d6987c0f4/repair-plan.json"
+      },
+      {
+        "course_id": "ucb-cs61a-summer-2026",
+        "baseline_build_id": "db465e2135a7d4c31a27b046b9378cb8476f12dd3a9813ca5ab6df402179d966",
+        "round1_repair_build_id": "09e38a57a95cfa256b6c3270013dc6fb6bf4dcba08d2191d11a7879b43a9b933",
+        "round1_repair_plan": "outputs/ucb-cs61a-summer-2026/09e38a57a95cfa256b6c3270013dc6fb6bf4dcba08d2191d11a7879b43a9b933/repair-plan.json"
+      },
+      {
+        "course_id": "ucb-cs61c-spring-2026",
+        "baseline_build_id": "d67ae21b12a58a3f5b08240b45cf84a18e36a192572b9c261cbf98434d77f09a",
+        "round1_repair_build_id": "12b1704ea45e2daca9b589b480185850638ca311835eede3f1cfc6ecffc82fd5",
+        "round1_repair_plan": "outputs/ucb-cs61c-spring-2026/12b1704ea45e2daca9b589b480185850638ca311835eede3f1cfc6ecffc82fd5/repair-plan.json"
+      }
+    ],
+    "tree_hash_definition": "Detailed unit hashes below preserve the earlier first-round plan evidence. The executable Round2 repair-plan.json recomputes baseline_artifact_tree_sha256 from the immediate parent repair build and verifies it against repair-parent-baseline before reuse; inherited repair-baseline directories are historical only."
+  },
+  "unit_stage_contract": {
+    "semantic": {
+      "stage": "03-practice-flow",
+      "required_outputs": [
+        "03-practice-flow.json",
+        "05-studykit.candidate.json",
+        "independent-audit.xhigh.json"
+      ],
+      "gate": "different-agent independent semantic audit must pass"
+    },
+    "evidence": {
+      "stage": "01-evidence-plan",
+      "required_outputs": ["01-evidence-plan.json"],
+      "gate": "every selected chunk id and source anchor exists before downstream practice repair"
+    },
+    "lineage-only": {
+      "stage": "lineage-reconciliation",
+      "required_outputs": [
+        "lineage/provenance metadata"
+      ],
+      "gate": "lineage identity and parent/build references must reconcile; no content repair"
+    },
+    "structure-only": {
+      "stage": "structure-reconciliation",
+      "required_outputs": [
+        "structure/metadata checkpoints"
+      ],
+      "gate": "stage parity, projection, schema and tree integrity must pass; no semantic rewrite"
+    }
+  },
+  "cycle_rules": {
+    "ordering": "course order as listed, then unit_id ascending; checkpoint every unit",
+    "max_targeted_repairs_per_stage_per_cycle": 1,
+    "semantic_repair_boundary": "repair only confirmed blocker scope; synchronize 03, candidate/final projection, citations, hints, expected evidence and evaluation as applicable",
+    "audit_boundary": "preserve all historical audits; never overwrite or reinterpret a prior xhigh audit",
+    "tree_boundary": "recompute and record the unit tree hash after each stage; stop the unit on mismatch",
+    "reuse_rule": "reuse unchanged baseline artifacts only after exact baseline_tree_sha256 verification",
+    "independent_gate": "different auditor reads source/chunks, 01-04, candidate/final and review evidence; pass is required before release",
+    "loop": "after a blocking independent audit, automatically create a new fingerprinted Round N+1 build containing only residual blockers; do not apply a second repair in the same stage/build",
+    "termination": "continue until every requested unit passes deterministic and independent gates; never mark complete on validator-only success"
+  },
+  "units": [
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "unit_id": "lecture-01",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "632e7623c203f9cad350dfc11ca2954f3f6b273d078d77fadac28bb21bb93ff4",
+      "round1_audit_path": "outputs/mit-6-042j-spring-2024/1db4a3a7fee047565818f331b9bc809fd00b9036ce97826a0cafcf29049c53ce/courses/mit-6-042j-spring-2024/units/lecture-01/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "unit_id": "lecture-02",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "742d117a224c2aa480e312ebdc13a63cc74aaf88f931ac04343adae2f0f9843d",
+      "round1_audit_path": "outputs/mit-6-042j-spring-2024/1db4a3a7fee047565818f331b9bc809fd00b9036ce97826a0cafcf29049c53ce/courses/mit-6-042j-spring-2024/units/lecture-02/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "unit_id": "lecture-03",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "1974808c93417e76afabbfdb585b3054584414dbdbc0bfcd4323e6ae07f59a77",
+      "round1_audit_path": "outputs/mit-6-042j-spring-2024/1db4a3a7fee047565818f331b9bc809fd00b9036ce97826a0cafcf29049c53ce/courses/mit-6-042j-spring-2024/units/lecture-03/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "unit_id": "lecture-04",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "1a625cc4471a6f0e3bb2b09d81775de855b5b48413017d571bfd1a7dea5697a1",
+      "round1_audit_path": "outputs/mit-6-042j-spring-2024/1db4a3a7fee047565818f331b9bc809fd00b9036ce97826a0cafcf29049c53ce/courses/mit-6-042j-spring-2024/units/lecture-04/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "unit_id": "lecture-05",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "c82802b7b202635bc6cd071e8937e575274886728ccef56a1dd3b53257c31d0f",
+      "round1_audit_path": "outputs/mit-6-042j-spring-2024/1db4a3a7fee047565818f331b9bc809fd00b9036ce97826a0cafcf29049c53ce/courses/mit-6-042j-spring-2024/units/lecture-05/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "unit_id": "lecture-06",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "5ef710cee37a9e57115deaa8b7d991860b13b04900489e135ea78556d21912a7",
+      "round1_audit_path": "outputs/mit-6-042j-spring-2024/1db4a3a7fee047565818f331b9bc809fd00b9036ce97826a0cafcf29049c53ce/courses/mit-6-042j-spring-2024/units/lecture-06/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "unit_id": "lecture-07",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "c78d6e1a54fb9dab7a1aaa3ba9435da491c450772117fd77b0dd6d7cf740c075",
+      "round1_audit_path": "outputs/mit-6-042j-spring-2024/1db4a3a7fee047565818f331b9bc809fd00b9036ce97826a0cafcf29049c53ce/courses/mit-6-042j-spring-2024/units/lecture-07/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "unit_id": "lecture-08",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "289f16993018fb1f319b0ed5d5fd1c78af53016b2974f781e097dda29892a89d",
+      "round1_audit_path": "outputs/mit-6-042j-spring-2024/1db4a3a7fee047565818f331b9bc809fd00b9036ce97826a0cafcf29049c53ce/courses/mit-6-042j-spring-2024/units/lecture-08/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "unit_id": "lecture-09",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "0b0de39f2f10bb1eebcde8ffdec25d34fee408ee53ae9d64a76a540f1a1e488b",
+      "round1_audit_path": "outputs/mit-6-042j-spring-2024/1db4a3a7fee047565818f331b9bc809fd00b9036ce97826a0cafcf29049c53ce/courses/mit-6-042j-spring-2024/units/lecture-09/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "unit_id": "lecture-10",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "a9c647d9d2f1cb339090ce646532815481359c48b2a3f57ef6a506e6db8840ea",
+      "round1_audit_path": "outputs/mit-6-042j-spring-2024/1db4a3a7fee047565818f331b9bc809fd00b9036ce97826a0cafcf29049c53ce/courses/mit-6-042j-spring-2024/units/lecture-10/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "unit_id": "lecture-11",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "7c90022d3be480d18b7cd42acaeadbe0b1f3100ea06105e4ec0a985340d6c6d0",
+      "round1_audit_path": "outputs/mit-6-042j-spring-2024/1db4a3a7fee047565818f331b9bc809fd00b9036ce97826a0cafcf29049c53ce/courses/mit-6-042j-spring-2024/units/lecture-11/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "unit_id": "lecture-12",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "1bbf07c80f6c1032fd7bb82a941e292134315f37f4b8f292016e1318cd07ce51",
+      "round1_audit_path": "outputs/mit-6-042j-spring-2024/1db4a3a7fee047565818f331b9bc809fd00b9036ce97826a0cafcf29049c53ce/courses/mit-6-042j-spring-2024/units/lecture-12/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "unit_id": "lecture-13",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "064906f3296c6a0c12e5e92f3b1666effcd2a96078b799c613f42378a7738bd3",
+      "round1_audit_path": "outputs/mit-6-042j-spring-2024/1db4a3a7fee047565818f331b9bc809fd00b9036ce97826a0cafcf29049c53ce/courses/mit-6-042j-spring-2024/units/lecture-13/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "unit_id": "lecture-14",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "91a9d1fc6deb1e28c3caca3ccc00715742b9be000d3dc7a16767ab7f35f6d366",
+      "round1_audit_path": "outputs/mit-6-042j-spring-2024/1db4a3a7fee047565818f331b9bc809fd00b9036ce97826a0cafcf29049c53ce/courses/mit-6-042j-spring-2024/units/lecture-14/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "unit_id": "lecture-15",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "3fca1dc5b79bce3fc32ba6c7f203bab2d402ca8f6b1630474edb4cf32dfb7da6",
+      "round1_audit_path": "outputs/mit-6-042j-spring-2024/1db4a3a7fee047565818f331b9bc809fd00b9036ce97826a0cafcf29049c53ce/courses/mit-6-042j-spring-2024/units/lecture-15/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "unit_id": "lecture-16",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "313d32d93322e8665c3583f32cf3a3add1082c4e7557be9bc543af722c5642a6",
+      "round1_audit_path": "outputs/mit-6-042j-spring-2024/1db4a3a7fee047565818f331b9bc809fd00b9036ce97826a0cafcf29049c53ce/courses/mit-6-042j-spring-2024/units/lecture-16/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "unit_id": "lecture-17",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "d4dc27c9a22c6f229ef58747dfc9abac384b95ae83912fb868dac734fbf65e5d",
+      "round1_audit_path": "outputs/mit-6-042j-spring-2024/1db4a3a7fee047565818f331b9bc809fd00b9036ce97826a0cafcf29049c53ce/courses/mit-6-042j-spring-2024/units/lecture-17/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "unit_id": "lecture-18",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "1ab09cb772349d83f622247231bb1bceab1f6dbcf31e5646a730850b029cb14b",
+      "round1_audit_path": "outputs/mit-6-042j-spring-2024/1db4a3a7fee047565818f331b9bc809fd00b9036ce97826a0cafcf29049c53ce/courses/mit-6-042j-spring-2024/units/lecture-18/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "unit_id": "lecture-19",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "22ea6f2f847efaff42c5ca7abaac85d89a8c0b5e8869df0fae29952868e9ed5d",
+      "round1_audit_path": "outputs/mit-6-042j-spring-2024/1db4a3a7fee047565818f331b9bc809fd00b9036ce97826a0cafcf29049c53ce/courses/mit-6-042j-spring-2024/units/lecture-19/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "unit_id": "lecture-20",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "a787e95ea57c4b7617916ff4dd4faf688a4ac3bc8bf62b1b5371658623b213c9",
+      "round1_audit_path": "outputs/mit-6-042j-spring-2024/1db4a3a7fee047565818f331b9bc809fd00b9036ce97826a0cafcf29049c53ce/courses/mit-6-042j-spring-2024/units/lecture-20/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "unit_id": "lecture-21",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "18c233161a640464bec0f281220e8a8ec8747f86e9228242622169855b42737e",
+      "round1_audit_path": "outputs/mit-6-042j-spring-2024/1db4a3a7fee047565818f331b9bc809fd00b9036ce97826a0cafcf29049c53ce/courses/mit-6-042j-spring-2024/units/lecture-21/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "unit_id": "lecture-22",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "5f24cafc6925b71c3862921ecaf17d7b96c3add33d22adefa8172c3d570480a6",
+      "round1_audit_path": "outputs/mit-6-042j-spring-2024/1db4a3a7fee047565818f331b9bc809fd00b9036ce97826a0cafcf29049c53ce/courses/mit-6-042j-spring-2024/units/lecture-22/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "unit_id": "lecture-23",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "d548ba2014894086c93cd0aea1cf29671c3031e1d0febf126c3a6b1e12891215",
+      "round1_audit_path": "outputs/mit-6-042j-spring-2024/1db4a3a7fee047565818f331b9bc809fd00b9036ce97826a0cafcf29049c53ce/courses/mit-6-042j-spring-2024/units/lecture-23/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "unit_id": "lecture-24",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "a1ec908da5be6fe4d6490b090f1c9cb99ad7821d0bd0fe6f7c8235e79347680c",
+      "round1_audit_path": "outputs/mit-6-042j-spring-2024/1db4a3a7fee047565818f331b9bc809fd00b9036ce97826a0cafcf29049c53ce/courses/mit-6-042j-spring-2024/units/lecture-24/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "ucb-cs168-spring-2026",
+      "unit_id": "lecture-04",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "a491e1e7fad8ea94092a5e05efbfcca5b03428403b37099ff8df5561f770b212",
+      "round1_audit_path": "outputs/ucb-cs168-spring-2026/d194c537857777cc12747610d694519d43545a1928ff50daa93f66051deaa8d0/courses/ucb-cs168-spring-2026/units/lecture-04/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "ucb-cs168-spring-2026",
+      "unit_id": "lecture-13",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "8b7e6f37a372a034c02df01a8576f1c2e9783b118c341932e619cf50eb7912f2",
+      "round1_audit_path": "outputs/ucb-cs168-spring-2026/d194c537857777cc12747610d694519d43545a1928ff50daa93f66051deaa8d0/courses/ucb-cs168-spring-2026/units/lecture-13/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "ucb-cs168-spring-2026",
+      "unit_id": "lecture-21",
+      "classification": "lineage-only",
+      "stage": "lineage-reconciliation",
+      "status": "pending",
+      "baseline_tree_sha256": "7805b3056ede755050b20e53abcf112939a5639f9f1fe927e469df9cb6687a1a",
+      "round1_audit_path": "outputs/ucb-cs168-spring-2026/d194c537857777cc12747610d694519d43545a1928ff50daa93f66051deaa8d0/courses/ucb-cs168-spring-2026/units/lecture-21/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "ucb-cs188-spring-2026",
+      "unit_id": "lecture-14",
+      "classification": "structure-only",
+      "stage": "structure-reconciliation",
+      "status": "pending",
+      "baseline_tree_sha256": "a698e6f73916e4f76389044980ec939c34b32d5c3b1977691be1bd31278a4842",
+      "round1_audit_path": "outputs/ucb-cs188-spring-2026/132fad020d624070614235f6b2378fd5d9d5cd412a9acf00c4a6be8d6987c0f4/courses/ucb-cs188-spring-2026/units/lecture-14/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "ucb-cs186-spring-2026",
+      "unit_id": "note-01",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "cab13a8a56b7ac00af8a9228ab5014f9479e04e6af7514bbda6e2241054b5fd1",
+      "round1_audit_path": "outputs/ucb-cs186-spring-2026/7e26cbe86e81324985a46ea0d9cfd694ce0d077351605da080d4eecd612c2fe0/courses/ucb-cs186-spring-2026/units/note-01/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "ucb-cs186-spring-2026",
+      "unit_id": "note-05",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "afdf6a297b042366ef7b8e4f46ce439b05c95c50d0e7f1d6bd951c42a21018c8",
+      "round1_audit_path": "outputs/ucb-cs186-spring-2026/7e26cbe86e81324985a46ea0d9cfd694ce0d077351605da080d4eecd612c2fe0/courses/ucb-cs186-spring-2026/units/note-05/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "ucb-cs186-spring-2026",
+      "unit_id": "note-06",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "2f4e6eb6f975966724955b5a853857a62a20d088460db46f23cdcc332f9751ba",
+      "round1_audit_path": "outputs/ucb-cs186-spring-2026/7e26cbe86e81324985a46ea0d9cfd694ce0d077351605da080d4eecd612c2fe0/courses/ucb-cs186-spring-2026/units/note-06/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "ucb-cs186-spring-2026",
+      "unit_id": "note-07",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "5025d62fd44f444787fd9a71d9f3093936fa567d6708013507ca50f8aa0468d4",
+      "round1_audit_path": "outputs/ucb-cs186-spring-2026/7e26cbe86e81324985a46ea0d9cfd694ce0d077351605da080d4eecd612c2fe0/courses/ucb-cs186-spring-2026/units/note-07/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "ucb-cs186-spring-2026",
+      "unit_id": "note-10",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "955a3c47ab3e30a088d4762346a5dc823d53eb55f722d29d26d71e1829122d3f",
+      "round1_audit_path": "outputs/ucb-cs186-spring-2026/7e26cbe86e81324985a46ea0d9cfd694ce0d077351605da080d4eecd612c2fe0/courses/ucb-cs186-spring-2026/units/note-10/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "ucb-cs186-spring-2026",
+      "unit_id": "note-15",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "6594607f15b6bb161b03c735cedb8f178d2d1c14f7b783eebe566ee655eaf5ea",
+      "round1_audit_path": "outputs/ucb-cs186-spring-2026/7e26cbe86e81324985a46ea0d9cfd694ce0d077351605da080d4eecd612c2fe0/courses/ucb-cs186-spring-2026/units/note-15/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "ucb-cs188-spring-2026",
+      "unit_id": "lecture-16",
+      "classification": "semantic",
+      "stage": ["01-evidence-plan", "03-practice-flow"],
+      "status": "pending",
+      "baseline_tree_sha256": "8890942f73f469d678232e994a3a3012a6cc7bc372d1b3d860649835d72fc980",
+      "round1_audit_path": "outputs/ucb-cs188-spring-2026/132fad020d624070614235f6b2378fd5d9d5cd412a9acf00c4a6be8d6987c0f4/courses/ucb-cs188-spring-2026/units/lecture-16/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "ucb-cs188-spring-2026",
+      "unit_id": "lecture-17",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "b4151e379a2c7d4b761b2e660a090ca6ab66b7ede6a26d3f628164ffa2c86a0b",
+      "round1_audit_path": "outputs/ucb-cs188-spring-2026/132fad020d624070614235f6b2378fd5d9d5cd412a9acf00c4a6be8d6987c0f4/courses/ucb-cs188-spring-2026/units/lecture-17/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "ucb-cs188-spring-2026",
+      "unit_id": "lecture-23",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "87a112bb816778bfdc746cd5401e61dda7b6b6bc9c6adfbee45fd66d57443947",
+      "round1_audit_path": "outputs/ucb-cs188-spring-2026/132fad020d624070614235f6b2378fd5d9d5cd412a9acf00c4a6be8d6987c0f4/courses/ucb-cs188-spring-2026/units/lecture-23/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "ucb-cs188-spring-2026",
+      "unit_id": "lecture-24",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "1aaf7fd2e0ad06cec63b298016f4091fc4e6302494bf2b0d2047764b217d14a0",
+      "round1_audit_path": "outputs/ucb-cs188-spring-2026/132fad020d624070614235f6b2378fd5d9d5cd412a9acf00c4a6be8d6987c0f4/courses/ucb-cs188-spring-2026/units/lecture-24/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "ucb-cs188-spring-2026",
+      "unit_id": "lecture-27",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "fec90e444541467a285fc79695698ac79208bd7e89e101525ad31a881166f71c",
+      "round1_audit_path": "outputs/ucb-cs188-spring-2026/132fad020d624070614235f6b2378fd5d9d5cd412a9acf00c4a6be8d6987c0f4/courses/ucb-cs188-spring-2026/units/lecture-27/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "ucb-cs188-spring-2026",
+      "unit_id": "lecture-28",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "5a41fff3383e74438cfb862b7e14c5d1871932658942de29d168b1fc3658d36b",
+      "round1_audit_path": "outputs/ucb-cs188-spring-2026/132fad020d624070614235f6b2378fd5d9d5cd412a9acf00c4a6be8d6987c0f4/courses/ucb-cs188-spring-2026/units/lecture-28/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "ucb-cs61a-summer-2026",
+      "unit_id": "lecture-28",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "4a0f56eb0c4fce14d6bac08c553cf5e389cfc9ff5ffb7e530a0c699781285df8",
+      "round1_audit_path": "outputs/ucb-cs61a-summer-2026/09e38a57a95cfa256b6c3270013dc6fb6bf4dcba08d2191d11a7879b43a9b933/courses/ucb-cs61a-summer-2026/units/lecture-28/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "ucb-cs61c-spring-2026",
+      "unit_id": "lecture-07",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "54046011fc684ec6a0164dae3ebebc0e3894d54802d3f864c4805a2ee9161feb",
+      "round1_audit_path": "outputs/ucb-cs61c-spring-2026/12b1704ea45e2daca9b589b480185850638ca311835eede3f1cfc6ecffc82fd5/courses/ucb-cs61c-spring-2026/units/lecture-07/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "ucb-cs61c-spring-2026",
+      "unit_id": "lecture-29",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "9c9f74fd8cafabbf58f9e4e6c2d0eb701758da59b26e5feed52df697b74ee3f8",
+      "round1_audit_path": "outputs/ucb-cs61c-spring-2026/12b1704ea45e2daca9b589b480185850638ca311835eede3f1cfc6ecffc82fd5/courses/ucb-cs61c-spring-2026/units/lecture-29/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "ucb-cs61c-spring-2026",
+      "unit_id": "lecture-33",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "c35f7d5df3590b9adaa1bbe1438a7e7917dea4faad7cf1e9cabd30919c7a81bc",
+      "round1_audit_path": "outputs/ucb-cs61c-spring-2026/12b1704ea45e2daca9b589b480185850638ca311835eede3f1cfc6ecffc82fd5/courses/ucb-cs61c-spring-2026/units/lecture-33/independent-audit.xhigh.json"
+    },
+    {
+      "course_id": "ucb-cs61c-spring-2026",
+      "unit_id": "lecture-36",
+      "classification": "semantic",
+      "stage": "03-practice-flow",
+      "status": "pending",
+      "baseline_tree_sha256": "a570bce0098a23c565b59eff085e96cb4ec298122763e479beec4f480934fd41",
+      "round1_audit_path": "outputs/ucb-cs61c-spring-2026/12b1704ea45e2daca9b589b480185850638ca311835eede3f1cfc6ecffc82fd5/courses/ucb-cs61c-spring-2026/units/lecture-36/independent-audit.xhigh.json"
+    }
+  ]
+}

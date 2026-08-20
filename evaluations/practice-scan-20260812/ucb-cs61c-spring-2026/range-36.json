@@ -1,0 +1,218 @@
+{
+  "schema_version": "practice-semantic-scan-v1",
+  "course_id": "ucb-cs61c-spring-2026",
+  "build_id": "d67ae21b12a58a3f5b08240b45cf84a18e36a192572b9c261cbf98434d77f09a",
+  "unit_id": "lecture-36",
+  "unit_ids": ["lecture-36"],
+  "scanned_at": "2026-08-12T00:00:00+08:00",
+  "auditor_id": "codex-practice-semantic-auditor-ucb-cs61c-spring-2026-lecture-36-20260812",
+  "offline_only": true,
+  "network_used": false,
+  "provider_api_calls": 0,
+  "scope": {
+    "manifest_unit_range": ["lecture-02", "lecture-36"],
+    "excluded_nonexistent_unit": "lecture-01",
+    "source_id": "lecture-36-dcb4515957",
+    "source_chunks_path": "data/sources/ucb-cs61c-spring-2026/lecture-36/chunks.jsonl",
+    "source_chunk_count": 25,
+    "source_chunks_read": "all 25 current lecture-36 heading chunks",
+    "artifacts_read": [
+      "01-evidence-plan.json",
+      "02-learning-content.json",
+      "03-practice-flow.json",
+      "05-studykit.json",
+      "05-studykit.candidate.json",
+      "review-plan.json",
+      "04-quality-audit.json",
+      "independent-audit.json",
+      "validation.json",
+      "studykit.yaml",
+      "studykit.md"
+    ]
+  },
+  "unit_status": "scanned",
+  "item_results": [
+    {
+      "practice_id": "P1",
+      "status": "pass",
+      "requirement_ids": ["R1"],
+      "concept_ids": ["C1", "C6"],
+      "source_anchors": [
+        "lecture-36-dcb4515957 :: ## Virtual Memory System Design",
+        "lecture-36-dcb4515957 :: ### Dirty Bit"
+      ],
+      "protocol_checks": {
+        "setting": true,
+        "self_contained": true,
+        "transfer": true,
+        "alignment": true,
+        "anchors": true,
+        "formative": true
+      },
+      "reason": "Concrete VPN, frames, LRU order, and dirty branches make policy and write-back judgments directly verifiable; hint, evidence, and evaluation match the same task."
+    },
+    {
+      "practice_id": "P2",
+      "status": "blocker",
+      "blocker_codes": ["lecture_specific_dependency"],
+      "requirement_ids": ["R2"],
+      "concept_ids": ["C2", "C3"],
+      "source_anchors": ["lecture-36-dcb4515957 :: ## Page Table Details"],
+      "protocol_checks": {
+        "setting": true,
+        "self_contained": true,
+        "transfer": false,
+        "alignment": true,
+        "anchors": true,
+        "formative": true
+      },
+      "reason": "The prompt reproduces the source Quick Check exactly (32-bit address, 16 KiB pages, 4 B PTEs, 128 KiB L1, and the same requested outputs). It is solvable, but it is a replay of the worked lecture special case rather than an application demonstrating replacement of the source numbers.",
+      "missing_condition": "A changed, source-supported numerical setting or boundary condition, such as different address width/page size/PTE size/cache capacity, with an explicitly recomputed fit and page-table classification.",
+      "repair_prescription": "Keep the page-table-vs-cache concept and calculation requirements, but replace at least the source-specific numeric tuple with a new tuple and require the learner to recompute offset bits, VPN bits, entries, bytes, and cache fit."
+    },
+    {
+      "practice_id": "P3",
+      "status": "pass",
+      "requirement_ids": ["R3"],
+      "concept_ids": ["C4"],
+      "source_anchors": [
+        "lecture-36-dcb4515957 :: ## Implementing Protection with Virtual Memory",
+        "lecture-36-dcb4515957 :: ### Write Protection Bit"
+      ],
+      "protocol_checks": {
+        "setting": true,
+        "self_contained": true,
+        "transfer": true,
+        "alignment": true,
+        "anchors": true,
+        "formative": true
+      },
+      "reason": "The new A/B mapping supplies virtual pages, shared PPN, per-process permissions, protected page tables, and the requested read/write outcomes; the three structural roles are aligned and falsifiable."
+    },
+    {
+      "practice_id": "P4",
+      "status": "pass",
+      "requirement_ids": ["R4"],
+      "concept_ids": ["C5", "C6"],
+      "source_anchors": [
+        "lecture-36-dcb4515957 :: ### Valid Bit",
+        "lecture-36-dcb4515957 :: ### Dirty Bit",
+        "lecture-36-dcb4515957 :: ### Write Protection Bit"
+      ],
+      "protocol_checks": {
+        "setting": true,
+        "self_contained": true,
+        "transfer": true,
+        "alignment": true,
+        "anchors": true,
+        "formative": true
+      },
+      "reason": "The event sequence gives initial state, page-in PPN, store, replacement, and a separate protected-store branch, allowing valid, dirty, page-fault, write-back, and protection results to be separated."
+    },
+    {
+      "practice_id": "P5",
+      "status": "pass",
+      "requirement_ids": ["R5"],
+      "concept_ids": ["C7", "C8"],
+      "source_anchors": [
+        "lecture-36-dcb4515957 :: ## Learning Outcomes [occurrence 2]",
+        "lecture-36-dcb4515957 :: ## Page Table Walks",
+        "lecture-36-dcb4515957 :: ## The Translation Lookaside Buffer"
+      ],
+      "protocol_checks": {
+        "setting": true,
+        "self_contained": true,
+        "transfer": true,
+        "alignment": true,
+        "anchors": true,
+        "formative": true
+      },
+      "reason": "The 64-entry/4 KiB TLB, miss, valid in-memory PTE, and required order are concrete; the expected reach and two-access trace are observable and distinguish a TLB miss from a page fault."
+    },
+    {
+      "practice_id": "P6",
+      "status": "blocker",
+      "blocker_codes": ["lecture_specific_dependency"],
+      "requirement_ids": ["R6"],
+      "concept_ids": ["C9", "C10"],
+      "source_anchors": [
+        "lecture-36-dcb4515957 :: ## The Translation Lookaside Buffer",
+        "lecture-36-dcb4515957 :: ## Address Translation with the TLB"
+      ],
+      "protocol_checks": {
+        "setting": true,
+        "self_contained": true,
+        "transfer": false,
+        "alignment": true,
+        "anchors": true,
+        "formative": true
+      },
+      "reason": "The prompt explicitly reuses the lecture toy scenario (firefox, intellij, VA 0x00004ABC, VPN 4, PPN 0x8C121D, PA 0x8C121DABC) and asks for the same three case traces and timing order. All conditions are present, but the central task is a source-example replay, not a changed setting testing transferable PID/TLB reasoning.",
+      "missing_condition": "A new process/VA/VPN/PPN setting, or an explicit changed-condition comparison such as a different current process and a stale entry with a specified PID, while retaining the three branch conditions.",
+      "repair_prescription": "Replace the source toy identifiers and address values with a new fixed scenario and ask for the same TLB/page-table/disk trace plus flush-versus-PID matching; cite the existing TLB case anchors for the general rules."
+    },
+    {
+      "practice_id": "P7",
+      "status": "pass",
+      "requirement_ids": ["R7"],
+      "concept_ids": ["C11", "C12"],
+      "source_anchors": [
+        "lecture-36-dcb4515957 :: ## Virtual Memory and Caches",
+        "lecture-36-dcb4515957 :: ## Physically Indexed, Physically Tagged Caches"
+      ],
+      "protocol_checks": {
+        "setting": true,
+        "self_contained": true,
+        "transfer": true,
+        "alignment": true,
+        "anchors": true,
+        "formative": true
+      },
+      "reason": "The prompt supplies a VA-to-PA translation, PIPT assumption, cache-miss condition, refill destination, and terminology distinctions; translation-first order and physical tag/index/offset use are directly checkable."
+    },
+    {
+      "practice_id": "P8",
+      "status": "blocker",
+      "blocker_codes": ["lecture_specific_dependency"],
+      "requirement_ids": ["R8"],
+      "concept_ids": ["C13"],
+      "source_anchors": ["lecture-36-dcb4515957 :: ## Revisiting AMAT: Impact of Paging"],
+      "protocol_checks": {
+        "setting": true,
+        "self_contained": true,
+        "transfer": false,
+        "alignment": true,
+        "anchors": true,
+        "formative": true
+      },
+      "reason": "The prompt copies the source AMAT parameter set and the exact R=99.9999% and R=99.9% scenarios, then asks for the same 5.5, 5.9, and 405.5-cycle results. Excluding the malformed source row is careful, but the task still tests replay of the worked example rather than transferable AMAT sensitivity.",
+      "missing_condition": "A new source-grounded AMAT parameter tuple or an explicit altered hit-rate/penalty condition whose penalty and final AMAT must be recomputed and compared.",
+      "repair_prescription": "Retain the AMAT expression and disk-penalty interpretation, but change at least one cache or DRAM parameter and use new R values; require the learner to derive the no-disk baseline, penalty, and sensitivity comparison."
+    }
+  ],
+  "counts": {
+    "total": 8,
+    "pass": 5,
+    "needs_repair": 0,
+    "blocker": 3,
+    "blocker_count": 3,
+    "by_code": {"lecture_specific_dependency": 3}
+  },
+  "deferred_structural_findings": [
+    {
+      "code": "upstream_checkpoint_build_metadata_mismatch",
+      "unit_id": "lecture-36",
+      "detail": "01-evidence-plan.json and 02-learning-content.json retain target_build_id=4841715fb4df08100efe9e910423d03bcccdeea48e2bc4330676eed50cffcc2b rather than the current build id; this scan records the mismatch and does not rewrite upstream checkpoints."
+    },
+    {
+      "code": "heading_anchor_review_boundary",
+      "unit_id": "lecture-36",
+      "detail": "The source has 25 exact Markdown heading anchors and no page/image anchors; all 25 chunks were read, but no page-level visual review is claimed."
+    },
+    {
+      "code": "existing_practice_issues_deferred",
+      "unit_id": "lecture-36",
+      "detail": "The unit checkpoints explicitly defer pre-existing practice issues outside new P1-P8; they were not modified, repaired, or counted as passes in this scan."
+    }
+  ]
+}

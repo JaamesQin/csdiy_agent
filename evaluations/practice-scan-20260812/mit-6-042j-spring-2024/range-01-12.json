@@ -1,0 +1,103 @@
+{
+  "schema_version": "practice-semantic-scan-v1",
+  "course_id": "mit-6-042j-spring-2024",
+  "build_id": "89a0616b96b49b2060735c20c2ba17616905b29c357aa0d8c4daa42f624ba485",
+  "unit_ids": ["lecture-01", "lecture-02", "lecture-03", "lecture-04", "lecture-05", "lecture-06", "lecture-07", "lecture-08", "lecture-09", "lecture-10", "lecture-11", "lecture-12"],
+  "scanned_at": "2026-08-12",
+  "auditor_id": "luna-medium-unit-range-01-12",
+  "offline_only": true,
+  "units": [
+    {
+      "unit_id": "lecture-01",
+      "item_results": [
+        {"practice_id":"p-01","status":"needs_repair","requirement_ids":["req-01"],"concept_ids":["cc-01"],"citations":["lecture-01@p2","lecture-01@p3"],"blockers":[{"code":"generic_exercise_shell","reason":"要求学习者自行给出程序性质和两个实例；题面没有变量、定义域、谓词或可核验目标。","missing_condition":"具体变量类型/定义域、谓词、满足与不满足的实例及真值验证规则。","source_anchors":["lecture-01@p2","lecture-01@p3"],"repair_prescription":"改成给定一个具体程序性质（例如 n∈N 上的谓词）和两个具体输入，要求判断真值并说明全称命题是否成立；保留一个新输入而非讲义表格。"}]},
+        {"practice_id":"p-02","status":"needs_repair","requirement_ids":["req-02"],"concept_ids":["cc-02"],"citations":["lecture-01@p5","lecture-01@p6"],"blockers":[{"code":"generic_exercise_shell","reason":"只给出符号 A、B，要求学习者自行选择条件并制作整张题目；没有具体命题状态或待判定结论。","missing_condition":"A、B 的具体定义或四种状态的待比较实例，以及要核验的蕴含结论。","source_anchors":["lecture-01@p5","lecture-01@p6"],"repair_prescription":"提供两个具体布尔谓词或一组四行输入，要求填表、判断逆命题/逆否命题并指出一个明确不成立的推论。"}]}
+      ],
+      "counts":{"items":2,"pass":0,"needs_repair":2,"fail":0,"blockers":2},
+      "source_checkpoint_anomalies":[]
+    },
+    {
+      "unit_id":"lecture-02","item_results":[
+        {"practice_id":"p1","status":"needs_repair","requirement_ids":["topic-1"],"concept_ids":["concept-1"],"citations":["lecture-02@p1","lecture-02@p2","lecture-02@p3"],"blockers":[{"code":"generic_exercise_shell","reason":"‘构造一个微型情境’把存在性/全称性/蕴含的输入、条件和结论全部留给学习者。","missing_condition":"具体对象、命题形式、初始条件、有限推理步骤和可判定结论。","source_anchors":["lecture-02@p1","lecture-02@p2","lecture-02@p3"],"repair_prescription":"给定一个具体存在性或全称命题及数值/对象，要求完成证明骨架和逐步推理，再明确改变一个条件后的真假。"}]},
+        {"practice_id":"p2","status":"needs_repair","requirement_ids":["topic-2"],"concept_ids":["concept-2"],"citations":["lecture-02@p4","lecture-02@p5"],"blockers":[{"code":"generic_exercise_shell","reason":"反证法题面没有给出要证明的命题、否定假设或矛盾目标，仅要求自拟情境。","missing_condition":"具体待证命题、反设、允许使用的对象约束和矛盾的可观察终点。","source_anchors":["lecture-02@p4","lecture-02@p5"],"repair_prescription":"提供一个新的具体整数/集合命题，明确要求先写反设，再完成到矛盾的有限推导，并指定改变哪个条件会破坏证明。"}]},
+        {"practice_id":"p3","status":"needs_repair","requirement_ids":["topic-3"],"concept_ids":["concept-3"],"citations":["lecture-02@p6","lecture-02@p7"],"blockers":[{"code":"generic_exercise_shell","reason":"没有给出归纳谓词、起始值、归纳步或待证范围；‘构造情境’不是可直接开始的归纳任务。","missing_condition":"具体 P(n)、基例范围、归纳步输入与应推出的 P(n+1)。","source_anchors":["lecture-02@p6","lecture-02@p7"],"repair_prescription":"给出一个新的有限求和/不等式命题和起始 n，要求写基例、归纳假设、归纳步及一个明确边界改变。"}]},
+        {"practice_id":"p4","status":"needs_repair","requirement_ids":["topic-4"],"concept_ids":["concept-4"],"citations":["lecture-02@p8","lecture-02@p9"],"blockers":[{"code":"generic_exercise_shell","reason":"强化归纳的对象、强化后的命题和递推构造均未给出，学习者必须自行设计完整证明。","missing_condition":"具体结构/输入、原命题、强化命题、基例和可核验的归纳构造。","source_anchors":["lecture-02@p8","lecture-02@p9"],"repair_prescription":"给定一个不同于 L-tromino 的具体可递归对象，写出原命题与强化命题，并指定一个 n 让学习者核验归纳步。"}]}
+      ],"counts":{"items":4,"pass":0,"needs_repair":4,"fail":0,"blockers":4},"source_checkpoint_anomalies":[]
+    },
+    {
+      "unit_id":"lecture-03","item_results":[
+        {"practice_id":"practice-1","status":"needs_repair","requirement_ids":["lecture-03-topic-1"],"concept_ids":["concept-1"],"citations":["lecture-03@p2","lecture-03@p3"],"blockers":[{"code":"generic_exercise_shell","reason":"分类条件、对象、目标命题和两个分支的待证内容均未给出。","missing_condition":"具体有限对象/命题、分类判据、分支结论和可核验输出。","source_anchors":["lecture-03@p2","lecture-03@p3"],"repair_prescription":"提供一个新的具体图或整数命题及二分判据，要求分别完成两分支并给出改变判据后的明确结论。"}]},
+        {"practice_id":"practice-2","status":"needs_repair","requirement_ids":["lecture-03-topic-2"],"concept_ids":["concept-2"],"citations":["lecture-03@p4","lecture-03@p5","lecture-03@p6","lecture-03@p7"],"blockers":[{"code":"generic_exercise_shell","reason":"强归纳练习没有具体 P(n)、基例、归纳步或 n 的范围；十步限制不提供求解设置。","missing_condition":"具体谓词、起始条件、可用的较小实例及需要证明的目标。","source_anchors":["lecture-03@p5","lecture-03@p6"],"repair_prescription":"给出一个新递归对象和明确 P(n)，要求写基例、使用全部 m≤n 的假设并验证 P(n+1)，再改变一个必要条件。"}]},
+        {"practice_id":"practice-3","status":"needs_repair","requirement_ids":["lecture-03-topic-3"],"concept_ids":["concept-3"],"citations":["lecture-03@p7","lecture-03@p8"],"blockers":[{"code":"generic_exercise_shell","reason":"‘把强归纳用于构造’没有给出构造对象、目标性质、初始规模或递推操作。","missing_condition":"具体构造输入、合法性约束、基例、归纳构造和验证结果。","source_anchors":["lecture-03@p7","lecture-03@p8"],"repair_prescription":"提供新的构造任务和 n 的范围，逐项给出基例与从较小对象到 n+1 的操作，并指定要检查的性质。"}]}
+      ],"counts":{"items":3,"pass":0,"needs_repair":3,"fail":0,"blockers":3},"source_checkpoint_anomalies":[]
+    },
+    {
+      "unit_id":"lecture-04","item_results":[
+        {"practice_id":"practice-1","status":"needs_repair","requirement_ids":["req-1"],"concept_ids":["cc-01"],"citations":["lecture-04@p1","lecture-04@p2"],"blockers":[{"code":"underspecified_setting","reason":"只要求构造状态机，没有给出状态集合、初态、转移、执行长度或要判断的终态。","missing_condition":"具体状态/转移表、初始状态、操作序列和可观察轨迹或可达性结论。","source_anchors":["lecture-04@p1","lecture-04@p2"],"repair_prescription":"给出一个有限状态集和确定转移规则及输入序列，要求列出轨迹并判断一个指定状态是否可达。"}]},
+        {"practice_id":"practice-2","status":"needs_repair","requirement_ids":["req-2"],"concept_ids":["cc-02"],"citations":["lecture-04@p3","lecture-04@p5"],"blockers":[{"code":"underspecified_setting","reason":"没有指定原不变量、状态、改变的单一假设或待验证结论；page 5 也主要支持排序终止而非题面给出的不变量。","missing_condition":"具体状态机、原不变量、改变后的转移/初态和要求构造的反例或证明终点。","source_anchors":["lecture-04@p3","lecture-04@p5"],"repair_prescription":"给定一个小状态机和可核验不变量，明确只删除/改变一个转移条件，要求预测并验证可达性；移除不相关 page 5 引用或改为排序终止任务。"},{"code":"citation_mismatch","reason":"page 5 的排序过程终止/正确性内容与未指定的‘不变量与可达性’变体不直接对应。","missing_condition":"与改变后的具体状态机和结论一一对应的来源锚点。","source_anchors":["lecture-04@p3","lecture-04@p5"],"repair_prescription":"仅保留支持不变量/可达性的页面，或把题目改成 page 5 所述排序状态机的具体终止性验证。"}]}
+      ],"counts":{"items":2,"pass":0,"needs_repair":2,"fail":0,"blockers":3},"source_checkpoint_anomalies":[]
+    },
+    {
+      "unit_id":"lecture-05","item_results":[
+        {"practice_id":"p-01","status":"needs_repair","requirement_ids":["req-01"],"concept_ids":["cc-01"],"citations":["lecture-05@p2"],"blockers":[{"code":"lecture_specific_dependency","reason":"题面逐字要求推导讲义 page 2 的 Gauss 扰动法经典例子 1+2+…+n，未提供新的输入或变化，属于重放讲义示例而非新形成性任务。","missing_condition":"新的数列/有限范围或明确改变条件，使题目检验方法迁移而非记忆原推导。","source_anchors":["lecture-05@p2"],"repair_prescription":"改为给定新的等差数列或具体 n 范围，要求用扰动法推导并用另一个 n 验证；不要复用 1+2+…+n 的原例。"}]},
+        {"practice_id":"p-02","status":"needs_repair","requirement_ids":["req-03"],"concept_ids":["cc-03"],"citations":["lecture-05@p6","lecture-05@p7"],"blockers":[{"code":"underspecified_setting","reason":"仅说‘一个满足单调性的 f’，没有给出定义域、n、函数或具体求和，无法画出唯一关系或给出数值上下界。","missing_condition":"具体 f、区间 [1,n]、求和范围和要计算/比较的结果。","source_anchors":["lecture-05@p6","lecture-05@p7"],"repair_prescription":"给定例如 f(x)=sqrt(x)、n=9 和 S=Σf(k)，要求画/描述两阶梯界并指出去掉单调性时哪条不等式失效。"}]},
+        {"practice_id":"p-03","status":"needs_repair","requirement_ids":["req-02"],"concept_ids":["cc-02"],"citations":["lecture-05@p4","lecture-05@p5"],"blockers":[{"code":"generic_exercise_shell","reason":"‘一个三角形双和’没有给出被求和表达式、索引区域的边界或 n，换序后的答案不唯一。","missing_condition":"具体双和 integrand、原索引集合、n 的取值和要核对的等式。","source_anchors":["lecture-05@p4","lecture-05@p5"],"repair_prescription":"给出具体 Σ_{i=1}^n Σ_{j=i}^n g(i,j)（含 g 与 n），要求写原/新索引域并用小 n 数值核验。"}]}
+      ],"counts":{"items":3,"pass":0,"needs_repair":3,"fail":0,"blockers":3},"source_checkpoint_anomalies":[]
+    },
+    {
+      "unit_id":"lecture-06","item_results":[
+        {"practice_id":"p1","status":"needs_repair","requirement_ids":["topic-1"],"concept_ids":["concept-1"],"citations":["lecture-06@p1","lecture-06@p2","lecture-06@p3","lecture-06@p4"],"blockers":[{"code":"generic_exercise_shell","reason":"没有给出递推、初值、n 或要求估计的具体量；学习者必须自行发明调和数情境。","missing_condition":"具体递推/数值输入、范围、目标界和可验证计算。","source_anchors":["lecture-06@p1","lecture-06@p2","lecture-06@p3","lecture-06@p4"],"repair_prescription":"给定 H_n 的递推和具体 n（如 n=16）以及上下界目标，要求完成计算并说明改变初值/范围的后果。"}]},
+        {"practice_id":"p2","status":"needs_repair","requirement_ids":["topic-2"],"concept_ids":["concept-2"],"citations":["lecture-06@p5","lecture-06@p6"],"blockers":[{"code":"generic_exercise_shell","reason":"‘阶乘与积分估计’没有给出 n、积分函数、目标不等式或边界条件。","missing_condition":"具体 n、log(n!) 的表达式/函数、积分区间及上下界方向。","source_anchors":["lecture-06@p5","lecture-06@p6"],"repair_prescription":"给定具体 n 和 log(n!)，要求用单调性积分界得到两侧不等式，并指定一个数值核对。"}]},
+        {"practice_id":"p3","status":"needs_repair","requirement_ids":["topic-3"],"concept_ids":["concept-3"],"citations":["lecture-06@p4","lecture-06@p7","lecture-06@p8","lecture-06@p9","lecture-06@p10","lecture-06@p11"],"blockers":[{"code":"generic_exercise_shell","reason":"没有给出待比较的两个函数或极限，无法直接判断 tilde/O/o/Omega/Theta 中的关系。","missing_condition":"具体 f(n), g(n)、n 的趋近范围和要求判定的记号。","source_anchors":["lecture-06@p7","lecture-06@p8","lecture-06@p9","lecture-06@p10","lecture-06@p11"],"repair_prescription":"给出两到三对具体函数，要求逐对判定关系并指出一个改变条件使某记号不再成立。"}]},
+        {"practice_id":"p4","status":"needs_repair","requirement_ids":["topic-4"],"concept_ids":["concept-4"],"citations":["lecture-06@p12","lecture-06@p13"],"blockers":[{"code":"generic_exercise_shell","reason":"‘记号陷阱’未指定具体表达式、错误推理或反例目标，不能直接验证。","missing_condition":"具体渐近表达式、待检查的等价/界关系和观察到错误的标准。","source_anchors":["lecture-06@p12","lecture-06@p13"],"repair_prescription":"提供一条含具体函数和渐近记号的候选推理，要求定位错误、给出反例并改写成正确关系。"}]}
+      ],"counts":{"items":4,"pass":0,"needs_repair":4,"fail":0,"blockers":4},"source_checkpoint_anomalies":[]
+    },
+    {
+      "unit_id":"lecture-07","item_results":[
+        {"practice_id":"practice-1","status":"needs_repair","requirement_ids":["lecture-07-topic-1"],"concept_ids":["concept-1"],"citations":["lecture-07@p1","lecture-07@p2","lecture-07@p3"],"blockers":[{"code":"generic_exercise_shell","reason":"递推建模题没有给出对象、初始状态、每步变化或目标量。","missing_condition":"具体递推输入/状态、边界值、求解范围和可核验结果。","source_anchors":["lecture-07@p1","lecture-07@p2","lecture-07@p3"],"repair_prescription":"给定一个新的递推式/算法成本和初值，要求展开前几项、写出模型并验证一个改变条件后的结果。"}]},
+        {"practice_id":"practice-2","status":"needs_repair","requirement_ids":["lecture-07-topic-2"],"concept_ids":["concept-2"],"citations":["lecture-07@p3","lecture-07@p4","lecture-07@p5","lecture-07@p6"],"blockers":[{"code":"generic_exercise_shell","reason":"递归树与闭式练习没有给出递推式、分支数、规模缩减或基例。","missing_condition":"具体 T(n)、a、b、f(n)、基例和闭式目标。","source_anchors":["lecture-07@p3","lecture-07@p4","lecture-07@p5","lecture-07@p6"],"repair_prescription":"提供一个新的明确递推式，要求画/列出两层递归树、求总成本并用小 n 核对闭式。"}]},
+        {"practice_id":"practice-3","status":"needs_repair","requirement_ids":["lecture-07-topic-3"],"concept_ids":["concept-3"],"citations":["lecture-07@p5","lecture-07@p6"],"blockers":[{"code":"generic_exercise_shell","reason":"主定理边界没有给出具体 a、b、f 或要判断的条件，无法预测结论。","missing_condition":"具体递推参数和主定理三种情形的条件比较。","source_anchors":["lecture-07@p5","lecture-07@p6"],"repair_prescription":"给出一个满足/不满足某一主定理条件的具体递推，要求选定情形、计算界并改变一个参数后重新判断。"}]}
+      ],"counts":{"items":3,"pass":0,"needs_repair":3,"fail":0,"blockers":3},"source_checkpoint_anomalies":[]
+    },
+    {
+      "unit_id":"lecture-08","item_results":[
+        {"practice_id":"practice-1","status":"needs_repair","requirement_ids":["req-1"],"concept_ids":["cc-01"],"citations":["lecture-08@p1","lecture-08@p3"],"blockers":[{"code":"generic_exercise_shell","reason":"没有给出要计算 gcd 的整数、除法步骤或验证目标；‘构造一个新例子’是完整场景设计委托。","missing_condition":"具体 a,b、余数链、目标 gcd 和线性/整除验证。","source_anchors":["lecture-08@p1","lecture-08@p3"],"repair_prescription":"给定两个新的具体整数和要求输出 gcd/余数链，要求逐步验证定义并与一个边界输入比较。"}]},
+        {"practice_id":"practice-2","status":"needs_repair","requirement_ids":["req-2"],"concept_ids":["cc-02"],"citations":["lecture-08@p4","lecture-08@p5"],"blockers":[{"code":"underspecified_setting","reason":"没有指定欧几里得算法的初始 a,b、改变的假设或要判断的结论。","missing_condition":"具体初始状态、唯一改变的条件、终止/正确性观察量。","source_anchors":["lecture-08@p4","lecture-08@p5"],"repair_prescription":"给定一对有序非负整数，明确改为允许负数或交换初始顺序中的一个条件，要求给出余数链并判断算法是否仍终止/正确。"}]}
+      ],"counts":{"items":2,"pass":0,"needs_repair":2,"fail":0,"blockers":2},"source_checkpoint_anomalies":[]
+    },
+    {
+      "unit_id":"lecture-09","item_results":[
+        {"practice_id":"p-01","status":"needs_repair","requirement_ids":["req-01"],"concept_ids":["cc-01"],"citations":["lecture-09@p2","lecture-09@p4"],"blockers":[{"code":"underspecified_setting","reason":"要求验证‘两个整数’但没有给出两个整数；加法和乘法后的判断对象也随学习者选择而变。","missing_condition":"具体整数 a,b、模数 12 下的初始真假和同加/同乘常数。","source_anchors":["lecture-09@p2","lecture-09@p4"],"repair_prescription":"给出具体 a,b,c（例如 a=35,b=11,c=7），要求验证同余、证明差值整除并计算变换后的三次判断。"}]},
+        {"practice_id":"p-02","status":"needs_repair","requirement_ids":["req-01"],"concept_ids":["cc-02"],"citations":["lecture-09@p5"],"blockers":[{"code":"generic_exercise_shell","reason":"‘一个大整数幂’没有底数、指数或模数；末两位与周期没有唯一答案。","missing_condition":"具体底数、指数、模 100 目标和允许的核验方式。","source_anchors":["lecture-09@p5"],"repair_prescription":"给出具体 a^k（例如 35^1111 mod 100），要求只替换底数、记录周期并与直接小规模计算核对。"}]},
+        {"practice_id":"p-03","status":"needs_repair","requirement_ids":["req-03"],"concept_ids":["cc-03"],"citations":["lecture-09@p5","lecture-09@p6"],"blockers":[{"code":"generic_exercise_shell","reason":"要求自行构造不能约去和可逆的两例，没有给出 n、因子或同余方程，结论不可唯一核验。","missing_condition":"具体模数、因子、同余式和要比较的逆元判定。","source_anchors":["lecture-09@p5","lecture-09@p6"],"repair_prescription":"给定一个具体不可约消案例和一个 gcd=1 对照案例，要求解两式并说明 gcd 条件为何决定能否约去。"}]}
+      ],"counts":{"items":3,"pass":0,"needs_repair":3,"fail":0,"blockers":3},"source_checkpoint_anomalies":[]
+    },
+    {
+      "unit_id":"lecture-10","item_results":[
+        {"practice_id":"p1","status":"needs_repair","requirement_ids":["topic-1"],"concept_ids":["concept-1"],"citations":["lecture-10@p1","lecture-10@p2","lecture-10@p3"],"blockers":[{"code":"generic_exercise_shell","reason":"Caesar Shift 的字母表、消息、k、加密结果和边界变化均未给出。","missing_condition":"具体消息编码、shift、解密目标和一个明确的安全/穷举变化。","source_anchors":["lecture-10@p1","lecture-10@p2","lecture-10@p3"],"repair_prescription":"给定短消息、字母编号和 k，要求加密/解密并计算穷举空间，再改变消息长度或重复 k。"}]},
+        {"practice_id":"p2","status":"needs_repair","requirement_ids":["topic-2"],"concept_ids":["concept-2"],"citations":["lecture-10@p3","lecture-10@p4"],"blockers":[{"code":"generic_exercise_shell","reason":"一次一密与 Diffie–Hellman 的参与者、公开参数、秘密值和待计算结果全部缺失。","missing_condition":"具体模数/生成元、私密输入、公开交换值和安全边界判断。","source_anchors":["lecture-10@p3","lecture-10@p4"],"repair_prescription":"给定小型公开参数和 Alice/Bob 私密值，要求算共享秘密并指出一次一密在复用密钥时的具体泄露。"}]},
+        {"practice_id":"p3","status":"needs_repair","requirement_ids":["topic-3"],"concept_ids":["concept-3"],"citations":["lecture-10@p5"],"blockers":[{"code":"generic_exercise_shell","reason":"RSA 练习没有给出 n、p、q、e、消息或具体困难性判断，无法直接推理。","missing_condition":"具体密钥材料、可计算的短消息和要求区分的安全假设。","source_anchors":["lecture-10@p5"],"repair_prescription":"给定小型 RSA 公钥及其两个候选因数，要求说明可恢复什么、哪一步依赖 factoring-hard 假设，并明确这只是教学迁移。"}]},
+        {"practice_id":"p4","status":"needs_repair","requirement_ids":["topic-4"],"concept_ids":["concept-4"],"citations":["lecture-10@p4","lecture-10@p6","lecture-10@p7"],"blockers":[{"code":"generic_exercise_shell","reason":"CRT/快速模幂任务没有给出互素模数、余数、底数或指数，要求和验证结果不确定。","missing_condition":"具体 p,q、同余系统、模幂输入和唯一解/中间平方。","source_anchors":["lecture-10@p4","lecture-10@p6"],"repair_prescription":"给定一组新的互素模数和余数及一个模幂，要求用 CRT/重复平方求解并以代入验证。"}]}
+      ],"counts":{"items":4,"pass":0,"needs_repair":4,"fail":0,"blockers":4},"source_checkpoint_anomalies":[]
+    },
+    {
+      "unit_id":"lecture-11","item_results":[
+        {"practice_id":"practice-1","status":"needs_repair","requirement_ids":["lecture-11-topic-1"],"concept_ids":["concept-1"],"citations":["lecture-11@p1","lecture-11@p2","lecture-11@p3"],"blockers":[{"code":"generic_exercise_shell","reason":"图的顶点、边、方向/自环约束、目标性质和改变条件都未指定。","missing_condition":"具体 V,E、图类型、要计算/证明的性质和可观察结果。","source_anchors":["lecture-11@p1","lecture-11@p2","lecture-11@p3"],"repair_prescription":"给出一个新的有限简单图的 V,E，要求计算度数/边数或应用握手引理，并改变一条边验证结果。"}]},
+        {"practice_id":"practice-2","status":"needs_repair","requirement_ids":["lecture-11-topic-2"],"concept_ids":["concept-2"],"citations":["lecture-11@p4","lecture-11@p5"],"blockers":[{"code":"generic_exercise_shell","reason":"二分图左右集合、边集、平均度和要比较的量均留空。","missing_condition":"具体 L,R,E、至少一条边、平均度计算目标。","source_anchors":["lecture-11@p4","lecture-11@p5"],"repair_prescription":"给定两个具体顶点集合和边集，要求计算两侧平均度并改变一条跨部/部内边后重新判断二分性。"}]},
+        {"practice_id":"practice-3","status":"needs_repair","requirement_ids":["lecture-11-topic-3"],"concept_ids":["concept-3"],"citations":["lecture-11@p6","lecture-11@p7","lecture-11@p8"],"blockers":[{"code":"generic_exercise_shell","reason":"着色题没有给出图、颜色数或候选着色，无法证明上界/下界或预测改变后的色数。","missing_condition":"具体 V,E、允许颜色、待检查的 coloring 和下界证据。","source_anchors":["lecture-11@p6","lecture-11@p7","lecture-11@p8"],"repair_prescription":"给定一个新的小图和 k，要求给出 k-coloring 或证明不存在 (k-1)-coloring，再改变一条边验证色数变化。"}]}
+      ],"counts":{"items":3,"pass":0,"needs_repair":3,"fail":0,"blockers":3},"source_checkpoint_anomalies":[]
+    },
+    {
+      "unit_id":"lecture-12","item_results":[
+        {"practice_id":"practice-1","status":"needs_repair","requirement_ids":["req-1"],"concept_ids":["cc-01"],"citations":["lecture-12@p1","lecture-12@p2"],"blockers":[{"code":"generic_exercise_shell","reason":"匹配题没有给出图的顶点/边或候选匹配，无法区分极大、最大和完美。","missing_condition":"具体 G=(V,E)、候选边集和要验证的三种性质。","source_anchors":["lecture-12@p1","lecture-12@p2"],"repair_prescription":"给定一个新的小图和一个候选匹配，要求分别判断 maximal/maximum/perfect，并给出增广或上界理由。"}]},
+        {"practice_id":"practice-2","status":"needs_repair","requirement_ids":["req-2"],"concept_ids":["cc-02"],"citations":["lecture-12@p3","lecture-12@p10"],"blockers":[{"code":"underspecified_setting","reason":"没有给出权重、偏好表、匹配、改变的单一假设或稳定性判定对象；page 3 与 page 10 也涉及不同子主题。","missing_condition":"具体加权图/偏好表、初始匹配、改变条件和可观察的最小权或稳定性结果。","source_anchors":["lecture-12@p3","lecture-12@p10"],"repair_prescription":"拆成一个具体加权完美匹配或具体偏好表任务，明确只改变一个权重/偏好，并分别给出最优性或 blocking-pair 检查；不要混用无关页面。"}]}
+      ],"counts":{"items":2,"pass":0,"needs_repair":2,"fail":0,"blockers":2},"source_checkpoint_anomalies":[]
+    }
+  ],
+  "counts":{"units":12,"items":35,"pass":0,"needs_repair":35,"fail":0,"blockers":36},
+  "deferred_structural_findings":[
+    {"code":"checkpoint_semantic_conflict","scope":"lecture-01..lecture-12","finding":"所有 assigned review-plan/independent-audit records report passed, but the independent records do not establish the protocol's item-level self-containedness; this scan therefore treats those semantic pass labels as superseded for practice quality only."},
+    {"code":"practice_mapping_metadata_gap","scope":"lecture-03,lecture-07,lecture-11","finding":"01-evidence-plan uses topic IDs while 02-learning-content uses concept IDs, but 03-practice-flow items carry no explicit requirement_id/concept_id mapping; mappings in this report are semantic auditor mappings, not artifact fields."},
+    {"code":"source_scope_anomaly","scope":"all assigned units","finding":"Cited source anchors are real page chunks and generally topic-relevant, but citation presence does not supply the missing learner inputs; no hidden-text evidence was used. Pages used only for attribution/terms were not treated as practice evidence."}
+  ]
+}

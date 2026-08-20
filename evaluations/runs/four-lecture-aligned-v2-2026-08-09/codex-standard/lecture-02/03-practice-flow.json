@@ -1,0 +1,203 @@
+{
+  "stage": "03-practice-flow",
+  "progression": [
+    "基础",
+    "进阶",
+    "挑战"
+  ],
+  "practice": [
+    {
+      "id": "ex-1",
+      "level": "基础",
+      "question": "分别说明 batch=1、小批量和 batch=N 时一次 SGD 更新使用什么数据。",
+      "hint": "先找第 9 页明确给出的两个边界。",
+      "deliverable": "三行比较表。",
+      "expected_evidence": [
+        "batch=1 逐样本",
+        "batch=N 为全批量",
+        "小批量是总梯度的带噪近似"
+      ],
+      "evaluation": {
+        "criteria": [
+          "三种情形都正确"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        }
+      ]
+    },
+    {
+      "id": "ex-2",
+      "level": "基础",
+      "question": "为第 29 页的链式图写出一次训练迭代的前向、反向、更新顺序，并说明为什么不能先更新。",
+      "hint": "参数梯度依赖已计算的损失和激活。",
+      "deliverable": "步骤图和两句解释。",
+      "expected_evidence": [
+        "先前向",
+        "再从损失端反向",
+        "最后统一更新"
+      ],
+      "evaluation": {
+        "criteria": [
+          "顺序和因果关系正确"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 29
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 42
+          }
+        }
+      ]
+    },
+    {
+      "id": "ex-3",
+      "level": "进阶",
+      "question": "设 |x|=n、|u|=p、|z|=m，标出 ∂z/∂u、∂u/∂x 和乘积的形状。",
+      "hint": "使用第 34 页的 Jacobian 排布。",
+      "deliverable": "带形状的链式法则。",
+      "expected_evidence": [
+        "m×p",
+        "p×n",
+        "乘积 m×n"
+      ],
+      "evaluation": {
+        "criteria": [
+          "乘法顺序与形状一致"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        }
+      ]
+    },
+    {
+      "id": "ex-4",
+      "level": "进阶",
+      "question": "对 x_out=W x_in，推导 g_in，并用分量关系解释权重梯度为何是外积形状。",
+      "hint": "先使用 ∂x_out_i/∂x_in_j=W_ij。",
+      "deliverable": "公式、分量推导、形状表。",
+      "expected_evidence": [
+        "g_in=g_out W",
+        "权重梯度每项由输入分量和输出梯度分量相乘",
+        "形状正确"
+      ],
+      "evaluation": {
+        "criteria": [
+          "符合讲义行梯度约定"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 46
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 48
+          }
+        }
+      ]
+    },
+    {
+      "id": "ex-5",
+      "level": "挑战",
+      "question": "一个变量分成两条路径，又有同一参数在三处使用。分别写回到变量与参数的梯度汇总规则。",
+      "hint": "把每个下游使用点视为独立贡献，再相加。",
+      "deliverable": "两条求和公式与路径图。",
+      "expected_evidence": [
+        "变量分支梯度相加",
+        "三处参数贡献全部相加"
+      ],
+      "evaluation": {
+        "criteria": [
+          "路径无遗漏",
+          "区分变量分支和参数共享"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 53
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 55
+          }
+        }
+      ]
+    },
+    {
+      "id": "ex-6",
+      "level": "挑战",
+      "question": "仅看第 72 页，完成一次前向和反向传播，给出两个权重梯度及更新后权重；完成后再用第 75–80 页核对。",
+      "hint": "先重画成线性—tanh—线性—平方损失模块。",
+      "deliverable": "完整计算表，注明矩阵形状和舍入。",
+      "expected_evidence": [
+        "前向激活正确",
+        "tanh Jacobian 为对角形式",
+        "两个权重梯度形状正确",
+        "使用题中 η=-0.2 的正增量约定"
+      ],
+      "evaluation": {
+        "criteria": [
+          "过程可复核",
+          "最终值接近讲义两位小数结果"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 72
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 75
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 80
+          }
+        }
+      ]
+    }
+  ]
+}

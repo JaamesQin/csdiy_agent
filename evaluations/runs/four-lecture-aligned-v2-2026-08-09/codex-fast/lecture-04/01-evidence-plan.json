@@ -1,0 +1,315 @@
+{
+  "stage": "01-evidence-plan",
+  "unit_id": "lecture-04",
+  "mode": "fast",
+  "source_id": "mit-6.7960-f24-lecture-04-slides",
+  "topics": [
+    {
+      "order": 1,
+      "topic": "架构作为归纳偏置",
+      "requirements": [
+        "解释受约束假设空间为何可能减少数据需求",
+        "区分表示能力、优化与计算效率"
+      ],
+      "chunk_ids": [
+        "mit-6.7960-f24-lecture-04-slides-p004",
+        "mit-6.7960-f24-lecture-04-slides-p006",
+        "mit-6.7960-f24-lecture-04-slides-p008"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 6
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        }
+      ]
+    },
+    {
+      "order": 2,
+      "topic": "从密集预测到卷积",
+      "requirements": [
+        "把逐像素分类改写为共享的重叠局部处理",
+        "辨认平移等变"
+      ],
+      "chunk_ids": [
+        "mit-6.7960-f24-lecture-04-slides-p018",
+        "mit-6.7960-f24-lecture-04-slides-p019",
+        "mit-6.7960-f24-lecture-04-slides-p022",
+        "mit-6.7960-f24-lecture-04-slides-p023",
+        "mit-6.7960-f24-lecture-04-slides-p024"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 19
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 22
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 23
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 24
+          }
+        }
+      ]
+    },
+    {
+      "order": 3,
+      "topic": "卷积层的五种视角",
+      "requirements": [
+        "连接局部性、权重共享、滤波、等变性与可变尺寸输入"
+      ],
+      "chunk_ids": [
+        "mit-6.7960-f24-lecture-04-slides-p027",
+        "mit-6.7960-f24-lecture-04-slides-p028",
+        "mit-6.7960-f24-lecture-04-slides-p032",
+        "mit-6.7960-f24-lecture-04-slides-p034",
+        "mit-6.7960-f24-lecture-04-slides-p036"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 27
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 28
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 32
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 36
+          }
+        }
+      ]
+    },
+    {
+      "order": 4,
+      "topic": "深层 CNN 与尺度",
+      "requirements": [
+        "追踪感受野",
+        "比较池化、步幅和扩张"
+      ],
+      "chunk_ids": [
+        "mit-6.7960-f24-lecture-04-slides-p037",
+        "mit-6.7960-f24-lecture-04-slides-p053",
+        "mit-6.7960-f24-lecture-04-slides-p056",
+        "mit-6.7960-f24-lecture-04-slides-p058",
+        "mit-6.7960-f24-lecture-04-slides-p060",
+        "mit-6.7960-f24-lecture-04-slides-p062"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 37
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 53
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 56
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 58
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 60
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 62
+          }
+        }
+      ]
+    },
+    {
+      "order": 5,
+      "topic": "空间输出架构",
+      "requirements": [
+        "比较编码器—解码器、U-Net、ResNet"
+      ],
+      "chunk_ids": [
+        "mit-6.7960-f24-lecture-04-slides-p067",
+        "mit-6.7960-f24-lecture-04-slides-p068",
+        "mit-6.7960-f24-lecture-04-slides-p069",
+        "mit-6.7960-f24-lecture-04-slides-p070",
+        "mit-6.7960-f24-lecture-04-slides-p071"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 67
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 68
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 69
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 70
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 71
+          }
+        }
+      ]
+    },
+    {
+      "order": 6,
+      "topic": "位置与连续场",
+      "requirements": [
+        "判断何时注入位置",
+        "说明神经场的坐标查询"
+      ],
+      "chunk_ids": [
+        "mit-6.7960-f24-lecture-04-slides-p076",
+        "mit-6.7960-f24-lecture-04-slides-p077",
+        "mit-6.7960-f24-lecture-04-slides-p078",
+        "mit-6.7960-f24-lecture-04-slides-p079",
+        "mit-6.7960-f24-lecture-04-slides-p080"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 76
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 77
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 78
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 79
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 80
+          }
+        }
+      ]
+    }
+  ],
+  "excluded_or_limited": [
+    "不保留页面抽取中排版损坏的求和、softmax 与索引公式。",
+    "不从第三方示例图推断图中未明示的实验数值。",
+    "归档 PDF 是讲课转录；它用于核对讲者可见陈述，页级引用仍指向固定 chunks。"
+  ]
+}

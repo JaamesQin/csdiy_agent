@@ -1,0 +1,467 @@
+{
+  "quality_mode": "strict",
+  "selection_policy": "all_needs_host_vision_and_every_final_formula",
+  "selected_pages": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43
+  ],
+  "actual_reviewed_pages": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43
+  ],
+  "required_final_formula_pages": [
+    8,
+    9,
+    10,
+    13,
+    14,
+    15,
+    17,
+    30,
+    32,
+    33
+  ],
+  "page_reviews": [
+    {
+      "page": 1,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 2,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 3,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 4,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 5,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 6,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 7,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 8,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision",
+        "final_formula"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 9,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision",
+        "final_formula"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 10,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision",
+        "final_formula"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 11,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 12,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 13,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision",
+        "final_formula"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 14,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision",
+        "final_formula"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 15,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision",
+        "final_formula"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 16,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 17,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision",
+        "final_formula"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 18,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 19,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 20,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 21,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 22,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 23,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 24,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 25,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 26,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 27,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 28,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 29,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 30,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision",
+        "final_formula"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 31,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 32,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision",
+        "final_formula"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 33,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision",
+        "final_formula"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 34,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 35,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 36,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 37,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 38,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 39,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 40,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 41,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 42,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    },
+    {
+      "page": 43,
+      "status": "reviewed",
+      "reason": [
+        "needs_host_vision"
+      ],
+      "result": "usable"
+    }
+  ],
+  "independent_audit": true,
+  "blocker_reaudit": true,
+  "blockers_after_reaudit": [],
+  "vision_source": "PDF pages rendered locally with pdftoppm and inspected page-by-page",
+  "page_selector_version": "review-pages-v1"
+}

@@ -1,0 +1,558 @@
+{
+  "schema_version": "2.0",
+  "audit_id": "csdiy-classification-independent-audit-20260812-v2",
+  "auditor_id": "independent_catalog_classification_auditor",
+  "audited_at": "2026-08-12T15:10:07+08:00",
+  "result": "blocked",
+  "release_decision": {
+    "decision": "block",
+    "reason": "Independent review still finds unresolved canonical identity collisions, a sequence under-splitting, five target-type errors, and two direct major-direction errors. The 115-target denominator is retained and is not lowered to make the totals look complete.",
+    "blocking_conditions": [
+      "Split the three cross-page canonical collisions without merging distinct official identities.",
+      "Preserve distinct identities for the Coursera Algorithms I & II sequence.",
+      "Repair the five false course_sequence classifications and the two LLM/NLP major-direction classifications.",
+      "Keep the 115 registry target denominator until identity repairs are applied; do not silently discard targets."
+    ]
+  },
+  "offline_only": {
+    "network_called": false,
+    "model_called": false,
+    "provider_called": false,
+    "source_of_authority": "Only the pinned snapshot, current registry, and current discovery script were inspected. Older audit reports were not used as authority."
+  },
+  "scope": {
+    "pinned_snapshot": "data/raw/catalog-sources/cs-self-learning/81d874ee0fb37b2289839847026ba7651f3725d5",
+    "pinned_commit": "81d874ee0fb37b2289839847026ba7651f3725d5",
+    "navigation_source": "data/raw/catalog-sources/cs-self-learning/81d874ee0fb37b2289839847026ba7651f3725d5/mkdocs.yml",
+    "registry": "data/catalog/csdiy-course-registry.yaml",
+    "discovery_script": "scripts/discover_csdiy_courses.py",
+    "report": "evaluations/csdiy-classification-independent-audit-20260812-v2.json",
+    "sha256": {
+      "mkdocs_yml": "cdc913309dcd0b4024c1b1f98552cddd792272cf3c6dbcd98da404e3fdb49c33",
+      "registry": "3a9aaec008298759619855f276ab7f0dd80a7499da8d59e45908d5e458ee5c0f",
+      "discovery_script": "cef905ced9c995fe293bf0f94f2ffdf768b65b1f668490d896d9c7785c5ab0bd"
+    }
+  },
+  "method": {
+    "nav_enumeration": "Independently parsed the pinned mkdocs nav leaves, resolved every Markdown path inside the snapshot, counted unique source paths, and compared the resulting leaf keys with the registry.",
+    "target_enumeration": "Independently grouped official course identity evidence from nav title, guide heading, course-introduction text, institution, explicit course numbers, and source path. Same-page translation/title aliases were not treated as new identities; distinct official numbers and distinct cross-page course pages were not collapsed.",
+    "target_type_rule": "A course_sequence requires source evidence of paired/sequential official identities. A slash, ampersand, or duplicate formatting of one course number is not sufficient by itself.",
+    "direction_rule": "Navigation category is primary evidence; substantive guide title/body can refine a broad category. Neural-network wording is not computer-network evidence. Numerical analysis is numerical_scientific_computing.",
+    "reason_completeness_rule": "A classification reason must explain the observed type and, for a sequence, identify the sequence or paired official identities; a generic course-like sentence plus identifiers is insufficient for sequence pages."
+  },
+  "counts": {
+    "source_nav_leaf_count": 135,
+    "registry_nav_leaf_count": 135,
+    "source_registry_nav_leaf_count_match": true,
+    "source_unique_markdown_path_count": 135,
+    "registry_unique_markdown_path_count": 135,
+    "source_duplicate_markdown_path_count": 0,
+    "source_duplicate_nav_occurrence_count": 0,
+    "source_missing_markdown_path_count": 0,
+    "registry_orphan_leaf_count": 0,
+    "source_course_leaf_count": 112,
+    "registry_course_leaf_count": 112,
+    "source_non_course_leaf_count": 23,
+    "registry_non_course_leaf_count": 23,
+    "source_expected_target_type_counts": {
+      "book": 3,
+      "course": 105,
+      "course_sequence": 7,
+      "other": 3,
+      "roadmap": 3,
+      "tool": 14
+    },
+    "registry_observed_target_type_counts": {
+      "book": 3,
+      "course": 100,
+      "course_sequence": 12,
+      "other": 3,
+      "roadmap": 3,
+      "tool": 14
+    },
+    "target_type_mismatch_leaf_count": 5,
+    "registry_canonical_target_count": 115,
+    "independent_distinct_identity_key_count_lower_bound": 118,
+    "identity_collision_target_count": 3,
+    "sequence_under_split_target_count": 1,
+    "classification_reason_leaf_counts": {
+      "pass": 128,
+      "partial": 7,
+      "block": 0
+    },
+    "leaf_finding_counts": {
+      "pass": 115,
+      "partial": 13,
+      "block": 7
+    },
+    "target_finding_counts": {
+      "pass": 102,
+      "partial": 9,
+      "block": 4
+    },
+    "unresolved_case_count": 46,
+    "unresolved_case_counts_by_code": {
+      "canonical_identity_collision": 9,
+      "classification_reason_incomplete": 7,
+      "target_type_mismatch": 5,
+      "course_sequence_false_positive": 5,
+      "major_direction_mismatch": 6,
+      "source_course_number_missing": 4,
+      "sequence_not_split": 2,
+      "crosslisted_course_number_missing": 2,
+      "llm_direction_other_computing": 2,
+      "major_direction_ambiguous_after_identity_merge": 2,
+      "crosslisted_number_not_preserved": 2
+    }
+  },
+  "structural_findings": [
+    {
+      "id": "nav_source_counts",
+      "status": "pass",
+      "severity": "pass",
+      "source_evidence": "Independent walk of mkdocs.yml produces 135 Markdown nav leaves, 135 unique source paths, zero duplicate nav occurrences, and zero missing files.",
+      "registry_evidence": "source_catalog.markdown_nav_leaf_count=135; nav_leaves length=135; source_catalog.course_nav_leaf_count=112; summary.course_nav_leaf_count=112.",
+      "independent_conclusion": "Nav and source counts match; the 23 non-course leaves remain explicitly represented."
+    },
+    {
+      "id": "target_type_distribution",
+      "status": "block",
+      "severity": "block",
+      "source_evidence": "Independent source review expects 105 course leaves and 7 true sequence leaves. The seven sequence pages are MITmaths.md, CS149.md, Algo.md, CMU10-414.md, CMU15-442.md, EE16.md, and CS106B_CS106X.md.",
+      "registry_evidence": "Registry records 100 course leaves and 12 course_sequence leaves. The five excess sequence classifications are CSAPP.md, CS571.md, MIT6-7960.md, EECS498-007.md, and CS229M.md.",
+      "independent_conclusion": "The nav/source denominator is intact, but the target_type projection is not release-safe."
+    },
+    {
+      "id": "canonical_denominator_and_collisions",
+      "status": "block",
+      "severity": "block",
+      "source_evidence": "The three collision groups contain six distinct source identity keys: two separate PKU guide pages, two separate NJU guide pages, and the unrelated AICS and LHY guide pages. Their titles, institutions, nav categories, and guide bodies are distinct.",
+      "registry_evidence": "course_targets groups both PKU pages under pku-pku, both NJU pages under nju-nju, and AICS.md plus LHY.md under unknown. The registry still reports 115 canonical targets.",
+      "independent_conclusion": "115 is retained as the current denominator, but the independently proven distinct-identity lower bound is 115 - 3 merged target slots + 6 source identities = 118. The collisions block release and must not be repaired by reducing the denominator."
+    },
+    {
+      "id": "translation_and_alias_deduplication",
+      "status": "block",
+      "severity": "block",
+      "source_evidence": "The snapshot has 135 unique nav source paths and no duplicate path occurrence. Same-page title/heading and numeric-format aliases are legitimate alias evidence, while PKU, NJU, AICS, and LHY are different source pages with different official course subjects.",
+      "registry_evidence": "language_variants are single-language for all 115 targets, but guide_page_provenance has three multi-page target groups: nju-nju, pku-pku, and unknown. Their aliases are different titles rather than translations of one official identity.",
+      "independent_conclusion": "No translation-only merge was found; however, the alias/canonicalization result still collapses distinct official identities across pages, so the identity gate remains blocked."
+    },
+    {
+      "id": "classification_reason_completeness",
+      "status": "partial",
+      "severity": "partial",
+      "source_evidence": "Seven source pages explicitly describe paired or multi-course identities: MIT18.01/18.02, CMU15-418/Stanford CS149, Coursera Algorithms I & II, CMU10-414/714, CMU15-442/642, EE16A&B, and Stanford CS106B/X.",
+      "registry_evidence": "Each affected leaf has a generic reason such as 'course-like instructional content' plus identifiers, but does not state why it is a sequence or how distinct official identities are preserved. Seven leaves therefore fail the reason-completeness check.",
+      "independent_conclusion": "Classification reasons are present for all 135 leaves, but seven sequence reasons are not complete enough for independent review."
+    },
+    {
+      "id": "major_direction_evidence",
+      "status": "block",
+      "severity": "block",
+      "source_evidence": "Category-first review confirms CS168 networks, numerical analysis numerical_scientific_computing, and neural-network pages without computer-networks evidence. Separate LLM/NLP pages are under the large-language-model category and describe LLM/NLP content, while merged NJU/PKU pages carry conflicting category evidence.",
+      "registry_evidence": "CS168, MIT18.330, and the two neural pages now carry the corrected direction evidence. CMU11-667 and CMU11-711 remain other_computing with 'no substantive direction marker matched'; nju-nju and pku-pku retain a single compilers direction after merging programming-language pages with compiler pages.",
+      "independent_conclusion": "The three newly specified direction rules pass, but two direct LLM/NLP direction errors and two collision-induced ambiguous targets remain."
+    },
+    {
+      "id": "script_reproducibility_risks",
+      "status": "block",
+      "severity": "block",
+      "source_evidence": "A fresh offline invocation of the current script reproduces 135 nav leaves, 112 course leaves, 115 targets, and the same 100/12 course/course_sequence split. Source pages show that several slash/ampersand forms are cross-listed aliases or one-course numeric formats.",
+      "registry_evidence": "scripts/discover_csdiy_courses.py:676 classifies any len(codes)>1 or title marker '/', '&', 'sequence', etc. as course_sequence. Lines 365-368 expand numeric slash forms, while lines 207-209 later normalize CMU CS15213 to 15-213; the sequence decision precedes that canonical equivalence. Lines 192-196 remove Chinese characters and return unknown when no Latin slug remains; lines 481-489 then use institution-title slugs, producing pku-pku, nju-nju, and unknown collisions.",
+      "independent_conclusion": "The current deterministic script reproduces the registry's structural counts but still contains the identity and sequence heuristics responsible for the blocked findings."
+    }
+  ],
+  "special_rule_reviews": [
+    {
+      "rule": "ucb_cs168_networks_primary_architecture_secondary",
+      "status": "pass",
+      "severity": "pass",
+      "source_evidence": {
+        "nav": "mkdocs.yml:230 places UCB CS168 under 计算机网络.",
+        "guide": "docs/计算机网络/CS168.md:1 identifies 'Introduction to the Internet: Architecture and Protocols'; line 11 lists routing, reliable transport, TCP, UDP, IP, DNS, HTTP, Ethernet, and wireless networking."
+      },
+      "registry_evidence": "course_targets[ucb-cs168].priority.major_direction=networks; secondary_directions=[architecture]; direction_evidence says the 计算机网络 category takes precedence. The leaf target_type is course.",
+      "script_effect": "infer_direction_details lines 509-522 gives the category rule priority; the current fresh run returns networks with architecture secondary.",
+      "independent_conclusion": "Correct. UCB CS168 is networks; architecture is secondary only."
+    },
+    {
+      "rule": "neural_network_not_computer_network",
+      "status": "pass",
+      "severity": "pass",
+      "source_evidence": {
+        "nav": "mkdocs.yml:168 places The Information Theory, Pattern Recognition, and Neural Networks under 数学进阶; line 267 places Neural Networks: Zero to Hero under 人工智能.",
+        "guides": "The Information...md:1 names pattern recognition and neural networks and lines 5-7 describe a Cambridge mathematical/ML course. Neural Networks：Zero to Hero.md:1 and lines 5-7 describe a Python/deep-learning course. Neither page is a computer-network course."
+      },
+      "registry_evidence": "the-information-theory-pattern-recognition-and-neural-networks has major_direction=discrete_mathematics_probability and secondary_directions=[machine_learning,theory], with no networks. neural-networks-zero-to-hero has major_direction=artificial_intelligence and secondary_directions=[machine_learning], with no networks.",
+      "script_effect": "infer_direction_details lines 513-521 explicitly skips generic networks when neural network(s) or 神经网络 is present; the current fresh run has no neural lexical networks secondary.",
+      "independent_conclusion": "Correct. Neural network wording is not counted as computer-networks evidence."
+    },
+    {
+      "rule": "mit_18_330_numerical_scientific_computing",
+      "status": "pass",
+      "severity": "pass",
+      "source_evidence": {
+        "nav": "mkdocs.yml:166 places MIT18.330 under 数学进阶.",
+        "guide": "docs/数学进阶/numerical.md:1 says 'Introduction to numerical analysis'; lines 5-7 identify MIT, calculus/linear-algebra/probability prerequisites, and Julia."
+      },
+      "registry_evidence": "course_targets[mit-18-330].priority.major_direction=numerical_scientific_computing; direction_evidence says substantive title/path matched numerical-analysis or scientific-computing evidence; secondary_directions is empty.",
+      "script_effect": "infer_direction_details lines 497-507 applies the numerical/scientific-computing title/path override before broad 数学进阶 category matching; the current fresh run returns numerical_scientific_computing.",
+      "independent_conclusion": "Correct. MIT 18.330 is not reduced to broad discrete mathematics/probability."
+    }
+  ],
+  "identity_collision_groups": [
+    {
+      "canonical_course_id": "pku-pku",
+      "severity": "block",
+      "source_identity_keys": [
+        "pku::guide::pku-compilers",
+        "pku::guide::pku-softwareanalysis"
+      ],
+      "source_evidence": [
+        "docs/编译原理/PKU-Compilers.md:1 is PKU 编译原理实践 and lines 11-36 describe implementing a compiler from SysY to RISC-V.",
+        "docs/编程语言设计与分析/PKU-SoftwareAnalysis.md:1 is 北京大学 软件分析技术 and lines 11-17 describe static/software analysis; it explicitly compares itself with the NJU software-analysis course."
+      ],
+      "registry_evidence": "Both guide_page_provenance entries map to canonical_course_id pku-pku; aliases include PKU 编译原理实践, PKU 软件分析, and 北京大学 软件分析技术.",
+      "independent_conclusion": "Distinct official guide identities are merged; split required."
+    },
+    {
+      "canonical_course_id": "nju-nju",
+      "severity": "block",
+      "source_identity_keys": [
+        "nju::guide::nju-compilers",
+        "nju::guide::nju-softwareanalysis"
+      ],
+      "source_evidence": [
+        "docs/编译原理/NJU-Compilers.md:1 is NJU 编译原理 and lines 17-38 describe ANTLR, syntax/lexical analysis, and building a compiler.",
+        "docs/编程语言设计与分析/NJU-SoftwareAnalysis.md:1 is NJU 软件分析 and lines 11-20 describe static analysis, compiler optimization, call graphs, pointer analysis, and taint analysis."
+      ],
+      "registry_evidence": "Both guide_page_provenance entries map to canonical_course_id nju-nju; priority.major_direction=compilers masks the programming_languages category evidence.",
+      "independent_conclusion": "Distinct official guide identities and directions are merged; split required."
+    },
+    {
+      "canonical_course_id": "unknown",
+      "severity": "block",
+      "source_identity_keys": [
+        "unknown::guide::aics",
+        "ntu::guide::lhy"
+      ],
+      "source_evidence": [
+        "docs/机器学习系统/AICS.md:1 is 智能计算系统, line 5 identifies 中国科学院大学, and line 6 requires architecture and deep learning.",
+        "docs/深度学习/LHY.md:1 is 国立台湾大学：李宏毅机器学习, line 5 identifies 國立台灣大學, and line 13 lists regression, CNN, self-attention, Transformer, GAN, BERT, and other ML labs."
+      ],
+      "registry_evidence": "Both guide_page_provenance entries map to canonical_course_id unknown; aliases combine 国立台湾大学: 李宏毅机器学习 with 智能计算系统 and institution is null.",
+      "independent_conclusion": "Two different universities and course identities are merged; split required."
+    }
+  ],
+  "leaf_findings": [
+    {
+      "source_markdown_path": "docs/数学基础/MITmaths.md",
+      "severity": "partial",
+      "codes": ["classification_reason_incomplete"],
+      "source_evidence": "Line 11 says the calculus offering consists of MIT 18.01 and MIT 18.02; line 17 links both official course pages.",
+      "registry_evidence": "nav_leaves leaf for MIT18.01/18.02 has target_type=course_sequence and target ids [mit-18-01, mit-18-02], but classification_reason only says course-like content and lists identifiers.",
+      "independent_conclusion": "Type and identity split pass; reason must explicitly explain the paired sequence."
+    },
+    {
+      "source_markdown_path": "docs/编程入门/cpp/CS106B_CS106X.md",
+      "severity": "partial",
+      "codes": ["classification_reason_incomplete"],
+      "source_evidence": "Line 1 names CS106B/X; line 11 says CS106X is deeper than CS106B; line 19 links separate CS106B and CS106X course sites.",
+      "registry_evidence": "Leaf has course_sequence and target ids stanford-cs106b and stanford-cs106x, but the reason only lists identifiers and outbound links without stating the paired official identities.",
+      "independent_conclusion": "Sequence classification and split pass; reason completeness partial."
+    },
+    {
+      "source_markdown_path": "docs/电子基础/EE16.md",
+      "severity": "partial",
+      "codes": ["classification_reason_incomplete"],
+      "source_evidence": "Line 1 names EE16A&B; line 15 links separate EE16A and EE16B course sites.",
+      "registry_evidence": "Leaf has course_sequence and target ids ucb-ee16a and ucb-ee16b, but the reason does not state that A/B are distinct official identities.",
+      "independent_conclusion": "A/B identity split passes; reason completeness partial."
+    },
+    {
+      "source_markdown_path": "docs/数据结构与算法/Algo.md",
+      "severity": "block",
+      "codes": ["classification_reason_incomplete", "sequence_not_split"],
+      "source_evidence": "Line 1 explicitly names Coursera Algorithms I & II and line 5 identifies Princeton; the guide describes one sequence but does not provide a single official course number that would justify collapsing I and II.",
+      "registry_evidence": "Leaf is course_sequence but has only canonical target id coursera-algorithms-i-ii and one target record; reason only says course-like content.",
+      "independent_conclusion": "The sequence is recognized as a type but its distinct course identities are not preserved; release-blocking."
+    },
+    {
+      "source_markdown_path": "docs/并行与分布式系统/CS149.md",
+      "severity": "partial",
+      "codes": ["classification_reason_incomplete"],
+      "source_evidence": "Line 1 names CMU 15-418/Stanford CS149; line 11 explains the CMU and Stanford offerings and their differences; lines 17-18 link both course sites/videos.",
+      "registry_evidence": "Leaf has course_sequence and target ids cmu-15-418 and stanford-cs149, but the reason does not explain the paired/cross-institution identity evidence.",
+      "independent_conclusion": "Distinct official identities are retained; reason completeness partial."
+    },
+    {
+      "source_markdown_path": "docs/机器学习系统/CMU10-414.md",
+      "severity": "partial",
+      "codes": ["classification_reason_incomplete"],
+      "source_evidence": "Guide title and course introduction identify CMU 10-414/714 as two numbered levels of Deep Learning Systems.",
+      "registry_evidence": "Leaf has target_type=course_sequence and target ids cmu-10-414 and cmu-10-714, but reason completeness does not state why both official identities are retained.",
+      "independent_conclusion": "Identity split passes; reason completeness partial."
+    },
+    {
+      "source_markdown_path": "docs/机器学习系统/CMU15-442.md",
+      "severity": "partial",
+      "codes": ["classification_reason_incomplete"],
+      "source_evidence": "Guide title identifies CMU 15-442/642: Machine Learning Systems and the introduction records both numbered identities.",
+      "registry_evidence": "Leaf has course_sequence and target ids cmu-15-442 and cmu-15-642, but reason completeness does not state the distinct official identities.",
+      "independent_conclusion": "Identity split passes; reason completeness partial."
+    },
+    {
+      "source_markdown_path": "docs/计算机系统基础/CSAPP.md",
+      "severity": "partial",
+      "codes": ["target_type_mismatch"],
+      "source_evidence": "Line 1 identifies one CMU CSAPP course as CMU CS15213; line 11 describes one systems course spanning assembly, architecture, operating systems, linking, parallelism, and networking.",
+      "registry_evidence": "Leaf target_type=course_sequence and course_numbers contains 15-213 plus CS15213, although canonical_course_id is only cmu-15-213.",
+      "independent_conclusion": "The two numeric forms are aliases of one course; expected target_type=course."
+    },
+    {
+      "source_markdown_path": "docs/编译原理/PKU-Compilers.md",
+      "severity": "block",
+      "codes": ["canonical_identity_collision"],
+      "source_evidence": "Line 1 and lines 11-36 identify a PKU compiler-practice course with a compiler implementation project.",
+      "registry_evidence": "Leaf maps to pku-pku, which also contains the separate PKU software-analysis guide.",
+      "independent_conclusion": "Identity collision; split required."
+    },
+    {
+      "source_markdown_path": "docs/编译原理/NJU-Compilers.md",
+      "severity": "block",
+      "codes": ["canonical_identity_collision"],
+      "source_evidence": "Line 1 and lines 17-38 identify an NJU compiler course using ANTLR and implementing a compiler.",
+      "registry_evidence": "Leaf maps to nju-nju, which also contains the separate NJU software-analysis guide.",
+      "independent_conclusion": "Identity collision; split required."
+    },
+    {
+      "source_markdown_path": "docs/编程语言设计与分析/NJU-SoftwareAnalysis.md",
+      "severity": "block",
+      "codes": ["canonical_identity_collision", "major_direction_mismatch"],
+      "source_evidence": "Line 1 names NJU 软件分析; lines 11-20 describe static/software analysis and compiler optimization, call-graph, pointer, and taint analysis.",
+      "registry_evidence": "Leaf maps to nju-nju whose priority.major_direction is compilers, inherited from the other source page; its own nav category is 编程语言设计与分析.",
+      "independent_conclusion": "The page is a distinct programming_languages identity and is merged into a conflicting compilers target; block."
+    },
+    {
+      "source_markdown_path": "docs/编程语言设计与分析/PKU-SoftwareAnalysis.md",
+      "severity": "block",
+      "codes": ["canonical_identity_collision", "major_direction_mismatch"],
+      "source_evidence": "Line 1 names 北京大学 软件分析技术; lines 11-17 describe software-analysis theory/practice and compare the course with NJU software analysis.",
+      "registry_evidence": "Leaf maps to pku-pku whose priority.major_direction is compilers, inherited from the separate PKU compiler-practice page; its own nav category is 编程语言设计与分析.",
+      "independent_conclusion": "The page is a distinct programming_languages identity and is merged into a conflicting compilers target; block."
+    },
+    {
+      "source_markdown_path": "docs/Web开发/CS571.md",
+      "severity": "partial",
+      "codes": ["target_type_mismatch"],
+      "source_evidence": "Line 1 names one CS571 Building UI course; line 11 describes React and React Native as technologies taught within that one course.",
+      "registry_evidence": "Leaf target_type=course_sequence and one target id cs571; the sequence result is caused by '&' in the title.",
+      "independent_conclusion": "React and React Native are topics/frameworks in one course; expected target_type=course."
+    },
+    {
+      "source_markdown_path": "docs/人工智能/Neural Networks：Zero to Hero.md",
+      "severity": "pass",
+      "codes": [],
+      "source_evidence": "Line 1 and lines 5-7 describe a Python/deep-learning neural-network course under the artificial-intelligence nav category.",
+      "registry_evidence": "major_direction=artificial_intelligence; secondary_directions=[machine_learning]; networks is absent.",
+      "independent_conclusion": "Pass under the neural-network lexical rule."
+    },
+    {
+      "source_markdown_path": "docs/机器学习系统/AICS.md",
+      "severity": "block",
+      "codes": ["canonical_identity_collision"],
+      "source_evidence": "Line 1 names 智能计算系统; lines 5-7 identify 中国科学院大学 and architecture/deep-learning prerequisites.",
+      "registry_evidence": "Leaf maps to unknown, which also contains the separate NTU LHY page.",
+      "independent_conclusion": "Identity collision; split required."
+    },
+    {
+      "source_markdown_path": "docs/深度学习/LHY.md",
+      "severity": "block",
+      "codes": ["canonical_identity_collision"],
+      "source_evidence": "Line 1 names the National Taiwan University Li Hongyi machine-learning course; lines 5-13 identify the university, Python, and its broad ML lab sequence.",
+      "registry_evidence": "Leaf maps to unknown, which also contains the separate AICS page.",
+      "independent_conclusion": "Identity collision; split required."
+    },
+    {
+      "source_markdown_path": "docs/深度学习/MIT6-7960.md",
+      "severity": "partial",
+      "codes": ["target_type_mismatch"],
+      "source_evidence": "Line 1 identifies one MIT 6.7960 Deep Learning course; line 11 describes one course spanning LLM/NLP and computer vision.",
+      "registry_evidence": "Leaf target_type=course_sequence and course_numbers contains 6.7960 plus 6-7960, while canonical_course_id is only mit-6-7960.",
+      "independent_conclusion": "Dot/hyphen forms are aliases of one official course; expected target_type=course."
+    },
+    {
+      "source_markdown_path": "docs/深度学习/EECS498-007.md",
+      "severity": "partial",
+      "codes": ["target_type_mismatch", "crosslisted_course_number_missing"],
+      "source_evidence": "Line 1 identifies UMich EECS 498-007 / 598-005; lines 11-17 describe one computer-vision course and its assignments.",
+      "registry_evidence": "Leaf target_type=course_sequence with one target id umich-eecs498-007 and course_numbers=[EECS498-007]; 598-005 is absent.",
+      "independent_conclusion": "This is one cross-listed/format-alias course, not a sequence; expected target_type=course while preserving both source numbers."
+    },
+    {
+      "source_markdown_path": "docs/深度生成模型/大语言模型/CMU11-667.md",
+      "severity": "partial",
+      "codes": ["major_direction_mismatch"],
+      "source_evidence": "mkdocs.yml:297 places the page under 深度生成模型 / 大语言模型; guide lines 1, 6, and 11-18 identify Large Language Models, ML/NLP prerequisites, and LLM methods/applications.",
+      "registry_evidence": "Target cmu-11-667 has major_direction=other_computing and direction_evidence='no substantive direction marker matched'.",
+      "independent_conclusion": "Independent direction is artificial_intelligence; other_computing is too generic."
+    },
+    {
+      "source_markdown_path": "docs/深度生成模型/大语言模型/CMU11-711.md",
+      "severity": "partial",
+      "codes": ["major_direction_mismatch"],
+      "source_evidence": "mkdocs.yml:298 places the page under 深度生成模型 / 大语言模型; guide lines 1, 6, and 11-15 identify Advanced Natural Language Processing, neural-network prerequisites, and LLM/NLP topics.",
+      "registry_evidence": "Target cmu-11-711 has major_direction=other_computing and direction_evidence='no substantive direction marker matched'.",
+      "independent_conclusion": "Independent direction is artificial_intelligence; other_computing is too generic."
+    },
+    {
+      "source_markdown_path": "docs/机器学习进阶/CS229M.md",
+      "severity": "partial",
+      "codes": ["target_type_mismatch", "crosslisted_course_number_missing"],
+      "source_evidence": "Line 1 identifies STATS214 / CS229M as one Machine Learning Theory course; line 8 links the stats214 course site.",
+      "registry_evidence": "Leaf target_type=course_sequence with one target id stanford-cs229m and course_numbers=[CS229M]; STATS214 is absent.",
+      "independent_conclusion": "One cross-listed/alias course is expected; target_type should be course and both source numbers should remain evidence."
+    },
+    {
+      "source_markdown_path": "docs/数学进阶/numerical.md",
+      "severity": "pass",
+      "codes": [],
+      "source_evidence": "Line 1 explicitly says Introduction to numerical analysis; lines 5-7 identify MIT, mathematical prerequisites, and Julia.",
+      "registry_evidence": "major_direction=numerical_scientific_computing with substantive title/path evidence.",
+      "independent_conclusion": "Pass under the numerical-analysis rule."
+    },
+    {
+      "source_markdown_path": "docs/数学进阶/The_Information_Theory_Pattern_Recognition_and_Neural_Networks.md",
+      "severity": "pass",
+      "codes": [],
+      "source_evidence": "Line 1 names information theory, pattern recognition, and neural networks; lines 5-7 identify a Cambridge course with calculus, linear algebra, probability/statistics, and Python prerequisites.",
+      "registry_evidence": "major_direction=discrete_mathematics_probability; secondary_directions=[machine_learning,theory]; networks is absent.",
+      "independent_conclusion": "Pass under the neural-network lexical rule."
+    }
+  ],
+  "target_findings": [
+    {
+      "canonical_course_id": "amirkabir-university-of-technology-ap1400-2-advanced-programming",
+      "severity": "partial",
+      "codes": ["source_course_number_missing"],
+      "source_evidence": "docs/编程入门/cpp/AUT1400.md title identifies AP1400-2 Advanced Programming.",
+      "registry_evidence": "Target course_numbers is empty although the source identity contains AP1400-2.",
+      "independent_conclusion": "Preserve AP1400-2 as source identity evidence."
+    },
+    {
+      "canonical_course_id": "cmu-11-667",
+      "severity": "partial",
+      "codes": ["llm_direction_other_computing", "major_direction_mismatch"],
+      "source_evidence": "CMU11-667.md:1 and 11-18 identify an LLM methods/applications course with ML/NLP prerequisites.",
+      "registry_evidence": "major_direction=other_computing; no substantive direction marker matched.",
+      "independent_conclusion": "Use artificial_intelligence as the independent major direction."
+    },
+    {
+      "canonical_course_id": "cmu-11-711",
+      "severity": "partial",
+      "codes": ["llm_direction_other_computing", "major_direction_mismatch"],
+      "source_evidence": "CMU11-711.md:1 and 11-15 identify advanced NLP, neural-network prerequisites, and LLM topics.",
+      "registry_evidence": "major_direction=other_computing; no substantive direction marker matched.",
+      "independent_conclusion": "Use artificial_intelligence as the independent major direction."
+    },
+    {
+      "canonical_course_id": "cmu-15-213",
+      "severity": "partial",
+      "codes": ["course_sequence_false_positive"],
+      "source_evidence": "CSAPP.md:1 identifies one CMU CSAPP course; the guide body describes one systems course.",
+      "registry_evidence": "Target id is one cmu-15-213, but its leaf target_type is course_sequence because 15-213 and CS15213 are duplicate formats before canonical normalization.",
+      "independent_conclusion": "Expected target type is course."
+    },
+    {
+      "canonical_course_id": "coursera-algorithms-i-ii",
+      "severity": "block",
+      "codes": ["sequence_not_split"],
+      "source_evidence": "Algo.md:1 explicitly names Algorithms I & II and line 5 identifies Princeton; the title denotes two sequence members.",
+      "registry_evidence": "Only one canonical target coursera-algorithms-i-ii is emitted for the sequence.",
+      "independent_conclusion": "Distinct sequence identities must be retained; do not lower the target denominator."
+    },
+    {
+      "canonical_course_id": "cs571",
+      "severity": "partial",
+      "codes": ["course_sequence_false_positive"],
+      "source_evidence": "CS571.md:1 and 11 describe one UI course that teaches React and React Native.",
+      "registry_evidence": "One target id cs571 is associated with target_type=course_sequence because the title contains '&'.",
+      "independent_conclusion": "Expected target type is course."
+    },
+    {
+      "canonical_course_id": "mit-6-7960",
+      "severity": "partial",
+      "codes": ["course_sequence_false_positive"],
+      "source_evidence": "MIT6-7960.md:1 and 11 describe one MIT 6.7960 Deep Learning course.",
+      "registry_evidence": "One target id mit-6-7960 is associated with target_type=course_sequence because 6.7960 and 6-7960 are duplicate formatting forms.",
+      "independent_conclusion": "Expected target type is course."
+    },
+    {
+      "canonical_course_id": "nju-nju",
+      "severity": "block",
+      "codes": ["canonical_identity_collision", "major_direction_ambiguous_after_identity_merge"],
+      "source_evidence": "NJU-Compilers.md and NJU-SoftwareAnalysis.md are separate pages with compiler and software-analysis subjects under separate nav categories.",
+      "registry_evidence": "Both pages are one nju-nju target with major_direction=compilers.",
+      "independent_conclusion": "Split identities before assigning a major direction."
+    },
+    {
+      "canonical_course_id": "pku-pku",
+      "severity": "block",
+      "codes": ["canonical_identity_collision", "major_direction_ambiguous_after_identity_merge"],
+      "source_evidence": "PKU-Compilers.md and PKU-SoftwareAnalysis.md are separate pages with compiler-practice and software-analysis subjects under separate nav categories.",
+      "registry_evidence": "Both pages are one pku-pku target with major_direction=compilers.",
+      "independent_conclusion": "Split identities before assigning a major direction."
+    },
+    {
+      "canonical_course_id": "stanford-cs229m",
+      "severity": "partial",
+      "codes": ["course_sequence_false_positive", "crosslisted_number_not_preserved", "source_course_number_missing"],
+      "source_evidence": "CS229M.md:1 and 8 identify one STATS214 / CS229M course and its stats214 course site.",
+      "registry_evidence": "One target id stanford-cs229m is typed as course_sequence and stores only CS229M, omitting STATS214.",
+      "independent_conclusion": "Expected type is course; preserve STATS214 as cross-listed identity evidence."
+    },
+    {
+      "canonical_course_id": "ucb-ucb-data100-principles-and-techniques-of-data-science",
+      "severity": "partial",
+      "codes": ["source_course_number_missing"],
+      "source_evidence": "Data100.md nav/title identifies UCB Data100: Principles and Techniques of Data Science.",
+      "registry_evidence": "Canonical target is a title slug with course_numbers empty; DATA100 is not preserved.",
+      "independent_conclusion": "Preserve DATA100 as source identity evidence."
+    },
+    {
+      "canonical_course_id": "umich-eecs498-007",
+      "severity": "partial",
+      "codes": ["course_sequence_false_positive", "crosslisted_number_not_preserved", "source_course_number_missing"],
+      "source_evidence": "EECS498-007.md:1 identifies one UMich course as EECS 498-007 / 598-005; lines 11-17 describe one computer-vision course.",
+      "registry_evidence": "One target id umich-eecs498-007 is typed as course_sequence and stores only EECS498-007, omitting 598-005.",
+      "independent_conclusion": "Expected type is course; preserve both cross-listed source numbers."
+    },
+    {
+      "canonical_course_id": "unknown",
+      "severity": "block",
+      "codes": ["canonical_identity_collision"],
+      "source_evidence": "AICS.md identifies a Chinese Academy of Sciences intelligent-computing course; LHY.md identifies a National Taiwan University Li Hongyi machine-learning course.",
+      "registry_evidence": "Both guide pages are grouped under unknown with combined aliases and no institution.",
+      "independent_conclusion": "Split the two official identities."
+    }
+  ],
+  "corrected_rule_regressions": {
+    "cs168": {
+      "previous_risk": "Architecture in the title could outrank the computer-network nav category.",
+      "current_result": "networks primary, architecture secondary",
+      "audit_effect": "No unresolved CS168 direction finding."
+    },
+    "neural_networks": {
+      "previous_risk": "Substring network could create a false computer-networks secondary direction.",
+      "current_result": "No networks secondary on either neural-network page.",
+      "audit_effect": "Two prior lexical findings cleared."
+    },
+    "mit_18_330": {
+      "previous_risk": "The broad 数学进阶 category could make numerical analysis discrete_mathematics_probability.",
+      "current_result": "numerical_scientific_computing with substantive title/path evidence.",
+      "audit_effect": "The prior numerical direction finding is cleared."
+    }
+  },
+  "integrity_statement": "This report is an independent offline classification audit. It does not authorize registry changes, offering research, StudyKit generation, or changes to any course artifact."
+}

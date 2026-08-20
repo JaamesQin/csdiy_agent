@@ -1,0 +1,134 @@
+{
+  "schema_version": "reviewed-package-audit-v1",
+  "audit_id": "mit-6.s081-fall-2021-s081-4-audit-20260812",
+  "audited_at": "2026-08-12",
+  "auditor_id": "s081-4-audit-worker",
+  "course_id": "mit-6.s081-fall-2021",
+  "course_version": "fall-2021",
+  "scope": {
+    "reviewed_root": "data/reviewed/mit-6.s081-fall-2021/portable-v0.2.0/units",
+    "units": ["lecture-19", "lecture-20", "lecture-21", "lecture-22", "lecture-23", "lecture-24"],
+    "raw_root": "data/raw/mit-6.s081/fall-2021/prepared",
+    "source_root": "data/sources/mit-6.s081-fall-2021",
+    "read_only_inputs": true,
+    "reviewed_package_modified": false,
+    "studykit_content_modified": false,
+    "registry_or_root_modified": false
+  },
+  "method": {
+    "local_contract": "skills/studykit-generator/references/contract.md",
+    "local_formats": "skills/studykit-generator/references/formats.md",
+    "local_examples": "skills/studykit-generator/references/examples.md",
+    "local_quality_modes": "skills/studykit-generator/references/quality-modes.md",
+    "local_parallelism": "skills/studykit-generator/references/parallelism.md",
+    "checks": [
+      "final JSON, validation.json, studykit.yaml, review-plan.json, review-validation.json and metrics.json",
+      "raw/source ingestion reports, chunks.jsonl and formula-candidates.json",
+      "manifest source identity and hashes",
+      "JSON/YAML semantic equality",
+      "visible formula-candidate and actual-review evidence",
+      "author/auditor provenance and v0.2.1 resumability metadata",
+      "content-grounded practice contract; findings remain deferred and were not repaired"
+    ],
+    "network_used": false,
+    "provider_or_model_used": false
+  },
+  "decision": {
+    "migration_status": "blocked_pending_v0.2.1_rebuild_and_reaudit",
+    "can_migrate_current_v0.2.1_build": false,
+    "reason": "The v0.2.0 package is source/hash aligned and schema-valid, but it is not a resumable v0.2.1 checkpoint: pipeline/prompt/schema provenance is incomplete or mismatched, unit-level author/auditor identities are absent, review evidence conflicts with audit summaries, and content-grounded practice quality is not closed.",
+    "next_action": "Create a new v0.2.1 fingerprinted build for these six units from the existing raw/source inputs; preserve the old package read-only; author/checkpoint 01-03 with the content-grounded practice contract; record distinct author and independent auditor IDs; re-run the selected visual/formula review and validation; then re-audit every practice item before any import or promotion. Do not resume or mutate portable-v0.2.0."
+  },
+  "package_level": {
+    "old_build_id": "8905ecd85275372bb2684127ba30a27046650d6b94e3c4d8320c51387ca561db",
+    "old_manifest_pipeline_version": "0.2.0",
+    "current_required_pipeline_version": "portable-studykit-pipeline-v0.2.1",
+    "current_prompt_contract": "host-authored-studykit-v0.2-content-grounded-practice-v2",
+    "old_prompt_version": null,
+    "old_schema_version": null,
+    "old_page_selector_version": "review-pages-v1",
+    "fingerprint_status": "mismatch_for_v0.2.1",
+    "fingerprint_note": "The old fingerprint is internally the v0.2.0 build fingerprint and is not evidence of v0.2.1 resumability. A new build_id must include the v0.2.1 pipeline, prompt, schema and current inventory inputs.",
+    "source_hash_alignment": "observed aligned for all six source reports and review-plan source_hash values; this does not close the build-version mismatch",
+    "package_result_status": "succeeded",
+    "delivery_policy": "draft",
+    "quality_mode": "standard",
+    "known_deferred_gate": "No explicit v0.2.1 content-grounded practice-quality result exists for these units. Existing schema/independent-audit claims are insufficient to close that gate."
+  },
+  "units": [
+    {
+      "unit_id": "lecture-19",
+      "final_status": "succeeded",
+      "validation_status": "succeeded",
+      "yaml_semantic_equal": true,
+      "counts": {"final_learning_objectives": 4, "final_practice": 5, "validation_citations": 52, "source_chunks": 4, "source_pages": 4, "formula_candidates": 4, "structured_final_formulas": 0, "selected_review_pages": 4, "actual_reviewed_pages": 4},
+      "source": {"source_id": "mit-6.s081-f21-lecture-19-material", "prepared_path": "data/raw/mit-6.s081/fall-2021/prepared/lecture-19-virtual-machines.pdf", "chunks_path": "data/sources/mit-6.s081-fall-2021/lecture-19/chunks.jsonl", "source_sha256": "3948a9feaf2ceec2ab7d8d06aaf4d59e9a8e5d6dd96fe9acdb47f11a12d8217e", "raw_sha256": "1affd33333ba522ac73bb4096eb8c28f6e8939de96119d90c951904480443421", "parser_version": "pdf-page-v0.2"},
+      "visible_formula_review": {"candidate_pages": [1, 2, 3, 4], "all_candidates_needs_host_vision": true, "required_final_formula_pages": [], "evidence": "review-plan actual_reviewed_pages covers all four pages, but final has no structured formulas; 04-quality-audit says actual_reviewed_pages was empty/not finalization-authorizing, so evidence is contradictory."},
+      "provenance": {"package_author": "host_codex_agents", "unit_author_id": null, "auditor_claim": "independent_audit=true", "unit_auditor_id": null, "distinct_identity_verifiable": false},
+      "version_fingerprint_mismatch": {"status": "mismatch", "old_pipeline": "0.2.0", "required_pipeline": "portable-studykit-pipeline-v0.2.1", "old_build_id": "8905ecd85275372bb2684127ba30a27046650d6b94e3c4d8320c51387ca561db"},
+      "practice_semantic_issue": {"status": "deferred", "finding": "The five questions are citation-backed but mostly ask the learner to draw/design/compare a VM, sandbox boundary or decision matrix without a concrete guest state, resource budget, trace or falsifiable input/output. They are not accepted as content-grounded pass evidence.", "next_action": "Re-author each item with a complete solvable setting, observable result and aligned hint/evaluation; independently audit each item."}
+    },
+    {
+      "unit_id": "lecture-20",
+      "final_status": "succeeded",
+      "validation_status": "succeeded",
+      "yaml_semantic_equal": true,
+      "counts": {"final_learning_objectives": 5, "final_practice": 6, "validation_citations": 206, "source_chunks": 67, "source_pages": 67, "formula_candidates": 11, "structured_final_formulas": 0, "selected_review_pages": 49, "actual_reviewed_pages": 49},
+      "source": {"source_id": "mit-6.s081-f21-lecture-20-material", "prepared_path": "data/raw/mit-6.s081/fall-2021/prepared/lecture-20-kernels-and-high-level-languages.pdf", "chunks_path": "data/sources/mit-6.s081-fall-2021/lecture-20/chunks.jsonl", "source_sha256": "f0c11f6c25e4e48e6ff7112b2af661bb136fcf6a14a3820dc8e283da0c13492b", "raw_sha256": "f0c11f6c25e4e48e6ff7112b2af661bb136fcf6a14a3820dc8e283da0c13492b", "parser_version": "pdf-page-v0.2"},
+      "visible_formula_review": {"candidate_pages": [21, 22, 23, 24, 25, 28, 38, 40, 45, 52, 54], "all_candidates_needs_host_vision": true, "required_final_formula_pages": [], "evidence": "review-plan covers 49 selected/actual pages including all candidate pages; low-text pages 21-24 were explicitly excluded from claims. 04-quality-audit still says performance-table/chart visual review was incomplete, so the written audit and review-plan are not mutually consistent."},
+      "provenance": {"package_author": "host_codex_agents", "unit_author_id": null, "auditor_claim": "independent_audit=true", "unit_auditor_id": null, "distinct_identity_verifiable": false},
+      "version_fingerprint_mismatch": {"status": "mismatch", "old_pipeline": "0.2.0", "required_pipeline": "portable-studykit-pipeline-v0.2.1", "old_build_id": "8905ecd85275372bb2684127ba30a27046650d6b94e3c4d8320c51387ca561db"},
+      "practice_semantic_issue": {"status": "deferred", "finding": "The six questions are generally analytical prompts, but several leave the scenario to the learner: the C/HLL table has no fixed system, the experiment-design task has no prescribed workload or measurements, and the three deployment scenarios have no constraints. Citation presence does not make these directly answerable.", "next_action": "Rebuild with concrete system parameters/workloads and falsifiable expected observations, then perform the independent item-by-item audit."}
+    },
+    {
+      "unit_id": "lecture-21",
+      "final_status": "succeeded",
+      "validation_status": "succeeded",
+      "yaml_semantic_equal": true,
+      "counts": {"final_learning_objectives": 5, "final_practice": 5, "validation_citations": 40, "source_chunks": 4, "source_pages": 4, "formula_candidates": 2, "structured_final_formulas": 0, "selected_review_pages": 4, "actual_reviewed_pages": 4},
+      "source": {"source_id": "mit-6.s081-f21-lecture-21-material", "prepared_path": "data/raw/mit-6.s081/fall-2021/prepared/lecture-21-networking.pdf", "chunks_path": "data/sources/mit-6.s081-fall-2021/lecture-21/chunks.jsonl", "source_sha256": "db39f780aaa108064c2e50462cc96d6a58326f1f19a1f427229bbf17d3070fe0", "raw_sha256": "06df24d26706a828dffe644e34574ad25d8e8134df110436a80b1ac4086d47c7", "parser_version": "pdf-page-v0.2"},
+      "visible_formula_review": {"candidate_pages": [2, 4], "all_candidates_needs_host_vision": true, "required_final_formula_pages": [], "evidence": "review-plan actual_reviewed_pages covers all four pages and no hidden-warning pages are reported; final retains no structured formulas."},
+      "provenance": {"package_author": "host_codex_agents", "unit_author_id": null, "auditor_claim": "independent_audit=true", "unit_auditor_id": null, "distinct_identity_verifiable": false},
+      "version_fingerprint_mismatch": {"status": "mismatch", "old_pipeline": "0.2.0", "required_pipeline": "portable-studykit-pipeline-v0.2.1", "old_build_id": "8905ecd85275372bb2684127ba30a27046650d6b94e3c4d8320c51387ca561db"},
+      "practice_semantic_issue": {"status": "deferred", "finding": "All five prompts request labeling, drawing, explaining, simulating or comparing a network path, but give no concrete packet headers, queue sizes, arrival/service sequence or state transition table. A learner must invent the entire scenario before solving.", "next_action": "Supply fixed packet/queue/state inputs and observable output criteria for every item, then independently audit setting, hint, expected evidence and evaluation together."}
+    },
+    {
+      "unit_id": "lecture-22",
+      "final_status": "succeeded",
+      "validation_status": "succeeded",
+      "yaml_semantic_equal": true,
+      "counts": {"final_learning_objectives": 4, "final_practice": 5, "validation_citations": 52, "source_chunks": 3, "source_pages": 3, "formula_candidates": 3, "structured_final_formulas": 0, "selected_review_pages": 3, "actual_reviewed_pages": 3},
+      "source": {"source_id": "mit-6.s081-f21-lecture-22-material", "prepared_path": "data/raw/mit-6.s081/fall-2021/prepared/lecture-22-meltdown.pdf", "chunks_path": "data/sources/mit-6.s081-fall-2021/lecture-22/chunks.jsonl", "source_sha256": "c6946a008e1bcbe9eaa94410fb3ad26564fba73330947a61ab430460c8b9b231", "raw_sha256": "9a7b5f89739fb9054ada2d95ebaaccbe8c0fde0c5a4fa689ee0d5038c602a849", "parser_version": "pdf-page-v0.2"},
+      "visible_formula_review": {"candidate_pages": [1, 2, 3], "all_candidates_needs_host_vision": true, "required_final_formula_pages": [], "evidence": "review-plan actual_reviewed_pages covers all three candidate pages; final has no structured formulas. The written audit agrees on defensive scope but does not provide per-formula provenance."},
+      "provenance": {"package_author": "host_codex_agents", "unit_author_id": null, "auditor_claim": "independent_audit=true", "unit_auditor_id": null, "distinct_identity_verifiable": false},
+      "version_fingerprint_mismatch": {"status": "mismatch", "old_pipeline": "0.2.0", "required_pipeline": "portable-studykit-pipeline-v0.2.1", "old_build_id": "8905ecd85275372bb2684127ba30a27046650d6b94e3c4d8320c51387ca561db"},
+      "practice_semantic_issue": {"status": "deferred", "finding": "The five defensive questions are safer than operational attack tasks, but the trace has no concrete register/cache values or fixed secret/cache-line mapping, and the threat-model task leaves attacker capabilities and assets open. The requested result is therefore not falsifiable as written.", "next_action": "Use a bounded toy microarchitecture and explicit non-sensitive trace, with a stated expected classification/causal result; retain the defensive boundary and audit every item."}
+    },
+    {
+      "unit_id": "lecture-23",
+      "final_status": "succeeded",
+      "validation_status": "succeeded",
+      "yaml_semantic_equal": true,
+      "counts": {"final_learning_objectives": 5, "final_practice": 5, "validation_citations": 55, "source_chunks": 4, "source_pages": 4, "formula_candidates": 3, "structured_final_formulas": 0, "selected_review_pages": 4, "actual_reviewed_pages": 4},
+      "source": {"source_id": "mit-6.s081-f21-lecture-23-material", "prepared_path": "data/raw/mit-6.s081/fall-2021/prepared/lecture-23-multi-core-scalability-and-rcu.pdf", "chunks_path": "data/sources/mit-6.s081-fall-2021/lecture-23/chunks.jsonl", "source_sha256": "51a40a6f6be240907b44c1fc10c50743d72a2b948ce5dad80ea64d615f0eadcd", "raw_sha256": "fc67e73518a5e4b5472549a74679c5307a90e174fc2262ec5df976d5a3309ada", "parser_version": "pdf-page-v0.2"},
+      "visible_formula_review": {"candidate_pages": [1, 2, 3], "all_candidates_needs_host_vision": true, "required_final_formula_pages": [], "evidence": "review-plan actual_reviewed_pages covers all four pages including all candidates; final has no structured formulas. 04-quality-audit nevertheless says manual visual review was not complete."},
+      "provenance": {"package_author": "host_codex_agents", "unit_author_id": null, "auditor_claim": "independent_audit=true", "unit_auditor_id": null, "distinct_identity_verifiable": false},
+      "version_fingerprint_mismatch": {"status": "mismatch", "old_pipeline": "0.2.0", "required_pipeline": "portable-studykit-pipeline-v0.2.1", "old_build_id": "8905ecd85275372bb2684127ba30a27046650d6b94e3c4d8320c51387ca561db"},
+      "practice_semantic_issue": {"status": "deferred", "finding": "The five prompts mention four cores, a linked-list update and named data structures, but do not specify an interleaving, timing/state trace, workload rates or concrete data. Several answers can be arbitrary designs while still matching the citation.", "next_action": "Instantiate bounded RCU timelines and workload parameters with observable safe/unsafe outcomes; independently review each item against the exact source concept."}
+    },
+    {
+      "unit_id": "lecture-24",
+      "final_status": "succeeded",
+      "validation_status": "succeeded",
+      "yaml_semantic_equal": true,
+      "counts": {"final_learning_objectives": 5, "final_practice": 5, "validation_citations": 111, "source_chunks": 62, "source_pages": 62, "formula_candidates": 7, "structured_final_formulas": 0, "selected_review_pages": 46, "actual_reviewed_pages": 46},
+      "source": {"source_id": "mit-6.s081-f21-lecture-24-material", "prepared_path": "data/raw/mit-6.s081/fall-2021/prepared/lecture-24-current-research-radiation-tolerance.pdf", "chunks_path": "data/sources/mit-6.s081-fall-2021/lecture-24/chunks.jsonl", "source_sha256": "3df9aeb2fd2d9a8aa54c16750cc67456810cc4027b1fd673ac17dca6c871b107", "raw_sha256": "3df9aeb2fd2d9a8aa54c16750cc67456810cc4027b1fd673ac17dca6c871b107", "parser_version": "pdf-page-v0.2"},
+      "visible_formula_review": {"candidate_pages": [9, 20, 25, 27, 28, 33, 39], "all_candidates_needs_host_vision": true, "required_final_formula_pages": [], "evidence": "review-plan actual_reviewed_pages covers 46 selected pages including all seven candidates; low-text pages 9 and 25 are selected but not evidence-bearing. 04-quality-audit says actual_reviewed_pages was empty/not finalization-authorizing, which conflicts with review-plan/review-validation."},
+      "provenance": {"package_author": "host_codex_agents", "unit_author_id": null, "auditor_claim": "independent_audit=true", "unit_auditor_id": null, "distinct_identity_verifiable": false},
+      "version_fingerprint_mismatch": {"status": "mismatch", "old_pipeline": "0.2.0", "required_pipeline": "portable-studykit-pipeline-v0.2.1", "old_build_id": "8905ecd85275372bb2684127ba30a27046650d6b94e3c4d8320c51387ca561db"},
+      "practice_semantic_issue": {"status": "deferred", "finding": "The five tasks ask for generic evaluation chains, fault matrices, I/O choices, responsibility mappings and proposal audits without a fixed fault state, device contract, output trace or evidence sample. They are useful prompts but not complete learner-solvable settings under the v0.2.1 contract.", "next_action": "Re-author with explicit fault injections, device states and expected classifications; preserve the source's implemented/proposed/unknown boundaries and independently audit each practice item."}
+    }
+  ],
+  "aggregate_counts": {"units": 6, "final_practice": 31, "validation_citations": 516, "source_chunks": 144, "source_pages": 144, "formula_candidates": 30, "structured_final_formulas": 0, "actual_reviewed_pages": 110, "yaml_semantic_equal_units": 6, "deferred_practice_quality_units": 6},
+  "non_promotion_note": "Do not report a generic pass. Existing final/validation/YAML success is retained as an observed v0.2.0 artifact fact only; it is not approval for current v0.2.1 migration or database import."
+}

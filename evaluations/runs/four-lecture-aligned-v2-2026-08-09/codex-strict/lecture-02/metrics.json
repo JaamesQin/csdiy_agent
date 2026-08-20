@@ -1,0 +1,57 @@
+{
+  "mode": "strict",
+  "unit_id": "lecture-02",
+  "coordinator_dispatch_at": "2026-08-09T13:57:13.537520691Z",
+  "started_at": "2026-08-09T13:58:00.954754206Z",
+  "completed_at": "2026-08-09T14:02:44.495796Z",
+  "duration_seconds": 283.541042,
+  "stages": [
+    {
+      "name": "setup_and_source_inventory",
+      "started_at": "2026-08-09T13:58:00.954754206Z",
+      "completed_at": "2026-08-09T13:58:14.405713642Z",
+      "duration_seconds": 13.450959
+    },
+    {
+      "name": "strict_vision_and_formula_review",
+      "started_at": "2026-08-09T13:58:14.405713642Z",
+      "completed_at": "2026-08-09T13:59:05.548862813Z",
+      "duration_seconds": 51.143149
+    },
+    {
+      "name": "independent_authoring_audit_and_schema_repair",
+      "started_at": "2026-08-09T13:59:05.548862813Z",
+      "completed_at": "2026-08-09T14:01:47.175280829Z",
+      "duration_seconds": 161.626418
+    },
+    {
+      "name": "deterministic_finalization",
+      "started_at": "2026-08-09T14:01:47.175280829Z",
+      "completed_at": "2026-08-09T14:01:57.428369434Z",
+      "duration_seconds": 10.253089
+    },
+    {
+      "name": "independent_validation",
+      "started_at": "2026-08-09T14:01:57.428369434Z",
+      "completed_at": "2026-08-09T14:02:03.288108887Z",
+      "duration_seconds": 5.859739
+    },
+    {
+      "name": "final_consistency_and_metrics",
+      "started_at": "2026-08-09T14:02:03.288108887Z",
+      "completed_at": "2026-08-09T14:02:44.495796Z",
+      "duration_seconds": 41.207688
+    }
+  ],
+  "stage_duration_sum_seconds": 283.541042,
+  "source_chunk_count": 81,
+  "citation_count": 204,
+  "needs_host_vision_page_count": 51,
+  "reviewed_page_count": 56,
+  "formula_page_count": 22,
+  "remaining_blockers": 0,
+  "timing_basis": "实际 UTC 检查点；未估算",
+  "quality_mode": "strict",
+  "repairs": [],
+  "semantic_passes": 5
+}

@@ -1,0 +1,65 @@
+{
+  "quality_mode": "strict",
+  "coordinator_dispatch_utc": "2026-08-09T13:59:28.003984271Z",
+  "started_at_utc": "2026-08-09T13:59:28.003984271Z",
+  "completed_at_utc": "2026-08-09T14:02:41.684537Z",
+  "duration_seconds": 193.680553,
+  "internal_checkpoints": [
+    {
+      "checkpoint": "authoring_started",
+      "started_at_utc": "2026-08-09T13:59:28.003984Z",
+      "completed_at_utc": "2026-08-09T14:02:41.518943Z",
+      "duration_seconds": 193.514959
+    },
+    {
+      "checkpoint": "evidence_plan_completed",
+      "started_at_utc": "2026-08-09T14:02:41.518943Z",
+      "completed_at_utc": "2026-08-09T14:02:41.519496Z",
+      "duration_seconds": 0.000553
+    },
+    {
+      "checkpoint": "learning_content_completed",
+      "started_at_utc": "2026-08-09T14:02:41.519496Z",
+      "completed_at_utc": "2026-08-09T14:02:41.520143Z",
+      "duration_seconds": 0.000647
+    },
+    {
+      "checkpoint": "practice_flow_completed",
+      "started_at_utc": "2026-08-09T14:02:41.520143Z",
+      "completed_at_utc": "2026-08-09T14:02:41.520379Z",
+      "duration_seconds": 0.000236
+    },
+    {
+      "checkpoint": "independent_audit_completed",
+      "started_at_utc": "2026-08-09T14:02:41.520379Z",
+      "completed_at_utc": "2026-08-09T14:02:41.520522Z",
+      "duration_seconds": 0.000143
+    },
+    {
+      "checkpoint": "blocker_reaudit_completed",
+      "started_at_utc": "2026-08-09T14:02:41.520522Z",
+      "completed_at_utc": "2026-08-09T14:02:41.520621Z",
+      "duration_seconds": 9.9e-05
+    },
+    {
+      "checkpoint": "assembly_completed",
+      "started_at_utc": "2026-08-09T14:02:41.520621Z",
+      "completed_at_utc": "2026-08-09T14:02:41.538395Z",
+      "duration_seconds": 0.017774
+    },
+    {
+      "checkpoint": "validation_completed",
+      "started_at_utc": "2026-08-09T14:02:41.538395Z",
+      "completed_at_utc": "2026-08-09T14:02:41.684537Z",
+      "duration_seconds": 0.146142
+    }
+  ],
+  "semantic_passes": 5,
+  "reviewed_page_count": 43,
+  "formula_reviewed_page_count": 10,
+  "independent_audit": true,
+  "blocker_reaudit": true,
+  "blockers_after_reaudit": [],
+  "repairs": [],
+  "timing_note": "Coordinator dispatch is authoritative; checkpoints use actual UTC clock readings during this independent turn."
+}

@@ -1,0 +1,760 @@
+{
+  "stage": "02-learning-content",
+  "learning_objectives": [
+    {
+      "id": "LO1",
+      "objective": "区分逼近、优化与泛化三个问题，并说明本讲结论只覆盖逼近。"
+    },
+    {
+      "id": "LO2",
+      "objective": "用 Lipschitz 条件和 L1 误差复述三层 ReLU 网络的矩形逼近证明。"
+    },
+    {
+      "id": "LO3",
+      "objective": "推导维数 d、误差 ε 与矩形/神经元数量之间的指数关系。"
+    },
+    {
+      "id": "LO4",
+      "objective": "用分段线性函数的折点数解释宽度与深度的表达效率差异。"
+    },
+    {
+      "id": "LO5",
+      "objective": "辨析普适逼近与实际训练、泛化、归纳偏置之间的逻辑边界。"
+    }
+  ],
+  "prerequisites": [
+    {
+      "topic": "ReLU 与前馈网络",
+      "required_level": "能写出 ReLU 并识别层数、宽度。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 3
+          }
+        }
+      ]
+    },
+    {
+      "topic": "积分与范数",
+      "required_level": "理解 L1 积分误差及向量范数。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 7
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        }
+      ]
+    },
+    {
+      "topic": "Lipschitz 连续性",
+      "required_level": "能使用差分上界。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        }
+      ]
+    }
+  ],
+  "outline": [
+    {
+      "order": 1,
+      "topic": "逼近问题与误差",
+      "anchors": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 3
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 10
+          }
+        }
+      ],
+      "purpose": "确定本讲命题的范围。"
+    },
+    {
+      "order": 2,
+      "topic": "矩形构造证明",
+      "anchors": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 11
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        }
+      ],
+      "purpose": "把目标函数离散成可由 ReLU 实现的局部基函数。"
+    },
+    {
+      "order": 3,
+      "topic": "UFA 边界",
+      "anchors": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 19
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 21
+          }
+        }
+      ],
+      "purpose": "区分存在性与学习成功。"
+    },
+    {
+      "order": 4,
+      "topic": "宽度与深度",
+      "anchors": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 24
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        }
+      ],
+      "purpose": "用折点数建立深度分离。"
+    },
+    {
+      "order": 5,
+      "topic": "实践解释",
+      "anchors": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 37
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 42
+          }
+        }
+      ],
+      "purpose": "把表达结论放回完整学习流程。"
+    }
+  ],
+  "core_concepts": [
+    {
+      "id": "c1",
+      "term": "机器学习三块拼图",
+      "claim_type": "source_summary",
+      "explanation": "模型族中存在拟合函数（逼近）、算法能找到它（优化）、所得函数在未见数据上有效（泛化）是三个不同命题；本讲主要讨论第一个。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "term": "逼近误差",
+      "claim_type": "source_summary",
+      "explanation": "形式化时先选目标函数族 G、网络族 F 与误差度量；讲义比较最大误差与积分型 L1 误差。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 7
+          }
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "term": "L-Lipschitz 函数",
+      "claim_type": "source_summary",
+      "explanation": "输入变化受控时输出变化不超过 L 倍；它把局部网格尺寸转成统一的高度误差界。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        }
+      ],
+      "formula": {
+        "status": "resolved",
+        "latex": "|g(x+\\Delta x)-g(x)|\\le L|\\Delta x|",
+        "citation": {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        },
+        "warnings": []
+      }
+    },
+    {
+      "id": "c4",
+      "term": "RMS 范数",
+      "claim_type": "source_summary",
+      "explanation": "多维输入使用每坐标平方平均的平方根，避免尺度随维数直接膨胀。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        }
+      ],
+      "formula": {
+        "status": "resolved",
+        "latex": "\\|x\\|_{\\mathrm{rms}}=\\sqrt{\\frac1d\\sum_{i=1}^d x_i^2}",
+        "citation": {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        },
+        "warnings": []
+      }
+    },
+    {
+      "id": "c5",
+      "term": "三层逼近定理",
+      "claim_type": "source_summary",
+      "explanation": "任意定义在单位超立方体上的 L-Lipschitz 函数，都可由三层 ReLU 网络以 L1 误差小于 2ε 逼近；讲义给出宽度量级 4d(L/ε)^d。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 10
+          }
+        }
+      ],
+      "formula": {
+        "status": "resolved",
+        "latex": "N=4d(L/\\varepsilon)^d,\\quad \\int_{[0,1]^d}|f(x)-g(x)|\\,dx<2\\varepsilon",
+        "citation": {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 10
+          }
+        },
+        "warnings": []
+      }
+    },
+    {
+      "id": "c6",
+      "term": "一维矩形条误差",
+      "claim_type": "explanation",
+      "explanation": "把区间分成 N 条并用常数高度近似。每条由 Lipschitz 性产生三角形误差，总 L1 误差至多 L/(2N)，故 N=L/(2ε) 足够。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 13
+          }
+        }
+      ],
+      "formula": {
+        "status": "resolved",
+        "latex": "\\int_0^1|f-g|\\le \\frac{L}{2N},\\qquad N=\\frac{L}{2\\varepsilon}",
+        "citation": {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 13
+          }
+        },
+        "warnings": []
+      }
+    },
+    {
+      "id": "c7",
+      "term": "多维网格与维数灾难",
+      "claim_type": "source_summary",
+      "explanation": "N 个等体积超矩形的边长为 N^{-1/d}；总误差界为 L N^{-1/d}，所以 N=(L/ε)^d，随 d 指数增长。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 14
+          }
+        }
+      ],
+      "formula": {
+        "status": "resolved",
+        "latex": "\\int_{[0,1]^d}|f-g|\\le \\frac{L}{N^{1/d}},\\qquad N=(L/\\varepsilon)^d",
+        "citation": {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 14
+          }
+        },
+        "warnings": []
+      }
+    },
+    {
+      "id": "c8",
+      "term": "ReLU 矩形脉冲",
+      "claim_type": "source_summary",
+      "explanation": "四个平移 ReLU 的线性组合形成近似一维矩形；斜率参数 c 越大，边缘越陡，并可通过偏置平移。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 15
+          }
+        }
+      ],
+      "formula": {
+        "status": "resolved",
+        "latex": "f_c(x)=[1,-1,-1,1]^\\top\\operatorname{ReLU}([cx,cx-1,c(x-1)-2,c(x-1)-3]^\\top)",
+        "citation": {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 15
+          }
+        },
+        "warnings": []
+      }
+    },
+    {
+      "id": "c9",
+      "term": "超矩形门与线性组合",
+      "claim_type": "source_summary",
+      "explanation": "各坐标的一维门相加并在 d-1 处阈值化，只有所有坐标门均开启时输出；再对平移后的门线性组合逼近曲面。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 17
+          }
+        }
+      ],
+      "formula": {
+        "status": "resolved",
+        "latex": "h_c(x)=\\operatorname{ReLU}(\\sum_{i=1}^d f_c(x_i)-(d-1)),\\quad f(x)=\\sum_u\\alpha_u h_c(x-u)",
+        "citation": {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 17
+          }
+        },
+        "warnings": []
+      }
+    },
+    {
+      "id": "c10",
+      "term": "普适逼近的局限",
+      "claim_type": "source_summary",
+      "explanation": "存在性构造可能需要指数宽度、极陡权重，且训练会把矩形放在训练点附近；UFA 本身既不保证可训练，也不保证泛化。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 19
+          }
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "term": "分段线性与折点",
+      "claim_type": "source_summary",
+      "explanation": "一维 ReLU 网络输出是分段线性的；折点是梯度改变的位置，可作为深浅网络表达复杂度的可计数证据。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 27
+          }
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "term": "折点递推上界",
+      "claim_type": "source_summary",
+      "explanation": "宽度 n 的线性组合先至多汇集 n 倍折点，逐坐标 ReLU 至多再翻倍，故逐层递推并得到深度指数增长。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 30
+          }
+        }
+      ],
+      "formula": {
+        "status": "resolved",
+        "latex": "\\mathrm{KINKS}_\\ell\\le 2n\\,\\mathrm{KINKS}_{\\ell-1},\\qquad \\mathrm{KINKS}_L\\le(2n)^L",
+        "citation": {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 30
+          }
+        },
+        "warnings": []
+      }
+    },
+    {
+      "id": "c13",
+      "term": "锯齿函数的自复合",
+      "claim_type": "source_summary",
+      "explanation": "一个宽度 2 的 ReLU 模块形成帐篷状函数；每次自复合使线性区域数翻倍。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 32
+          }
+        }
+      ],
+      "formula": {
+        "status": "resolved",
+        "latex": "g(x)=\\operatorname{ReLU}(2\\operatorname{ReLU}(x)-4\\operatorname{ReLU}(x-\\tfrac12))",
+        "citation": {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 32
+          }
+        },
+        "warnings": []
+      }
+    },
+    {
+      "id": "c14",
+      "term": "深度分离实例",
+      "claim_type": "source_summary",
+      "explanation": "自复合 500 次产生 2^500-1 个折点，可由宽度 2、1000 层实现；三层网络若匹配折点数量需天文级宽度。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 33
+          }
+        }
+      ],
+      "formula": {
+        "status": "resolved",
+        "latex": "n\\ge\\tfrac12(2^{500}-1)^{1/3}\\approx 7\\times10^{49}",
+        "citation": {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 33
+          }
+        },
+        "warnings": []
+      }
+    },
+    {
+      "id": "c15",
+      "term": "结论的边界",
+      "claim_type": "source_summary",
+      "explanation": "深度分离只说明某些函数的表达效率，不说明深网易训练或泛化好；实践中的学习率等混杂因素会改变宽深比较。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "term": "归纳偏置",
+      "claim_type": "source_summary",
+      "explanation": "即使 MLP 是普适逼近器，把不同结构的输入都展平成向量也未必合适；模型结构还编码了任务偏好。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 42
+          }
+        }
+      ]
+    }
+  ],
+  "glossary": [
+    {
+      "term": "L1 误差",
+      "definition": "绝对误差在定义域上的积分。"
+    },
+    {
+      "term": "普适函数逼近",
+      "definition": "给定精度下，模型族中存在某个成员逼近目标函数。"
+    },
+    {
+      "term": "折点",
+      "definition": "一维分段线性函数中斜率发生变化的位置。"
+    },
+    {
+      "term": "深度分离",
+      "definition": "某函数由深网紧凑表示，但浅网达到同等复杂度需指数级更多单元。"
+    },
+    {
+      "term": "归纳偏置",
+      "definition": "模型结构对候选函数或解的偏好。"
+    }
+  ],
+  "common_misconceptions": [
+    {
+      "claim": "三层足够，所以更深没有表达优势。",
+      "correction": "足够是存在性；特定函数在浅网中可能需要指数宽度。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 10
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 33
+          }
+        }
+      ]
+    },
+    {
+      "claim": "UFA 保证梯度法能找到好模型。",
+      "correction": "UFA 只回答存在性，不回答优化。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 21
+          }
+        }
+      ]
+    },
+    {
+      "claim": "深度分离证明深网一定泛化更好。",
+      "correction": "该结论只涉及逼近；讲义明确否定这一推论。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        }
+      ]
+    },
+    {
+      "claim": "矩形构造在实践中自然可学。",
+      "correction": "构造依赖陡峭门并可能只记住训练点。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 19
+          }
+        }
+      ]
+    }
+  ],
+  "learning_sequence": [
+    {
+      "step": 1,
+      "activity": "建立三块拼图与误差度量",
+      "duration_minutes": 20,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 7
+          }
+        }
+      ]
+    },
+    {
+      "step": 2,
+      "activity": "手推一维矩形条误差",
+      "duration_minutes": 30,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 12
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 13
+          }
+        }
+      ]
+    },
+    {
+      "step": 3,
+      "activity": "推广到 d 维并追踪维数灾难",
+      "duration_minutes": 30,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 14
+          }
+        }
+      ]
+    },
+    {
+      "step": 4,
+      "activity": "拆解 ReLU 矩形门和超矩形组合",
+      "duration_minutes": 35,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 15
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 17
+          }
+        }
+      ]
+    },
+    {
+      "step": 5,
+      "activity": "推导折点递推与深度分离",
+      "duration_minutes": 35,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 27
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 33
+          }
+        }
+      ]
+    },
+    {
+      "step": 6,
+      "activity": "完成综合练习与边界反思",
+      "duration_minutes": 30,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 42
+          }
+        }
+      ]
+    }
+  ]
+}

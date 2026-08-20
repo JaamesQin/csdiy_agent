@@ -1,0 +1,261 @@
+{
+  "stage": "evidence_plan",
+  "unit_id": "lecture-08",
+  "mode": "fast",
+  "language": "zh-CN",
+  "target_minutes": 180,
+  "source": {
+    "source_id": "mit-6.7960-f24-lecture-08-slides",
+    "title": "Lecture 8: Transformers",
+    "type": "pdf",
+    "sha256": "e72290651ce5c112b09e5ee0068a7b270d26ffe262e8fa7ff131fabeda4e78ca"
+  },
+  "topics": [
+    {
+      "id": "t1",
+      "topic": "CNN 的局部性限制与 Transformer 的三个关键思想",
+      "requirements": [
+        "说明远距离依赖为何促使全局信息混合",
+        "列出 token、attention、positional encoding"
+      ],
+      "evidence": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        }
+      ]
+    },
+    {
+      "id": "t2",
+      "topic": "Token 化、token 混合与逐 token 非线性",
+      "requirements": [
+        "解释图像 patch 到 token",
+        "用矩阵形状表达 token 线性组合",
+        "区分跨 token 混合与逐 token MLP"
+      ],
+      "evidence": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 14
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 17
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 20
+          }
+        }
+      ]
+    },
+    {
+      "id": "t3",
+      "topic": "QKV 注意力与自注意力",
+      "requirements": [
+        "解释 query、key、value 的角色",
+        "追踪相似度、softmax、value 加权和",
+        "解释 self-attention"
+      ],
+      "evidence": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 29
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 30
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 32
+          }
+        }
+      ]
+    },
+    {
+      "id": "t4",
+      "topic": "多头注意力与 ViT 块",
+      "requirements": [
+        "描述并行 heads 的合并",
+        "说明 norm、MSA、token-wise MLP、residual 的顺序"
+      ],
+      "evidence": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 37
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 38
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 39
+          }
+        }
+      ]
+    },
+    {
+      "id": "t5",
+      "topic": "置换等变性与位置编码",
+      "requirements": [
+        "说明无位置编码时的置换等变性",
+        "解释 Fourier 位置码如何注入坐标"
+      ],
+      "evidence": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 41
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 43
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 44
+          }
+        }
+      ]
+    },
+    {
+      "id": "t6",
+      "topic": "因果注意力与跨模态架构",
+      "requirements": [
+        "解释 causal mask 如何并行训练自回归预测",
+        "区分 self-attention 与 cross-attention"
+      ],
+      "evidence": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 48
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 51
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 52
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 54
+          }
+        }
+      ]
+    }
+  ],
+  "excluded_or_limited": [
+    {
+      "topic": "Laplacian/地理位置编码细节",
+      "reason": "课件仅给应用摘录，快速模式不扩展论文外部内容",
+      "evidence": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 45
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 46
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 47
+          }
+        }
+      ]
+    }
+  ],
+  "formula_review_pages": [
+    17,
+    18,
+    29,
+    35,
+    37,
+    38,
+    39,
+    41,
+    44,
+    51,
+    52,
+    54
+  ],
+  "semantic_passes": 1
+}

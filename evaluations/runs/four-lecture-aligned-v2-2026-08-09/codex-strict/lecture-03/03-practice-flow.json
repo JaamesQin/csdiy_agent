@@ -1,0 +1,257 @@
+{
+  "stage": "03-practice-flow",
+  "progression": "识记→推导→构造→深度分离→批判性评价",
+  "practice": [
+    {
+      "id": "P1",
+      "level": "识记",
+      "question": "把“训练一个神经网络”拆成逼近、优化、泛化三个问题，并指出本讲证明覆盖哪一个。",
+      "hint": "逐项使用“是否存在、是否找到、未见数据是否有效”。",
+      "deliverable": "三行对照表。",
+      "expected_evidence": [
+        "定义正确",
+        "范围限定为逼近"
+      ],
+      "evaluation": {
+        "criteria": [
+          "三项不混淆",
+          "引用页码"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "P2",
+      "level": "推导",
+      "question": "将 [0,1] 分成 N 段，利用 L-Lipschitz 性推导阶梯近似的 L1 误差上界。",
+      "hint": "每段的误差区域由底 1/N、高 L/N 的三角形控制。",
+      "deliverable": "完整不等式链及选择 N 的条件。",
+      "expected_evidence": [
+        "每段面积",
+        "对 N 段求和",
+        "N=L/(2ε)"
+      ],
+      "evaluation": {
+        "criteria": [
+          "常数因子正确",
+          "说明使用了 Lipschitz 条件"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 13
+          }
+        }
+      ]
+    },
+    {
+      "id": "P3",
+      "level": "推导",
+      "question": "解释为什么 d 维时 N 个等体积单元导致 N=(L/ε)^d，并用一句话解释维数灾难。",
+      "hint": "边长为 N^{-1/d}。",
+      "deliverable": "三步推导。",
+      "expected_evidence": [
+        "边长",
+        "总误差界",
+        "指数依赖"
+      ],
+      "evaluation": {
+        "criteria": [
+          "指数方向正确",
+          "解释清楚"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 14
+          }
+        }
+      ]
+    },
+    {
+      "id": "P4",
+      "level": "分析",
+      "question": "逐区间计算 f_c(x) 的形状，并说明四个 ReLU 如何产生近似矩形门。",
+      "hint": "按四个转折点分段。",
+      "deliverable": "分段表达或带斜率标注的草图。",
+      "expected_evidence": [
+        "转折点",
+        "平台区",
+        "c 增大时边缘变陡"
+      ],
+      "evaluation": {
+        "criteria": [
+          "符号组合正确",
+          "能解释平移"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 15
+          }
+        }
+      ]
+    },
+    {
+      "id": "P5",
+      "level": "综合",
+      "question": "说明 h_c(x) 为什么近似 d 维超矩形指示函数，并解释线性组合如何逼近 g。",
+      "hint": "若有任一坐标门关闭，和就到不了阈值。",
+      "deliverable": "逻辑说明与网络三层角色图。",
+      "expected_evidence": [
+        "坐标门",
+        "阈值",
+        "输出层线性组合"
+      ],
+      "evaluation": {
+        "criteria": [
+          "层次对应正确",
+          "不声称精确硬指示"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 16
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 17
+          }
+        }
+      ]
+    },
+    {
+      "id": "P6",
+      "level": "推导",
+      "question": "从“加宽至多汇集 n 倍折点、ReLU 至多翻倍”推导 KINKS_L≤(2n)^L。",
+      "hint": "写递推并从初层归纳。",
+      "deliverable": "归纳证明。",
+      "expected_evidence": [
+        "递推式",
+        "初始条件",
+        "指数结论"
+      ],
+      "evaluation": {
+        "criteria": [
+          "每步含义正确"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 28
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 29
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 30
+          }
+        }
+      ]
+    },
+    {
+      "id": "P7",
+      "level": "计算",
+      "question": "用三层折点上界估算匹配 500 次自复合函数所需的宽度，并解释数量级。",
+      "hint": "解 (2n)^3≥2^500-1。",
+      "deliverable": "代数推导和一句解释。",
+      "expected_evidence": [
+        "2^500-1",
+        "立方根",
+        "约 7×10^49"
+      ],
+      "evaluation": {
+        "criteria": [
+          "不等式方向正确",
+          "与讲义结论一致"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 33
+          }
+        }
+      ]
+    },
+    {
+      "id": "P8",
+      "level": "评价",
+      "question": "评审陈述：“深度分离说明部署时应无条件选择更深网络。”列出至少三个缺失条件。",
+      "hint": "回到优化、泛化和训练流水线混杂因素。",
+      "deliverable": "150 字反驳。",
+      "expected_evidence": [
+        "逼近范围",
+        "优化",
+        "泛化",
+        "实践混杂因素至少一项"
+      ],
+      "evaluation": {
+        "criteria": [
+          "逻辑边界明确",
+          "不把理论结论过度外推"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 39
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 41
+          }
+        }
+      ]
+    }
+  ],
+  "completion_rule": "P2、P3、P6、P8 为核心；公式错误需回到对应视觉核验页修订。"
+}

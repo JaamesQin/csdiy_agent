@@ -1,0 +1,39 @@
+{
+  "audit_version": "0.1",
+  "canonical_course_id": "mit-6-042j",
+  "auditor": {
+    "identity": "mit6042-classification-sidecar",
+    "role": "independent_catalog_auditor_writer",
+    "independence_basis": "This sidecar audits the catalog classification only and does not author or inspect StudyKit content."
+  },
+  "pinned_catalog": {
+    "repository": "https://github.com/PKUFlyingPig/cs-self-learning",
+    "pinned_commit": "81d874ee0fb37b2289839847026ba7651f3725d5",
+    "navigation_file": "mkdocs.yml",
+    "guide_source_path": "docs/数学进阶/6.042J.md",
+    "guide_page_url": "https://csdiy.wiki/docs/%E6%95%B0%E5%AD%A6%E8%BF%9B%E9%98%B6/6.042J",
+    "guide_page_sha256": "f3411f4fff8b6298af2b9bc3fb122ff1265f07d5e5dc25f6f3ba611379e8e357"
+  },
+  "classification_evidence": {
+    "nav_category": "数学进阶",
+    "nav_label": "MIT 6.042J: Mathematics for Computer Science",
+    "official_course_identity": "MIT 6.042J: Mathematics for Computer Science",
+    "guide_evidence": [
+      {
+        "source": "mkdocs.yml",
+        "observation": "The pinned navigation places the guide under 数学进阶 (Advanced Mathematics)."
+      },
+      {
+        "source": "docs/数学进阶/6.042J.md",
+        "section": "课程简介",
+        "observation": "The guide describes the course as MIT's combined discrete mathematics and probability course and notes its usefulness for later algorithms study."
+      }
+    ],
+    "title_keyword_conflict": false,
+    "direction_rationale": "The navigation category and substantive guide description both support discrete mathematics and probability; no stronger conflicting course-direction evidence was found."
+  },
+  "major_direction": "discrete_mathematics_probability",
+  "secondary_directions": [],
+  "conclusion": "pass",
+  "audited_at": "2026-08-12T00:00:00Z"
+}

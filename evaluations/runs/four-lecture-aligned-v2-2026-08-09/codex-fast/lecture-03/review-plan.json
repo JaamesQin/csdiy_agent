@@ -1,0 +1,119 @@
+{
+  "quality_mode": "fast",
+  "page_selector_version": "review-pages-v1",
+  "source_hash": "4e8d557d267710069ee6f1adc0751acf12d53df1757eacef36ef649aa5371c72",
+  "selected_pages": [
+    1,
+    8,
+    9,
+    10,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    22,
+    23,
+    27,
+    30,
+    32,
+    33,
+    36,
+    40,
+    41
+  ],
+  "selection_reasons": {
+    "1": [
+      "identity"
+    ],
+    "8": [
+      "final_formula"
+    ],
+    "9": [
+      "final_formula"
+    ],
+    "10": [
+      "final_formula"
+    ],
+    "13": [
+      "final_formula"
+    ],
+    "14": [
+      "final_formula"
+    ],
+    "15": [
+      "final_formula"
+    ],
+    "16": [
+      "theorem_or_strong_claim"
+    ],
+    "17": [
+      "theorem_or_strong_claim"
+    ],
+    "18": [
+      "theorem_or_strong_claim"
+    ],
+    "22": [
+      "risk"
+    ],
+    "23": [
+      "risk"
+    ],
+    "27": [
+      "theorem_or_strong_claim"
+    ],
+    "30": [
+      "final_formula"
+    ],
+    "32": [
+      "final_formula"
+    ],
+    "33": [
+      "theorem_or_strong_claim"
+    ],
+    "36": [
+      "risk"
+    ],
+    "40": [
+      "risk"
+    ],
+    "41": [
+      "theorem_or_strong_claim"
+    ]
+  },
+  "sampled_pages": [],
+  "required_final_formula_pages": [
+    8,
+    9,
+    10,
+    13,
+    14,
+    15,
+    30,
+    32
+  ],
+  "actual_reviewed_pages": [
+    1,
+    8,
+    9,
+    10,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    22,
+    23,
+    27,
+    30,
+    32,
+    33,
+    36,
+    40,
+    41
+  ],
+  "independent_audit": false,
+  "blockers_after_reaudit": []
+}

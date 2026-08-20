@@ -1,0 +1,210 @@
+{
+  "stage": "practice_flow",
+  "practice": [
+    {
+      "id": "P1",
+      "level": "基础",
+      "question": "设 4 个图像 patch 各投影成 8 维 token。写出 T_in 的形状；若 W∈R^{3×4}，写出 T_out=W T_in 的形状，并说明每一行的含义。",
+      "hint": "token 放在矩阵的行；左乘混合 token 维。",
+      "deliverable": "形状推导与一句语义解释。",
+      "expected_evidence": [
+        "T_in∈R^{4×8}",
+        "T_out∈R^{3×8}",
+        "每个输出 token 是输入 token 的标量加权和"
+      ],
+      "evaluation": {
+        "criteria": [
+          "形状正确",
+          "不把通道混合误作 token 混合"
+        ],
+        "points": 3
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 16
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 17
+          }
+        }
+      ]
+    },
+    {
+      "id": "P2",
+      "level": "基础",
+      "question": "比较 token mixing 与 token-wise MLP：哪一步跨 token 通信，哪一步独立处理每个 token？",
+      "hint": "查看求和下标与 F_θ 的输入行。",
+      "deliverable": "两列表格。",
+      "expected_evidence": [
+        "token mixing 跨行聚合",
+        "MLP 对每行共享且独立"
+      ],
+      "evaluation": {
+        "criteria": [
+          "区分信息流",
+          "指出参数共享"
+        ],
+        "points": 2
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 17
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        }
+      ]
+    },
+    {
+      "id": "P3",
+      "level": "中级",
+      "question": "给定单个 query 与四个 key 的分数 [1,0.2,0.9,0.1]，说明 softmax 后哪些 value 贡献更大，并写出输出的符号表达式。无需计算小数。",
+      "hint": "softmax 保持分数次序；输出是归一化权重乘 value 的和。",
+      "deliverable": "排序与公式。",
+      "expected_evidence": [
+        "第1和第3个 value 权重较大",
+        "a=softmax(s)",
+        "t_out=Σ_j a_j v_j"
+      ],
+      "evaluation": {
+        "criteria": [
+          "权重来源正确",
+          "输出依赖 value 而非 key"
+        ],
+        "points": 3
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 29
+          }
+        }
+      ]
+    },
+    {
+      "id": "P4",
+      "level": "中级",
+      "question": "把三个 token 的顺序从 (t1,t2,t3) 改成 (t2,t3,t1)。对无位置码 transformer，预测输出如何变化；再说明加入位置码后为什么结论可能改变。",
+      "hint": "先应用第41页等变关系，再考虑代码是否跟 token 内容一起被置换。",
+      "deliverable": "一段推理和一个等式。",
+      "expected_evidence": [
+        "输出按同一置换变化",
+        "无位置码不能恢复原空间排列",
+        "位置码使表示携带位置"
+      ],
+      "evaluation": {
+        "criteria": [
+          "等变不误写成不变",
+          "解释位置码作用"
+        ],
+        "points": 4
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 41
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 43
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 44
+          }
+        }
+      ]
+    },
+    {
+      "id": "P5",
+      "level": "高级",
+      "question": "为长度 4 的 next-token 训练画出 causal attention 允许/禁止矩阵，并解释两层时为何第 i 个输出仍不能依赖未来输入。",
+      "hint": "每层都只能从当前位置及允许的过去路径取信息。",
+      "deliverable": "4×4 mask 与路径论证。",
+      "expected_evidence": [
+        "未来连接被遮罩",
+        "所有跨层路径保持因果",
+        "多个位置可并行监督"
+      ],
+      "evaluation": {
+        "criteria": [
+          "mask 方向正确",
+          "论证跨层因果性",
+          "指出训练并行性"
+        ],
+        "points": 5
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 51
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 52
+          }
+        }
+      ]
+    },
+    {
+      "id": "P6",
+      "level": "综合",
+      "question": "依据第54页设计图像描述器的数据流：标出 image self-attention、text causal self-attention、cross-attention 的 query 来源与 key/value 来源，并指出哪部分保证生成时不看未来词。",
+      "hint": "跨注意力让文本 token 查询图像 token。",
+      "deliverable": "带箭头模块图及 4 句说明。",
+      "expected_evidence": [
+        "图像 token 内部 self-attend",
+        "文本 token 内部 causal self-attend",
+        "文本 query 对图像 key/value 做 cross-attend",
+        "causal mask 防未来泄漏"
+      ],
+      "evaluation": {
+        "criteria": [
+          "三类注意力连接正确",
+          "因果约束位置正确",
+          "表达完整"
+        ],
+        "points": 6
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 54
+          }
+        }
+      ]
+    }
+  ]
+}

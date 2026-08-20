@@ -1,0 +1,344 @@
+{
+  "executed": true,
+  "completed_at": "2026-08-12T15:00:32.077604+00:00",
+  "outputs_root": "outputs",
+  "archive": {
+    "path": "storage/studykits.sqlite3",
+    "sha256": "76daa4534257434b9e0e005ce20c03c06abed655ff9c4c061d96e30fc752107a",
+    "bytes": 130453504,
+    "build_count": 12,
+    "document_count": 286,
+    "build_ids": [
+      "ff5d60747dbcc5327685c3d81764165550c388874a7472ed478882443ead9c01",
+      "40bd4156f8432f731a6dce34d04cd3cdf7e198a7c754d1533131b7e7754938f6",
+      "41c40de8c5e32a2fc6d4243c8e130a76e75640f0d2352980a395db1f99f8af1e",
+      "33598b2ae46119080dfbf1bd71df11c55e911d8658188adf781286d93ff65f77",
+      "4f758f6f76878aac08ccea9683b9f20fe1f040bd02d153d801606309ecf71882",
+      "8905ecd85275372bb2684127ba30a27046650d6b94e3c4d8320c51387ca561db",
+      "5a5845d06392380ddb75c75279c52cb9154f6e0e2ebedafcccf0007c681db104",
+      "07a4426e48eae39ad61b2b09122cbb72f4a04896a0fd715e2cc1e4c478327939",
+      "8ae49b80fe5b56b9d43b575a50ed70dcc89b9b217ab988f691e0c446cd23f169",
+      "c24fc9db0a8b098c4656ede6f8efe74eafac9335c6f315b23a61fed929a9fbe2",
+      "a748c428609e7a5bc9f0697a06ae0d7fbd56e2469aaaba8f5b034121f2479ab1",
+      "3aa107ff8c441c733af11b2dead8a08344a629e05db0ffed30df152aa39054c8"
+    ]
+  },
+  "deleted_entry_count": 78,
+  "deleted_bytes": 4582997323,
+  "targets": [
+    {
+      "path": "outputs/cambridge-semantics-of-programming-languages-2025-26",
+      "bytes": 9812663
+    },
+    {
+      "path": "outputs/cmu-15.213-summer-2026",
+      "bytes": 165263988
+    },
+    {
+      "path": "outputs/final-v06006-lecture-01",
+      "bytes": 198872
+    },
+    {
+      "path": "outputs/final-v06006-lecture-02",
+      "bytes": 244057
+    },
+    {
+      "path": "outputs/final-v06006-lecture-03",
+      "bytes": 178445
+    },
+    {
+      "path": "outputs/final-v06006-lecture-04",
+      "bytes": 120247
+    },
+    {
+      "path": "outputs/final-v06006-lecture-05",
+      "bytes": 208036
+    },
+    {
+      "path": "outputs/final-v06006-lecture-06",
+      "bytes": 211732
+    },
+    {
+      "path": "outputs/final-v06006-lecture-07",
+      "bytes": 170252
+    },
+    {
+      "path": "outputs/final-v06006-lecture-08",
+      "bytes": 91182
+    },
+    {
+      "path": "outputs/final-v06007",
+      "bytes": 6500
+    },
+    {
+      "path": "outputs/final-v06007-batch1",
+      "bytes": 1618693
+    },
+    {
+      "path": "outputs/final-v06009-batch1",
+      "bytes": 1059112
+    },
+    {
+      "path": "outputs/final-v06010-batch1",
+      "bytes": 1652755
+    },
+    {
+      "path": "outputs/final-v06011-batch1",
+      "bytes": 1515192
+    },
+    {
+      "path": "outputs/final-v06012-batch1",
+      "bytes": 4606
+    },
+    {
+      "path": "outputs/final-v06012-batch2",
+      "bytes": 1595451
+    },
+    {
+      "path": "outputs/finaljson-v06005-lecture-01",
+      "bytes": 64928
+    },
+    {
+      "path": "outputs/finaljson-v06005-lecture-02",
+      "bytes": 66674
+    },
+    {
+      "path": "outputs/finaljson-v06005-lecture-03",
+      "bytes": 74764
+    },
+    {
+      "path": "outputs/finaljson-v06005-lecture-04",
+      "bytes": 76779
+    },
+    {
+      "path": "outputs/finaljson-v06005-lecture-05",
+      "bytes": 44218
+    },
+    {
+      "path": "outputs/finaljson-v06005-lecture-06",
+      "bytes": 66607
+    },
+    {
+      "path": "outputs/finaljson-v06005-lecture-07",
+      "bytes": 78262
+    },
+    {
+      "path": "outputs/finaljson-v06005-lecture-08",
+      "bytes": 81502
+    },
+    {
+      "path": "outputs/fresh-v06003-lecture-01",
+      "bytes": 84791
+    },
+    {
+      "path": "outputs/fresh-v06003-lecture-02",
+      "bytes": 231776
+    },
+    {
+      "path": "outputs/fresh-v06003-lecture-03",
+      "bytes": 189692
+    },
+    {
+      "path": "outputs/fresh-v06003-lecture-04",
+      "bytes": 85109
+    },
+    {
+      "path": "outputs/fresh-v06003-lecture-05",
+      "bytes": 83724
+    },
+    {
+      "path": "outputs/fresh-v06003-lecture-06",
+      "bytes": 255015
+    },
+    {
+      "path": "outputs/fresh-v06003-lecture-07",
+      "bytes": 83764
+    },
+    {
+      "path": "outputs/fresh-v06003-lecture-08",
+      "bytes": 98143
+    },
+    {
+      "path": "outputs/lecture-02-acceptance",
+      "bytes": 22164
+    },
+    {
+      "path": "outputs/lecture-02-deepseek-v4flash-0731-64k",
+      "bytes": 93869
+    },
+    {
+      "path": "outputs/lecture-02-deepseek-v4flash-v044-64k",
+      "bytes": 107623
+    },
+    {
+      "path": "outputs/lecture-02-deepseek-v4flash-v045-64k",
+      "bytes": 184021
+    },
+    {
+      "path": "outputs/lecture-02-single-audit-v06001",
+      "bytes": 129385
+    },
+    {
+      "path": "outputs/lecture-02-single-audit-v06002",
+      "bytes": 60019
+    },
+    {
+      "path": "outputs/lecture-02-v05002-clean",
+      "bytes": 119896
+    },
+    {
+      "path": "outputs/lecture-02-v05002-one-shot",
+      "bytes": 294507
+    },
+    {
+      "path": "outputs/lecture-02-v06002-audit-repair",
+      "bytes": 235529
+    },
+    {
+      "path": "outputs/lecture-02-v0731-quality",
+      "bytes": 14059
+    },
+    {
+      "path": "outputs/lecture-02-v4flash-quality",
+      "bytes": 100396
+    },
+    {
+      "path": "outputs/lecture-02-v4flash-v04",
+      "bytes": 189016
+    },
+    {
+      "path": "outputs/lecture-02-v4flash-v043-latex",
+      "bytes": 39296
+    },
+    {
+      "path": "outputs/mit-6-031-spring-2022",
+      "bytes": 225176
+    },
+    {
+      "path": "outputs/mit-6-042j-spring-2024",
+      "bytes": 753289082
+    },
+    {
+      "path": "outputs/mit-6.7960-fall-2024",
+      "bytes": 2438668
+    },
+    {
+      "path": "outputs/mit-6.s081-fall-2021",
+      "bytes": 104158420
+    },
+    {
+      "path": "outputs/parallel-lecture-01",
+      "bytes": 39717
+    },
+    {
+      "path": "outputs/parallel-lecture-01-input",
+      "bytes": 69524
+    },
+    {
+      "path": "outputs/parallel-lecture-02",
+      "bytes": 117686
+    },
+    {
+      "path": "outputs/parallel-lecture-03",
+      "bytes": 91388
+    },
+    {
+      "path": "outputs/parallel-lecture-03-input",
+      "bytes": 29959
+    },
+    {
+      "path": "outputs/parallel-lecture-04",
+      "bytes": 99540
+    },
+    {
+      "path": "outputs/parallel-lecture-04-input",
+      "bytes": 87460
+    },
+    {
+      "path": "outputs/parallel-lecture-05",
+      "bytes": 45199
+    },
+    {
+      "path": "outputs/parallel-lecture-05-input",
+      "bytes": 39189
+    },
+    {
+      "path": "outputs/parallel-lecture-06",
+      "bytes": 74768
+    },
+    {
+      "path": "outputs/parallel-lecture-06-input",
+      "bytes": 71620
+    },
+    {
+      "path": "outputs/parallel-lecture-07",
+      "bytes": 87050
+    },
+    {
+      "path": "outputs/parallel-lecture-07-input",
+      "bytes": 22674
+    },
+    {
+      "path": "outputs/parallel-lecture-08",
+      "bytes": 231960
+    },
+    {
+      "path": "outputs/studykit-generator-v0.1.0-mit-6.7960-fall-2024-complete-2026-08-10",
+      "bytes": 1348433169
+    },
+    {
+      "path": "outputs/studykit-skill-v0.1-lectures-01-08",
+      "bytes": 401274454
+    },
+    {
+      "path": "outputs/thinking-v06004-lecture-01",
+      "bytes": 206473
+    },
+    {
+      "path": "outputs/thinking-v06004-lecture-04",
+      "bytes": 108312
+    },
+    {
+      "path": "outputs/thinking-v06004-lecture-05",
+      "bytes": 99653
+    },
+    {
+      "path": "outputs/thinking-v06004-lecture-07",
+      "bytes": 67193
+    },
+    {
+      "path": "outputs/thinking-v06004-lecture-08",
+      "bytes": 196322
+    },
+    {
+      "path": "outputs/ucb-cs168-spring-2026",
+      "bytes": 44296115
+    },
+    {
+      "path": "outputs/ucb-cs186-spring-2026",
+      "bytes": 70178045
+    },
+    {
+      "path": "outputs/ucb-cs188-spring-2026",
+      "bytes": 1202749683
+    },
+    {
+      "path": "outputs/ucb-cs61a-spring-2026",
+      "bytes": 249457635
+    },
+    {
+      "path": "outputs/ucb-cs61a-summer-2026",
+      "bytes": 102611517
+    },
+    {
+      "path": "outputs/ucb-cs61b-spring-2024",
+      "bytes": 24681331
+    },
+    {
+      "path": "outputs/ucb-cs61c-spring-2026",
+      "bytes": 90211030
+    }
+  ],
+  "remaining_entries": [],
+  "recoverability": "archived text artifacts are recoverable from SQLite; excluded images and caches are not"
+}

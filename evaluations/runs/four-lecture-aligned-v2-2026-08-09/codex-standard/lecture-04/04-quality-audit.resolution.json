@@ -1,0 +1,11 @@
+{
+  "status": "accepted_no_repair",
+  "repairs": [],
+  "warning_resolutions": [
+    {
+      "code": "formula_archive_gap",
+      "resolution": "保留限制声明且不转写未核验公式。"
+    }
+  ],
+  "remaining_blockers": []
+}

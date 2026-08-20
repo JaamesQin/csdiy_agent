@@ -31,6 +31,13 @@ class SecurityPrincipal:
             return f"legacy:{requested_user.strip()}"
         return None
 
+    def continuity_namespace(self, requested_user: str | None) -> str:
+        if self.kind is PrincipalKind.ACCOUNT:
+            return f"account:{self.account_id}"
+        if requested_user and requested_user.strip():
+            return f"legacy:{requested_user.strip()}"
+        return "legacy:qingxiaoda-gateway"
+
 
 def _validate_api_key(authorization: str) -> None:
     scheme, separator, credential = authorization.partition(" ")
