@@ -1,6 +1,6 @@
 # 清小搭平台与本地协议验证记录
 
-> 更新日期：2026-08-13
+> 更新日期：2026-08-20
 > 当前结论：本地协议验证通过，清小搭生产平台验证待执行
 
 ## 1. 验证范围
@@ -18,7 +18,7 @@
 - 流式中途错误的 stop 帧、独立 `error` 字段和 `[DONE]`；
 - 密钥缺失或过短时拒绝启动；
 - 密钥不出现在正常或错误响应中；
-- 本地聊天界面和静态资源；
+- 本地聊天界面、Vite 静态资源和安全 Markdown/MathML 学习者渲染；
 - 独立 Uvicorn 进程上的真实 HTTP、SSE 和轻量并发请求。
 
 本轮没有验证清小搭账号侧能力、生产网络、文件 URL 或长期状态。
@@ -29,7 +29,7 @@ online-ready 文档为 0（全部保持 `validated_draft`）。记录见
 `evaluations/studykit-archive-import-20260812.json` 与
 `evaluations/studykit-outputs-prune-20260812.json`。
 
-## 2. 本地环境
+## 2. 本地环境（2026-07-31 历史基线）
 
 | 项目 | 值 |
 | --- | --- |
@@ -409,7 +409,7 @@ latency 为 780/2,776/1,813 ms，总 completion 556 tokens。模型仍把编程�
 “你可以进行代码辅导吗”等请求，在 Planner 和画像观察前返回对应 `/help` 内容；带真实代码块的
 同类措辞仍进入 `code_tutoring`。路由、编排和实际代码反例均有独立回归。
 
-浏览器连续状态修复：`app.js` 从非流式响应顶层或 SSE stop frame 读取短期签名
+浏览器连续状态修复：Web 客户端从非流式响应顶层或 SSE stop frame 读取短期签名
 `coursepilot_context`，在下一轮请求中回传，并在清空会话或请求失败时清除；不写入 localStorage、
 sessionStorage 或数据库。“显示/查看/打开 + practice ID/中文序数”以及单独发送的 `ex-N` 在 Planner 前
 确定性进入练习展示；当前讲次内把 `ex1`、`ex-1`、`EX 1` 等位置别名绑定到审核过的练习顺序。
@@ -443,3 +443,32 @@ sessionStorage 或数据库。“显示/查看/打开 + practice ID/中文序数
 
 自动化基线为 `623 passed`。使用真实 DeepSeek 与本地 HTTP 复测原失败句
 “查看我的 StudyKit 生成任务状态”：不再进入练习反馈或索要 practice ID，而是进入通用回答并明示未上线边界；学习复盘请求同样进入通用学习建议。
+
+## 18. 2026-08-20 Web 富文本渲染与连续状态合并验证
+
+前端源码位于 `frontend/`，通过 Vite/React/TypeScript 构建为同源 `app/static/` 资源；FastAPI
+路由、严格 `script-src/style-src 'self'` CSP、Cookie 会话和 CSRF 契约未放宽。助手输出支持
+Markdown 标题/列表/表格、Highlight.js 代码和 MathML-only 公式。Markdown 原始 HTML 关闭，
+DOMPurify 阻断脚本、表单、内联样式、危险链接和模型图片；用户消息、用户名和错误只写入文本节点。
+
+合并后的 React 客户端从有界 JSON 响应或 SSE stop frame 读取签名 `coursepilot_context`，只保存在
+页面内存中，在下一轮请求回传，并在清空会话或请求失败时清除。上下文长度、SSE frame、助手正文、
+JSON body 和浏览器内对话总量均有独立上限。
+
+验证结果：
+
+```text
+npm run check
+18 passed
+
+npm run test:e2e
+7 passed (installed Google Chrome, channel=chrome)
+
+.venv/bin/pytest -q
+623 passed
+```
+
+Chrome 流程覆盖旧浏览器存储清理、注册/刷新恢复/注销、HttpOnly/Strict Cookie、聊天 CSRF、
+SSE 富文本与主动停止、连续状态回传与清空、代码复制、远程图片/XSS 阻断、认证与注销竞态、
+流错误纯文本边界、响应大小上限、非流式多轮原始 Markdown 历史，以及 `390×844` 下表格/代码/公式
+无页面级横向溢出。构建产物不需要 CDN、浏览器下载或系统级依赖安装。

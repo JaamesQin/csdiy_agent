@@ -59,6 +59,10 @@
 - Raw session tokens live only in HttpOnly, SameSite=Strict cookies. SQLite stores SHA-256 token digests and server-side expiry/revocation state.
 - Cookie-authenticated writes require the session-bound `X-CSRF-Token`. Browser auth writes must pass the Origin allowlist.
 - Production requires HTTPS, `COURSEPILOT_COOKIE_SECURE=true`, an explicit Origin allowlist, a protected persistent database volume, and shared proxy-level auth rate limiting.
+- `frontend/` is the source of truth for the Vite/React/TypeScript browser client; `app/static/` is generated and committed deployment output. Rebuild it with `npm run build` instead of editing generated files directly.
+- Assistant Markdown is untrusted: keep raw HTML disabled, sanitize rendered output, forbid model-supplied images and active content, and use dimension-bounded MathML-only equations under the existing strict CSP. User messages, usernames, and errors remain text-only, including when a queued stream render is cancelled by an error.
+- Keep raw assistant Markdown in in-memory conversation history; never reconstruct request history from rendered DOM, which contains MathML and local copy controls.
+- Bound browser-side SSE frames, non-stream JSON, assistant output, rich streaming previews, and total in-memory conversation size; cancel oversized readers and keep resulting errors text-only.
 
 ## Learner data
 
@@ -95,6 +99,7 @@
 - Preserve `/v1/models`, `/v1/chat/completions`, optional OpenAI `user`, model ID `coursepilot-probe`, JSON envelopes, and SSE order: role, content, one stop frame, then `[DONE]`.
 - Tests must not require external model credentials or network access. Real HTTP tests bind loopback only.
 - Use `.venv/bin/python` and `.venv/bin/pytest -q`.
+- Use Node 24 with `npm run check` and `npm run test:e2e`; Playwright must reuse the installed Chrome channel and must not install browsers or OS dependencies.
 - Inject a fake `StructuredModel` for route/profile/tutor model paths.
 - Keep account/profile databases and temporary backups under ignored `storage/`. Within the
   private data submodule, raw binaries, reviewed-package duplicates, regression data, rendered

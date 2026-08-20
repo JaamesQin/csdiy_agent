@@ -29,3 +29,10 @@ htmlcov/
 /artifacts/
 /outputs/
 .DS_Store
+
+# Project-local frontend dependencies and test output.
+/node_modules/
+/.vite/
+/coverage/
+/playwright-report/
+/test-results/

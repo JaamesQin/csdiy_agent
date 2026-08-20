@@ -89,10 +89,10 @@ def test_live_auth_and_non_streaming(live_server_url: str) -> None:
         assert client.get(f"{live_server_url}/health").json() == {"status": "ok"}
         assert (
             client.get(
-            f"{live_server_url}/v1/models",
-            headers={"Authorization": "Bearer wrong-key"},
-        ).status_code
-        == 401
+                f"{live_server_url}/v1/models",
+                headers={"Authorization": "Bearer wrong-key"},
+            ).status_code
+            == 401
         )
         response = client.post(
             f"{live_server_url}/v1/chat/completions",

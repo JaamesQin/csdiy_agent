@@ -11,8 +11,13 @@
 CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生成内核，
 并已落地本地账号注册/登录、Cookie 会话和可信 subject 画像隔离，同时将意图路由、
 能力帮助、主动学习画像、CSDIY 课程导航、StudyKit 查询/材料/概念/练习能力和
-多语言静态代码辅导接入 OpenAI 兼容对话 API；资料权限、SourceChunk 检索、私有材料和
+多语言静态代码辅导接入 OpenAI 兼容对话 API；公共 SourceChunk 的 permission-first FTS5
+接口和材料问答 adapter 已接线，但当前没有 approved 在线索引，私有资料权限、向量检索和
 学习复盘仍未接成完整闭环。
+
+本地学习界面现使用 Vite/React/TypeScript 构建：助手输出支持安全 Markdown、表格、代码高亮和
+原生 MathML，用户消息与错误保持纯文本。模型原始 HTML、脚本、危险链接和远程图片均被阻断，
+并保持现有严格 CSP、Cookie/CSRF 与内存会话边界。
 
 2026-08-12 已将 `outputs/` 中每个课程版本的最新有效成果归档为
 `data/archive/studykits.sqlite3`：12 builds、286 个 StudyKit；初始 12,008 个文本 checkpoint/
@@ -146,9 +151,16 @@ UCB CS186 由直接父快照生成新指纹身份修复 build 并重新通过 ex
 - 未配置 `DEEPSEEK_API_KEY`、模型失败或画像数据库不可用时均透明降级；个性化课程排序失败时明确标注为未结合画像的方向候选；通用问答不会进行
   第二次生成尝试，其他确定性能力仍能启动和响应。
 
+### Web 客户端与学习者渲染
+
+- `frontend/` 是 React/TypeScript 源码，Vite 将可部署文件构建到 `app/static/`；FastAPI 继续从同源 `/static` 提供资源，不引入 CDN、内联脚本或内联样式。
+- 助手回复使用 MarkdownIt、Highlight.js、KaTeX 的 MathML-only 输出和 DOMPurify；Markdown 原始 HTML关闭，远程图片、脚本、表单和危险 URL 不可渲染。
+- 流式回复可以增量预览，但发送给下一轮的历史始终保留原始 Markdown，不从已渲染 DOM 反向取值；用户文本、错误和用户名始终使用文本节点。
+- 桌面 Chrome 与 `390×844` 移动视口已验证注册、会话恢复、CSRF、SSE、表格/代码/公式、复制代码和页面级无横向溢出。
+
 ### 测试状态
 
-- 当前自动化测试：`623 passed`，包括全课程知识投影、画像感知排序、能力可用性问句短路、未上线能力失败关闭与通用边界回答、浏览器签名与清小搭 `sessionId` 服务端连续状态、可信讲次继承与显式换课/换讲、练习 ID/位置别名、状态库故障降级、通用学习兜底和 loopback HTTP/SSE 回归。
+- 当前自动化测试：`623 passed`（Python 完整回归）；另有 18 项前端单元测试和 7 项 Chrome Playwright 流程。覆盖全课程知识投影、画像感知排序、能力可用性问句短路、未上线能力失败关闭与通用边界回答、浏览器签名与清小搭 `sessionId` 服务端连续状态、可信讲次继承与显式换课/换讲、练习 ID/位置别名、状态库故障降级、通用学习兜底和 loopback HTTP/SSE 回归。
 - 测试覆盖阶段 Schema、Evidence controls、确定性 chunk 并集、引用、
   Markdown LaTeX、模型响应重试、恢复、单次 Audit 回修、非 CS 合成单元、
   CLI、质量 profile、数据库迁移、密码/会话安全、CSRF、限流、账号隔离、
@@ -191,23 +203,26 @@ UCB CS186 由直接父快照生成新指纹身份修复 build 并重新通过 ex
 | 可信 subject SQLite 学习画像 | `app/profile/` |
 | 静态代码辅导 | `app/code_tutor/` |
 | 已审核 StudyKit 读取 | `app/catalog/studykits.py` |
+| Web 前端源码与富文本渲染 | `frontend/` |
+| FastAPI 部署静态资源 | `app/static/`（由 `npm run build` 生成） |
 
 运行全部测试：
 
 ```bash
 .venv/bin/pytest -q
+npm run check
+npm run test:e2e
 ```
 
 ## 尚未完成
 
-1. 将当前类型化、只读的 Catalog/StudyKit 接口演进为数据库 `StudyKitBuild`、
-   `StudyKitDocument`、MaterialManifest、MaterialSet 和 TaskPlan；账号与画像事实表
-   已完成，后续演进为完整 LearnerState。
+1. 为 archive 文档完成独立人工批准，冻结 MaterialManifest、MaterialSet 和完整
+   LearnerState 的最小接口；TaskPlan 与账号/画像事实基础已经实现。
 2. 完成公共课程与用户私有资料的统一解析、存储、授权过滤、过期和删除。
-3. 建立按用户、会话、课程、版本和讲次过滤的检索层；先关键词检索，
-   再按需要增加向量检索和重排。
-4. 将当前 approved archive + golden 回退的材料答疑和练习反馈接到权限过滤的 SourceChunk；继续接入
-   学习复盘和后台生成状态。
+3. 为已接线的公共 FTS5 检索发布 approved SourceChunk 索引并完成质量验收，再将
+   当前 course/version/unit 范围扩展到 owner/session/material_set；按需要增加经审核的向量检索。
+4. 让材料答疑在公共索引可用时使用已实现的 SourceChunk 路径，并继续把练习反馈、
+   私有材料、学习复盘和后台生成状态接入同一权限边界。
 5. 修复 Lecture 2 的离线 profile 对齐问题，核对 Lecture 8 的 LayerNorm 表述，
    并为 `repairs_applied_unverified` 结果安排人工语义复核。
 6. 实现最小学习闭环，记录用户确认的学习证据，并输出概念、实现、
@@ -216,8 +231,8 @@ UCB CS186 由直接父快照生成新指纹身份修复 build 并重新通过 ex
 8. 验收模板课程与未知私有资料两条端到端流程，再进行用户试用和 Demo 打磨。
 
 这些工作可以在当前只读接口基础上并行开发；真正的串行依赖是：数据库导入和
-MaterialSet/权限必须先提供稳定接口，SourceChunk 检索随后增强当前 StudyKit-only 降级，
-最后进行平台端到端和用户验收。
+公共 SourceChunk 索引发布可在现有只读接口上独立推进；私有检索仍必须先稳定
+MaterialSet/权限接口，最后再关闭平台端到端和用户验收。
 
 ## 主要风险
 
@@ -227,8 +242,8 @@ MaterialSet/权限必须先提供稳定接口，SourceChunk 检索随后增强�
 - 清小搭文件输入、稳定会话标识和文件保留能力仍需账号级实测。
 - 本地网页登录已使用服务端验证的账号身份；API Key 请求的 `user` 仍只是逻辑标识，
   不是授权凭据，在清小搭稳定身份完成实测前只适用于受信网关。
-- 在线代码辅导当前不执行代码；课程引用仅来自 approved archive 或两份人工批准的黄金 StudyKit，
-  尚未接入原始 SourceChunk 检索。
+- 在线代码辅导当前不执行代码；公共 SourceChunk 检索基础只接入材料问答，且当前没有
+  approved 索引，因此实际课程引用仍来自 approved archive 或两份人工批准的黄金 StudyKit。
 - v21 已完成新鲜模型全量回归并达到 8/8，但修复后未进行二次语义 Audit；
   外部模型结果仍需人工复核后才适合作为最终教材。
 

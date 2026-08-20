@@ -64,7 +64,12 @@ async def health() -> dict[str, str]:
 
 @app.get("/", include_in_schema=False)
 async def chat_page() -> FileResponse:
-    return FileResponse(STATIC_DIR / "index.html")
+    # Revalidate the entry point on every navigation: Vite build hashes change
+    # atomically, so a cached old index could otherwise reference deleted assets.
+    return FileResponse(
+        STATIC_DIR / "index.html",
+        headers={"Cache-Control": "no-cache"},
+    )
 
 
 @app.get("/favicon.ico", include_in_schema=False)
