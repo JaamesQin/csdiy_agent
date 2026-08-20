@@ -113,7 +113,7 @@ async def test_specific_code_help_lists_languages(tmp_path) -> None:
     agent = _agent(tmp_path)
 
     reply = await agent.handle(
-        messages=[ChatMessage(role="user", content="代码辅导支持什么语言")],
+        messages=[ChatMessage(role="user", content="/help code")],
         user_id=None,
     )
 
@@ -123,6 +123,14 @@ async def test_specific_code_help_lists_languages(tmp_path) -> None:
     assert "ISPC" in reply.answer
     assert "LaTeX" in reply.answer
     assert "ran_code 始终为 false" in reply.answer
+    assert "````text" not in reply.answer
+    assert (
+        "### 输入示例\n\n"
+        "请分析下面的代码，并说明诊断与验证步骤：\n\n"
+        "```cpp\n"
+        "int main( { return 0; }\n"
+        "```"
+    ) in reply.answer
 
 
 async def test_available_course_navigation_help_reports_usage(tmp_path) -> None:

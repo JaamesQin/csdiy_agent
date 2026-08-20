@@ -7,6 +7,7 @@ CoursePilot 是一个面向中文计算机科学自学者的循证学习 Agent�
 - `GET /v1/models` 和 `POST /v1/chat/completions`，支持非流式 JSON 与 SSE；模型 ID 固定为 `coursepilot-probe`。
 - 旧的 `Authorization: Bearer <COURSEPILOT_API_KEY>` 调用保持兼容，包括可选 OpenAI `user` 字段。
 - 本地网页支持用户名注册、密码登录、会话恢复和注销，不再要求用户在浏览器中输入服务器 API Key。
+- 网页将助手回复渲染为经过清洗的 Markdown、表格、语法高亮代码和原生 MathML 公式；用户消息与错误仍按纯文本显示，模型提供的原始 HTML、脚本和远程图片不会进入 DOM。
 - 每个账号可以保存、查看和删除最小学习画像：学习方向、每周时间和明确陈述的技术基础。
 - 画像按服务端账号 UUID 隔离；不保存完整对话、用户代码、traceback 或模型推理。
 - 在线 Agent 已接入规则优先的意图路由、`/help` 能力目录、主动学习画像、课程导航、多语言静态代码辅导和透明降级。
@@ -25,7 +26,7 @@ CoursePilot 是一个面向中文计算机科学自学者的循证学习 Agent�
   快照包含 12 builds、286 个 StudyKit 和 12,008 个审计/阶段工件；原始 PDF、站点镜像、页面图
   和 reviewed 重复包不上传。
 
-SourceChunk 检索、私有 MaterialSet 和学习复盘尚未接入在线编排；材料问答不能回答 StudyKit 未覆盖的任意原文细节。代码辅导当前只做静态分析，不执行用户代码。
+公共 SourceChunk 的 permission-first FTS5 接口和在线 adapter 已接入，但当前 checkout 没有可用的 approved 索引，因此材料问答仍会回退到 StudyKit，不能回答其未覆盖的任意原文细节。私有 MaterialSet、向量检索和学习复盘尚未上线；代码辅导当前只做静态分析，不执行用户代码。
 
 ## 身份与数据边界
 
@@ -56,7 +57,7 @@ SourceChunk 检索、私有 MaterialSet 和学习复盘尚未接入在线编排�
 - 代码辅导：Python/Triton 使用 Python AST，C/C++、CUDA、ISPC、LaTeX、Java、Go、Rust、函数式语言、Web/SQL、Verilog 和汇编等使用离线 Tree-sitter 语法解析；提供诊断、假设、验证步骤和下一次尝试，不运行用户代码，也不代写可提交作业。
 - 已审核 StudyKit 读取：统一 `StudyKitStore` 使用 approved archive 优先、Lecture 2/8 golden 回退；不输出 `expected_evidence`、evaluation、rubric、本地路径或审计字段。
 - 离线 StudyKit 生成：生成包含目标、前置知识、提纲、术语、练习、引用和限制说明的中文学习包。
-- 规划中：MaterialSet 权限、在线 SourceChunk 检索、私有材料和学习复盘。
+- 检索基础：公共 SourceChunk 的 FTS5 范围过滤和运行时接线已完成；仍需发布 approved 索引，并继续实现 MaterialSet 权限、私有/向量检索和学习复盘。
 
 ## 技术路线
 
@@ -86,7 +87,7 @@ Agent 编排：意图路由、主动画像、课程导航、StudyKit 学习、�
 
 ## 当前阶段
 
-截至 2026-08-13，项目处于“离线 StudyKit 生成与私有检索数据归档完成、数据库 ready 门禁和首批在线 Agent 能力已接入、等待 SourceChunk 检索与清小搭生产验证”阶段：
+截至 2026-08-20，项目处于“离线 StudyKit 生成与私有检索数据归档完成、数据库 ready 门禁、首批在线 Agent 能力和安全富文本学习界面已接入，公共 SourceChunk 检索基础已接线但等待 approved 索引与清小搭生产验证”阶段：
 
 | 项目 | 状态 |
 | --- | --- |
@@ -95,12 +96,12 @@ Agent 编排：意图路由、主动画像、课程导航、StudyKit 学习、�
 | 清小搭接入协议调研 | 已完成 |
 | 自研后端架构与仓库结构 | 已完成最小实现 |
 | OpenAI 兼容 API 实现 | 已完成 |
-| Bearer、Cookie 会话、JSON、SSE 和错误契约测试 | 已完成；303 项测试通过 |
+| Bearer、Cookie 会话、JSON、SSE 和错误契约测试 | 已完成；完整 Python 回归通过 |
 | 本地账号、会话、CSRF 与画像隔离 | 已完成安全 MVP |
 | 意图路由、能力帮助、主动画像和多语言静态代码辅导 | 已完成首版 |
 | CSDIY 课程导航 | 已完成全目录分级检索；目录分类仍按 registry 审核状态展示 |
-| StudyKit 查询、材料/概念、练习选择/反馈 | 已完成 approved archive + golden 回退首版；无 SourceChunk 时严格降级 |
-| 本地聊天测试界面 | 已接入账号登录、功能总览、画像、课程、StudyKit、练习和代码辅导入口 |
+| StudyKit 查询、材料/概念、练习选择/反馈 | 已完成 approved archive + golden 回退首版；公共 SourceChunk adapter 无索引/命中时严格降级 |
+| 本地聊天测试界面 | 已接入账号登录、功能总览、画像、课程、StudyKit、练习和代码辅导入口；助手 Markdown/表格/代码/MathML 安全渲染通过 Chrome 验证 |
 | 云端部署方式 | 已确认，等待生产版本部署 |
 | 首个模板课程与核心讲次冻结 | 已完成：MIT 6.7960，Lecture 2 和 8 为核心 Demo |
 | CourseManifest 与来源审核 | 已完成初稿 |
@@ -112,15 +113,15 @@ Agent 编排：意图路由、主动画像、课程导航、StudyKit 学习、�
 | 私有检索数据归档 | 已完成精简快照：12 builds、286 documents、12,008 artifacts；全部为 `validated_draft` |
 | 数据库 StudyKitStore | 已完成只读接入：build/document 双 `approved` 门禁，portable v0.1/v0.2.1 兼容，golden 回退 |
 | 六课 practice repair | 161/161 validated、161/161 audited、6/6 build succeeded；五课仍需关闭课程级视觉复核 |
-| 线上 SourceChunk 检索与 RAG | 尚未开始 |
+| 线上 SourceChunk 检索与 RAG | 公共 permission-first FTS5 接口和运行时 adapter 已完成；当前无 approved 索引，私有/向量检索未上线 |
 | 清小搭接入探测与试聊 | 尚未开始 |
 | 端到端 Demo、评测和用户试用 | 尚未开始 |
 
 当前关键路径是：
 
 1. 为归档记录完成独立人工批准流程，并继续保持双 `approved` 在线门禁；
-2. 冻结 MaterialSet/权限接口并建立 owner/session/course/version/unit 过滤的 SourceChunk 检索；
-3. 将现有材料问答与练习反馈接到权限过滤的 SourceChunk，再接入私有材料和学习复盘；
+2. 为现有公共 FTS5 运行时发布 approved SourceChunk 索引并完成检索质量验收；
+3. 冻结 MaterialSet/权限接口，将现有 course/version/unit 过滤扩展到 owner/session/material_set，再接入私有材料和学习复盘；
 4. 验证清小搭稳定用户身份、消息历史、文件输入、状态和日志能力；
 5. 将通过测试的后端部署到生产环境并完成端到端评测。
 
@@ -141,6 +142,16 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
+
+React/TypeScript 前端源码位于 `frontend/`，生产静态资源生成到并提交于 `app/static/`。修改前端后使用 Node 24：
+
+```bash
+npm ci
+npm run build
+```
+
+仅运行已提交静态资源时不需要 Node；`app/static/` 整体由 Vite 生成，不要直接编辑，
+应修改 `frontend/` 后重新构建。
 
 设置本地接入密钥。配置 `DEEPSEEK_API_KEY` 后会启用低置信路由、画像候选、语义材料问答、当前练习答案反馈和语义代码辅导；不配置时课程导航、StudyKit 查询、概念解释和练习选择仍可用，材料问答返回最相关的已审核摘要，练习反馈不做粗略判分：
 
@@ -188,13 +199,22 @@ Cookie 认证的 `POST /v1/chat/completions` 同样要求 `X-CSRF-Token`。API K
 
 ## 测试
 
-运行全部测试：
+运行完整 Python 测试：
 
 ```bash
 .venv/bin/pytest -q
 ```
 
-当前基线为 `553 passed`。覆盖密码和令牌非明文存储、v1→v2 迁移、账号隔离、JSON/SSE 契约、课程目录与 archive 门禁、模型驱动的统一自然语言理解、内联/压平代码、签名序号指代、中文讲次/页码、画像校验、上下文连续反馈、材料引用白名单、多语言静态诊断、生成管线和本地 HTTP/SSE。
+当前 Python 基线为 `360 passed`。覆盖密码和令牌非明文存储、v1→v2 迁移、账号隔离、JSON/SSE 契约、课程目录与 archive 门禁、模型驱动的统一自然语言理解、内联/压平代码、签名序号指代、中文讲次/页码、画像校验、上下文连续反馈、材料引用白名单、多语言静态诊断、生成管线和本地 HTTP/SSE。
+
+前端门禁另包含 17 项 Vitest 单元测试和 7 项使用本机 Chrome 的 Playwright 流程：
+
+```bash
+npm run check
+npm run test:e2e
+```
+
+这些测试覆盖 Markdown/MathML/代码渲染、DOM 清洗、SSE/JSON 终止与大小边界、Cookie/CSRF、认证竞态、原始多轮历史、复制代码和移动端横向溢出；Playwright 使用已安装的 `chrome` channel，不下载浏览器或系统依赖。
 
 真实 DeepSeek 后端端到端验收不属于 pytest，使用合成消息、临时画像数据库和真实受审核 Store：
 
@@ -258,7 +278,7 @@ Cookie 认证的 `POST /v1/chat/completions` 同样要求 `X-CSRF-Token`。API K
 
 ## 开发状态说明
 
-仓库已经包含账号注册/登录与安全会话、OpenAI 兼容服务、规则优先的意图路由与能力目录、可信 subject 学习画像、CSDIY 课程导航、只读黄金 StudyKit 查询/材料/概念/练习能力、多语言静态代码辅导，以及完整的分阶段生成内核。Lecture 2/8 的原始 PDF 和抽取 chunks 仅保留在本地；线上 SourceChunk 检索、未收录私有资料、跨会话练习状态和学习复盘仍属于后续阶段。
+仓库已经包含账号注册/登录与安全会话、OpenAI 兼容服务、规则优先的意图路由与能力目录、可信 subject 学习画像、CSDIY 课程导航、只读黄金 StudyKit 查询/材料/概念/练习能力、多语言静态代码辅导，以及完整的分阶段生成内核。公共 SourceChunk 的 permission-first FTS5 接口与材料问答 adapter 已实现，但当前 checkout 未部署 approved 索引；未收录私有资料、向量检索、跨会话练习状态和学习复盘仍属于后续阶段。
 # Online Agent P0–P2
 
 The online runtime's current planning, provenance, public retrieval, continuity-token, course-advice,

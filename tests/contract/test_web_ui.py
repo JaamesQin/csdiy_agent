@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import re
+
 from tests.conftest import ASGITestClient
 
 
@@ -8,36 +10,43 @@ def test_chat_page_is_available(client: ASGITestClient) -> None:
 
     assert response.status_code == 200
     assert response.headers["content-type"].startswith("text/html")
+    assert response.headers["cache-control"] == "no-cache"
     assert "CoursePilot" in response.text
-    assert "/v1/chat/completions" in response.text
     assert "登录" in response.text
-    assert "注册" in response.text
+    assert '<div id="root"></div>' in response.text
     assert response.headers["x-frame-options"] == "DENY"
-    assert "frame-ancestors 'none'" in response.headers["content-security-policy"]
+    csp = response.headers["content-security-policy"]
+    assert "frame-ancestors 'none'" in csp
+    assert "script-src 'self'" in csp
+    assert "style-src 'self'" in csp
+    assert "unsafe-inline" not in csp
 
 
 def test_chat_assets_are_available(client: ASGITestClient) -> None:
-    stylesheet = client.get("/static/styles.css")
-    script = client.get("/static/app.js")
-    favicon = client.get("/favicon.ico")
-
-    assert stylesheet.status_code == 200
-    assert stylesheet.headers["content-type"].startswith("text/css")
-    assert script.status_code == 200
-    assert "readStream" in script.text
-    assert 'fetch("/auth/me"' in script.text
-    assert "X-CSRF-Token" in script.text
-    assert "elements.loginForm.reset()" in script.text
-    assert "elements.registerForm.reset()" in script.text
-    assert "event.currentTarget.reset()" not in script.text
-    assert 'sessionStorage.setItem("coursepilot_api_key"' not in script.text
-    assert 'localStorage.setItem("coursepilot_anonymous_user"' not in script.text
     page = client.get("/").text
-    assert "多语言静态代码辅导" in page
-    assert "课程导航" in page
-    assert "查看 StudyKit" in page
-    assert "课程概念解释" in page
-    assert "练习选择" in page
-    assert 'data-prompt="/help"' in page
+    assets = set(
+        re.findall(
+            r'<(?:script|link)\b[^>]*(?:src|href)="([^"]+)"',
+            page,
+        )
+    )
+
+    assert any(path.endswith(".css") for path in assets)
+    assert any(path.endswith(".js") for path in assets)
+    assert all(path.startswith("/static/") for path in assets)
+    assert not re.search(r"<script(?![^>]*\bsrc=)[^>]*>", page)
+    assert "<style" not in page
+
+    for path in assets:
+        response = client.get(path)
+        assert response.status_code == 200, path
+        if path.endswith(".css"):
+            assert response.headers["content-type"].startswith("text/css")
+        elif path.endswith(".js"):
+            assert "javascript" in response.headers["content-type"]
+        elif path.endswith(".svg"):
+            assert response.headers["content-type"].startswith("image/svg+xml")
+
+    favicon = client.get("/favicon.ico")
     assert favicon.status_code == 200
     assert favicon.headers["content-type"].startswith("image/svg+xml")

@@ -97,7 +97,7 @@ def test_live_auth_and_non_streaming(live_server_url: str) -> None:
         f"{live_server_url}/v1/chat/completions",
         headers=_headers(),
         json={
-            "messages": [{"role": "user", "content": "本地黑盒测试"}],
+            "messages": [{"role": "user", "content": "/help"}],
             "stream": False,
         },
     )

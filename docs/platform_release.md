@@ -1,6 +1,6 @@
 # 平台发布记录
 
-> 更新日期：2026-08-13
+> 更新日期：2026-08-20
 >
 > 发布状态：多用户本地候选版本已验证，生产发布待执行
 
@@ -16,15 +16,18 @@
 - 规则优先的意图路由、八项可用能力的 `/help`、主动学习画像和多语言静态代码辅导；
 - 119 个课程目标的失败关闭 Catalog 校验、确定性导航和三类状态展示；
 - Lecture 2/8 已审核黄金 StudyKit 查询、材料/概念、练习选择和当前答案反馈；
-- 带登录、功能总览、画像、课程、StudyKit、练习和代码辅导入口的本地聊天界面；
+- 带登录、功能总览、画像、课程、StudyKit、练习和代码辅导入口的同源聊天界面；助手回复支持经清洗的 Markdown、表格、代码高亮和 MathML，用户/错误保持纯文本；
 - selective practice repair 仅作为离线 fingerprinted build；保留 direct-parent snapshot，
   rich audit 绑定当前 build+repair plan，并要求逐题 practice ID exact coverage；
 - 独立 StudyKit SQLite 归档已实现，但当前 286 个导入文档均为 `validated_draft`；它们不属于本次在线发布面，人工批准前不得切换 ready 查询。
 - 在线 Store 已接入只读 archive adapter：build/document 双 `approved`、portable v0.1/v0.2.1 兼容、approved archive 优先和 golden 回退；当前在线范围仍为 Lecture 2/8。
 - `data/` 是需要单独授权的私有 submodule；部署/测试主仓库前必须初始化 submodule 与 Git LFS。
-- 303 项自动化测试通过，其中 4 项为独立 Uvicorn/loopback HTTP 测试。
+- 360 项 Python 自动化测试、17 项前端单元测试和 7 项 Chrome Playwright 流程通过。
 
 ## 本地启动
+
+从源码修改或重新生成 Web 客户端时先运行 `npm ci` 与 `npm run build`；只运行仓库已提交的
+`app/static/` 时可省略这两步。
 
 ```bash
 python3 -m venv .venv
@@ -72,7 +75,9 @@ online-ready 或绕过 document review status。
 - 将真实网页登录 Origin 放入 allowlist；不要使用通配符凭据 CORS。
 - 应用默认使用 socket peer IP，不信任 `X-Forwarded-For`。生产网关应另行实施共享的注册/登录限流，并只在受信代理链中处理真实 IP。
 - 不缓存 `/auth/*`；保持响应的 `Cache-Control: no-store`。
+- `/` 必须保持 `Cache-Control: no-cache`，避免旧入口引用已被下一次 Vite 构建替换的哈希资源。
 - 保留 CSP、`X-Frame-Options: DENY`、`nosniff` 和 `no-referrer`。
+- 不为 Markdown/公式渲染增加 `unsafe-inline`、`unsafe-eval` 或远程资源域名；生产资源全部由同源 `/static` 提供。
 
 ## 清小搭兼容配置
 
@@ -90,7 +95,7 @@ credential: <COURSEPILOT_API_KEY>
 ## 当前限制
 
 - 当前执行功能帮助、画像、课程导航、StudyKit 查询、材料/概念、练习选择/反馈、代码辅导和澄清；学习复盘和生成状态仍降级；
-- Catalog 仍读取 tracked registry/Manifest，StudyKit 仍读取 golden 文件；尚未接入数据库 MaterialSet、SourceChunk 检索或 RAG；
+- Catalog 仍读取 tracked registry/Manifest，StudyKit 使用 approved archive 优先与 golden 回退；公共 SourceChunk FTS5 adapter 已接线但当前没有 approved 索引，数据库 MaterialSet、私有/向量检索尚未上线；
 - 课程上下文仅覆盖 Lecture 2/8 人工批准的黄金 StudyKit；
 - 代码只做 AST/Tree-sitter 静态分析，始终 `ran_code=false`；课程专用 DSL 可能只获得模型静态建议；
 - API Key 请求的 `user` 是客户端提供的逻辑标识，只进入 legacy 命名空间，不是生产授权凭据；
@@ -121,6 +126,7 @@ credential: <COURSEPILOT_API_KEY>
 - [ ] API Key legacy 用户不能访问账号画像；
 - [ ] 正确/错误 API Key 分别返回 200/401；
 - [ ] 非流式 JSON 与 SSE role/content/stop/`[DONE]` 正常；
+- [ ] 助手 Markdown、表格、代码和 MathML 正常；用户 HTML 保持文本，远程图片/脚本/危险链接不能加载或执行；
 - [ ] 课程导航将目录/authoring/在线 StudyKit 状态分开，且不输出未审核 candidate offering；
 - [ ] Lecture 2/8 的查询、材料/概念、练习和反馈正常，未知页码不产生猜测；
 - [ ] 无 DeepSeek 时练习反馈透明降级，不输出隐藏 rubric、分数或掌握度；

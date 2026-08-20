@@ -1,6 +1,6 @@
 # CoursePilot 全局进度
 
-更新时间：2026-08-13
+更新时间：2026-08-20
 
 状态口径：
 
@@ -18,8 +18,13 @@ StudyKit JSON/YAML/Markdown。
 
 本地账号、会话安全和可信 subject 学习画像已经落地，产品运行时也已加入意图路由、
 能力帮助、主动学习画像、全目录分级课程导航、golden StudyKit 查询/材料/概念/练习能力
-和多语言静态代码辅导。尚未完成的是用户资料接入、MaterialSet 权限、在线 SourceChunk
-检索、完整 LearnerState、清小搭生产部署和真实用户验收。
+和多语言静态代码辅导。公共 SourceChunk 的 permission-first FTS5 接口与材料问答 adapter
+已经实现，但当前没有 approved 在线索引；尚未完成的是用户资料接入、MaterialSet 权限、
+私有/向量检索、完整 LearnerState、清小搭生产部署和真实用户验收。
+
+同源 Web 客户端已加入安全学习者渲染：助手 Markdown、表格、代码高亮和原生 MathML
+在严格 CSP 下显示；用户/错误保持纯文本，模型 HTML、脚本、危险链接和远程图片被阻断。
+原始 Markdown 历史与 DOM 展示分离，避免 MathML 或复制按钮污染下一轮请求。
 
 离线成果现有独立 SQLite 归档层：2026-08-12 的整理保留 12 个最新 build、286 个
 StudyKit 和 12,008 个文本审计工件，并删除约 4.27 GiB 的重复 `outputs/` checkpoint/
@@ -48,17 +53,18 @@ StudyKit 和 12,008 个文本审计工件，并删除约 4.27 GiB 的重复 `out
 | CourseManifest / Catalog | 已完成类型化只读 Catalog MVP | 正式 Schema、数据库和独立分类审核 |
 | MaterialManifest/MaterialSet | 待完成 | 存储、权限、过期、删除和混合授权 |
 | 私有检索数据归档 | 已完成精简快照 | 接入 permission-filtered 在线读取；当前仍为 `validated_draft` |
-| 检索 | 待完成 | 元数据过滤、关键词检索、可选向量检索 |
+| 检索 | 公共 permission-first FTS5 基础和运行时接线已完成 | 发布 approved 索引；实现私有 MaterialSet 权限和可选向量检索 |
 | 本地账号与会话 | 已完成安全 MVP | 邮箱、找回/修改密码和账号删除不在首版 |
+| Web 学习界面 | 已完成 Vite/React/TypeScript 安全富文本 MVP | 生产可观测性与更多真实设备验收 |
 | OpenAI 兼容 API | 双身份兼容且已接入八项 Agent 能力 | 扩展权限检索、私有材料与复盘 handler |
 | 主动学习画像 | 已完成账号/legacy 隔离的 SQLite MVP | 验证清小搭稳定身份并演进完整 LearnerState |
 | 能力帮助 | 已完成可发现能力目录与 `/help` | 新能力接入时同步状态与帮助内容 |
-| 代码辅导 | 已完成 Python AST + Tree-sitter 多语言静态 MVP | 接入 SourceChunk 检索；沙箱执行不属于当前范围 |
+| 代码辅导 | 已完成 Python AST + Tree-sitter 多语言静态 MVP | 按需接入已审核课程检索；沙箱执行不属于当前范围 |
 | StudyKit 查询/概念/练习选择 | 已完成 approved archive + golden 回退 MVP | 人工批准更多课程和端到端评测 |
-| 材料答疑/练习反馈 | 已完成页码白名单与透明降级 MVP | SourceChunk 检索、权限过滤和生产模型评测 |
+| 材料答疑/练习反馈 | 材料答疑已接公共 FTS5 adapter；无 approved 索引时按页码白名单透明降级 | 发布公共索引；扩展私有权限、练习反馈检索和生产模型评测 |
 | LearnerState/复盘 | 有账号隔离的画像事实基础 | 练习/代码证据更新、目标映射和复盘状态机 |
 | 清小搭接入 | 本地协议已验证 | 账号级文件、会话、超时和生产实测 |
-| 自动化测试 | 303 项通过 | MaterialSet 权限、检索和生产测试 |
+| 自动化测试 | 360 项 Python、17 项前端单元、7 项 Chrome E2E 通过 | MaterialSet 权限、检索和生产测试 |
 
 ## 三、已经完成的生成闭环
 
@@ -152,7 +158,7 @@ chunks、页图和完整作者化 build 继续留在精简远端之外；正式 
 - 标题优先使用 manifest/unit 的可信标题，内部 `EvidencePlan` 等标签不进入
   学习者文本；外部回归 8 讲均未发现内部标签泄漏。
 
-这些修复、账号安全链路及新增在线运行时已有 303 项自动化测试覆盖，并已通过 v21 新鲜外部全量回归；由于设计
+这些修复、账号安全链路及新增在线运行时已有 360 项 Python 自动化测试覆盖，并已通过 v21 新鲜外部全量回归；由于设计
 上不进行二次语义 Audit，`repairs_applied_unverified` 结果仍必须人工复核。
 
 仍需关注的语义问题：
@@ -168,9 +174,9 @@ chunks、页图和完整作者化 build 继续留在精简远端之外；正式 
 
 1. 为 archive 文档完成独立人工批准流程，并冻结 MaterialSet、完整 LearnerState 和
    TaskPlan 的最小接口；复用可信 `account:<uuid>` 身份。
-2. 完成公共课程和私有用户资料的统一解析、存储、授权与删除。
-3. 建立带 owner/session/course/version/unit 过滤的检索层。
-4. 将已完成的 approved archive + golden 回退材料答疑和练习反馈接入 SourceChunk，继续实现复盘和后台生成状态。
+2. 为现有公共 FTS5 检索发布 approved SourceChunk 索引并完成质量验收。
+3. 完成私有用户资料的统一解析、存储、授权与删除，把现有 course/version/unit 范围扩展到 owner/session/material_set。
+4. 在材料答疑的既有 SourceChunk 路径上继续接入练习反馈、私有材料、复盘和后台生成状态。
 5. 修复 Lecture 2 离线 profile 对齐问题，核对 Lecture 8 LayerNorm 表述，
    并完成 v21 产物的人工语义复核。
 6. 实现基于用户确认证据的最小学习状态与复盘。

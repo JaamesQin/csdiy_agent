@@ -1,6 +1,6 @@
 # CoursePilot Developers Guide
 
-更新时间：2026-08-13
+更新时间：2026-08-20
 
 本文说明下一阶段如何在现有 StudyKit 生成内核之上开发用户画像、代码辅导、资料检索、意图路由、清小搭多轮 Agent，以及 generator skill。本文的核心约束是：
 
@@ -65,7 +65,7 @@ API Key 客户端继续把 OpenAI `user` 映射到 `legacy:<user>`。请求体 `
 不能覆盖账号身份。完整认证、CSRF 和数据库迁移契约见
 [账号认证与画像隔离](account_authentication.md)。
 
-当前自动化测试基线为 `553 passed`。在线模型通过现有 `DeepSeekModel` 惰性加载；
+当前自动化测试基线为 `360 passed`，前端另有 17 项 Vitest 和 7 项 Chrome Playwright 流程。在线模型通过现有 `DeepSeekModel` 惰性加载；
 未配置 `DEEPSEEK_API_KEY` 时规则路由、功能帮助、课程导航、StudyKit 查询、概念解释、
 练习选择、显式画像抽取、Python AST 和 Tree-sitter 多语言语法诊断仍可用；材料问答
 只返回已审核摘要，练习反馈透明降级且不判分。
@@ -262,11 +262,16 @@ Manifest 做失败关闭校验，`StudyKitStore` 提供 `get_ready`、`list_read
 
 首版已经实现。画像事实保存在 SQLite，代码辅导只读取确认后的必要画像字段；
 两者共享编排和 StudyKitStore，但不保存用户代码，也不把代码表现自动当作长期掌握度。
-由于 SourceChunk 检索尚未完成，课程上下文当前只来自黄金 StudyKit。
+公共 SourceChunk 的 permission-first FTS5 接口与材料问答 adapter 已实现；当前 checkout
+没有 approved 索引，所以实际课程上下文仍来自 approved StudyKitStore（现为 Lecture 2/8
+golden 回退）。
 
 ### P2：资料检索系统
 
-先实现带严格元数据过滤的关键词/BM25 检索，再按真实使用效果增加向量检索和重排。检索必须同时支持原始 SourceChunk 和学习者可见 StudyKit 内容，但需要标记来源类型，避免把生成摘要误当作原始证据。
+公共关键词/BM25 基础已实现：scope、course、version、unit 和 page 与 FTS5 recall 在同一
+SQL 查询内过滤，材料问答运行时已接 adapter。下一步是发布 approved 公共索引，再实现
+MaterialSet 私有授权边界；只有真实使用证明需要时才增加经审核的向量检索和重排。检索必须
+区分原始 SourceChunk 和学习者可见 StudyKit，避免把生成摘要误当作原始证据。
 
 ### P3：意图识别与路由
 
@@ -695,14 +700,25 @@ app/
   storage/             # 共享 SQLite 迁移、后续对象存储与权限
 skills/
   studykit-generator/  # 开发者/后台离线生成 skill
+frontend/              # Vite/React/TypeScript Web 源码、渲染器与浏览器测试
+app/static/            # npm run build 生成并提交的部署资源
 ```
 
 能力模块应返回结构化结果，再由 Agent renderer 统一生成 OpenAI JSON/SSE。不要让 profile、retrieval 或 code tutor 直接拼接 SSE 帧。
 
 其中 `app/agent/`、`app/catalog/`、`app/course_navigation/`、`app/learning/`、
 `app/profile/` 和 `app/code_tutor/` 已经落地。Catalog/StudyKit 当前是只读文件适配器，
-storage 当前只覆盖账号、会话和画像 SQLite；jobs、MaterialSet 数据库和在线 retrieval
-仍是后续工作。
+storage 当前只覆盖账号、会话和画像 SQLite；公共只读 FTS5 retrieval 基础已经落地，
+approved 索引发布、jobs、MaterialSet 数据库和私有/向量 retrieval 仍是后续工作。
+
+### 11.1 Web 前端构建与安全边界
+
+- 使用 Node 24 执行 `npm ci`、`npm run check` 和 `npm run build`；Python-only 部署直接提供已提交的 `app/static/`。该目录整体由 Vite 生成，不要手工修改，应改 `frontend/` 后重建。
+- Vite 生产 base 为 `/static/`，开发服务器只代理 `/auth`、`/v1` 和 `/health`；FastAPI 不增加 SPA catch-all，以免把无效 API 请求伪装成 HTML 200。
+- 助手输出先由关闭原始 HTML 的 MarkdownIt 处理，再经 DOMPurify；禁止模型图片、脚本、表单、内联样式和危险 URL。用户消息、错误、用户名不得进入 `innerHTML`。
+- 公式必须使用带有限 `maxSize` 的 MathML-only 输出以兼容 `style-src 'self'` 并限制病态尺寸；不得为 KaTeX 或其他渲染器放宽为 `unsafe-inline`/`unsafe-eval`。
+- 浏览器只在内存保存 CSRF token、用户与原始消息历史；渲染后的 DOM 不能作为下一轮请求正文。Cookie 仍为唯一浏览器凭据。
+- SSE frame、JSON body、单次助手正文、富文本流预览和累计对话都必须保持显式浏览器侧上限；越界时取消 reader 并以纯文本错误透明降级。
 
 ## 12. 验收标准
 

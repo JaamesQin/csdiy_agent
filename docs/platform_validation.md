@@ -1,6 +1,6 @@
 # 清小搭平台与本地协议验证记录
 
-> 更新日期：2026-08-13
+> 更新日期：2026-08-20
 > 当前结论：本地协议验证通过，清小搭生产平台验证待执行
 
 ## 1. 验证范围
@@ -18,7 +18,7 @@
 - 流式中途错误的 stop 帧、独立 `error` 字段和 `[DONE]`；
 - 密钥缺失或过短时拒绝启动；
 - 密钥不出现在正常或错误响应中；
-- 本地聊天界面和静态资源；
+- 本地聊天界面、Vite 静态资源和安全 Markdown/MathML 学习者渲染；
 - 独立 Uvicorn 进程上的真实 HTTP、SSE 和轻量并发请求。
 
 本轮没有验证清小搭账号侧能力、生产网络、文件 URL 或长期状态。
@@ -29,7 +29,7 @@ online-ready 文档为 0（全部保持 `validated_draft`）。记录见
 `evaluations/studykit-archive-import-20260812.json` 与
 `evaluations/studykit-outputs-prune-20260812.json`。
 
-## 2. 本地环境
+## 2. 本地环境（2026-07-31 历史基线）
 
 | 项目 | 值 |
 | --- | --- |
@@ -276,6 +276,35 @@ mismatch 都阻止 completion/false-complete。portable/deterministic Schema pas
   在临时测试库中设为 approved，验证双 review gate、哈希/身份/schema/table 失败关闭、
   archive 优先、golden 回退以及六项在线能力；正式 archive 未被修改；
 - 当前 catalog 为 119 个课程目标、13 个 manifest 绑定；archive 仍为 0 online-ready。
+
+## 13. 2026-08-20 Web 富文本渲染验证
+
+前端源码已迁入 `frontend/`，通过 Vite/React/TypeScript 构建为同源 `app/static/` 资源；FastAPI
+路由、严格 `script-src/style-src 'self'` CSP、Cookie 会话和 CSRF 契约未放宽。助手输出支持
+Markdown 标题/列表/表格、Highlight.js 代码和 MathML-only 公式。Markdown 原始 HTML 关闭，
+DOMPurify 继续阻断脚本、表单、内联样式、危险链接和模型图片；用户消息、用户名和错误只写入文本节点。
+本轮使用项目 `.venv` 的 Python 3.13.14、Node 24.19.0、npm/npx 11.17.0 和已安装的
+Google Chrome 151；上方第 2 节保留初次协议验证时的历史环境，不代表本轮版本。
+
+验证结果：
+
+```text
+npm run check
+17 passed
+
+npm run test:e2e
+7 passed (installed Google Chrome, channel=chrome)
+
+.venv/bin/pytest -q
+360 passed
+```
+
+Chrome 流程覆盖匿名启动与旧浏览器存储清理、注册/刷新恢复/注销、HttpOnly/Strict Cookie、
+聊天 CSRF 且无浏览器 Authorization/user 字段、SSE 富文本与主动停止、代码复制、远程图片/XSS 阻断、
+过期会话恢复/重复认证与注销竞态、流错误纯文本边界和响应大小上限、
+非流式多轮原始 Markdown 历史，以及 `390×844` 下表格/代码/公式无页面级横向溢出。
+构建产物不需要 CDN、浏览器下载或系统级依赖安装。
+
 # Online Agent P0–P2 validation
 
 Validation covers TaskPlan DAG limits, partial execution, provenance partition degradation, public
