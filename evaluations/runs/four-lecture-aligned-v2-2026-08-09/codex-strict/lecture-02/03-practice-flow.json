@@ -1,0 +1,448 @@
+{
+  "unit_id": "lecture-02",
+  "total_minutes": 180,
+  "learning_sequence": [
+    {
+      "step": 1,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 5
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 10
+          }
+        }
+      ],
+      "activity": "建立目标与基本更新：写出经验风险目标；逐项标注梯度下降和动量公式",
+      "duration_minutes": 25
+    },
+    {
+      "step": 2,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 12
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 16
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 19
+          }
+        }
+      ],
+      "activity": "诊断训练困难：用草图比较病态曲率与鞍点；追踪深层链式乘积",
+      "duration_minutes": 20
+    },
+    {
+      "step": 3,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 20
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 22
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 24
+          }
+        }
+      ],
+      "activity": "匹配稳定化方法：比较归一化、残差、裁剪、ReLU 的作用位置",
+      "duration_minutes": 20
+    },
+    {
+      "step": 4,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 32
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        }
+      ],
+      "activity": "固定导数形状：为每个 Jacobian 写出维度；验证矩阵链式法则乘法次序",
+      "duration_minutes": 25
+    },
+    {
+      "step": 5,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 41
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 42
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 46
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 48
+          }
+        }
+      ],
+      "activity": "实现层式反向传播：写出通用层接口；推导线性层输入与权重梯度",
+      "duration_minutes": 30
+    },
+    {
+      "step": 6,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 45
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 53
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 55
+          }
+        }
+      ],
+      "activity": "处理复杂图结构：推导批均值；在分支和共享参数处累加梯度",
+      "duration_minutes": 25
+    },
+    {
+      "step": 7,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 61
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 66
+          }
+        }
+      ],
+      "activity": "扩展到输入优化：把输入视为待优化变量；解释正则项作用",
+      "duration_minutes": 15
+    },
+    {
+      "step": 8,
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 72
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 75
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 76
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 77
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 78
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 79
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 80
+          }
+        }
+      ],
+      "activity": "复核数值例题：复算前向中间量；核对反向梯度和一次权重更新",
+      "duration_minutes": 20
+    }
+  ],
+  "practice": [
+    {
+      "id": "p1",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 10
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 12
+          }
+        }
+      ],
+      "level": "概念检查",
+      "question": "解释病态曲率为何使固定学习率梯度下降发生之字形振荡，并给出一个讲义中的缓解思路。",
+      "hint": "先写出相关局部公式或计算图，再检查维度与符号。",
+      "deliverable": "一份含推导或解释的书面答案",
+      "expected_evidence": [
+        "不同方向曲率差异大时，稳定所需步长受陡峭方向限制，而平缓方向进展慢；动量可平滑振荡并积累一致方向。"
+      ],
+      "evaluation": {
+        "criterion": "答案须与 expected_evidence 一致，并引用对应讲义页。"
+      }
+    },
+    {
+      "id": "p2",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        }
+      ],
+      "level": "推导",
+      "question": "设 z∈R^m、u∈R^p、x∈R^n，写出 dz/dx 的链式法则和各矩阵形状。",
+      "hint": "先写出相关局部公式或计算图，再检查维度与符号。",
+      "deliverable": "一份含推导或解释的书面答案",
+      "expected_evidence": [
+        "dz/dx=(dz/du)(du/dx)，形状为 (m×p)(p×n)=m×n。"
+      ],
+      "evaluation": {
+        "criterion": "答案须与 expected_evidence 一致，并引用对应讲义页。"
+      }
+    },
+    {
+      "id": "p3",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 46
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 48
+          }
+        }
+      ],
+      "level": "推导",
+      "question": "对 x_out=W x_in，给定行向量 g_out，写出输入梯度并描述权重梯度结构。",
+      "hint": "先写出相关局部公式或计算图，再检查维度与符号。",
+      "deliverable": "一份含推导或解释的书面答案",
+      "expected_evidence": [
+        "g_in=g_out W；权重梯度是与 W 同形的外积，由上游梯度各输出分量与输入各分量配对。"
+      ],
+      "evaluation": {
+        "criterion": "答案须与 expected_evidence 一致，并引用对应讲义页。"
+      }
+    },
+    {
+      "id": "p4",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 53
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 55
+          }
+        }
+      ],
+      "level": "图分析",
+      "question": "同一中间变量分成两支后再汇合，且两支都使用共享参数 θ。反向传播时两类梯度如何处理？",
+      "hint": "先写出相关局部公式或计算图，再检查维度与符号。",
+      "deliverable": "一份含推导或解释的书面答案",
+      "expected_evidence": [
+        "对中间变量的梯度把两条路径贡献相加；对 θ 的梯度也把每个使用位置的贡献相加。"
+      ],
+      "evaluation": {
+        "criterion": "答案须与 expected_evidence 一致，并引用对应讲义页。"
+      }
+    },
+    {
+      "id": "p5",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 66
+          }
+        }
+      ],
+      "level": "应用",
+      "question": "固定分类器参数，想寻找使第 j 类得分高且不过度噪声化的输入，应写什么目标并更新哪个变量？",
+      "hint": "先写出相关局部公式或计算图，再检查维度与符号。",
+      "deliverable": "一份含推导或解释的书面答案",
+      "expected_evidence": [
+        "优化输入 x：argmax_x(y_j+λR(x))，根据目标关于 x 的梯度做上升；模型参数保持固定。"
+      ],
+      "evaluation": {
+        "criterion": "答案须与 expected_evidence 一致，并引用对应讲义页。"
+      }
+    },
+    {
+      "id": "p6",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 72
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 75
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 76
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 77
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 78
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 79
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-02-slides",
+          "anchor": {
+            "type": "page",
+            "value": 80
+          }
+        }
+      ],
+      "level": "综合核验",
+      "question": "讲义两层网络例题从 x=(1.0,0.1) 出发。列出核验一次训练迭代的顺序，并解释 η=−0.2 的符号。",
+      "hint": "先写出相关局部公式或计算图，再检查维度与符号。",
+      "deliverable": "一份含推导或解释的书面答案",
+      "expected_evidence": [
+        "依次复算 x1、x2、x3 与损失，再从损失回传各层梯度，最后更新 W1、W0；例题采用加 η 倍梯度且 η 为负，因此方向仍是梯度下降。讲义给出的前向值约为 x1=(0.7,0.3)、x2=(0.604,0.291)、x3=0.313、损失 0.017。"
+      ],
+      "evaluation": {
+        "criterion": "答案须与 expected_evidence 一致，并引用对应讲义页。"
+      }
+    }
+  ]
+}

@@ -13,8 +13,12 @@ from typing import Any
 import yaml
 
 
-PIPELINE_VERSION = "portable-studykit-pipeline-v0.2.0"
-PROMPT_VERSION = "host-authored-studykit-v0.1"
+PIPELINE_VERSION = "portable-studykit-pipeline-v0.2.1"
+# Bump the portable-build fingerprint whenever the authoring contract changes.
+# The content-grounded practice contract, objective-to-practice alignment,
+# provenance completeness, and mandatory per-practice audit are intentionally
+# not resumable from earlier host-authored builds.
+PROMPT_VERSION = "host-authored-studykit-v0.2-content-grounded-practice-v2"
 PAGE_SELECTOR_VERSION = "review-pages-v1"
 
 
@@ -33,7 +37,16 @@ def unit_source(unit: dict[str, Any]) -> dict[str, Any]:
     return sources[0]
 
 
-def make_build(catalog_manifest_path: Path, repository_root: Path, output_base: Path, quality_mode: str, delivery_policy: str, parallel_units: str) -> tuple[Path, dict[str, Any]]:
+def make_build(
+    catalog_manifest_path: Path,
+    repository_root: Path,
+    output_base: Path,
+    quality_mode: str,
+    delivery_policy: str,
+    parallel_units: str,
+    coordinator_id: str = "coordinator-1",
+    fingerprint_context: dict[str, Any] | None = None,
+) -> tuple[Path, dict[str, Any]]:
     catalog = yaml.safe_load(catalog_manifest_path.read_text(encoding="utf-8")) or {}
     course_id = str(catalog.get("course_id") or "")
     course_version = str(catalog.get("course_version") or "")
@@ -73,6 +86,8 @@ def make_build(catalog_manifest_path: Path, repository_root: Path, output_base: 
         "prompt_version": PROMPT_VERSION,
         "schema_version": sha256_file(repository_root / "schemas" / "source_chunk.schema.json"),
     }
+    if fingerprint_context is not None:
+        fingerprint_payload["fingerprint_context"] = fingerprint_context
     build_id = hashlib.sha256(canonical_json(fingerprint_payload).encode("utf-8")).hexdigest()
     build_root = output_base / course_id / build_id
     if build_root.exists():
@@ -93,6 +108,9 @@ def make_build(catalog_manifest_path: Path, repository_root: Path, output_base: 
         "page_selector_version": PAGE_SELECTOR_VERSION,
         "delivery_policy": delivery_policy,
         "parallel_units": parallel_units,
+        "coordinator_id": coordinator_id,
+        "coordinator_scope": "single-build",
+        "global_merge_owner": "global-coordinator",
         "course_id": course_id,
         "course_version": course_version,
         "title": catalog.get("title", ""),
@@ -124,6 +142,8 @@ def make_build(catalog_manifest_path: Path, repository_root: Path, output_base: 
         "warnings": list(catalog.get("limitations", [])),
         "fingerprint_payload": fingerprint_payload,
     }
+    if fingerprint_context is not None:
+        manifest["fingerprint_context"] = fingerprint_context
     (build_root / "manifest.yaml").write_text(yaml.safe_dump(manifest, allow_unicode=True, sort_keys=False), encoding="utf-8")
     run = {
         "run_version": "0.2",
@@ -136,6 +156,9 @@ def make_build(catalog_manifest_path: Path, repository_root: Path, output_base: 
         "quality_mode": quality_mode,
         "delivery_policy": delivery_policy,
         "parallel_units": parallel_units,
+        "coordinator_id": coordinator_id,
+        "coordinator_scope": "single-build",
+        "global_merge_owner": "global-coordinator",
         "worker_count": None,
         "requested_units": [unit["unit_id"] for unit in unit_records],
         "completed_units": [],
@@ -146,6 +169,8 @@ def make_build(catalog_manifest_path: Path, repository_root: Path, output_base: 
         "resume_fingerprint": build_id,
         "fingerprint_payload": fingerprint_payload,
     }
+    if fingerprint_context is not None:
+        run["fingerprint_context"] = fingerprint_context
     (build_root / "run.json").write_text(json.dumps(run, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     result = {
         "status": "partial",
@@ -156,6 +181,7 @@ def make_build(catalog_manifest_path: Path, repository_root: Path, output_base: 
         "retry_count": 0,
         "recoverable": True,
         "artifacts": {"manifest": "manifest.yaml", "run": "run.json", "batch_summary": "batch-summary.json"},
+        "coordinator_id": coordinator_id,
         "issues": [],
         "next_action": "author_units",
     }
@@ -165,6 +191,7 @@ def make_build(catalog_manifest_path: Path, repository_root: Path, output_base: 
         "build_id": build_id,
         "status": "partial",
         "worker_count": None,
+        "coordinator_id": coordinator_id,
         "requested_units": [unit["unit_id"] for unit in unit_records],
         "succeeded_units": [],
         "failed_units": [],
@@ -183,6 +210,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--quality-mode", choices=("fast", "standard", "strict"), default="standard")
     parser.add_argument("--delivery-policy", choices=("draft", "publish"), default="draft")
     parser.add_argument("--parallel-units", default="auto")
+    parser.add_argument("--coordinator-id", default="coordinator-1")
+    parser.add_argument("--fingerprint-context", type=Path, help="JSON object included only in the build fingerprint")
     return parser.parse_args()
 
 
@@ -195,5 +224,7 @@ if __name__ == "__main__":
         args.quality_mode,
         args.delivery_policy,
         args.parallel_units,
+        args.coordinator_id,
+        json.loads(args.fingerprint_context.read_text(encoding="utf-8")) if args.fingerprint_context else None,
     )
     print(json.dumps({"build_root": str(build_root), "build_id": run["build_id"], "unit_count": len(run["requested_units"])}, ensure_ascii=False, indent=2))

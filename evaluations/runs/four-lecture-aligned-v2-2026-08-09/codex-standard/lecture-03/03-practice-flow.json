@@ -1,0 +1,335 @@
+{
+  "target_minutes": 180,
+  "progression": [
+    "概念辨析",
+    "误差计算",
+    "网络构造",
+    "局限论证",
+    "递推证明",
+    "综合决策"
+  ],
+  "practice": [
+    {
+      "id": "P1",
+      "level": "基础",
+      "question": "用自己的话区分逼近、优化、泛化，并标出本讲证明直接回答哪一个。",
+      "hint": "回看第 4 页的三个问题。",
+      "deliverable": "三行定义和一行判断。",
+      "expected_evidence": [
+        "三个问题互不混淆",
+        "只把逼近标为直接回答"
+      ],
+      "evaluation": {
+        "criteria": [
+          "概念准确",
+          "有页码依据"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "P2",
+      "level": "基础",
+      "question": "从单条宽 1/N、高 L/N 的误差帽出发，推导总 L1 误差及达到 ε 所需的 N。",
+      "hint": "先算三角形面积。",
+      "deliverable": "逐步公式推导。",
+      "expected_evidence": [
+        "L/(2N²)",
+        "L/(2N)",
+        "N=L/(2ε)"
+      ],
+      "evaluation": {
+        "criteria": [
+          "每步代数正确",
+          "符号定义完整"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 12
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 13
+          }
+        }
+      ]
+    },
+    {
+      "id": "P3",
+      "level": "进阶",
+      "question": "在 d 维中用边长 N^{-1/d} 的超矩形重做误差估计，并解释维数灾难。",
+      "hint": "总面积为 1，误差帽高度受 Lipschitz 常数控制。",
+      "deliverable": "推导和 150 字解释。",
+      "expected_evidence": [
+        "L/N^{1/d}",
+        "N=(L/ε)^d",
+        "指出对 d 指数增长"
+      ],
+      "evaluation": {
+        "criteria": [
+          "推导闭合",
+          "限制解释正确"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 14
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        }
+      ]
+    },
+    {
+      "id": "P4",
+      "level": "进阶",
+      "question": "画出三层构造的数据流：一维矩形模块→超矩形门→超矩形线性组合，并解释每层角色。",
+      "hint": "依序用第 15–17 页。",
+      "deliverable": "结构图和三段说明。",
+      "expected_evidence": [
+        "四 ReLU 组合",
+        "d−1 阈值",
+        "带位置参数的线性组合"
+      ],
+      "evaluation": {
+        "criteria": [
+          "层次顺序正确",
+          "没有加入训练算法"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 15
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 16
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 17
+          }
+        }
+      ]
+    },
+    {
+      "id": "P5",
+      "level": "辨析",
+      "question": "为什么矩形构造的普适逼近结论不足以保证学习成功？给出至少两个材料内理由。",
+      "hint": "检查规模、训练点矩形和其他 UFA 例子。",
+      "deliverable": "200 字论证。",
+      "expected_evidence": [
+        "维数指数规模",
+        "可能只拟合训练点",
+        "UFA 不是充分条件"
+      ],
+      "evaluation": {
+        "criteria": [
+          "至少两个证据",
+          "不引入材料外结论"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 19
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 21
+          }
+        }
+      ]
+    },
+    {
+      "id": "P6",
+      "level": "挑战",
+      "question": "从“加宽最多累加 kink、ReLU 最多翻倍 kink”出发，用归纳法证明 KINKS_L≤(2n)^L。",
+      "hint": "把 KINKS_0=1 作为基例。",
+      "deliverable": "完整归纳证明。",
+      "expected_evidence": [
+        "递推式",
+        "基例",
+        "归纳步骤",
+        "宽度多项式/深度指数解释"
+      ],
+      "evaluation": {
+        "criteria": [
+          "证明严格",
+          "解释与公式一致"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 28
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 29
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 30
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 31
+          }
+        }
+      ]
+    },
+    {
+      "id": "P7",
+      "level": "挑战",
+      "question": "重算复合 500 次三角形函数的 kink 数与三层宽度数量级，并列出该结果不能支持的两个实践判断。",
+      "hint": "结合第 33、34 页。",
+      "deliverable": "计算表和边界清单。",
+      "expected_evidence": [
+        "2^500−1",
+        "1000 层宽 2",
+        "约 7×10^49",
+        "不保证优化或泛化"
+      ],
+      "evaluation": {
+        "criteria": [
+          "数值准确",
+          "边界完整"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 32
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 33
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        }
+      ]
+    },
+    {
+      "id": "P8",
+      "level": "综合",
+      "question": "为“应加宽还是加深”写一份谨慎的决策备忘录：分别列出逼近论能说什么、不能说什么、还需控制哪些实验细节。",
+      "hint": "使用第 24、25、34、39、41 页。",
+      "deliverable": "三栏备忘录。",
+      "expected_evidence": [
+        "宽度/深度表达差异",
+        "优化泛化未定",
+        "训练管线混杂因素"
+      ],
+      "evaluation": {
+        "criteria": [
+          "三栏齐全",
+          "结论不过度外推"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 24
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 25
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 39
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 41
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "schema_version": "selective-repair-residual-plan-v1",
+  "plan_id": "mit-6-042j-practice-repair-round3-20260812",
+  "created_at": "2026-08-12T21:25:00+08:00",
+  "policy": {
+    "scope": "only residual blockers from the fresh round-2 Luna xhigh audit",
+    "max_targeted_repairs_per_stage": 1,
+    "author_tier": "luna-medium",
+    "auditor_tier": "luna-xhigh",
+    "fresh_independent_per_practice_audit_required": true,
+    "termination": "zero blockers and all deterministic portable validators pass"
+  },
+  "courses": [
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "baseline_build_id": "13c0b4c1c67259f6caf45e71e9fe2aaf8bcab19c04bd5785ba396765f8ec02bf",
+      "repair_units": [
+        {"unit_id": "lecture-01", "stages": ["practice"], "blocked_practice_ids": ["p-02"], "required_repairs": ["replace the equivalent A/B definitions or change the requested truth row so the counterexample is realizable"]},
+        {"unit_id": "lecture-02", "stages": ["evidence", "practice"], "blocked_practice_ids": ["p1", "p3"], "required_repairs": ["bind induction claims to pages 6-7", "replace p3's unrelated expected evidence and evaluation with the odd-sum induction task"]},
+        {"unit_id": "lecture-03", "stages": ["practice"], "blocked_practice_ids": ["practice-1"], "required_repairs": ["make the parity claim and evaluation agree with n(n+2) being odd for odd n"]},
+        {"unit_id": "lecture-04", "stages": ["practice"], "blocked_practice_ids": ["practice-1"], "required_repairs": ["make the stated state-machine elements and deliverable count agree"]},
+        {"unit_id": "lecture-05", "stages": ["evidence", "practice"], "blocked_practice_ids": ["p-03"], "required_repairs": ["cite pages 4-5 for double-sum reordering"]},
+        {"unit_id": "lecture-06", "stages": ["evidence", "practice"], "blocked_practice_ids": ["p1", "p2"], "required_repairs": ["cite the harmonic-number definition on page 3 and remove unrelated evaluation requirements", "correct the integral-comparison bounds and all dependent expectations"]},
+        {"unit_id": "lecture-08", "stages": ["evidence", "practice"], "blocked_practice_ids": ["practice-2"], "required_repairs": ["replace the answer-leaking gcd edge-case hint", "bind every evaluated Euclid/normalization claim to relevant evidence"]},
+        {"unit_id": "lecture-10", "stages": ["evidence", "content", "practice"], "blocked_practice_ids": ["p3"], "required_repairs": ["either ground the complete RSA parameter/formula mapping in real source pages or narrow the task to supported claims", "remove d=3 from the hint"]},
+        {"unit_id": "lecture-11", "stages": ["evidence", "content", "practice"], "blocked_practice_ids": ["practice-1"], "required_repairs": ["replace unsupported walk/path/shortest-path requirements with graph claims supported by this unit, or map them to real anchors"]},
+        {"unit_id": "lecture-12", "stages": ["evidence", "content", "practice"], "blocked_practice_ids": ["practice-2"], "required_repairs": ["map Gale-Shapley rules to page 6 and stable-matching background to page 4"]},
+        {"unit_id": "lecture-13", "stages": ["evidence", "practice"], "blocked_practice_ids": ["p-02", "p-03"], "required_repairs": ["correct the Euler result after deleting AC", "cite pages 7-8 for the tree edge theorem and leaf-removal induction"]},
+        {"unit_id": "lecture-15", "stages": ["evidence", "practice"], "blocked_practice_ids": ["practice-3"], "required_repairs": ["cite page 4 for divisibility posets, comparability, and extrema"]},
+        {"unit_id": "lecture-16", "stages": ["practice"], "blocked_practice_ids": ["practice-1"], "required_repairs": ["request the actual three non-repeating length-two passwords beginning with 1, or change the symbol set so four exist"]},
+        {"unit_id": "lecture-19", "stages": ["practice"], "blocked_practice_ids": ["practice-1", "practice-3"], "required_repairs": ["align the deliverable with the with-replacement joint-probability evaluation", "include the aggregate-versus-strata reversal in expected evidence and evaluation"]},
+        {"unit_id": "lecture-23", "stages": ["evidence", "practice"], "blocked_practice_ids": ["practice-1", "practice-3"], "required_repairs": ["define and correct the indicator mapping in the hint", "cite pages 8-10 for the multiplication rule"]},
+        {"unit_id": "lecture-24", "stages": ["evidence", "practice"], "blocked_practice_ids": ["practice-2"], "required_repairs": ["add a relevant source anchor for the Chebyshev conclusion"]}
+      ]
+    }
+  ]
+}

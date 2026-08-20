@@ -1,0 +1,216 @@
+{
+  "target_minutes": 180,
+  "progression": [
+    "概念边界",
+    "一维误差推导",
+    "高维与网络构造",
+    "kink 归纳",
+    "深度分离和限制"
+  ],
+  "practice": [
+    {
+      "id": "ex-1",
+      "level": "基础",
+      "question": "分别用一句话定义逼近、优化和泛化，并判断本讲定理回答哪一项。",
+      "hint": "使用第 4 页的三块拼图。",
+      "deliverable": "三行定义和一行判断。",
+      "expected_evidence": [
+        "三者边界清楚",
+        "只选择逼近"
+      ],
+      "evaluation": {
+        "criteria": [
+          "不把存在性写成训练保证",
+          "引用准确"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "ex-2",
+      "level": "基础",
+      "question": "从宽 1/N、高 L/N 的误差三角形推导一维总 L1 误差。",
+      "hint": "先求单个三角形面积，再乘 N。",
+      "deliverable": "三步公式推导。",
+      "expected_evidence": [
+        "单条 L/(2N²)",
+        "总误差 L/(2N)",
+        "N=L/(2ε)"
+      ],
+      "evaluation": {
+        "criteria": [
+          "代数正确",
+          "量纲一致"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 13
+          }
+        }
+      ]
+    },
+    {
+      "id": "ex-3",
+      "level": "进阶",
+      "question": "解释 d 维中为何需要 (L/ε)^d 个超矩形，并指出这个结果揭示的主要限制。",
+      "hint": "每格边长为 N^{-1/d}。",
+      "deliverable": "150–250 字推导。",
+      "expected_evidence": [
+        "误差 L/N^{1/d}",
+        "解出 N",
+        "指出维数指数增长"
+      ],
+      "evaluation": {
+        "criteria": [
+          "推导闭合",
+          "限制解释准确"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 14
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        }
+      ]
+    },
+    {
+      "id": "ex-4",
+      "level": "进阶",
+      "question": "画出从一维矩形模块到 d 维超矩形，再到任意 Lipschitz 曲面的三模块图。",
+      "hint": "依次使用第 15、16、17 页。",
+      "deliverable": "模块图与每模块一句说明。",
+      "expected_evidence": [
+        "四 ReLU 线性组合",
+        "各坐标相加后阈值",
+        "平移超矩形线性组合"
+      ],
+      "evaluation": {
+        "criteria": [
+          "模块顺序正确",
+          "没有虚构优化过程"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 15
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 16
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 17
+          }
+        }
+      ]
+    },
+    {
+      "id": "ex-5",
+      "level": "挑战",
+      "question": "用归纳法从 KINKS_l≤2n·KINKS_{l−1} 推出 (2n)^L，并比较固定深度加宽与固定宽度加深。",
+      "hint": "从第一层一个 kink 开始。",
+      "deliverable": "归纳证明和增长率比较。",
+      "expected_evidence": [
+        "基例",
+        "递推应用",
+        "多项式/指数区别"
+      ],
+      "evaluation": {
+        "criteria": [
+          "证明有效",
+          "符号定义明确"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 30
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 31
+          }
+        }
+      ]
+    },
+    {
+      "id": "ex-6",
+      "level": "挑战",
+      "question": "计算三角函数复合 500 次的 kink 数和浅层宽度下界数量级，再列出不能由此推出的两个结论。",
+      "hint": "结合第 33、34 页。",
+      "deliverable": "数值表与两条边界。",
+      "expected_evidence": [
+        "2^500−1",
+        "约 7×10^49",
+        "不保证易优化",
+        "不保证好泛化"
+      ],
+      "evaluation": {
+        "criteria": [
+          "数字与幻灯片一致",
+          "边界完整"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 32
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 33
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        }
+      ]
+    }
+  ]
+}

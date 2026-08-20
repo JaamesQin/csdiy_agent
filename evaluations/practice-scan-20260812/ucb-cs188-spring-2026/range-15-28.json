@@ -1,0 +1,3192 @@
+{
+  "schema_version": "practice-semantic-scan-v1",
+  "course_id": "ucb-cs188-spring-2026",
+  "build_id": "443efc651cd290edbf7ebf368bb2a79fd314c3db49da3969de19dc2d13aa204f",
+  "unit_ids": [
+    "lecture-15",
+    "lecture-16",
+    "lecture-17",
+    "lecture-18",
+    "lecture-19",
+    "lecture-20",
+    "lecture-21",
+    "lecture-22",
+    "lecture-23",
+    "lecture-24",
+    "lecture-25",
+    "lecture-26",
+    "lecture-27",
+    "lecture-28"
+  ],
+  "scanned_at": "2026-08-12T00:00:00+08:00",
+  "auditor_id": "luna-medium-unit-range-auditor-20260812",
+  "offline_only": true,
+  "scan_scope": {
+    "assigned_range": "15-28",
+    "artifacts": [
+      "01-evidence-plan.json",
+      "02-learning-content.json",
+      "03-practice-flow.json",
+      "05-studykit.json",
+      "review-plan.json",
+      "cited source chunks"
+    ],
+    "network_calls": false,
+    "provider_model_calls": false
+  },
+  "units": [
+    {
+      "unit_id": "lecture-15",
+      "title": "Bayes Nets: Exact Inference",
+      "item_results": [
+        {
+          "practice_id": "p1-enumerate",
+          "status": "pass",
+          "requirement_ids": [
+            "req-expand"
+          ],
+          "concept_ids": [
+            "concept-enumeration"
+          ],
+          "opportunity_ids": [
+            "opp-enumerate"
+          ],
+          "objective_ids": [
+            "obj-expand"
+          ],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-15-material",
+              "anchor": {
+                "type": "page",
+                "value": 2
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p2-product-shape",
+          "status": "pass",
+          "requirement_ids": [
+            "req-factor-ops"
+          ],
+          "concept_ids": [
+            "concept-factor",
+            "concept-pointwise"
+          ],
+          "opportunity_ids": [
+            "opp-product"
+          ],
+          "objective_ids": [
+            "obj-factor-ops"
+          ],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-15-material",
+              "anchor": {
+                "type": "page",
+                "value": 8
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-15-material",
+              "anchor": {
+                "type": "page",
+                "value": 9
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p3-sumout",
+          "status": "pass",
+          "requirement_ids": [
+            "req-factor-ops"
+          ],
+          "concept_ids": [
+            "concept-sumout"
+          ],
+          "opportunity_ids": [
+            "opp-sumout"
+          ],
+          "objective_ids": [
+            "obj-factor-ops"
+          ],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-15-material",
+              "anchor": {
+                "type": "page",
+                "value": 6
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-15-material",
+              "anchor": {
+                "type": "page",
+                "value": 11
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p4-ve-trace",
+          "status": "pass",
+          "requirement_ids": [
+            "req-ve"
+          ],
+          "concept_ids": [
+            "concept-ve",
+            "concept-sumout"
+          ],
+          "opportunity_ids": [
+            "opp-ve"
+          ],
+          "objective_ids": [
+            "obj-ve"
+          ],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-15-material",
+              "anchor": {
+                "type": "page",
+                "value": 12
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-15-material",
+              "anchor": {
+                "type": "page",
+                "value": 14
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-15-material",
+              "anchor": {
+                "type": "page",
+                "value": 15
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-15-material",
+              "anchor": {
+                "type": "page",
+                "value": 16
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p5-order-cost",
+          "status": "pass",
+          "requirement_ids": [
+            "req-cost"
+          ],
+          "concept_ids": [
+            "concept-order"
+          ],
+          "opportunity_ids": [
+            "opp-order"
+          ],
+          "objective_ids": [
+            "obj-cost"
+          ],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-15-material",
+              "anchor": {
+                "type": "page",
+                "value": 17
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-15-material",
+              "anchor": {
+                "type": "page",
+                "value": 19
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p6-boundaries",
+          "status": "pass",
+          "requirement_ids": [
+            "req-boundaries"
+          ],
+          "concept_ids": [
+            "concept-hardness",
+            "concept-polytree"
+          ],
+          "opportunity_ids": [
+            "opp-boundary"
+          ],
+          "objective_ids": [
+            "obj-boundaries"
+          ],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-15-material",
+              "anchor": {
+                "type": "page",
+                "value": 19
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-15-material",
+              "anchor": {
+                "type": "page",
+                "value": 21
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-15-material",
+              "anchor": {
+                "type": "page",
+                "value": 22
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        }
+      ],
+      "counts": {
+        "total": 6,
+        "pass": 6,
+        "blocker": 0
+      },
+      "source_chunk_count": 23,
+      "review_checkpoint": {
+        "quality_mode": "fast",
+        "selected_page_count": 23,
+        "actual_reviewed_page_count": 23,
+        "independent_audit_result": "pass"
+      },
+      "source_or_checkpoint_anomalies": []
+    },
+    {
+      "unit_id": "lecture-16",
+      "title": "Bayes Nets: Sampling",
+      "item_results": [
+        {
+          "practice_id": "p1-map",
+          "status": "pass",
+          "requirement_ids": [],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-16-material",
+              "anchor": {
+                "type": "page",
+                "value": 6
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p2-prior",
+          "status": "pass",
+          "requirement_ids": [],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-16-material",
+              "anchor": {
+                "type": "page",
+                "value": 11
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p3-reject",
+          "status": "pass",
+          "requirement_ids": [],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-16-material",
+              "anchor": {
+                "type": "page",
+                "value": 13
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-16-material",
+              "anchor": {
+                "type": "page",
+                "value": 14
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p4-weight",
+          "status": "pass",
+          "requirement_ids": [],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-16-material",
+              "anchor": {
+                "type": "page",
+                "value": 18
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-16-material",
+              "anchor": {
+                "type": "page",
+                "value": 19
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p5-gibbs",
+          "status": "pass",
+          "requirement_ids": [],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-16-material",
+              "anchor": {
+                "type": "page",
+                "value": 25
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-16-material",
+              "anchor": {
+                "type": "page",
+                "value": 30
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p6-compare",
+          "status": "pass",
+          "requirement_ids": [],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-16-material",
+              "anchor": {
+                "type": "page",
+                "value": 17
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-16-material",
+              "anchor": {
+                "type": "page",
+                "value": 22
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-16-material",
+              "anchor": {
+                "type": "page",
+                "value": 34
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        }
+      ],
+      "counts": {
+        "total": 6,
+        "pass": 6,
+        "blocker": 0
+      },
+      "source_chunk_count": 34,
+      "review_checkpoint": {
+        "quality_mode": "standard",
+        "selected_page_count": 18,
+        "actual_reviewed_page_count": 18,
+        "independent_audit_result": null
+      },
+      "source_or_checkpoint_anomalies": [
+        "review-plan has no independent_audit_result and all six practice items lack explicit requirement/concept/opportunity IDs in 03-practice-flow.json; semantic grounding was checked against 01/02 and cited chunks, but mapping remains a deferred structural finding."
+      ]
+    },
+    {
+      "unit_id": "lecture-17",
+      "title": "Markov Models & HMMs",
+      "item_results": [
+        {
+          "practice_id": "p1",
+          "status": "pass",
+          "requirement_ids": [
+            "req-mcmc-gibbs"
+          ],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-17-material",
+              "anchor": {
+                "type": "page",
+                "value": 2
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-17-material",
+              "anchor": {
+                "type": "page",
+                "value": 7
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p2",
+          "status": "pass",
+          "requirement_ids": [
+            "req-markov-chain",
+            "req-forward-distribution"
+          ],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-17-material",
+              "anchor": {
+                "type": "page",
+                "value": 19
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-17-material",
+              "anchor": {
+                "type": "page",
+                "value": 20
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-17-material",
+              "anchor": {
+                "type": "page",
+                "value": 25
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p3",
+          "status": "pass",
+          "requirement_ids": [
+            "req-hmm-model",
+            "req-inference-tasks"
+          ],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-17-material",
+              "anchor": {
+                "type": "page",
+                "value": 28
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-17-material",
+              "anchor": {
+                "type": "page",
+                "value": 41
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-17-material",
+              "anchor": {
+                "type": "page",
+                "value": 44
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p4",
+          "status": "pass",
+          "requirement_ids": [
+            "req-inference-tasks"
+          ],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-17-material",
+              "anchor": {
+                "type": "page",
+                "value": 31
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-17-material",
+              "anchor": {
+                "type": "page",
+                "value": 32
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p5",
+          "status": "pass",
+          "requirement_ids": [
+            "req-viterbi"
+          ],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-17-material",
+              "anchor": {
+                "type": "page",
+                "value": 28
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-17-material",
+              "anchor": {
+                "type": "page",
+                "value": 50
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-17-material",
+              "anchor": {
+                "type": "page",
+                "value": 51
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-17-material",
+              "anchor": {
+                "type": "page",
+                "value": 52
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        }
+      ],
+      "counts": {
+        "total": 5,
+        "pass": 5,
+        "blocker": 0
+      },
+      "source_chunk_count": 52,
+      "review_checkpoint": {
+        "quality_mode": "fast",
+        "selected_page_count": 27,
+        "actual_reviewed_page_count": 52,
+        "independent_audit_result": "pass"
+      },
+      "source_or_checkpoint_anomalies": []
+    },
+    {
+      "unit_id": "lecture-18",
+      "title": "Dynamic Bayes Nets 与粒子滤波",
+      "item_results": [
+        {
+          "practice_id": "p1",
+          "status": "pass",
+          "requirement_ids": [
+            "req-hmm-model",
+            "req-inference-tasks"
+          ],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-18-material",
+              "anchor": {
+                "type": "page",
+                "value": 5
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-18-material",
+              "anchor": {
+                "type": "page",
+                "value": 6
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-18-material",
+              "anchor": {
+                "type": "page",
+                "value": 9
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-18-material",
+              "anchor": {
+                "type": "page",
+                "value": 26
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p2",
+          "status": "pass",
+          "requirement_ids": [
+            "req-filtering"
+          ],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-18-material",
+              "anchor": {
+                "type": "page",
+                "value": 6
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-18-material",
+              "anchor": {
+                "type": "page",
+                "value": 19
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-18-material",
+              "anchor": {
+                "type": "page",
+                "value": 20
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-18-material",
+              "anchor": {
+                "type": "page",
+                "value": 22
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p3",
+          "status": "pass",
+          "requirement_ids": [
+            "req-viterbi"
+          ],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-18-material",
+              "anchor": {
+                "type": "page",
+                "value": 27
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-18-material",
+              "anchor": {
+                "type": "page",
+                "value": 28
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-18-material",
+              "anchor": {
+                "type": "page",
+                "value": 30
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p4",
+          "status": "pass",
+          "requirement_ids": [
+            "req-dbn"
+          ],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-18-material",
+              "anchor": {
+                "type": "page",
+                "value": 33
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-18-material",
+              "anchor": {
+                "type": "page",
+                "value": 34
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-18-material",
+              "anchor": {
+                "type": "page",
+                "value": 35
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p5",
+          "status": "pass",
+          "requirement_ids": [
+            "req-particle"
+          ],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-18-material",
+              "anchor": {
+                "type": "page",
+                "value": 52
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-18-material",
+              "anchor": {
+                "type": "page",
+                "value": 53
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-18-material",
+              "anchor": {
+                "type": "page",
+                "value": 55
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-18-material",
+              "anchor": {
+                "type": "page",
+                "value": 56
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p6",
+          "status": "pass",
+          "requirement_ids": [
+            "req-particle",
+            "req-dbn"
+          ],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-18-material",
+              "anchor": {
+                "type": "page",
+                "value": 52
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-18-material",
+              "anchor": {
+                "type": "page",
+                "value": 53
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-18-material",
+              "anchor": {
+                "type": "page",
+                "value": 59
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-18-material",
+              "anchor": {
+                "type": "page",
+                "value": 61
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        }
+      ],
+      "counts": {
+        "total": 6,
+        "pass": 6,
+        "blocker": 0
+      },
+      "source_chunk_count": 63,
+      "review_checkpoint": {
+        "quality_mode": "fast",
+        "selected_page_count": 63,
+        "actual_reviewed_page_count": 63,
+        "independent_audit_result": "pass"
+      },
+      "source_or_checkpoint_anomalies": []
+    },
+    {
+      "unit_id": "lecture-19",
+      "title": "Rational Decisions：效用、决策网络与信息价值",
+      "item_results": [
+        {
+          "practice_id": "p1-umbrella-eu",
+          "status": "pass",
+          "requirement_ids": [
+            "req-decision"
+          ],
+          "concept_ids": [
+            "c-decision-network",
+            "c-meu"
+          ],
+          "opportunity_ids": [
+            "opp-meu-umbrella"
+          ],
+          "objective_ids": [
+            "obj-decision"
+          ],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-19-material",
+              "anchor": {
+                "type": "page",
+                "value": 22
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p2-vpi",
+          "status": "pass",
+          "requirement_ids": [
+            "req-information"
+          ],
+          "concept_ids": [
+            "c-vpi"
+          ],
+          "opportunity_ids": [
+            "opp-vpi"
+          ],
+          "objective_ids": [
+            "obj-information"
+          ],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-19-material",
+              "anchor": {
+                "type": "page",
+                "value": 25
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p3-discount",
+          "status": "pass",
+          "requirement_ids": [
+            "req-sequence"
+          ],
+          "concept_ids": [
+            "c-discount"
+          ],
+          "opportunity_ids": [
+            "opp-discount"
+          ],
+          "objective_ids": [
+            "obj-sequence"
+          ],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-19-material",
+              "anchor": {
+                "type": "page",
+                "value": 17
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p4-shaping",
+          "status": "pass",
+          "requirement_ids": [
+            "req-sequence"
+          ],
+          "concept_ids": [
+            "c-shaping"
+          ],
+          "opportunity_ids": [
+            "opp-shaping"
+          ],
+          "objective_ids": [
+            "obj-sequence"
+          ],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-19-material",
+              "anchor": {
+                "type": "page",
+                "value": 18
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p5-risk",
+          "status": "pass",
+          "requirement_ids": [
+            "req-preference"
+          ],
+          "concept_ids": [
+            "c-risk"
+          ],
+          "opportunity_ids": [
+            "opp-risk"
+          ],
+          "objective_ids": [
+            "obj-preference"
+          ],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-19-material",
+              "anchor": {
+                "type": "page",
+                "value": 13
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p6-scale",
+          "status": "pass",
+          "requirement_ids": [
+            "req-utility"
+          ],
+          "concept_ids": [
+            "c-ordinal-cardinal"
+          ],
+          "opportunity_ids": [
+            "opp-scale"
+          ],
+          "objective_ids": [
+            "obj-utility"
+          ],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-19-material",
+              "anchor": {
+                "type": "page",
+                "value": 4
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        }
+      ],
+      "counts": {
+        "total": 6,
+        "pass": 6,
+        "blocker": 0
+      },
+      "source_chunk_count": 28,
+      "review_checkpoint": {
+        "quality_mode": "xhigh",
+        "selected_page_count": 28,
+        "actual_reviewed_page_count": 28,
+        "independent_audit_result": "pass"
+      },
+      "source_or_checkpoint_anomalies": []
+    },
+    {
+      "unit_id": "lecture-20",
+      "title": "Machine Learning I: Decision trees and linear regression",
+      "item_results": [
+        {
+          "practice_id": "p1",
+          "status": "pass",
+          "requirement_ids": [
+            "req-supervised"
+          ],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-20-material",
+              "anchor": {
+                "type": "page",
+                "value": 9
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p2",
+          "status": "pass",
+          "requirement_ids": [
+            "req-trees"
+          ],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-20-material",
+              "anchor": {
+                "type": "page",
+                "value": 23
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-20-material",
+              "anchor": {
+                "type": "page",
+                "value": 24
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p3",
+          "status": "pass",
+          "requirement_ids": [
+            "req-gain"
+          ],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-20-material",
+              "anchor": {
+                "type": "page",
+                "value": 30
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-20-material",
+              "anchor": {
+                "type": "page",
+                "value": 31
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-20-material",
+              "anchor": {
+                "type": "page",
+                "value": 32
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p4",
+          "status": "pass",
+          "requirement_ids": [
+            "req-eval"
+          ],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-20-material",
+              "anchor": {
+                "type": "page",
+                "value": 35
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p5",
+          "status": "pass",
+          "requirement_ids": [
+            "req-regression"
+          ],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-20-material",
+              "anchor": {
+                "type": "page",
+                "value": 38
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-20-material",
+              "anchor": {
+                "type": "page",
+                "value": 39
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-20-material",
+              "anchor": {
+                "type": "page",
+                "value": 40
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p6",
+          "status": "pass",
+          "requirement_ids": [
+            "req-trees"
+          ],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-20-material",
+              "anchor": {
+                "type": "page",
+                "value": 28
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        }
+      ],
+      "counts": {
+        "total": 6,
+        "pass": 6,
+        "blocker": 0
+      },
+      "source_chunk_count": 41,
+      "review_checkpoint": {
+        "quality_mode": "fast",
+        "selected_page_count": 41,
+        "actual_reviewed_page_count": 41,
+        "independent_audit_result": "pass"
+      },
+      "source_or_checkpoint_anomalies": []
+    },
+    {
+      "unit_id": "lecture-21",
+      "title": "ML II: Naive Bayes and Bayesian Learning",
+      "item_results": [
+        {
+          "practice_id": "practice-1",
+          "status": "pass",
+          "requirement_ids": [
+            "r1"
+          ],
+          "concept_ids": [
+            "c1"
+          ],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-21-material",
+              "anchor": {
+                "type": "page",
+                "value": 2
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "practice-2",
+          "status": "pass",
+          "requirement_ids": [
+            "r2"
+          ],
+          "concept_ids": [
+            "c2"
+          ],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-21-material",
+              "anchor": {
+                "type": "page",
+                "value": 5
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-21-material",
+              "anchor": {
+                "type": "page",
+                "value": 7
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "practice-3",
+          "status": "pass",
+          "requirement_ids": [
+            "r3"
+          ],
+          "concept_ids": [
+            "c3"
+          ],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-21-material",
+              "anchor": {
+                "type": "page",
+                "value": 10
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-21-material",
+              "anchor": {
+                "type": "page",
+                "value": 11
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-21-material",
+              "anchor": {
+                "type": "page",
+                "value": 13
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "practice-4",
+          "status": "pass",
+          "requirement_ids": [
+            "r5"
+          ],
+          "concept_ids": [
+            "c5"
+          ],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-21-material",
+              "anchor": {
+                "type": "page",
+                "value": 16
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-21-material",
+              "anchor": {
+                "type": "page",
+                "value": 20
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "practice-5",
+          "status": "pass",
+          "requirement_ids": [
+            "r6"
+          ],
+          "concept_ids": [
+            "c6"
+          ],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-21-material",
+              "anchor": {
+                "type": "page",
+                "value": 23
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-21-material",
+              "anchor": {
+                "type": "page",
+                "value": 24
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        }
+      ],
+      "counts": {
+        "total": 5,
+        "pass": 5,
+        "blocker": 0
+      },
+      "source_chunk_count": 27,
+      "review_checkpoint": {
+        "quality_mode": "fast",
+        "selected_page_count": 12,
+        "actual_reviewed_page_count": 12,
+        "independent_audit_result": null
+      },
+      "source_or_checkpoint_anomalies": [
+        "review-plan independent_audit_result is absent; this scan is semantic and does not certify the separate review-plan gate."
+      ]
+    },
+    {
+      "unit_id": "lecture-22",
+      "title": "ML III: Naive Bayes and Bayesian Learning, continued",
+      "item_results": [
+        {
+          "practice_id": "practice-1",
+          "status": "pass",
+          "requirement_ids": [
+            "r1"
+          ],
+          "concept_ids": [
+            "c1"
+          ],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-22-material",
+              "anchor": {
+                "type": "page",
+                "value": 1
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-22-material",
+              "anchor": {
+                "type": "page",
+                "value": 2
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "practice-2",
+          "status": "pass",
+          "requirement_ids": [
+            "r1"
+          ],
+          "concept_ids": [
+            "c2"
+          ],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-22-material",
+              "anchor": {
+                "type": "page",
+                "value": 2
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "practice-3",
+          "status": "pass",
+          "requirement_ids": [
+            "r2"
+          ],
+          "concept_ids": [
+            "c3"
+          ],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-22-material",
+              "anchor": {
+                "type": "page",
+                "value": 3
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-22-material",
+              "anchor": {
+                "type": "page",
+                "value": 4
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-22-material",
+              "anchor": {
+                "type": "page",
+                "value": 5
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "practice-4",
+          "status": "pass",
+          "requirement_ids": [
+            "r2"
+          ],
+          "concept_ids": [
+            "c4"
+          ],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-22-material",
+              "anchor": {
+                "type": "page",
+                "value": 4
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-22-material",
+              "anchor": {
+                "type": "page",
+                "value": 5
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "practice-5",
+          "status": "pass",
+          "requirement_ids": [
+            "r3"
+          ],
+          "concept_ids": [
+            "c5"
+          ],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-22-material",
+              "anchor": {
+                "type": "page",
+                "value": 5
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        }
+      ],
+      "counts": {
+        "total": 5,
+        "pass": 5,
+        "blocker": 0
+      },
+      "source_chunk_count": 5,
+      "review_checkpoint": {
+        "quality_mode": "fast",
+        "selected_page_count": 5,
+        "actual_reviewed_page_count": 5,
+        "independent_audit_result": "pending_independent_xhigh_reaudit"
+      },
+      "source_or_checkpoint_anomalies": [
+        "source chunks.jsonl contains 5 page-slice chunks (intentional pypdf-page-slice-v1 transformation noted by input-integrity audit)."
+      ]
+    },
+    {
+      "unit_id": "lecture-23",
+      "title": "Deep Learning",
+      "item_results": [
+        {
+          "practice_id": "practice-1",
+          "status": "pass",
+          "requirement_ids": [],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-23-material",
+              "anchor": {
+                "type": "page",
+                "value": 3
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-23-material",
+              "anchor": {
+                "type": "page",
+                "value": 4
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "practice-2",
+          "status": "pass",
+          "requirement_ids": [],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-23-material",
+              "anchor": {
+                "type": "page",
+                "value": 5
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-23-material",
+              "anchor": {
+                "type": "page",
+                "value": 6
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-23-material",
+              "anchor": {
+                "type": "page",
+                "value": 7
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "practice-3",
+          "status": "blocker",
+          "requirement_ids": [],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-23-material",
+              "anchor": {
+                "type": "page",
+                "value": 12
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-23-material",
+              "anchor": {
+                "type": "page",
+                "value": 14
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-23-material",
+              "anchor": {
+                "type": "page",
+                "value": 15
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": false,
+            "self_contained": false,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": [
+            {
+              "code": "underspecified_setting",
+              "reason": "题面先把输入写成向量 z=(2,-1)，随后又要求对标量 z=0.2 与 z=-0.2 计算输出；未说明这两个标量是否为该向量的线性组合结果，导致待评估输入不唯一。",
+              "missing_condition": "明确 z 是已算出的标量激活输入，或给出产生 z=0.2/-0.2 的两组输入与权重，并保留 z=0 的边界定义。",
+              "repair_prescription": "将题面改为“给定标量线性输入 z∈{0.2,-0.2}（另检查 z=0）”，删除向量 z=(2,-1)；或者给出 w 与两组 x，使 w·x 分别等于这两个值。",
+              "source_anchors": [
+                {
+                  "source_id": "ucb-cs188-spring-2026-lecture-23-material",
+                  "anchor": {
+                    "type": "page",
+                    "value": 12
+                  }
+                },
+                {
+                  "source_id": "ucb-cs188-spring-2026-lecture-23-material",
+                  "anchor": {
+                    "type": "page",
+                    "value": 14
+                  }
+                },
+                {
+                  "source_id": "ucb-cs188-spring-2026-lecture-23-material",
+                  "anchor": {
+                    "type": "page",
+                    "value": 15
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "counts": {
+        "total": 3,
+        "pass": 2,
+        "blocker": 1
+      },
+      "source_chunk_count": 30,
+      "review_checkpoint": {
+        "quality_mode": "fast",
+        "selected_page_count": 8,
+        "actual_reviewed_page_count": 8,
+        "independent_audit_result": null
+      },
+      "source_or_checkpoint_anomalies": [
+        "cited source set includes low_extracted_text pages; semantic judgment retained the page anchor but did not infer hidden or absent text.",
+        "review-plan independent_audit_result is absent; this scan is semantic and does not certify the separate review-plan gate."
+      ]
+    },
+    {
+      "unit_id": "lecture-24",
+      "title": "LLMs I: Language Models",
+      "item_results": [
+        {
+          "practice_id": "p1",
+          "status": "pass",
+          "requirement_ids": [
+            "r1"
+          ],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-24-material",
+              "anchor": {
+                "type": "page",
+                "value": 8
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p2",
+          "status": "pass",
+          "requirement_ids": [
+            "r2"
+          ],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-24-material",
+              "anchor": {
+                "type": "page",
+                "value": 13
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-24-material",
+              "anchor": {
+                "type": "page",
+                "value": 15
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p3",
+          "status": "pass",
+          "requirement_ids": [
+            "r3"
+          ],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-24-material",
+              "anchor": {
+                "type": "page",
+                "value": 18
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-24-material",
+              "anchor": {
+                "type": "page",
+                "value": 19
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p4",
+          "status": "pass",
+          "requirement_ids": [
+            "r4"
+          ],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-24-material",
+              "anchor": {
+                "type": "page",
+                "value": 27
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-24-material",
+              "anchor": {
+                "type": "page",
+                "value": 32
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-24-material",
+              "anchor": {
+                "type": "page",
+                "value": 35
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        }
+      ],
+      "counts": {
+        "total": 4,
+        "pass": 4,
+        "blocker": 0
+      },
+      "source_chunk_count": 37,
+      "review_checkpoint": {
+        "quality_mode": "fast",
+        "selected_page_count": 11,
+        "actual_reviewed_page_count": 11,
+        "independent_audit_result": null
+      },
+      "source_or_checkpoint_anomalies": [
+        "review-plan independent_audit_result is absent; this scan is semantic and does not certify the separate review-plan gate."
+      ]
+    },
+    {
+      "unit_id": "lecture-25",
+      "title": "LLMs II: Fine-Tuning and Aligning",
+      "item_results": [
+        {
+          "practice_id": "p1",
+          "status": "pass",
+          "requirement_ids": [
+            "r1"
+          ],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-25-material",
+              "anchor": {
+                "type": "page",
+                "value": 4
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-25-material",
+              "anchor": {
+                "type": "page",
+                "value": 13
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p2",
+          "status": "pass",
+          "requirement_ids": [
+            "r2"
+          ],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-25-material",
+              "anchor": {
+                "type": "page",
+                "value": 17
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-25-material",
+              "anchor": {
+                "type": "page",
+                "value": 18
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p3",
+          "status": "pass",
+          "requirement_ids": [
+            "r3"
+          ],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-25-material",
+              "anchor": {
+                "type": "page",
+                "value": 29
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-25-material",
+              "anchor": {
+                "type": "page",
+                "value": 30
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p4",
+          "status": "pass",
+          "requirement_ids": [
+            "r4"
+          ],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-25-material",
+              "anchor": {
+                "type": "page",
+                "value": 32
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-25-material",
+              "anchor": {
+                "type": "page",
+                "value": 35
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-25-material",
+              "anchor": {
+                "type": "page",
+                "value": 36
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-25-material",
+              "anchor": {
+                "type": "page",
+                "value": 38
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        }
+      ],
+      "counts": {
+        "total": 4,
+        "pass": 4,
+        "blocker": 0
+      },
+      "source_chunk_count": 43,
+      "review_checkpoint": {
+        "quality_mode": "fast",
+        "selected_page_count": 17,
+        "actual_reviewed_page_count": 17,
+        "independent_audit_result": "pass_with_warnings"
+      },
+      "source_or_checkpoint_anomalies": []
+    },
+    {
+      "unit_id": "lecture-26",
+      "title": "贝叶斯模型在全球核监测中的应用",
+      "item_results": [
+        {
+          "practice_id": "p1",
+          "status": "pass",
+          "requirement_ids": [],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-26-material",
+              "anchor": {
+                "type": "page",
+                "value": 22
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p2",
+          "status": "pass",
+          "requirement_ids": [],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-26-material",
+              "anchor": {
+                "type": "page",
+                "value": 24
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-26-material",
+              "anchor": {
+                "type": "page",
+                "value": 23
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p3",
+          "status": "pass",
+          "requirement_ids": [],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-26-material",
+              "anchor": {
+                "type": "page",
+                "value": 45
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "p4",
+          "status": "pass",
+          "requirement_ids": [],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-26-material",
+              "anchor": {
+                "type": "page",
+                "value": 55
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-26-material",
+              "anchor": {
+                "type": "page",
+                "value": 56
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-26-material",
+              "anchor": {
+                "type": "page",
+                "value": 57
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-26-material",
+              "anchor": {
+                "type": "page",
+                "value": 61
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        }
+      ],
+      "counts": {
+        "total": 4,
+        "pass": 4,
+        "blocker": 0
+      },
+      "source_chunk_count": 64,
+      "review_checkpoint": {
+        "quality_mode": "fast",
+        "selected_page_count": 20,
+        "actual_reviewed_page_count": 20,
+        "independent_audit_result": "pass"
+      },
+      "source_or_checkpoint_anomalies": [
+        "review-plan independent_audit_result is absent; this scan is semantic and does not certify the separate review-plan gate."
+      ]
+    },
+    {
+      "unit_id": "lecture-27",
+      "title": "What If We Succeed?",
+      "item_results": [
+        {
+          "practice_id": "practice-1",
+          "status": "blocker",
+          "requirement_ids": [],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-27-material",
+              "anchor": {
+                "type": "page",
+                "value": 2
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-27-material",
+              "anchor": {
+                "type": "page",
+                "value": 3
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": false,
+            "self_contained": false,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": [
+            {
+              "code": "underspecified_setting",
+              "reason": "给出“订单缺书且旁边有易碎品”与取货/等待动作，但没有动作转移、损坏风险、完成时间或代价，无法由目标推出应选哪一个动作。",
+              "missing_condition": "每个动作在该状态下的后果/概率、约束代价以及完成订单与保护易碎品的优先级或效用。",
+              "repair_prescription": "补充一个有限动作模型，例如取货成功/损坏的后果与等待的订单延迟，并给出比较规则；再要求选择唯一最优或说明平局。",
+              "source_anchors": [
+                {
+                  "source_id": "ucb-cs188-spring-2026-lecture-27-material",
+                  "anchor": {
+                    "type": "page",
+                    "value": 2
+                  }
+                },
+                {
+                  "source_id": "ucb-cs188-spring-2026-lecture-27-material",
+                  "anchor": {
+                    "type": "page",
+                    "value": 3
+                  }
+                }
+              ]
+            },
+            {
+              "code": "unobservable_result",
+              "reason": "题面要求输出“取货/等待及理由”，但未定义可观察的成功、损坏或延迟判据；理由只能是任意叙述而非可证伪结果。",
+              "missing_condition": "动作后的可观察状态变量和验证阈值。",
+              "repair_prescription": "指定动作后要检查的状态（订单是否完成、易碎品是否完好、耗时是否超过上限）及其判定结果。",
+              "source_anchors": [
+                {
+                  "source_id": "ucb-cs188-spring-2026-lecture-27-material",
+                  "anchor": {
+                    "type": "page",
+                    "value": 2
+                  }
+                },
+                {
+                  "source_id": "ucb-cs188-spring-2026-lecture-27-material",
+                  "anchor": {
+                    "type": "page",
+                    "value": 3
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "practice_id": "practice-2",
+          "status": "pass",
+          "requirement_ids": [],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-27-material",
+              "anchor": {
+                "type": "page",
+                "value": 5
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-27-material",
+              "anchor": {
+                "type": "page",
+                "value": 9
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "practice-3",
+          "status": "pass",
+          "requirement_ids": [],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-27-material",
+              "anchor": {
+                "type": "page",
+                "value": 16
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-27-material",
+              "anchor": {
+                "type": "page",
+                "value": 18
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-27-material",
+              "anchor": {
+                "type": "page",
+                "value": 19
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "practice-4",
+          "status": "pass",
+          "requirement_ids": [],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-27-material",
+              "anchor": {
+                "type": "page",
+                "value": 29
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-27-material",
+              "anchor": {
+                "type": "page",
+                "value": 31
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-27-material",
+              "anchor": {
+                "type": "page",
+                "value": 34
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        },
+        {
+          "practice_id": "practice-5",
+          "status": "pass",
+          "requirement_ids": [],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-27-material",
+              "anchor": {
+                "type": "page",
+                "value": 35
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-27-material",
+              "anchor": {
+                "type": "page",
+                "value": 36
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-27-material",
+              "anchor": {
+                "type": "page",
+                "value": 37
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-27-material",
+              "anchor": {
+                "type": "page",
+                "value": 38
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        }
+      ],
+      "counts": {
+        "total": 5,
+        "pass": 4,
+        "blocker": 1
+      },
+      "source_chunk_count": 56,
+      "review_checkpoint": {
+        "quality_mode": "fast",
+        "selected_page_count": 8,
+        "actual_reviewed_page_count": 10,
+        "independent_audit_result": null
+      },
+      "source_or_checkpoint_anomalies": [
+        "cited source set includes low_extracted_text pages; semantic judgment retained the page anchor but did not infer hidden or absent text.",
+        "review-plan independent_audit_result is absent; this scan is semantic and does not certify the separate review-plan gate."
+      ]
+    },
+    {
+      "unit_id": "lecture-28",
+      "title": "Further Thoughts",
+      "item_results": [
+        {
+          "practice_id": "practice-1",
+          "status": "blocker",
+          "requirement_ids": [],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+              "anchor": {
+                "type": "page",
+                "value": 2
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+              "anchor": {
+                "type": "page",
+                "value": 6
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+              "anchor": {
+                "type": "page",
+                "value": 7
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+              "anchor": {
+                "type": "page",
+                "value": 77
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": false,
+            "self_contained": false,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": [
+            {
+              "code": "underspecified_setting",
+              "reason": "路线 A/B 只给预计步数和可见性，没有目标函数或安全/时间代价，不能确定应选 A 还是 B；题目要求“可观察选择结果”却没有足够决策数据。",
+              "missing_condition": "路线后果的概率/代价，以及在到达时间与可见性之间的选择标准。",
+              "repair_prescription": "补充明确的目标与数值，例如最小化期望到达步数并对不可见前方设置碰撞风险；给出两路线风险/代价后要求计算并选择。",
+              "source_anchors": [
+                {
+                  "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+                  "anchor": {
+                    "type": "page",
+                    "value": 2
+                  }
+                },
+                {
+                  "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+                  "anchor": {
+                    "type": "page",
+                    "value": 6
+                  }
+                },
+                {
+                  "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+                  "anchor": {
+                    "type": "page",
+                    "value": 7
+                  }
+                },
+                {
+                  "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+                  "anchor": {
+                    "type": "page",
+                    "value": 77
+                  }
+                }
+              ]
+            },
+            {
+              "code": "unobservable_result",
+              "reason": "“planning 比较后果”和“learning 更新估计”没有定义具体观测、反馈或更新量，传感器恢复后也不能核验哪一栏发生了什么变化。",
+              "missing_condition": "路线执行反馈、历史样本字段/更新规则，以及传感器可见性对应的 belief 变量。",
+              "repair_prescription": "给出一条历史经验和一个 belief 更新规则，并指定传感器恢复前后要报告的 belief、预测代价和最终动作。",
+              "source_anchors": [
+                {
+                  "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+                  "anchor": {
+                    "type": "page",
+                    "value": 2
+                  }
+                },
+                {
+                  "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+                  "anchor": {
+                    "type": "page",
+                    "value": 6
+                  }
+                },
+                {
+                  "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+                  "anchor": {
+                    "type": "page",
+                    "value": 7
+                  }
+                },
+                {
+                  "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+                  "anchor": {
+                    "type": "page",
+                    "value": 77
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "practice_id": "practice-2",
+          "status": "blocker",
+          "requirement_ids": [],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+              "anchor": {
+                "type": "page",
+                "value": 41
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+              "anchor": {
+                "type": "page",
+                "value": 42
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+              "anchor": {
+                "type": "page",
+                "value": 44
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+              "anchor": {
+                "type": "page",
+                "value": 45
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+              "anchor": {
+                "type": "page",
+                "value": 46
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+              "anchor": {
+                "type": "page",
+                "value": 47
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+              "anchor": {
+                "type": "page",
+                "value": 48
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": false,
+            "self_contained": false,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": [
+            {
+              "code": "underspecified_setting",
+              "reason": "题面只说 2-Down 的第 2 个字母与 1-Across 的第 2 个位置相交，没有给出该交叉位置的字母或 2-Down 候选；因此无法从 {MEW,PURR} 与 {MEW,MIAOU} 唯一过滤候选。",
+              "missing_condition": "2-Down 第 2 个位置的已知字母，或完整的 2-Down 候选集合/交叉约束。",
+              "repair_prescription": "补充例如“2-Down 第2个字母为 E”，并要求按位置过滤；若要比较两种 QA，明确 closed/open 两组候选的交集和删除原因。",
+              "source_anchors": [
+                {
+                  "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+                  "anchor": {
+                    "type": "page",
+                    "value": 41
+                  }
+                },
+                {
+                  "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+                  "anchor": {
+                    "type": "page",
+                    "value": 42
+                  }
+                },
+                {
+                  "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+                  "anchor": {
+                    "type": "page",
+                    "value": 44
+                  }
+                },
+                {
+                  "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+                  "anchor": {
+                    "type": "page",
+                    "value": 45
+                  }
+                },
+                {
+                  "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+                  "anchor": {
+                    "type": "page",
+                    "value": 46
+                  }
+                },
+                {
+                  "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+                  "anchor": {
+                    "type": "page",
+                    "value": 47
+                  }
+                },
+                {
+                  "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+                  "anchor": {
+                    "type": "page",
+                    "value": 48
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "practice_id": "practice-3",
+          "status": "pass",
+          "requirement_ids": [],
+          "concept_ids": [],
+          "opportunity_ids": [],
+          "objective_ids": [],
+          "source_anchors": [
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+              "anchor": {
+                "type": "page",
+                "value": 49
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+              "anchor": {
+                "type": "page",
+                "value": 54
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+              "anchor": {
+                "type": "page",
+                "value": 55
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+              "anchor": {
+                "type": "page",
+                "value": 56
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+              "anchor": {
+                "type": "page",
+                "value": 57
+              }
+            },
+            {
+              "source_id": "ucb-cs188-spring-2026-lecture-28-material",
+              "anchor": {
+                "type": "page",
+                "value": 58
+              }
+            }
+          ],
+          "protocol_checks": {
+            "concrete_setting": true,
+            "self_contained": true,
+            "transferable_concept": true,
+            "hint_expected_evaluation_aligned": true,
+            "source_anchors_relevant": true,
+            "new_formative_task": true
+          },
+          "blockers": []
+        }
+      ],
+      "counts": {
+        "total": 3,
+        "pass": 1,
+        "blocker": 2
+      },
+      "source_chunk_count": 79,
+      "review_checkpoint": {
+        "quality_mode": "fast",
+        "selected_page_count": 31,
+        "actual_reviewed_page_count": 50,
+        "independent_audit_result": null
+      },
+      "source_or_checkpoint_anomalies": [
+        "review-plan independent_audit_result is absent; this scan is semantic and does not certify the separate review-plan gate.",
+        "actual_reviewed_pages exceeds selected_pages; preserve for structural reconciliation."
+      ]
+    }
+  ],
+  "counts": {
+    "units": 14,
+    "items": 68,
+    "pass_items": 64,
+    "blocker_items": 4,
+    "blocker_findings": 6
+  },
+  "deferred_structural_findings": [
+    {
+      "code": "missing_explicit_practice_mapping_ids",
+      "scope": [
+        "lecture-16",
+        "lecture-23",
+        "lecture-26",
+        "lecture-27",
+        "lecture-28"
+      ],
+      "reason": "03-practice-flow.json items do not consistently carry requirement/concept/opportunity IDs; this is recorded without converting it into a semantic blocker where the 01/02 content and source anchors establish alignment."
+    },
+    {
+      "code": "independent_review_metadata_incomplete",
+      "scope": [
+        "lecture-16",
+        "lecture-21",
+        "lecture-23",
+        "lecture-24",
+        "lecture-26",
+        "lecture-27",
+        "lecture-28"
+      ],
+      "reason": "review-plan.json lacks a completed independent_audit_result in the inspected checkpoint; this scan does not rewrite or certify that gate."
+    },
+    {
+      "code": "low_extracted_text_or_review_range_anomaly",
+      "scope": [
+        "lecture-23",
+        "lecture-27",
+        "lecture-28"
+      ],
+      "reason": "Cited low-text pages and/or selected-versus-actual review-page differences require separate structural/visual reconciliation; no hidden text was used as evidence."
+    }
+  ]
+}

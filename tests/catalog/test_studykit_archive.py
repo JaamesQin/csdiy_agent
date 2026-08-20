@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import json
 import sqlite3
 from pathlib import Path
 
 import pytest
 
 from app.agent.contracts import CourseContext
+from app.catalog.archive import StudyKitArchive
 from app.catalog.courses import ReviewedCourseCatalogStore
 from app.catalog.studykits import (
     ArchivedStudyKitStore,
@@ -17,6 +19,7 @@ from app.course_navigation.service import CourseNavigationService
 from app.learning.service import StudyKitLookupService
 from app.profile.contracts import LearnerProfile
 from app.protocol.schemas import ChatMessage
+from scripts.archive_studykit_builds import archive_builds
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -100,11 +103,31 @@ def _copy_approved_documents(
     return path
 
 
-def test_real_archive_is_validated_draft_and_not_online_ready() -> None:
+def test_real_archive_exposes_only_approved_documents() -> None:
     store = ArchivedStudyKitStore(REAL_ARCHIVE)
 
-    assert store.list_ready() == []
-    assert store.resolve_context(course_id="mit-6.7960-fall-2024") is None
+    ready = store.list_ready()
+
+    assert len(ready) == 220
+    assert {item.course_id for item in ready} == {
+        "cambridge-semantics-of-programming-languages-2025-26",
+        "mit-6-042j-spring-2024",
+        "mit-6.7960-fall-2024",
+        "mit-6.s081-fall-2021",
+        "ucb-cs168-spring-2026",
+        "ucb-cs186-spring-2026",
+        "ucb-cs188-spring-2026",
+        "ucb-cs61a-summer-2026",
+        "ucb-cs61c-spring-2026",
+    }
+    assert store.resolve_context(
+        course_id="ucb-cs186-spring-2026", unit_id="note-03"
+    ) == CourseContext(
+        course_id="ucb-cs186-spring-2026",
+        course_version="spring-2026",
+        unit_id="note-03",
+        title="磁盘、文件与记录布局",
+    )
 
 
 def test_approved_archive_supports_both_portable_schema_families(tmp_path: Path) -> None:
@@ -210,7 +233,7 @@ async def test_six_learning_capabilities_accept_archive_portable_documents(
         course_id=V02_IDENTITY[0], course_version=V02_IDENTITY[1], unit_id=V02_IDENTITY[2]
     )
 
-    navigation_answer = navigation.navigate(
+    navigation_answer = await navigation.navigate(
         text="查看 MIT 6.7960", profile=LearnerProfile()
     )
     lookup = await learning.lookup(messages=_messages("查看 StudyKit"), course_context=context_v01)
@@ -248,3 +271,75 @@ def test_page_reference_does_not_become_unit_for_archive_context(tmp_path: Path)
     assert context is not None
     assert context.course_id == V02_IDENTITY[0]
     assert context.unit_id is None
+
+
+def _write_json(path: Path, value: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(value), encoding="utf-8")
+
+
+def _legacy_build(root: Path, build_id: str, course_id: str, unit_id: str) -> Path:
+    build = root / build_id
+    _write_json(build / "result.json", {"status": "succeeded", "build_id": build_id})
+    _write_json(build / "run.json", {"quality_mode": "standard", "delivery_policy": "draft"})
+    unit = build / "courses" / course_id / "units" / unit_id
+    _write_json(
+        unit / "05-studykit.json",
+        {
+            "course_id": course_id,
+            "course_version": "fall-2026",
+            "unit_id": unit_id,
+            "title": "Test unit",
+            "status": "draft",
+        },
+    )
+    _write_json(unit / "validation.json", {"valid": True})
+    _write_json(unit / "review-validation.json", {"status": "passed"})
+    (unit / "studykit.md").write_text("# Test\n", encoding="utf-8")
+    return build
+
+
+def test_archive_round_trip_and_ready_boundary(tmp_path: Path) -> None:
+    build_id = "a" * 64
+    build = _legacy_build(tmp_path, build_id, "test-course-fall-2026", "lecture-01")
+    database = tmp_path / "studykits.sqlite3"
+
+    report = archive_builds(database, [(build, True)])
+    archive = StudyKitArchive(database)
+
+    assert report["build_count"] == 1
+    assert report["document_count"] == 1
+    assert archive.verify_integrity() == []
+    assert archive.get_document(
+        "test-course-fall-2026", "fall-2026", "lecture-01"
+    ) is None
+    document = archive.get_document(
+        "test-course-fall-2026", "fall-2026", "lecture-01", ready_only=False
+    )
+    assert document is not None
+    assert document["unit_id"] == "lecture-01"
+
+
+def test_reimport_replaces_same_identity_and_prunes_unselected(tmp_path: Path) -> None:
+    first = _legacy_build(tmp_path, "a" * 64, "course-a", "lecture-01")
+    other = _legacy_build(tmp_path, "b" * 64, "course-b", "lecture-01")
+    database = tmp_path / "studykits.sqlite3"
+    archive_builds(database, [(first, True), (other, True)])
+
+    replacement = _legacy_build(tmp_path, "c" * 64, "course-a", "lecture-02")
+    archive_builds(database, [(replacement, True)])
+
+    builds = StudyKitArchive(database).list_builds()
+    assert [(item.build_id, item.course_id, item.unit_count) for item in builds] == [
+        ("c" * 64, "course-a", 1)
+    ]
+
+
+def test_approved_import_requires_document_level_human_approval(tmp_path: Path) -> None:
+    build = _legacy_build(tmp_path, "d" * 64, "course-a", "lecture-01")
+    with pytest.raises(ValueError, match="human_review_status=approved"):
+        archive_builds(
+            tmp_path / "studykits.sqlite3",
+            [(build, True)],
+            review_status="approved",
+        )

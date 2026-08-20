@@ -59,18 +59,21 @@
 
 ## 5. 数据库 Schema 与迁移
 
-SQLite `PRAGMA user_version=2`。共享迁移层创建：
+SQLite `PRAGMA user_version=3`。共享迁移层创建：
 
 - `users`：账号 UUID、显示/规范化用户名、密码 hash、时间和禁用标记。
 - `auth_sessions`：令牌摘要、用户外键、创建/过期/撤销时间；账号删除时会话级联删除。
 - `profile_facts`：按受信 subject 存储最小画像事实和证据摘录。
+- `conversation_states`：按受信命名空间与 `sessionId` 的 HMAC 摘要存储最小连续状态、CAS revision 和滑动过期时间。
 
 Schema v1 首次启动时在事务内执行：
 
 1. 保留所有画像事实；
 2. 将旧 `user_id` 改为 `legacy:<旧值>`；
-3. 创建账号和会话表；
-4. 设置版本 2。
+3. 创建账号和 Cookie 会话表；
+4. 创建对话连续状态表并设置版本 3。
+
+Schema v2 升级 v3 时只增加 `conversation_states`，不再改写已有 `profile_facts.user_id`，避免重复添加 `legacy:` 前缀。
 
 未知版本拒绝服务启动。升级前仍建议使用 SQLite online backup 或停止服务后复制数据库及 `-wal`/`-shm` 文件；不要只在服务运行时复制主文件。
 

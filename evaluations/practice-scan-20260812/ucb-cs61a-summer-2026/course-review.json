@@ -1,0 +1,334 @@
+{
+  "schema_version": "practice-course-review-v1",
+  "course_id": "ucb-cs61a-summer-2026",
+  "build_id": "db465e2135a7d4c31a27b046b9378cb8476f12dd3a9813ca5ab6df402179d966",
+  "reviewed_range_reports": [
+    {
+      "report": "range-01-14.json",
+      "unit_ids": [
+        "lecture-01",
+        "lecture-02",
+        "lecture-03",
+        "lecture-04",
+        "lecture-05",
+        "lecture-06",
+        "lecture-07",
+        "lecture-08",
+        "lecture-09",
+        "lecture-10",
+        "lecture-11",
+        "lecture-12",
+        "lecture-13",
+        "lecture-14"
+      ],
+      "status_key": "verdict",
+      "reported_counts": {
+        "units": 14,
+        "items": 75,
+        "pass": 75,
+        "needs_repair": 0,
+        "fail": 0,
+        "blockers": 0
+      },
+      "normalized_counts": {
+        "total": 75,
+        "pass": 75,
+        "needs_repair": 0,
+        "blocker_items": 0,
+        "blocker_findings": 0
+      },
+      "unit_id_duplicates": [],
+      "item_id_duplicates_within_unit": [],
+      "missing_item_ids_vs_current_03": [],
+      "extra_item_ids_vs_current_03": []
+    },
+    {
+      "report": "range-15-28.json",
+      "unit_ids": [
+        "lecture-15",
+        "lecture-16",
+        "lecture-17",
+        "lecture-18",
+        "lecture-19",
+        "lecture-20",
+        "lecture-21",
+        "lecture-22",
+        "lecture-23",
+        "lecture-24",
+        "lecture-25",
+        "lecture-26",
+        "lecture-27",
+        "lecture-28"
+      ],
+      "status_key": "status",
+      "reported_counts": {
+        "units": 14,
+        "items": 64,
+        "pass": 63,
+        "blocker": 1
+      },
+      "normalized_counts": {
+        "total": 64,
+        "pass": 63,
+        "needs_repair": 0,
+        "blocker_items": 1,
+        "blocker_findings": 1
+      },
+      "unit_id_duplicates": [],
+      "item_id_duplicates_within_unit": [],
+      "missing_item_ids_vs_current_03": [],
+      "extra_item_ids_vs_current_03": []
+    }
+  ],
+  "manifest_unit_count": 28,
+  "scanned_unit_count": 28,
+  "item_counts": {
+    "total": 139,
+    "pass": 138,
+    "needs_repair": 0,
+    "blocker_items": 1,
+    "blocker_findings": 1
+  },
+  "coverage_gaps": [
+    {
+      "scope": "catalog_manifest_to_current_build_unit_directories",
+      "missing_unit_ids": [],
+      "unexpected_unit_ids": [],
+      "duplicate_unit_ids": [],
+      "status": "complete"
+    },
+    {
+      "scope": "two_reports_to_catalog_manifest",
+      "missing_unit_ids": [],
+      "unexpected_unit_ids": [],
+      "duplicate_unit_ids": [],
+      "status": "complete"
+    },
+    {
+      "scope": "reported_items_to_current_03_and_05",
+      "missing_item_ids": [],
+      "unexpected_item_ids": [],
+      "duplicate_item_ids_within_unit": [],
+      "duplicate_unit_item_pairs_across_reports": [],
+      "03_to_05_item_id_mismatches": [],
+      "status": "complete"
+    },
+    {
+      "scope": "unscoped_item_id_repetition",
+      "repeated_raw_item_ids": [
+        "p1",
+        "p2",
+        "p3",
+        "p4",
+        "practice-01",
+        "practice-02",
+        "practice-03",
+        "practice-04",
+        "practice-05",
+        "practice-06"
+      ],
+      "interpretation": "These IDs repeat across different units and are unique when scoped as (unit_id, item_id); they are not duplicate practice records."
+    }
+  ],
+  "independently_confirmed_findings": [
+    {
+      "kind": "semantic_blocker_confirmed",
+      "unit_id": "lecture-28",
+      "practice_id": "p4-ama-triage",
+      "verdict": "blocker",
+      "finding_code": "lecture_specific_dependency",
+      "secondary_code": "not_self_contained",
+      "current_artifacts": [
+        "outputs/ucb-cs61a-summer-2026/db465e2135a7d4c31a27b046b9378cb8476f12dd3a9813ca5ab6df402179d966/courses/ucb-cs61a-summer-2026/units/lecture-28/03-practice-flow.json",
+        "outputs/ucb-cs61a-summer-2026/db465e2135a7d4c31a27b046b9378cb8476f12dd3a9813ca5ab6df402179d966/courses/ucb-cs61a-summer-2026/units/lecture-28/05-studykit.json"
+      ],
+      "protocol_checks": {
+        "concrete_setting": false,
+        "all_necessary_conditions_restated": false,
+        "self_contained": false,
+        "transferable_concept": true,
+        "observable_result": true,
+        "hint_expected_evaluation_aligned": true,
+        "current_artifact_anchors_relevant": true,
+        "new_formative_task": true
+      },
+      "reason": "Both current practice checkpoints require the learner to select at least six questions from page 23, but neither reproduces the selectable question texts or supplies a bounded list. The learner must recover lecture text before the task can begin; citing page 23 does not supply a self-contained setting. The required cross-school question is likewise only identified by topic, while page 34 supplies a Berkeley-speaker caveat and Berkeley-only points, not a cross-school comparison.",
+      "current_source_anchors": [
+        {
+          "source_id": "ucb-cs61a-summer-2026-lecture-28-material",
+          "chunk_id": "ucb-cs61a-summer-2026-lecture-28-material-p023",
+          "anchor": {"type": "page", "value": 23}
+        },
+        {
+          "source_id": "ucb-cs61a-summer-2026-lecture-28-material",
+          "chunk_id": "ucb-cs61a-summer-2026-lecture-28-material-p034",
+          "anchor": {"type": "page", "value": 34}
+        }
+      ],
+      "direct_chunk_check": "Page 23 contains the AMA question list, including the cross-school question; page 34 contains the full cross-school question, the caveat that the speaker has only attended Berkeley, and Berkeley-specific observations. The prompt supplies none of those selectable question texts."
+    },
+    {
+      "kind": "sampled_passes_independently_confirmed",
+      "range_report": "range-01-14.json",
+      "sample_size": 5,
+      "protocol_checks_applied": [
+        "concrete_setting",
+        "all_necessary_conditions_restated",
+        "self_contained",
+        "transferable_concept_replacement_check",
+        "observable_result",
+        "hint_expected_evaluation_aligned",
+        "relevant_source_anchors",
+        "new_formative_task_without_assessed_answer"
+      ],
+      "items": [
+        {
+          "unit_id": "lecture-01",
+          "practice_id": "practice-04",
+          "verdict": "pass",
+          "source_pages": [30, 34, 35],
+          "note": "Concrete function bodies and four calls make display order and return values directly checkable; replacing the numeric input preserves the print-versus-return test."
+        },
+        {
+          "unit_id": "lecture-04",
+          "practice_id": "practice-01",
+          "verdict": "pass",
+          "source_pages": [7, 8, 10],
+          "note": "Lecture variable names are explicitly redefined with call order, frames, x=10 then x=100, and the deletion boundary; the replacement and changed-binding cases remain solvable without replaying a slide example."
+        },
+        {
+          "unit_id": "lecture-07",
+          "practice_id": "p2",
+          "verdict": "pass",
+          "source_pages": [16, 17, 18],
+          "note": "The nested list, shallow-copy operation, mutations, and equality/identity operands are fully supplied and yield observable intermediate states; the task tests the transferable aliasing distinction."
+        },
+        {
+          "unit_id": "lecture-12",
+          "practice_id": "practice-03-pytest",
+          "verdict": "pass",
+          "source_pages": [6, 8],
+          "note": "The test name, DEBUG print, empty-input IndexError, runner choice, and required output location are concrete enough for a static protocol answer; hint and evaluation do not claim execution or success."
+        },
+        {
+          "unit_id": "lecture-14",
+          "practice_id": "practice-06-integrated-refactor",
+          "verdict": "pass",
+          "source_pages": [7, 8, 18, 28, 30],
+          "note": "Parcel/ExpressParcel/Depot, numerical contracts, inputs, super chain, string outputs, and boundary cases are newly specified. The lecture's Artist/Album scenario is only a structural cue, not an answer replay."
+        }
+      ]
+    },
+    {
+      "kind": "sampled_passes_independently_confirmed",
+      "range_report": "range-15-28.json",
+      "sample_size": 5,
+      "protocol_checks_applied": [
+        "concrete_setting",
+        "all_necessary_conditions_restated",
+        "self_contained",
+        "transferable_concept_replacement_check",
+        "observable_result",
+        "hint_expected_evaluation_aligned",
+        "relevant_source_anchors",
+        "new_formative_task_without_assessed_answer"
+      ],
+      "items": [
+        {
+          "unit_id": "lecture-15",
+          "practice_id": "practice-05-tree-class",
+          "verdict": "pass",
+          "source_pages": [19, 20, 21, 22],
+          "note": "The Tree object, labels, branches, class/list representations, and invalid integer branch are explicit; changed-tree and empty-branch checks make the concept observable rather than a lecture replay."
+        },
+        {
+          "unit_id": "lecture-20",
+          "practice_id": "p1-parse-pipeline",
+          "verdict": "pass",
+          "source_pages": [12, 13],
+          "note": "The exact Scheme text is supplied, token and AST deliverables are observable, and the changed unary/binary expression plus extra-parenthesis boundary tests the stage distinction."
+        },
+        {
+          "unit_id": "lecture-23",
+          "practice_id": "p4-having-order",
+          "verdict": "pass",
+          "source_pages": [17, 23, 27, 29],
+          "note": "A new six-row sales table and complete query requirements are given; WHERE versus HAVING, aggregate results, LIMIT, and the tied-order boundary are independently checkable and explicitly marked as transfer."
+        },
+        {
+          "unit_id": "lecture-26",
+          "practice_id": "p3-sqli",
+          "verdict": "pass",
+          "source_pages": [28, 33],
+          "note": "The vulnerable query shape and the two requested data flows are concrete, while the parameterized interface and static-only constraint provide an observable defensive result without requiring a destructive payload or execution."
+        },
+        {
+          "unit_id": "lecture-27",
+          "practice_id": "p4-ratios-navigation",
+          "verdict": "pass",
+          "source_pages": [6],
+          "note": "Exam label, 15/15 time box, four timestamps, and distinct draft/checking placeholders are all supplied; the prompt explicitly preserves the missing-question boundary and does not invent an answer."
+        }
+      ]
+    }
+  ],
+  "repair_priority": [
+    {
+      "priority": 1,
+      "severity": "blocker",
+      "pattern": "lecture-specific dependency caused by an unbounded source-referenced selection",
+      "instances": [
+        {"unit_id": "lecture-28", "practice_id": "p4-ama-triage"}
+      ],
+      "repair": "Embed at least six bounded page-23 question texts in the prompt, including the cross-school item, or provide a bounded excerpt/list. Retain the page-34 Berkeley-speaker caveat as a supplied boundary, then re-audit classification, evidence gaps, and non-overreaching follow-ups in both 03-practice-flow and the assembled 05-studykit.",
+      "release_effect": "Keep the course semantic gate blocked until this item is repaired and independently rechecked."
+    }
+  ],
+  "deferred_structural_findings": [
+    {
+      "code": "review_page_set_mismatch",
+      "scope": ["lecture-04"],
+      "detail": "review-plan.json selected 15 pages but actual_reviewed_pages contains 19; this is separate from the sampled semantic practice result.",
+      "separate_from_semantic_blockers": true
+    },
+    {
+      "code": "missing_quality_audit_resolution_checkpoint",
+      "scope": ["lecture-01", "lecture-02", "lecture-03", "lecture-04", "lecture-05", "lecture-06", "lecture-07", "lecture-08", "lecture-09", "lecture-10", "lecture-11", "lecture-12", "lecture-13", "lecture-14"],
+      "detail": "04-quality-audit.resolution.json is absent in the first range; the scan did not treat this checkpoint absence as a semantic practice pass or repair.",
+      "separate_from_semantic_blockers": true
+    },
+    {
+      "code": "practice_schema_variants",
+      "scope": ["lecture-01", "lecture-02", "lecture-03", "lecture-04", "lecture-05", "lecture-06", "lecture-07", "lecture-08", "lecture-09", "lecture-10", "lecture-11", "lecture-12", "lecture-13", "lecture-14"],
+      "detail": "The 03 collection keys vary among practices, activities, and practice; item IDs and counts were normalized without changing content.",
+      "separate_from_semantic_blockers": true
+    },
+    {
+      "code": "source_chunks_unavailable_in_build_root",
+      "scope": ["lecture-15", "lecture-16", "lecture-17", "lecture-18", "lecture-19", "lecture-20", "lecture-21", "lecture-22", "lecture-23", "lecture-24", "lecture-25", "lecture-26", "lecture-27", "lecture-28"],
+      "detail": "The current build ingestion directory has no build-local chunks.jsonl, while the cited current chunk bodies are available under data/sources/ucb-cs61a-summer-2026/ and were used for the blocker and pass samples. This is a build traceability/checkpoint issue, not a semantic pass conversion.",
+      "separate_from_semantic_blockers": true
+    },
+    {
+      "code": "review_checkpoint_status_anomaly",
+      "scope": ["lecture-15", "lecture-16", "lecture-17", "lecture-18", "lecture-19", "lecture-20"],
+      "detail": "review-plan.json reports pending_current_build_review despite complete requested practice artifacts; lectures 21-28 carry reused visual-evidence/pass-with-warnings states. The practice verdicts were kept separate from this checkpoint status.",
+      "separate_from_semantic_blockers": true
+    },
+    {
+      "code": "practice_anchor_shape_inconsistency",
+      "scope": ["lecture-21", "lecture-28"],
+      "detail": "Some practice items use source_pages rather than per-item citation objects, and older items omit some mapping IDs; explicit page anchors and task/content alignment were not promoted to semantic blockers here.",
+      "separate_from_semantic_blockers": true
+    },
+    {
+      "code": "range_report_blocker_anchor_mismatch",
+      "scope": ["range-15-28.json", "lecture-28/p4-ama-triage"],
+      "detail": "The report's source_anchors name lecture-23-material-p023 and p034, whose bodies are unrelated SQL aggregation/IMDb pages. Current 03/05 citations and the intended chunks are lecture-28-material-p023 and p034; the semantic blocker was confirmed against those lecture-28 chunks rather than silently trusting the mismatched report anchors.",
+      "separate_from_semantic_blockers": true
+    }
+  ],
+  "auditor_id": "luna-xhigh-course-level-independent-practice-auditor-20260812",
+  "offline_only": true,
+  "next_action": "Hold semantic release for this course. Repair lecture-28/p4-ama-triage in the practice checkpoint with a bounded question list, assemble a new fingerprinted build, and have an independent auditor recheck the repaired item; resolve the deferred structural and report-anchor findings separately."
+}

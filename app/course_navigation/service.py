@@ -2,12 +2,22 @@
 
 from __future__ import annotations
 
+import json
 import re
 from difflib import SequenceMatcher
 from dataclasses import dataclass
 
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
+
+from app.agent.model_support import normalized_usage
 from app.catalog.contracts import CourseCard
 from app.catalog.courses import CatalogDataError, CourseCatalogStore
+from app.catalog.knowledge import (
+    CourseKnowledgeStore,
+    bounded_course_details,
+    compact_course_index,
+)
+from app.generation.model import ModelError, StructuredModel
 from app.profile.contracts import FactStatus, LearnerProfile
 
 
@@ -52,16 +62,46 @@ _REVIEW_LABELS = {
 class NavigationResult:
     answer: str
     catalog_ids: tuple[str, ...] = ()
+    usage: dict[str, int] | None = None
+
+
+class _RecommendationDraft(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    mode: str = Field(pattern="^recommend$")
+    overview: str = Field(min_length=1, max_length=4_000)
+    now_catalog_ids: list[str] = Field(default_factory=list, max_length=3)
+    later_catalog_ids: list[str] = Field(default_factory=list, max_length=3)
+    ran_code: bool = False
+
+    @model_validator(mode="after")
+    def validate_selection(self) -> "_RecommendationDraft":
+        if self.ran_code:
+            raise ValueError("course navigation never runs code")
+        combined = [*self.now_catalog_ids, *self.later_catalog_ids]
+        if not combined:
+            raise ValueError("recommendation must select at least one course")
+        if len(combined) != len(set(combined)):
+            raise ValueError("recommendation course IDs must be unique")
+        return self
 
 
 class CourseNavigationService:
-    def __init__(self, catalog: CourseCatalogStore) -> None:
+    def __init__(
+        self,
+        catalog: CourseCatalogStore,
+        *,
+        model: StructuredModel | None = None,
+        knowledge: CourseKnowledgeStore | None = None,
+    ) -> None:
         self.catalog = catalog
+        self.model = model
+        self.knowledge = knowledge
 
-    def navigate(self, *, text: str, profile: LearnerProfile) -> str:
-        return self.navigate_result(text=text, profile=profile).answer
+    async def navigate(self, *, text: str, profile: LearnerProfile) -> str:
+        return (await self.navigate_result(text=text, profile=profile)).answer
 
-    def navigate_result(
+    async def navigate_result(
         self,
         *,
         text: str,
@@ -109,10 +149,128 @@ class CourseNavigationService:
             return NavigationResult(
                 "现有课程表中没有找到可信匹配。请换一个方向、学校名或课程号重试。"
             )
-        heading = "课程目录候选" if is_list else "课程推荐"
+        if not is_list:
+            personalized = await self._personalized_recommendation(
+                text=text,
+                profile=profile,
+                directions=directions,
+            )
+            if personalized is not None:
+                return personalized
+            return NavigationResult(
+                self._render_unpersonalized(matches),
+                tuple(item.catalog_id for item in matches),
+                normalized_usage(),
+            )
+        heading = "课程目录候选"
         return NavigationResult(
             self._render(matches, heading=heading),
             tuple(item.catalog_id for item in matches),
+            normalized_usage(),
+        )
+
+    async def _personalized_recommendation(
+        self,
+        *,
+        text: str,
+        profile: LearnerProfile,
+        directions: tuple[str, ...],
+    ) -> NavigationResult | None:
+        if self.model is None or self.knowledge is None:
+            return None
+        try:
+            index = self.knowledge.list_index()
+            allowed_ids = {item.catalog_id for item in index}
+            details = self.knowledge.relevant_details(text, directions=directions)
+            prompt = {
+                "learner_request": text,
+                "confirmed_profile": self._confirmed_profile(profile),
+                "requested_directions": list(directions),
+                "course_index": compact_course_index(index),
+                "related_course_details": bounded_course_details(details),
+                "field_semantics": {
+                    "introductory_value": "registry prioritization signal, not an official prerequisite statement",
+                    "downstream_prerequisite_value": "registry sequencing signal, not a documented prerequisite",
+                    "public_source_readiness": "public-source preparation signal, not online StudyKit readiness",
+                    "unknown_policy": "null, unknown and not_researched must remain unknown",
+                },
+                "output_contract": {
+                    "mode": "recommend",
+                    "overview": "brief Chinese advice based on confirmed learner constraints; do not invent course facts",
+                    "now_catalog_ids": "0-3 unique IDs suitable for the learner's current starting point",
+                    "later_catalog_ids": "0-3 unique IDs serving as later direction goals",
+                    "ran_code": False,
+                },
+            }
+            response = await self.model.generate_json(
+                system_prompt=(
+                    "你是 CoursePilot 的课程路径决策器。你必须同时理解用户请求和全部 confirmed_profile，"
+                    "否定背景（例如‘没有 Python 基础’或‘没有编程基础’）是必须参与排序的真实约束，"
+                    "不能当成正向技能。只能选择 course_index 中存在的 catalog_id，并把适合当前起点的"
+                    "课程放入 now_catalog_ids，把方向上的进阶课程放入 later_catalog_ids。课程索引中的"
+                    "introductory_value、downstream_prerequisite_value 只是项目排序信号，不是官方先修事实；"
+                    "数据没有明确先修字段时不得编造。不得生成链接、版本、讲次、在线状态或课程材料事实，"
+                    "这些由后端可信渲染。不要泄露内部推理，只输出符合契约的 JSON object。"
+                ),
+                user_prompt=json.dumps(prompt, ensure_ascii=False),
+                thinking_enabled=False,
+                max_tokens=4096,
+                timeout_seconds=60,
+            )
+            draft = _RecommendationDraft.model_validate(response.output)
+            selected_ids = [*draft.now_catalog_ids, *draft.later_catalog_ids]
+            if any(catalog_id not in allowed_ids for catalog_id in selected_ids):
+                return None
+            now_cards = [self.catalog.get(catalog_id) for catalog_id in draft.now_catalog_ids]
+            later_cards = [self.catalog.get(catalog_id) for catalog_id in draft.later_catalog_ids]
+            if any(card is None for card in [*now_cards, *later_cards]):
+                return None
+            return NavigationResult(
+                answer=self._render_personalized(
+                    draft.overview,
+                    [card for card in now_cards if card is not None],
+                    [card for card in later_cards if card is not None],
+                    profile=profile,
+                ),
+                catalog_ids=tuple(selected_ids),
+                usage=normalized_usage(response.usage),
+            )
+        except (CatalogDataError, ModelError, ValidationError, ValueError, KeyError, TypeError):
+            return None
+
+    @staticmethod
+    def _confirmed_profile(profile: LearnerProfile) -> dict[str, list[object]]:
+        result: dict[str, list[object]] = {}
+        for fact in profile.facts:
+            if fact.status is FactStatus.CONFIRMED:
+                result.setdefault(fact.field_name, []).append(fact.value)
+        return result
+
+    def _render_personalized(
+        self,
+        overview: str,
+        now_cards: list[CourseCard],
+        later_cards: list[CourseCard],
+        *,
+        profile: LearnerProfile,
+    ) -> str:
+        sections = [overview.strip()]
+        if now_cards:
+            sections.append(self._render(now_cards, heading="现在开始"))
+        if later_cards:
+            sections.append(self._render(later_cards, heading="长期目标"))
+        if any(
+            fact.field_name == "background" and fact.status is FactStatus.CONFIRMED
+            for fact in profile.facts
+        ):
+            sections.append("排序已考虑你确认的学习背景。当前课程数据未记录精确先修要求时，我不会据此补全或猜测。")
+        return "\n\n".join(sections)
+
+    def _render_unpersonalized(self, cards: list[CourseCard]) -> str:
+        return (
+            "个性化排序当前暂时不可用。下面仅是方向相关的课程目录候选，"
+            "尚未结合你的学习背景判断适合的起点。\n\n"
+            + self._render(cards, heading="方向相关候选（未个性化排序）")
         )
 
     def get_card(self, catalog_id: str) -> CourseCard | None:

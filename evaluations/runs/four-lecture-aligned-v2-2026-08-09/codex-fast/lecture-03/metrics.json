@@ -1,0 +1,29 @@
+{
+  "quality_mode": "fast",
+  "started_at": "2026-08-09T13:51:13.886792674Z",
+  "completed_at": "2026-08-09T13:53:11.939008Z",
+  "total_duration_seconds": 118.05221605300903,
+  "parallel_units": "off",
+  "worker_count": 1,
+  "semantic_passes": 2,
+  "stage_duration_seconds": {
+    "source_inventory_and_visual_review": 117.8702220916748,
+    "joint_authoring_01_03": 0.0002410411834716797,
+    "audit_pass_04": 8.821487426757812e-06,
+    "assembly_and_render": 0.03464102745056152,
+    "artifact_and_review_validation": 0.14710307121276855
+  },
+  "checkpoints_utc": {
+    "inventory_and_visual_review_completed_at": "2026-08-09T13:53:11.757014Z",
+    "joint_authoring_completed_at": "2026-08-09T13:53:11.757255Z",
+    "audit_completed_at": "2026-08-09T13:53:11.757264Z",
+    "assembly_completed_at": "2026-08-09T13:53:11.791905Z",
+    "validation_completed_at": "2026-08-09T13:53:11.939008Z"
+  },
+  "retries": [],
+  "repairs": [],
+  "reviewed_page_count": 19,
+  "input_tokens": null,
+  "output_tokens": null,
+  "token_count_note": "Host model token counts are not observable."
+}

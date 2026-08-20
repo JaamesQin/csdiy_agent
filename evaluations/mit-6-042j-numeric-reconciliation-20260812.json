@@ -1,0 +1,84 @@
+{
+  "schema_version": "numeric-reconciliation-v1",
+  "audit_id": "mit-6-042j-numeric-reconciliation-20260812",
+  "audited_at": "2026-08-12",
+  "auditor": "codex-readonly-numeric-worker",
+  "course_id": "mit-6-042j-spring-2024",
+  "build_id": "89a0616b96b49b2060735c20c2ba17616905b29c357aa0d8c4daa42f624ba485",
+  "quality_mode": "standard",
+  "scope": "read-only numeric reconciliation; no model/provider calls",
+  "write_scope": [
+    "evaluations/mit-6-042j-numeric-reconciliation-20260812.json"
+  ],
+  "sources_checked": {
+    "catalog_manifest": "data/manifests/mit-6-042j-spring-2024.yaml",
+    "build_manifest": "outputs/mit-6-042j-spring-2024/89a0616b96b49b2060735c20c2ba17616905b29c357aa0d8c4daa42f624ba485/manifest.yaml",
+    "course_summary": "outputs/mit-6-042j-spring-2024/89a0616b96b49b2060735c20c2ba17616905b29c357aa0d8c4daa42f624ba485/course-summary.json",
+    "batch_summary": "outputs/mit-6-042j-spring-2024/89a0616b96b49b2060735c20c2ba17616905b29c357aa0d8c4daa42f624ba485/batch-summary.json",
+    "result": "outputs/mit-6-042j-spring-2024/89a0616b96b49b2060735c20c2ba17616905b29c357aa0d8c4daa42f624ba485/result.json",
+    "unit_checkpoints": "outputs/mit-6-042j-spring-2024/89a0616b96b49b2060735c20c2ba17616905b29c357aa0d8c4daa42f624ba485/courses/mit-6-042j-spring-2024/units/",
+    "chunks": "data/sources/mit-6-042j-spring-2024/<unit-id>/chunks.jsonl"
+  },
+  "root_counts": {
+    "requested": 24,
+    "completed": 24,
+    "validated": 24,
+    "audited": 24,
+    "failed": 0,
+    "pending": 0,
+    "status": "succeeded"
+  },
+  "reconciliation": {
+    "result": "pass",
+    "structural_numbers_consistent": true,
+    "unit_ids_consistent": true,
+    "manifest_units": 24,
+    "build_manifest_sources": 24,
+    "chunk_page_count": 217,
+    "manifest_coverage_source_chunks": 217,
+    "manifest_coverage_source_pages": 217,
+    "validation_citation_count": 1234,
+    "actual_reviewed_page_count": 169,
+    "course_summary_counts_match_root": true,
+    "batch_summary_counts_match_root": true,
+    "result_counts_match_root": true,
+    "all_unit_validations_succeeded": true,
+    "all_unit_review_validations_succeeded": true,
+    "all_unit_independent_audits_pass": true
+  },
+  "unit_counts": [
+    {"unit_id":"lecture-01","chunks":8,"pages":8,"citations":46,"reviewed_pages":4},
+    {"unit_id":"lecture-02","chunks":10,"pages":10,"citations":65,"reviewed_pages":9},
+    {"unit_id":"lecture-03","chunks":9,"pages":9,"citations":47,"reviewed_pages":7},
+    {"unit_id":"lecture-04","chunks":6,"pages":6,"citations":28,"reviewed_pages":6},
+    {"unit_id":"lecture-05","chunks":11,"pages":11,"citations":56,"reviewed_pages":4},
+    {"unit_id":"lecture-06","chunks":14,"pages":14,"citations":89,"reviewed_pages":13},
+    {"unit_id":"lecture-07","chunks":7,"pages":7,"citations":50,"reviewed_pages":6},
+    {"unit_id":"lecture-08","chunks":6,"pages":6,"citations":28,"reviewed_pages":5},
+    {"unit_id":"lecture-09","chunks":8,"pages":8,"citations":50,"reviewed_pages":3},
+    {"unit_id":"lecture-10","chunks":8,"pages":8,"citations":62,"reviewed_pages":7},
+    {"unit_id":"lecture-11","chunks":12,"pages":12,"citations":59,"reviewed_pages":9},
+    {"unit_id":"lecture-12","chunks":11,"pages":11,"citations":28,"reviewed_pages":10},
+    {"unit_id":"lecture-13","chunks":10,"pages":10,"citations":59,"reviewed_pages":4},
+    {"unit_id":"lecture-14","chunks":12,"pages":12,"citations":87,"reviewed_pages":11},
+    {"unit_id":"lecture-15","chunks":7,"pages":7,"citations":42,"reviewed_pages":5},
+    {"unit_id":"lecture-16","chunks":6,"pages":6,"citations":28,"reviewed_pages":5},
+    {"unit_id":"lecture-17","chunks":7,"pages":7,"citations":45,"reviewed_pages":3},
+    {"unit_id":"lecture-18","chunks":12,"pages":12,"citations":73,"reviewed_pages":11},
+    {"unit_id":"lecture-19","chunks":8,"pages":8,"citations":48,"reviewed_pages":7},
+    {"unit_id":"lecture-20","chunks":6,"pages":6,"citations":28,"reviewed_pages":5},
+    {"unit_id":"lecture-21","chunks":6,"pages":6,"citations":40,"reviewed_pages":4},
+    {"unit_id":"lecture-22","chunks":9,"pages":9,"citations":68,"reviewed_pages":8},
+    {"unit_id":"lecture-23","chunks":17,"pages":17,"citations":80,"reviewed_pages":17},
+    {"unit_id":"lecture-24","chunks":7,"pages":7,"citations":28,"reviewed_pages":6}
+  ],
+  "semantic_practice": {
+    "status": "deferred_by_scope",
+    "included_in_numeric_result": false,
+    "note": "本报告不修复、不重新判定 practice 的具体性、可作答性或内容贴合度；这些是独立语义审计问题，不能由结构数字一致性推断通过。已有 independent-audit.json 仅作为现存审计记录引用。"
+  },
+  "limitations": [
+    "course-summary.json 和 batch-summary.json 不提供课程级 citation/review 汇总字段；citation 数由 24 个 validation.json 的 citation_count 求和，review 数由 24 个 review-plan.json 的 actual_reviewed_pages 去重后按单元计数求和。",
+    "本报告未修改 registry、manifest、docs、outputs 或任何 unit checkpoint。"
+  ]
+}

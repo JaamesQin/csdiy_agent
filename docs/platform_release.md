@@ -1,6 +1,6 @@
 # 平台发布记录
 
-> 更新日期：2026-08-13
+> 更新日期：2026-08-20
 >
 > 发布状态：多用户本地候选版本已验证，生产发布待执行
 
@@ -10,19 +10,20 @@
 - 用户名注册、密码登录、会话恢复和注销；
 - Argon2id 密码 hash、仅摘要存储的会话令牌、Cookie/CSRF/Origin 防护；
 - 账号和 legacy API Key 双命名空间的最小学习画像；
-- SQLite Schema v1→v2 事务迁移；
+- SQLite Schema v1→v2→v3 事务迁移；v3 增加经 HMAC 索引的最小对话连续状态；
 - 不在服务器保存完整对话或代码；
 - 标准错误响应和流式错误收尾；
-- 规则优先的意图路由、八项可用能力的 `/help`、主动学习画像和多语言静态代码辅导；
-- 119 个课程目标的失败关闭 Catalog 校验、确定性导航和三类状态展示；
-- Lecture 2/8 已审核黄金 StudyKit 查询、材料/概念、练习选择和当前答案反馈；
+- 有界 TaskPlan、九项可用能力的 `/help`、受约束的通用学习问答、主动学习画像和多语言静态代码辅导；
+- 未上线能力仅保留 Help/状态 metadata；明确请求在 Planner/Router/执行入口失败关闭为带受控能力边界的通用回答；
+- 119 个课程目标的失败关闭 Catalog 校验、安全学习决策投影、确定性精确导航、画像感知的单次模型排序和三类状态展示；
+- 220 份 approved archive StudyKit 与 Lecture 2/8 golden 安全回退已接入查询、材料/概念、练习选择和当前答案反馈；
 - 带登录、功能总览、画像、课程、StudyKit、练习和代码辅导入口的本地聊天界面；
 - selective practice repair 仅作为离线 fingerprinted build；保留 direct-parent snapshot，
   rich audit 绑定当前 build+repair plan，并要求逐题 practice ID exact coverage；
-- 独立 StudyKit SQLite 归档已实现，但当前 286 个导入文档均为 `validated_draft`；它们不属于本次在线发布面，人工批准前不得切换 ready 查询。
-- 在线 Store 已接入只读 archive adapter：build/document 双 `approved`、portable v0.1/v0.2.1 兼容、approved archive 优先和 golden 回退；当前在线范围仍为 Lecture 2/8。
+- 独立 StudyKit SQLite 归档已实现；严格门禁、明确 reviewed-legacy 人工批准和 CS186 新指纹身份修复后，当前 9 builds/220 documents 为 `approved`，另外 3/66 partial 记录保持 `validated_draft`。
+- 在线 Store 已接入只读 archive adapter：build/document 双 `approved`、portable v0.1/v0.2.1 兼容、approved archive 优先和 golden 回退；组合 Store 当前有 220 个 ready StudyKit。
 - `data/` 是需要单独授权的私有 submodule；部署/测试主仓库前必须初始化 submodule 与 Git LFS。
-- 303 项自动化测试通过，其中 4 项为独立 Uvicorn/loopback HTTP 测试。
+- 623 项自动化测试通过，包含独立 Uvicorn/loopback HTTP、全课程知识投影、画像感知排序、未上线能力路由失败关闭、浏览器签名与清小搭 `sessionId` 连续状态、命名空间隔离、过期/CAS/故障降级、可信讲次继承、练习指代和通用学习兜底契约。
 
 ## 本地启动
 
@@ -41,12 +42,14 @@ uvicorn app.main:app --host 127.0.0.1 --port 8000
 | 名称 | 必须 | 说明 |
 | --- | --- | --- |
 | `COURSEPILOT_API_KEY` | 是 | 至少 16 个随机字符，通过 Secret 注入；同时用于 legacy API 和 CSRF HMAC |
-| `COURSEPILOT_DB_PATH` | 建议显式设置 | 挂载在受限权限的持久卷中；当前仅存账号、会话和画像 |
+| `COURSEPILOT_DB_PATH` | 建议显式设置 | 挂载在受限权限的持久卷中；当前仅存账号、Cookie 会话、画像和最小对话连续状态 |
 | `COURSEPILOT_SESSION_TTL_HOURS` | 否 | 默认 12 小时 |
+| `COURSEPILOT_CONVERSATION_TTL_DAYS` | 否 | 清小搭 `sessionId` 状态滑动有效期，默认 30 天 |
 | `COURSEPILOT_COOKIE_SECURE` | 生产必须 | HTTPS 环境设为 `true` |
 | `COURSEPILOT_ALLOWED_ORIGINS` | 生产必须 | 逗号分隔的完整 Origin，例如 `https://coursepilot.example.com` |
 | `COURSEPILOT_TEST_MODE` | 否 | 生产保持 `false` |
-| `DEEPSEEK_API_KEY` | 否 | 启用低置信路由、画像候选、材料问答、练习反馈和语义代码建议；未设置时透明降级 |
+| `COURSEPILOT_ROBUST_INPUT` | 否 | 默认 `true`；首个发布周期可临时设为 `false` 回退旧 Planner 路径 |
+| `DEEPSEEK_API_KEY` | 否 | 启用统一理解、画像感知课程排序、通用学习问答、画像候选、材料问答、练习反馈和语义代码建议；未设置时透明降级 |
 | `DEEPSEEK_BASE_URL` / `DEEPSEEK_MODEL` | 否 | 复用离线生成器的模型适配配置 |
 
 禁止记录或提交 API Key、密码、Cookie、CSRF token、Argon2 hash 和数据库内容。
@@ -59,8 +62,8 @@ online-ready 或绕过 document review status。
 1. 停止所有写实例；
 2. 使用 SQLite online backup，或在完全停止后同时备份 `.sqlite3`、`-wal`、`-shm`；
 3. 使用相同持久卷启动一个新实例；
-4. 启动迁移把 v1 画像 subject 改为 `legacy:<旧 user>`，创建账号/会话表并设置 `user_version=2`；
-5. 验证注册、登录、API Key legacy 画像和两个账号间隔离；
+4. 启动迁移把 v1 画像 subject 改为 `legacy:<旧 user>`，创建账号/Cookie 会话表，v3 再创建 `conversation_states`并设置 `user_version=3`；
+5. 验证注册、登录、API Key legacy 画像、`sessionId` 续接和命名空间隔离；
 6. 再扩容其他实例。
 
 未知数据库版本会让启动失败，不允许降级覆盖。历史匿名画像不会认领到新账号，因为匿名 ID 不是所有权证明。
@@ -83,15 +86,15 @@ baseUrl: https://<production-domain>/v1
 credential: <COURSEPILOT_API_KEY>
 ```
 
-其请求体 `user` 只进入 legacy 命名空间。清小搭是否提供可验证账号身份仍需平台实测，不能把该字段映射为本地账号 UUID。
+其请求体 `user` 只进入 legacy 命名空间。顶层可选 `sessionId` 在该可信命名空间内续接最小对话状态，响应无需回传；字段缺失或为空时不复用任何上一通状态。它不是授权凭据，也不能映射为本地账号 UUID。
 
 不得把 `/chat/completions` 重复附加到 `baseUrl`。
 
 ## 当前限制
 
-- 当前执行功能帮助、画像、课程导航、StudyKit 查询、材料/概念、练习选择/反馈、代码辅导和澄清；学习复盘和生成状态仍降级；
+- 当前执行功能帮助、画像、课程导航、StudyKit 查询、材料/概念、练习选择/反馈、代码辅导和通用学习问答；学习复盘和生成状态仍降级；
 - Catalog 仍读取 tracked registry/Manifest，StudyKit 仍读取 golden 文件；尚未接入数据库 MaterialSet、SourceChunk 检索或 RAG；
-- 课程上下文仅覆盖 Lecture 2/8 人工批准的黄金 StudyKit；
+- 课程上下文覆盖 220 份 approved archive StudyKit，并保留 Lecture 2/8 人工批准的黄金 StudyKit 回退；
 - 代码只做 AST/Tree-sitter 静态分析，始终 `ran_code=false`；课程专用 DSL 可能只获得模型静态建议；
 - API Key 请求的 `user` 是客户端提供的逻辑标识，只进入 legacy 命名空间，不是生产授权凭据；
 - 尚未完成清小搭生产探测；
@@ -107,7 +110,7 @@ credential: <COURSEPILOT_API_KEY>
 - 流式代理不稳定：保留非流式 JSON；
 - 文件输入不可用：使用公开链接、文本粘贴或预上传样板资料；
 - 长期状态不可用：输出可复制状态卡；
-- DeepSeek 不可用：保留规则路由、功能帮助、课程导航、StudyKit 查询、概念解释、练习选择、显式画像识别和多语言静态诊断；材料问答返回已审核摘要，练习反馈不判分；
+- DeepSeek 不可用：通用学习问答透明降级；课程精确查询/列表仍可用，个性化推荐明确标注为未结合画像排序；保留功能帮助、StudyKit 查询、概念解释、练习选择、显式画像识别和多语言静态诊断；材料问答返回已审核摘要，练习反馈不判分；
 - 画像数据库不可用：继续本轮临时画像和代码辅导，并提示未保存；
 - 云端候选版本异常：回退到最近一个完整测试通过的提交。
 
@@ -122,7 +125,7 @@ credential: <COURSEPILOT_API_KEY>
 - [ ] 正确/错误 API Key 分别返回 200/401；
 - [ ] 非流式 JSON 与 SSE role/content/stop/`[DONE]` 正常；
 - [ ] 课程导航将目录/authoring/在线 StudyKit 状态分开，且不输出未审核 candidate offering；
-- [ ] Lecture 2/8 的查询、材料/概念、练习和反馈正常，未知页码不产生猜测；
+- [ ] 220 份 approved archive 与 Lecture 2/8 golden 回退的查询、材料/概念、练习和反馈正常，未知页码不产生猜测；
 - [ ] 无 DeepSeek 时练习反馈透明降级，不输出隐藏 rubric、分数或掌握度；
 - [ ] 数据库版本为 2，备份和恢复演练通过；
 - [ ] 反向代理限流、日志脱敏和 HTTPS 验证通过；

@@ -89,8 +89,8 @@ No broken requirements found.
 | 清小搭四项探测 | 待验证 | 需要生产部署地址 |
 | 清小搭真实试聊 | 待验证 | 需要账号侧操作 |
 | `file.url` | 待验证 | 需要平台实际发送文件请求 |
-| 用户或会话标识 | 待验证 | 标准协议文档未作确定保证 |
-| 长期状态 | 待验证 | 需要平台账号实测 |
+| 用户或会话标识 | 协议已确认，本地已验证 | 清小搭顶层可选 `sessionId`；生产账号侧仍需实测 |
+| 长期状态 | 30 天最小连续状态已实现 | 生产持久卷、备份和平台账号侧仍需实测 |
 | 平台日志 | 待验证 | 需要生产部署与清小搭后台 |
 
 ## 5. 待执行的平台验收
@@ -275,7 +275,33 @@ mismatch 都阻止 completion/false-complete。portable/deterministic Schema pas
 - `tests/catalog/test_studykit_archive.py` 从真实 archive 抽取 portable v0.1/v0.2.1 行，
   在临时测试库中设为 approved，验证双 review gate、哈希/身份/schema/table 失败关闭、
   archive 优先、golden 回退以及六项在线能力；正式 archive 未被修改；
-- 当前 catalog 为 119 个课程目标、13 个 manifest 绑定；archive 仍为 0 online-ready。
+- 截至 2026-08-13，该历史基线的 catalog 为 119 个课程目标、13 个 manifest 绑定，archive 为
+  0 online-ready；后续批准结果见下一节。
+
+## 13. 2026-08-17 StudyKit archive 人工批准与在线接入
+
+- 批量批准工具：`scripts/approve_studykit_archive.py`；默认 dry-run，`--apply` 时强制要求
+  SQLite backup 路径；
+- 批准依据：archive 零完整性问题、portable v0.2.1 Schema、逐 unit validation 和
+  review-validation、requested/completed/validated/audited/document 精确身份集合、匹配 build ID
+  的独立审计全覆盖，以及用户明确的人工发布批准。MIT 6.7960 与 MIT 6.S081 采用显式
+  reviewed-legacy owner approval，报告逐项保留 waived gates，未伪装为新版门禁通过；
+- UCB CS186 从直接父 build `07a442…` 创建新指纹 build `bb2553…`，只在 `note-03` 范围修正
+  `lecture-03` 身份字段及其审计引用，不改变学习内容或练习语义；repair plan、父 artifact-tree
+  digest、20/20 exact-set 和当前 build 审计绑定全部写入归档与补充审计；
+- 批准结果：9 builds、220 documents 为 `approved`；3 个 partial builds、66 documents 保持
+  `validated_draft`；
+- approved archive Store 与组合 Store 均返回 220 项；MIT 6.7960 Lecture 2/8 golden 与 archive
+  身份重复，由 archive 优先覆盖；Catalog 中 9 门课程具有在线 StudyKit；
+- 保持 draft 的记录仅包括三个 partial build：CMU 15.213、MIT 6.031、UCB CS61B；
+- 更新前数据库 SHA-256：`76daa4534257434b9e0e005ce20c03c06abed655ff9c4c061d96e30fc752107a`；
+  最终数据库 SHA-256：`2ecb73198409e55753c0fb3d85f9bb04bd824588e1da6b3b7afe3b2fbc7b585f`；
+- 可审计报告：`evaluations/studykit-archive-approval-20260817.json`；更新前 SQLite backup 位于
+  `/tmp/studykits.before-approval-20260817.sqlite3`，该临时备份不属于发布产物；
+- CS186 修复报告：`evaluations/ucb-cs186-archive-identity-repair-result-20260817.json`；补充审计：
+  `evaluations/ucb-cs186-archive-identity-repair-audit-20260817.json`；
+- `tests/catalog/test_studykit_archive_approval.py` 验证严格门禁、legacy owner approval、CS186
+  补充审计和事务只更新 eligible build/document；在线相关目标测试结果见本节最终验证记录。
 # Online Agent P0–P2 validation
 
 Validation covers TaskPlan DAG limits, partial execution, provenance partition degradation, public
@@ -329,3 +355,91 @@ capability、task status 和模型调用元数据，不记录学习者内容。
 preflight），包括无格式代码、模型候选回绑、签名课程序号、自然 StudyKit/摘要、画像纠正删除、
 课程拼写和缺失练习上下文。完整新手探索另覆盖 24 条多轮旅程；报告写入 `/tmp`，不属于仓库产物。
 具体命令和双视角审查见 `docs/live-novice-agent-remediation-validation-20260819.md`。
+
+## 14. 2026-08-20 通用学习问答兜底验证
+
+- TaskPlan 无法归类、模型规划结构失败或错误使用 `generation_status` 时，统一规范化为
+  `general_assistance`；明确的生成状态请求仍保留原能力；
+- 专用任务和通用任务同时出现时只执行专用任务，并移除对被丢弃通用任务的依赖；
+- 通用上下文最多保留最近 30 条消息和 48,000 字符，长消息保留首尾并带截断标记；
+- 只传 confirmed 画像值和最小验签连续状态，过滤 plan/code digest、时间戳等内部字段；
+- CoursePilot 角色和 available 能力从 `CapabilitySpec` 构建，学习复盘等 unavailable 能力不作为
+  已上线功能提供给模型；
+- 输出合同固定 `general_knowledge`、空 citation/catalog/diagnostic IDs 和 `ran_code=false`；
+  违反合同或模型不可用时透明降级；
+- 可提交完整作业请求在通用模型调用前确定性拒绝；Planner 和通用能力分别计数，通用能力每个
+  请求最多调用模型一次。
+
+同日使用已配置的真实 `DEEPSEEK_API_KEY` 运行更新后的 full suite。provider preflight 与 26 个
+合成业务场景全部通过（27/27 checks）；50/50 次 `deepseek-v4-flash` 调用最终成功，无 provider
+error。总 usage 为 53,027 prompt、13,609 completion、66,636 tokens；单次调用延迟 P50 为
+2,144 ms、P95 为 3,097.3 ms，范围 590–6,077 ms。49 次调用一次传输成功，1 次调用经过
+3 次 transport attempts 后成功。新增 `general_learning_fallback` 场景严格完成
+`general_assistance`，只使用 1 次 TaskPlan 调用和 1 次通用能力调用，未降级、未输出课程依据或
+`ran_code=true`。测试只使用合成学习者输入与临时画像数据库，控制台未输出凭据、完整 prompt、
+模型正文、代码或画像证据。
+
+## 15. 2026-08-20 画像感知课程排序与全课程索引验证
+
+- registry 当前 119 个唯一课程目标全部进入约 27K 字符的极简决策索引；索引上限 64,000 字符，
+  相关详情最多 12 门/48,000 字符；本地路径、哈希、candidate offering 和审计诊断均未进入 Prompt；
+- `background=没有Python` 作为 confirmed 学习背景原样保存，界面标签改为“学习背景”；导航模型同时
+  收到方向、负向背景和完整课程索引，并只可返回 registry 中的唯一 catalog ID；
+- 个性化推荐每阶段最多 3 门，分成“现在开始/长期目标”。课程标题、链接、制作状态和在线状态由
+  后端重新解析；未记录精确先修时保持 unknown；
+- 精确查课、身份纠正和列表不调用模型。排序模型关闭 thinking，业务层每个导航能力最多调用一次；
+  非法 JSON 由模型适配器在相同关闭状态下附加修复指令重试，非法 ID、超时或模型不可用时显示
+  “未个性化排序”的方向候选；
+- `general_assistance` 常驻完整极简索引，课程选择经 catalog-ID 白名单生成独立 metadata claim，
+  无效课程分区被丢弃时 general knowledge 仍独立成功。
+
+本次 `.venv/bin/pytest -q` 为 601 passed。真实 DeepSeek full suite 首轮中 provider 56/56 调用成功，
+27 个业务场景有 25 个通过；两个失败是旧 E2E 标题断言未接受新的“现在开始/长期目标”或明确降级
+契约，不是能力执行失败。修正断言后定向重跑这两个多意图场景，2/2 通过且 provider 6/6 调用成功。
+新增负向背景场景实际选择编程基础课程作为当前入口、系统课程作为长期目标，并通过后端 ID、阶段、
+先修 unknown 和未降级检查。测试使用真实 `DEEPSEEK_API_KEY`，未输出密钥、完整 prompt 或模型正文。
+
+延迟复核后关闭课程排序 thinking，并将输出预算设为 4,096、单次请求超时设为 60 秒；非法 JSON
+仍由统一模型适配器附加修复指令后重试，重试保持 thinking disabled。使用真实 DeepSeek 重跑同一
+负向背景场景：场景通过，3/3 provider 调用均为单次传输；课程排序调用约 1,813 ms，整轮 provider
+latency 为 780/2,776/1,813 ms，总 completion 556 tokens。模型仍把编程基础课程放入“现在开始”，
+把系统核心课程放入“长期目标”，未触发未个性化降级。
+
+能力可用性问句补充确定性短路：短小、无代码痕迹、包含已知能力别名且以“吗/么/呢/？”结尾的
+“你可以进行代码辅导吗”等请求，在 Planner 和画像观察前返回对应 `/help` 内容；带真实代码块的
+同类措辞仍进入 `code_tutoring`。路由、编排和实际代码反例均有独立回归。
+
+浏览器连续状态修复：`app.js` 从非流式响应顶层或 SSE stop frame 读取短期签名
+`coursepilot_context`，在下一轮请求中回传，并在清空会话或请求失败时清除；不写入 localStorage、
+sessionStorage 或数据库。“显示/查看/打开 + practice ID/中文序数”以及单独发送的 `ex-N` 在 Planner 前
+确定性进入练习展示；当前讲次内把 `ex1`、`ex-1`、`EX 1` 等位置别名绑定到审核过的练习顺序。
+只有实际题目呈现标记或签名连续状态才计入已展示集合，StudyKit 目录列表不计入。StudyKit→指定练习多轮、
+流式/非流式静态合同和全仓回归共为 601 passed。练习连续交互新增验证：StudyKit 目录中的 ID 列表不会被误算为已展示题目；中文序数、`ex-N` 位置别名及“ex7 是什么”等自然问法均确定性解析到当前讲次的审核练习。
+
+跨能力连续状态进一步收紧：模型在 follow-up 中返回同一课程但省略讲次时，不能把已验签的当前讲次降为课程级；材料问答、概念解释、练习选择和 StudyKit 查询共享该规则。显式换讲覆盖旧讲次，显式换课不继承旧课程讲次，“列出所有讲次”才允许主动降到课程级。问候、能力帮助和 onboarding 响应保留有效 token；浏览器仅在服务返回新 token 时替换，篡改或过期 token 不回显。
+
+## 16. 2026-08-20 清小搭 `sessionId` 会话连续状态验证
+
+- `/v1/chat/completions` 接受可选顶层 `sessionId`；空白值规范为缺失，超长或非字符串值拒绝。JSON 和 SSE 都不回传 `sessionId` 或 `coursepilot_context`。
+- Schema v3 以 HMAC(`trusted namespace`, `sessionId`) 摘要作为主键，不存原始会话 ID。账号、不同 legacy user 与无 `user` 网关请求处于不同命名空间。
+- 仅存储已验证课程/讲次、当前与已展示练习、提示级别、展示/代码摘要和最小 follow-up 元数据；不存完整消息、代码、答案、分数或 reasoning。
+- 默认 30 天滑动有效期，加载和保存时惰性清理过期行；revision CAS 防止并发请求静默覆盖。数据库异常或 CAS 冲突只记录非敏感连续事件，不阻断当轮回答。
+- `TurnResolver` 统一课程、讲次和 Catalog 身份解析：显式新引用优先，同课 follow-up 不得因模型省略讲次而降低已验证上下文具体度。
+
+自动化全仓回归为 `619 passed`，包含 schema v2→v3 迁移不重复加 `legacy:`、原始 ID 非明文、命名空间隔离、滑动过期、CAS、故障降级、JSON/SSE 以及独立 Uvicorn 合同。
+
+另使用真实 `DEEPSEEK_API_KEY` 完成本地多轮：同一 `sessionId` 依次查看 MIT 6.7960 Lecture 2、询问梯度下降、索取一道练习；重启 Uvicorn 后只发送“ex7 是什么”，仍正确返回 `### ex-7`，没有要求重新指定课程/讲次，也没有回传签名上下文。SQLite 文件检查确认 `user_version=3`，且不包含测试用原始 `sessionId`。这仍是本地端到端验证，清小搭生产账号侧探测另行进行。
+
+## 17. 2026-08-20 未上线能力路由失败关闭
+
+- `app/agent/capabilities.py` 继续是能力可用性的唯一事实源；`learning_review` 和
+  `generation_status` 保留在 `/help` 中用于说明状态，但不再是可执行 Router/TaskPlan 目标。
+- Planner 在模型调用前拦截明确未上线能力别名；Prompt 只列已上线 capability ID；
+  模型后对任何违规 ID 再做目录驱动归一化。旧 IntentRouter 和编排执行入口各有独立防线。
+- 转换后的 `general_assistance` 只收到匹配能力的 title/status/limitations/alternative，
+  不获得后台状态、任务记录或其他权限。服务端确定性前缀声明该能力尚未接入，
+  通用模型不得暗示 StudyKit 查询等其他在线能力可以读取 authoring 任务状态。
+- `/help 生成状态`、“生成状态查询是什么？”仍返回专用状态页，不调用通用模型。
+
+自动化基线为 `623 passed`。使用真实 DeepSeek 与本地 HTTP 复测原失败句
+“查看我的 StudyKit 生成任务状态”：不再进入练习反馈或索要 practice ID，而是进入通用回答并明示未上线边界；学习复盘请求同样进入通用学习建议。

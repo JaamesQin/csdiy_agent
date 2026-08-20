@@ -17,6 +17,56 @@ from app.protocol.schemas import ChatMessage
 from tests.agent.helpers import FakeStructuredModel
 
 
+async def test_explicit_practice_display_bypasses_model_planning() -> None:
+    model = FakeStructuredModel()
+    planner = TaskPlanner(model=model, robust_input_enabled=True)
+
+    outcome = await planner.plan(
+        [ChatMessage(role="user", content="显示ex1")],
+        continuity={
+            "course": {
+                "course_id": "mit-6.7960-fall-2024",
+                "course_version": "fall-2024",
+                "unit_id": "lecture-02",
+            }
+        },
+    )
+
+    assert [task.capability_id for task in outcome.plan.tasks] == [
+        CapabilityId.PRACTICE_SELECTION
+    ]
+    assert outcome.reason == "practice_display_rule"
+    assert model.calls == []
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "显示第七道习题",
+        "ex-7",
+        "practice ID: ex-7",
+        "ex7是什么",
+        "ex-7 的题目是什么？",
+        "practice 7 内容",
+    ],
+)
+async def test_contextual_practice_references_bypass_model_planning(text: str) -> None:
+    model = FakeStructuredModel()
+    planner = TaskPlanner(model=model, robust_input_enabled=True)
+
+    outcome = await planner.plan([ChatMessage(role="user", content=text)])
+
+    assert [task.capability_id for task in outcome.plan.tasks] == [
+        CapabilityId.PRACTICE_SELECTION
+    ]
+    assert outcome.reason == "practice_display_rule"
+    assert model.calls == []
+
+
+def test_practice_answer_is_not_mistaken_for_bare_display_request() -> None:
+    assert TaskPlanner._practice_display_plan("ex-7 我的答案是链式法则") is None
+
+
 def test_task_plan_rejects_cycles_and_unknown_capabilities() -> None:
     with pytest.raises(ValidationError, match="acyclic"):
         TaskPlan(
@@ -158,10 +208,10 @@ async def test_fallback_does_not_route_broad_error_word_to_code() -> None:
         [ChatMessage(role="user", content="我学过这个概念，但理解可能报错了")]
     )
 
-    assert outcome.plan.tasks[0].capability_id is CapabilityId.GENERATION_STATUS
+    assert outcome.plan.tasks[0].capability_id is CapabilityId.GENERAL_ASSISTANCE
 
 
-async def test_planner_schema_failure_uses_safe_fallback_without_second_call() -> None:
+async def test_planner_schema_failure_plans_general_fallback_without_second_planner_call() -> None:
     invalid = {
         "user_goal": "invalid",
         "tasks": [
@@ -186,7 +236,7 @@ async def test_planner_schema_failure_uses_safe_fallback_without_second_call() -
 
     assert outcome.reason == "understanding_failed"
     assert len(model.calls) == 1
-    assert outcome.plan.tasks[0].parameters["understanding_unavailable"] is True
+    assert outcome.plan.tasks[0].capability_id is CapabilityId.GENERAL_ASSISTANCE
 
 
 async def test_safe_fallback_does_not_guess_multi_intent() -> None:
@@ -195,8 +245,106 @@ async def test_safe_fallback_does_not_guess_multi_intent() -> None:
     )
 
     assert [task.capability_id for task in outcome.plan.ordered_tasks()] == [
-        CapabilityId.GENERATION_STATUS
+        CapabilityId.GENERAL_ASSISTANCE
     ]
+
+
+async def test_explicit_generation_status_becomes_general_without_model_routing() -> None:
+    model = FakeStructuredModel(
+        {
+            "user_goal": "查询生成状态",
+            "tasks": [
+                {
+                    "task_id": "status",
+                    "capability_id": "generation_status",
+                    "objective": "查询后台生成状态",
+                    "depends_on": [],
+                    "parameters": {},
+                    "required_context": [],
+                    "self_statement": False,
+                }
+            ],
+            "course_mentions": [],
+            "missing_context": [],
+            "clarifying_questions": [],
+        }
+    )
+
+    outcome = await TaskPlanner(model).plan(
+        [ChatMessage(role="user", content="后台 StudyKit 生成状态怎么样？")]
+    )
+
+    assert outcome.reason == "unavailable_capability_fallback"
+    assert outcome.plan.tasks[0].capability_id is CapabilityId.GENERAL_ASSISTANCE
+    assert len(model.calls) == 0
+
+
+async def test_model_emitted_unavailable_capability_is_normalized_to_general() -> None:
+    model = FakeStructuredModel(
+        {
+            "user_goal": "做阶段性回顾",
+            "tasks": [
+                {
+                    "task_id": "review",
+                    "capability_id": "learning_review",
+                    "objective": "做阶段性回顾",
+                    "depends_on": [],
+                    "parameters": {},
+                    "required_context": [],
+                    "self_statement": False,
+                }
+            ],
+            "course_mentions": [],
+            "missing_context": [],
+            "clarifying_questions": [],
+        }
+    )
+
+    outcome = await TaskPlanner(model).plan(
+        [ChatMessage(role="user", content="帮我回顾一下这阶段的学习。")]
+    )
+
+    assert outcome.plan.tasks[0].capability_id is CapabilityId.GENERAL_ASSISTANCE
+
+
+async def test_specialized_task_wins_over_model_general_task() -> None:
+    model = FakeStructuredModel(
+        {
+            "user_goal": "解释事务",
+            "tasks": [
+                {
+                    "task_id": "general",
+                    "capability_id": "general_assistance",
+                    "objective": "通用回答",
+                    "depends_on": [],
+                    "parameters": {},
+                    "required_context": [],
+                    "self_statement": False,
+                },
+                {
+                    "task_id": "explain",
+                    "capability_id": "concept_explanation",
+                    "objective": "解释事务",
+                    "depends_on": ["general"],
+                    "parameters": {},
+                    "required_context": [],
+                    "self_statement": False,
+                },
+            ],
+            "course_mentions": [],
+            "missing_context": [],
+            "clarifying_questions": [],
+        }
+    )
+
+    outcome = await TaskPlanner(model).plan(
+        [ChatMessage(role="user", content="解释事务")]
+    )
+
+    assert [task.capability_id for task in outcome.plan.tasks] == [
+        CapabilityId.CONCEPT_EXPLANATION
+    ]
+    assert outcome.plan.tasks[0].depends_on == []
 
 
 async def test_model_understanding_routes_inline_code_and_binds_artifact() -> None:

@@ -1,0 +1,127 @@
+{
+  "stage": "quality_audit",
+  "mode": "fast",
+  "checks": [
+    {
+      "dimension": "identity",
+      "status": "pass",
+      "evidence": "第1页给出 Lecture 8: Transformers、6.7960、Fall 2024 与 Phillip Isola。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 1
+          }
+        }
+      ]
+    },
+    {
+      "dimension": "coverage",
+      "status": "pass",
+      "evidence": "覆盖第9页三项核心创新，并延伸至 ViT、自回归和图像到文本。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 38
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 51
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 54
+          }
+        }
+      ]
+    },
+    {
+      "dimension": "citations",
+      "status": "pass",
+      "evidence": "所有材料性陈述及练习均有页级锚点。"
+    },
+    {
+      "dimension": "formula_fidelity",
+      "status": "pass",
+      "evidence": "最终保留公式页已对照可见 PDF；不采用提取噪声中的未核实公式。",
+      "reviewed_pages": [
+        17,
+        18,
+        29,
+        35,
+        37,
+        38,
+        39,
+        41,
+        44,
+        51,
+        52,
+        54
+      ]
+    },
+    {
+      "dimension": "strong_claims",
+      "status": "pass",
+      "evidence": "置换等变、因果遮罩、跨注意力等强陈述均直接由对应页支持。",
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 41
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 51
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 52
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-08-slides",
+          "anchor": {
+            "type": "page",
+            "value": 54
+          }
+        }
+      ]
+    },
+    {
+      "dimension": "ordering_timing",
+      "status": "pass",
+      "evidence": "学习顺序遵循课件从 tokens→attention→position→applications；总计180分钟。"
+    },
+    {
+      "dimension": "copyright_integrity",
+      "status": "pass",
+      "evidence": "内容为概括、推导与原创练习，没有复制受限图片或长段落；不提供受评分作业答案。"
+    }
+  ],
+  "findings": [],
+  "repair_required": false,
+  "semantic_passes": 1
+}

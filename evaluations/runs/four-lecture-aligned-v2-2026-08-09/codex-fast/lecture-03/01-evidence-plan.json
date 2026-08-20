@@ -1,0 +1,200 @@
+{
+  "unit_id": "lecture-03",
+  "quality_mode": "fast",
+  "source_id": "mit-6.7960-f24-lecture-03-slides",
+  "topics": [
+    {
+      "topic": "把逼近、优化、泛化视为三个不同问题，并说明本讲结论只处理逼近。",
+      "requirement_ids": [
+        "obj-1"
+      ],
+      "chunk_ids": [
+        "mit-6.7960-f24-lecture-03-slides-p004"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 4
+          }
+        }
+      ]
+    },
+    {
+      "topic": "用 Lipschitz 条件推导分片矩形在一维和 d 维的误差—规模关系。",
+      "requirement_ids": [
+        "obj-2"
+      ],
+      "chunk_ids": [
+        "mit-6.7960-f24-lecture-03-slides-p008",
+        "mit-6.7960-f24-lecture-03-slides-p009",
+        "mit-6.7960-f24-lecture-03-slides-p013",
+        "mit-6.7960-f24-lecture-03-slides-p014"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 8
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 9
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 13
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 14
+          }
+        }
+      ]
+    },
+    {
+      "topic": "解释三层 ReLU 网络如何构造并线性组合超矩形以逼近 Lipschitz 函数。",
+      "requirement_ids": [
+        "obj-3"
+      ],
+      "chunk_ids": [
+        "mit-6.7960-f24-lecture-03-slides-p010",
+        "mit-6.7960-f24-lecture-03-slides-p015",
+        "mit-6.7960-f24-lecture-03-slides-p016",
+        "mit-6.7960-f24-lecture-03-slides-p017",
+        "mit-6.7960-f24-lecture-03-slides-p018"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 10
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 15
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 16
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 17
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 18
+          }
+        }
+      ]
+    },
+    {
+      "topic": "以分段线性函数的 kink 数分析宽度和深度的表达能力差异。",
+      "requirement_ids": [
+        "obj-4"
+      ],
+      "chunk_ids": [
+        "mit-6.7960-f24-lecture-03-slides-p027",
+        "mit-6.7960-f24-lecture-03-slides-p030",
+        "mit-6.7960-f24-lecture-03-slides-p031"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 27
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 30
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 31
+          }
+        }
+      ]
+    },
+    {
+      "topic": "复述三角函数自复合的深度分离例子，并准确陈述它的实践边界。",
+      "requirement_ids": [
+        "obj-5"
+      ],
+      "chunk_ids": [
+        "mit-6.7960-f24-lecture-03-slides-p032",
+        "mit-6.7960-f24-lecture-03-slides-p033",
+        "mit-6.7960-f24-lecture-03-slides-p034"
+      ],
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 32
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 33
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "anchor": {
+            "type": "page",
+            "value": 34
+          }
+        }
+      ]
+    }
+  ],
+  "final_formula_pages": [
+    8,
+    9,
+    10,
+    13,
+    14,
+    15,
+    30,
+    32
+  ],
+  "excluded_unsupported_claims": [
+    "优化收敛保证",
+    "泛化误差保证",
+    "现实任务的最优宽深比"
+  ]
+}

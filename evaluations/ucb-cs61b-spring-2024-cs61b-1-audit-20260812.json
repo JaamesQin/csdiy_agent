@@ -1,0 +1,97 @@
+{
+  "schema_version": "current-build-audit-v1",
+  "audit_date": "2026-08-12",
+  "role": "UCB CS61B current-build audit worker",
+  "build_id": "a748c428609e7a5bc9f0697a06ae0d7fbd56e2469aaaba8f5b034121f2479ab1",
+  "course_id": "ucb-cs61b-spring-2024",
+  "scope": [
+    "lecture-01", "lecture-02", "lecture-03", "lecture-04", "lecture-05",
+    "lecture-06", "lecture-07", "lecture-08", "lecture-09", "lecture-10",
+    "lecture-11", "lecture-12", "lecture-13"
+  ],
+  "skill_and_refs_read": [
+    "/home/jamesqin/.codex/skills/studykit-generator/SKILL.md",
+    "/home/jamesqin/.codex/skills/studykit-generator/references/contract.md",
+    "/home/jamesqin/.codex/skills/studykit-generator/references/formats.md"
+  ],
+  "write_scope_compliance": {
+    "canonical_unit_artifacts_modified": false,
+    "manifest_modified": false,
+    "registry_modified": false,
+    "root_summaries_modified": false,
+    "report_only_write": true
+  },
+  "overall": "audit_findings_require_reconciliation",
+  "checks": {
+    "candidate_final_yaml_semantic_equality": {
+      "status": "pass",
+      "evidence": "Independent canonical comparison of candidate JSON, final JSON, and parsed YAML returned equality for all 13 units."
+    },
+    "validation_and_review_validation": {
+      "status": "pass",
+      "evidence": "validation.candidate.json, validation.json, and review-validation.json are present and status=succeeded with issues=[] for all 13 units."
+    },
+    "source_chunk_fingerprint_provenance": {
+      "status": "pass",
+      "evidence": "The manifest-declared source and chunks files exist; SHA-256 recomputation matched manifest values for all 13 units. Unit identity, source_id, material_set_id, and page anchor type are consistent in the checked records."
+    },
+    "citation_chunk_page_drift": {
+      "status": "pass_with_one_preserved_numeric_note",
+      "evidence": "Current candidate/final validation counts match per unit and all current reports have no anchor issues. A preserved lecture-02 historical resolution note says 143 citations while current authoritative validation and independent audit say 134. This is recorded below and was not edited."
+    },
+    "independent_audit_freshness_and_identity": {
+      "status": "findings",
+      "evidence": "Independent-audit sidecars exist and identify an auditor for lectures 01, 02, 03, 06, 09, 10, 11, 12, and 13. Sidecars are absent for lectures 04, 05, 07, and 08. For lectures 09, 10, 11, 12, and 13, review-plan metadata still says pending/pending_external_assignment despite a later pass sidecar; these records need reconciliation."
+    }
+  },
+  "deferred_practice_semantic_issues": {
+    "status": "deferred",
+    "items": [],
+    "policy": "Any pre-existing practice semantic issue remains deferred. No practice content was repaired and no synthetic pass was created. This audit does not convert practice semantic review into a pass merely because structural validation succeeded."
+  },
+  "units": [
+    {"unit_id":"lecture-01","chunks":50,"citations":119,"candidate_final_yaml_semantic_equal":true,"validation":"succeeded","review_validation":"succeeded","independent_audit":{"status":"pass","auditor_id":"codex-main-independent-canonical-auditor-ucb-l01","audited_at":"2026-08-11T00:16:43+08:00"}},
+    {"unit_id":"lecture-02","chunks":49,"citations":134,"candidate_final_yaml_semantic_equal":true,"validation":"succeeded","review_validation":"succeeded","independent_audit":{"status":"pass","auditor_id":"codex-independent-cross-auditor","audited_at":"2026-08-11T00:03:33+08:00"}},
+    {"unit_id":"lecture-03","chunks":64,"citations":126,"candidate_final_yaml_semantic_equal":true,"validation":"succeeded","review_validation":"succeeded","independent_audit":{"status":"pass","auditor_id":"codex-independent-cross-auditor","audited_at":"2026-08-11T00:03:58+08:00"}},
+    {"unit_id":"lecture-04","chunks":97,"citations":132,"candidate_final_yaml_semantic_equal":true,"validation":"succeeded","review_validation":"succeeded","independent_audit":{"status":"missing","next_action":"Obtain a different-author independent audit and write the required sidecar; do not infer pass from review-validation."}},
+    {"unit_id":"lecture-05","chunks":48,"citations":91,"candidate_final_yaml_semantic_equal":true,"validation":"succeeded","review_validation":"succeeded","independent_audit":{"status":"missing_sidecar","metadata_claim":"review-plan records passed_standard_independent_audit","next_action":"Reconcile the claimed audit with an identity-bearing independent-audit sidecar; do not infer pass from the metadata alone."}},
+    {"unit_id":"lecture-06","chunks":121,"citations":116,"candidate_final_yaml_semantic_equal":true,"validation":"succeeded","review_validation":"succeeded","independent_audit":{"status":"pass","auditor_id":"codex-independent-cross-auditor","audited_at":"2026-08-11T00:07:38+08:00"}},
+    {"unit_id":"lecture-07","chunks":90,"citations":133,"candidate_final_yaml_semantic_equal":true,"validation":"succeeded","review_validation":"succeeded","independent_audit":{"status":"missing_sidecar","metadata_claim":"review-plan records passed_standard_independent_audit","next_action":"Reconcile the claimed audit with an identity-bearing independent-audit sidecar; do not infer pass from the metadata alone."}},
+    {"unit_id":"lecture-08","chunks":68,"citations":314,"candidate_final_yaml_semantic_equal":true,"validation":"succeeded","review_validation":"succeeded","independent_audit":{"status":"missing","metadata_claim":"review-plan says not_required_fast_mode","next_action":"If the current-build gate requires independent audit, obtain one; otherwise explicitly reconcile this exception in coordinator metadata."}},
+    {"unit_id":"lecture-09","chunks":96,"citations":370,"candidate_final_yaml_semantic_equal":true,"validation":"succeeded","review_validation":"succeeded","independent_audit":{"status":"pass_but_metadata_stale","auditor_id":"AUD-UCBCS61B-SP24-L09-20260810T214025+0800-602796E5","audited_at":"2026-08-10T21:40:25+08:00","stale_fields":{"review_plan.independent_audit_status":"pending","sidecar.result":"pass"}}},
+    {"unit_id":"lecture-10","chunks":82,"citations":176,"candidate_final_yaml_semantic_equal":true,"validation":"succeeded","review_validation":"succeeded","independent_audit":{"status":"pass_but_metadata_stale","auditor_id":"AUD-UCBCS61B-L10-RO-20260810T225047-27B778EA96","audited_at":"2026-08-10T22:50:47+08:00","stale_fields":{"review_plan.independent_audit_status":"pending","sidecar.result":"pass"}}},
+    {"unit_id":"lecture-11","chunks":95,"citations":373,"candidate_final_yaml_semantic_equal":true,"validation":"succeeded","review_validation":"succeeded","independent_audit":{"status":"pass_but_metadata_stale","auditor_id":"AUD-2-ucb-cs61b-sp24-lecture-11-20260810T221816+0800-readonly","audited_at":"2026-08-10T22:18:16+08:00","stale_fields":{"review_plan.independent_audit_status":"pending","sidecar.result":"pass"}}},
+    {"unit_id":"lecture-12","chunks":63,"citations":140,"candidate_final_yaml_semantic_equal":true,"validation":"succeeded","review_validation":"succeeded","independent_audit":{"status":"pass_but_metadata_stale","auditor_id":"codex-independent-cross-auditor-ucb-l12","audited_at":"2026-08-11T00:53:56+08:00","stale_fields":{"review_plan.independent_audit_status":"pending_external_assignment","sidecar.result":"pass"}}},
+    {"unit_id":"lecture-13","chunks":11,"citations":81,"candidate_final_yaml_semantic_equal":true,"validation":"succeeded","review_validation":"succeeded","independent_audit":{"status":"pass_but_metadata_stale","auditor_id":"AUD-UCBCS61B-SP24-L13-20260810T221307+0800","audited_at":"2026-08-10T22:13:07+08:00","stale_fields":{"review_plan.independent_audit_status":"pending","sidecar.result":"pass"}}}
+  ],
+  "findings": [
+    {
+      "id": "independent-audit-sidecar-gaps",
+      "severity": "blocking_for_audit_closure",
+      "units": ["lecture-04","lecture-05","lecture-07","lecture-08"],
+      "details": "Required/claimed independent-audit evidence is absent or not identity-bearing in the unit directory. Existing validation success is not an independent semantic audit pass.",
+      "next_action": "Have a different author/auditor reconcile each unit and record identity, audited_at, build/source/chunk identity, result, blockers, and next_action in the canonical audit sidecar."
+    },
+    {
+      "id": "independent-audit-review-plan-drift",
+      "severity": "metadata_reconciliation_required",
+      "units": ["lecture-09","lecture-10","lecture-11","lecture-12","lecture-13"],
+      "details": "The identity-bearing independent-audit sidecar is pass, but review-plan fields retain pending status. This is a freshness/identity metadata contradiction, not evidence to silently ignore.",
+      "next_action": "Coordinator should reconcile the review-plan/audit sidecar metadata without changing canonical study content."
+    },
+    {
+      "id": "lecture-02-preserved-citation-count-drift",
+      "severity": "numeric_reconciliation",
+      "units": ["lecture-02"],
+      "location": "04-quality-audit.resolution.json and independent-audit/validation records",
+      "expected": {"citation_count": 134, "authority": "current validation.json, validation.candidate.json, independent-audit.json"},
+      "actual": {"citation_count": 143, "authority": "older preserved resolution note"},
+      "next_action": "Root/coordinator merge owner should update only the stale merge/resolution summary to 134, preserving the historical note and canonical unit artifacts."
+    }
+  ],
+  "root_merge_numeric_note": {
+    "status": "not_the_only_finding",
+    "details": "Root summaries currently describe the full 40-unit build; the requested audit scope is 13 units. No root summary was modified. The concrete numeric drift found in this scope is lecture-02 expected 134 versus stale preserved actual 143 above."
+  },
+  "next_action": "Do not close this audit as pass. Reconcile the independent-audit sidecar gaps and pending/pass metadata contradictions; separately correct the stale lecture-02 numeric merge note to 134."
+}

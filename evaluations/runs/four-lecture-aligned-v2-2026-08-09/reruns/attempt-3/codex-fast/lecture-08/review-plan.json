@@ -1,0 +1,41 @@
+{
+  "quality_mode": "fast",
+  "selected_pages": [
+    1,
+    14,
+    17,
+    18,
+    34,
+    37,
+    39,
+    41,
+    43,
+    51,
+    54
+  ],
+  "actual_reviewed_pages": [
+    1,
+    14,
+    17,
+    18,
+    34,
+    37,
+    39,
+    41,
+    43,
+    51,
+    54
+  ],
+  "required_final_formula_pages": [
+    14,
+    17,
+    18,
+    34,
+    37,
+    41
+  ],
+  "independent_audit": false,
+  "blockers_after_reaudit": [],
+  "selection_reason": "identity, every retained formula, final architecture, symmetry, positional, causal and cross-attention claims",
+  "page_selector_version": "review-pages-v1"
+}

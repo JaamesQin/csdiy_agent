@@ -1,0 +1,15 @@
+{
+  "schema_version": "selective-repair-residual-plan-v1",
+  "plan_id": "ucb-cs61a-round5-markdown-self-containment-20260812",
+  "created_at": "2026-08-12T23:38:00+08:00",
+  "policy": {"parent_snapshot_must_match_declared_baseline": true, "max_targeted_repairs_per_stage": 1, "fresh_independent_per_practice_audit_required": true},
+  "courses": [{
+    "course_id": "ucb-cs61a-summer-2026",
+    "baseline_build_id": "f2e717f0153f1d6fa09c285369fdb074abca2a497bd0c649ee09c5fd5d6c8a78",
+    "repair_units": [{
+      "unit_id": "lecture-28",
+      "stages": ["practice", "structural"],
+      "required_repairs": ["embed every finite p1 and p3 input needed for solving directly in learner-rendered question/deliverable text", "preserve p2 and p4", "ensure 03/candidate/final/YAML/Markdown all expose equivalent self-contained tasks"]
+    }]
+  }]
+}

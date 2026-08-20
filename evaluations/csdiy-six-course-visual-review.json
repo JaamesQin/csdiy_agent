@@ -1,0 +1,66 @@
+{
+  "review_version": "risk-pages-v1",
+  "quality_mode": "fast",
+  "page_selector_version": "review-pages-v1",
+  "status": "passed",
+  "review_scope": "parser-risk-pages before StudyKit authoring",
+  "courses": [
+    {
+      "course_id": "ucb-cs61a-spring-2026",
+      "risk_page_count": 124,
+      "rendered_page_count": 124,
+      "contact_sheet_count": 7,
+      "actual_reviewed_page_count": 124,
+      "visual_review_status": "passed"
+    },
+    {
+      "course_id": "ucb-cs188-spring-2026",
+      "risk_page_count": 318,
+      "rendered_page_count": 318,
+      "contact_sheet_count": 15,
+      "actual_reviewed_page_count": 318,
+      "visual_review_status": "passed"
+    },
+    {
+      "course_id": "mit-6-042j-spring-2024",
+      "risk_page_count": 0,
+      "rendered_page_count": 0,
+      "contact_sheet_count": 0,
+      "actual_reviewed_page_count": 0,
+      "visual_review_status": "no_parser_risk_pages"
+    },
+    {
+      "course_id": "ucb-cs168-spring-2026",
+      "risk_page_count": 70,
+      "rendered_page_count": 70,
+      "contact_sheet_count": 3,
+      "actual_reviewed_page_count": 70,
+      "visual_review_status": "passed"
+    },
+    {
+      "course_id": "ucb-cs186-spring-2026",
+      "risk_page_count": 0,
+      "rendered_page_count": 0,
+      "contact_sheet_count": 0,
+      "actual_reviewed_page_count": 0,
+      "visual_review_status": "no_parser_risk_pages"
+    },
+    {
+      "course_id": "ucb-cs61c-spring-2026",
+      "risk_page_count": 0,
+      "rendered_page_count": 0,
+      "contact_sheet_count": 0,
+      "actual_reviewed_page_count": 0,
+      "visual_review_status": "no_parser_risk_pages"
+    }
+  ],
+  "risk_page_count": 512,
+  "rendered_page_count": 512,
+  "actual_reviewed_page_count": 512,
+  "contact_sheet_count": 25,
+  "review_method": "All selected pages were inspected through labeled contact sheets; no visual extraction blocker was found. Formula-specific and final-citation review remains a per-StudyKit-unit gate.",
+  "render_plan": "data/raw/catalog-visual-review-v1/risk-page-summary.json",
+  "render_command": ".venv/bin/python scripts/render_course_risk_pages.py --catalog-manifest <six catalog manifests> --output-root data/raw/catalog-visual-review-v1 --dpi 100",
+  "provider_client_used": false,
+  "network_used_during_review": false
+}

@@ -1,0 +1,683 @@
+{
+  "lecture_id": "lecture-03",
+  "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+  "claims": [
+    {
+      "text": "逼近问模型族中是否存在合适网络；优化问能否找到它；泛化问未见数据上是否有效。本讲主要回答第一问。",
+      "anchors": [
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 4
+        }
+      ]
+    },
+    {
+      "text": "函数增量由输入增量的 L 倍控制；多维输入采用 RMS 范数。",
+      "anchors": [
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 8
+        },
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 9
+        }
+      ]
+    },
+    {
+      "text": "RMS 范数是坐标平方平均后开根号，用来表示多维输入增量大小。",
+      "anchors": [
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 9
+        }
+      ]
+    },
+    {
+      "text": "任意定义在单位 d 维超立方体上的 L-Lipschitz 函数，都存在三层 ReLU 网络使积分 L1 误差小于 2ε；构造规模为 4d(L/ε)^d。",
+      "anchors": [
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 10
+        },
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 18
+        }
+      ]
+    },
+    {
+      "text": "N 条等宽区间内，Lipschitz 条件把单条误差限制在面积 L/(2N²) 的三角形内，总误差不超过 L/(2N)。",
+      "anchors": [
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 12
+        },
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 13
+        }
+      ]
+    },
+    {
+      "text": "N 个超矩形各边长 N^{-1/d}，总误差不超过 L/N^{1/d}；达到 ε 需 (L/ε)^d 个超矩形，数量对维数指数增长。",
+      "anchors": [
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 14
+        },
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 18
+        }
+      ]
+    },
+    {
+      "text": "四个平移、缩放的 ReLU 经系数 [1,-1,-1,1] 组合，在 c→∞ 时趋近区间 [0,1] 的矩形函数；偏置可水平平移它。",
+      "anchors": [
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 15
+        }
+      ]
+    },
+    {
+      "text": "把各坐标的一维矩形相加并在 d−1 处施加 ReLU 阈值，可近似 d 维超矩形；再对平移后的超矩形做线性组合即可逼近目标曲面。",
+      "anchors": [
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 16
+        },
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 17
+        }
+      ]
+    },
+    {
+      "text": "该构造在维数上耗费指数多神经元，而且按训练点形成矩形的表示未必泛化；普适逼近本身也不是学习成功的充分条件。",
+      "anchors": [
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 18
+        },
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 19
+        },
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 21
+        }
+      ]
+    },
+    {
+      "text": "ReLU、分段线性函数的和、标量乘法与复合仍为分段线性，可用梯度改变的位置 kink 衡量复杂度。",
+      "anchors": [
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 27
+        }
+      ]
+    },
+    {
+      "text": "宽度为 n 的一层至多把上一层的最大 kink 数乘以 2n，因此深度 L 的上界为 (2n)^L：对固定深度是宽度的多项式，对固定宽度则随深度指数增长。",
+      "anchors": [
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 28
+        },
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 29
+        },
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 30
+        },
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 31
+        }
+      ]
+    },
+    {
+      "text": "宽度 2 的三角函数每次自复合都使线性区域数翻倍；复合 500 次产生 2^500−1 个 kinks，而三层网络要匹配需约 7×10^49 的宽度。",
+      "anchors": [
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 32
+        },
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 33
+        }
+      ]
+    },
+    {
+      "text": "深度分离只支持关于逼近表达效率的结论，不能推出极深网络容易优化或泛化良好。",
+      "anchors": [
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 34
+        },
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 41
+        }
+      ]
+    }
+  ],
+  "formulas": [
+    {
+      "latex": "|g(x+\\\\Delta x)-g(x)|\\\\le L|\\\\Delta x|",
+      "status": "resolved",
+      "anchors": [
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 8
+        },
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 9
+        }
+      ],
+      "origin": "structured"
+    },
+    {
+      "latex": "\\\\|x\\\\|_{\\\\mathrm{RMS}}=\\\\sqrt{\\\\frac{1}{d}\\\\sum_{i=1}^{d}x_i^2}",
+      "status": "resolved",
+      "anchors": [
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 9
+        }
+      ],
+      "origin": "structured"
+    },
+    {
+      "latex": "N=4d(L/\\\\varepsilon)^d,\\\\quad \\\\int_{[0,1]^d}|f(x)-g(x)|\\\\,dx<2\\\\varepsilon",
+      "status": "resolved",
+      "anchors": [
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 10
+        },
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 18
+        }
+      ],
+      "origin": "structured"
+    },
+    {
+      "latex": "\\\\int |f(x)-g(x)|\\\\,dx\\\\le N\\\\frac{L}{2N^2}=\\\\frac{L}{2N}",
+      "status": "resolved",
+      "anchors": [
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 12
+        },
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 13
+        }
+      ],
+      "origin": "structured"
+    },
+    {
+      "latex": "N=(L/\\\\varepsilon)^d",
+      "status": "resolved",
+      "anchors": [
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 14
+        },
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 18
+        }
+      ],
+      "origin": "structured"
+    },
+    {
+      "latex": "f_c(x)=[1,-1,-1,1]^\\\\top\\\\operatorname{ReLU}([cx,cx-1,c(x-1)-2,c(x-1)-3]^\\\\top)",
+      "status": "resolved",
+      "anchors": [
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 15
+        }
+      ],
+      "origin": "structured"
+    },
+    {
+      "latex": "\\\\mathrm{KINKS}_L\\\\le2n\\\\,\\\\mathrm{KINKS}_{L-1}\\\\le(2n)^L",
+      "status": "resolved",
+      "anchors": [
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 28
+        },
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 29
+        },
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 30
+        },
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 31
+        }
+      ],
+      "origin": "structured"
+    },
+    {
+      "latex": "g(x)=\\\\operatorname{ReLU}(2\\\\operatorname{ReLU}(x)-4\\\\operatorname{ReLU}(x-\\\\tfrac12))",
+      "status": "resolved",
+      "anchors": [
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 32
+        },
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 33
+        }
+      ],
+      "origin": "structured"
+    }
+  ],
+  "objectives": [
+    "把逼近、优化、泛化视为三个不同问题，并说明本讲结论只处理逼近。",
+    "用 Lipschitz 条件推导分片矩形在一维和 d 维的误差—规模关系。",
+    "解释三层 ReLU 网络如何构造并线性组合超矩形以逼近 Lipschitz 函数。",
+    "以分段线性函数的 kink 数分析宽度和深度的表达能力差异。",
+    "复述三角函数自复合的深度分离例子，并准确陈述它的实践边界。"
+  ],
+  "practice": [
+    {
+      "question": "分别用一句话定义逼近、优化和泛化，并判断本讲定理回答哪一项。",
+      "hint": "使用第 4 页的三块拼图。",
+      "deliverable": "三行定义和一行判断。",
+      "expected_evidence": [
+        "三者边界清楚",
+        "只选择逼近"
+      ],
+      "evaluation": {
+        "criteria": [
+          "不把存在性写成训练保证",
+          "引用准确"
+        ]
+      },
+      "anchors": [
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 4
+        }
+      ]
+    },
+    {
+      "question": "从宽 1/N、高 L/N 的误差三角形推导一维总 L1 误差。",
+      "hint": "先求单个三角形面积，再乘 N。",
+      "deliverable": "三步公式推导。",
+      "expected_evidence": [
+        "单条 L/(2N²)",
+        "总误差 L/(2N)",
+        "N=L/(2ε)"
+      ],
+      "evaluation": {
+        "criteria": [
+          "代数正确",
+          "量纲一致"
+        ]
+      },
+      "anchors": [
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 13
+        }
+      ]
+    },
+    {
+      "question": "解释 d 维中为何需要 (L/ε)^d 个超矩形，并指出这个结果揭示的主要限制。",
+      "hint": "每格边长为 N^{-1/d}。",
+      "deliverable": "150–250 字推导。",
+      "expected_evidence": [
+        "误差 L/N^{1/d}",
+        "解出 N",
+        "指出维数指数增长"
+      ],
+      "evaluation": {
+        "criteria": [
+          "推导闭合",
+          "限制解释准确"
+        ]
+      },
+      "anchors": [
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 14
+        },
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 18
+        }
+      ]
+    },
+    {
+      "question": "画出从一维矩形模块到 d 维超矩形，再到任意 Lipschitz 曲面的三模块图。",
+      "hint": "依次使用第 15、16、17 页。",
+      "deliverable": "模块图与每模块一句说明。",
+      "expected_evidence": [
+        "四 ReLU 线性组合",
+        "各坐标相加后阈值",
+        "平移超矩形线性组合"
+      ],
+      "evaluation": {
+        "criteria": [
+          "模块顺序正确",
+          "没有虚构优化过程"
+        ]
+      },
+      "anchors": [
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 15
+        },
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 16
+        },
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 17
+        }
+      ]
+    },
+    {
+      "question": "用归纳法从 KINKS_l≤2n·KINKS_{l−1} 推出 (2n)^L，并比较固定深度加宽与固定宽度加深。",
+      "hint": "从第一层一个 kink 开始。",
+      "deliverable": "归纳证明和增长率比较。",
+      "expected_evidence": [
+        "基例",
+        "递推应用",
+        "多项式/指数区别"
+      ],
+      "evaluation": {
+        "criteria": [
+          "证明有效",
+          "符号定义明确"
+        ]
+      },
+      "anchors": [
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 30
+        },
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 31
+        }
+      ]
+    },
+    {
+      "question": "计算三角函数复合 500 次的 kink 数和浅层宽度下界数量级，再列出不能由此推出的两个结论。",
+      "hint": "结合第 33、34 页。",
+      "deliverable": "数值表与两条边界。",
+      "expected_evidence": [
+        "2^500−1",
+        "约 7×10^49",
+        "不保证易优化",
+        "不保证好泛化"
+      ],
+      "evaluation": {
+        "criteria": [
+          "数字与幻灯片一致",
+          "边界完整"
+        ]
+      },
+      "anchors": [
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 32
+        },
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 33
+        },
+        {
+          "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+          "source_id": "mit-6.7960-f24-lecture-03-slides",
+          "page": 34
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "源材料为板书式幻灯片；本包只保留已从可见页面核对的公式。",
+    "逼近定理和深度分离均为表达能力结论，不提供训练算法、收敛速度或泛化界。",
+    "第 38–39 页只用于提醒实践结果可能受训练管线混杂因素影响，本包不扩展未在材料中给出的经验定律。"
+  ],
+  "anchors": [
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 2
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 3
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 4
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 5
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 7
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 8
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 9
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 10
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 11
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 12
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 13
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 14
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 15
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 16
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 17
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 18
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 19
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 20
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 21
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 24
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 25
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 26
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 27
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 28
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 29
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 30
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 31
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 32
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 33
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 34
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 39
+    },
+    {
+      "pdf_sha256": "d7db2ac9fdc333a6bdcf4e39659df9d0c53f2587cf68df71cf68b2dd863a462e",
+      "source_id": "mit-6.7960-f24-lecture-03-slides",
+      "page": 41
+    }
+  ],
+  "duration_seconds": 118.05221605300903,
+  "reviewed_page_count": 19,
+  "semantic_passes": 2,
+  "tokens": null,
+  "anonymous_id": "sample-8fe86f7e08d31c28"
+}

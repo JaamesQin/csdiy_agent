@@ -25,6 +25,12 @@ def test_chat_assets_are_available(client: ASGITestClient) -> None:
     assert stylesheet.headers["content-type"].startswith("text/css")
     assert script.status_code == 200
     assert "readStream" in script.text
+    assert "coursepilotContext: null" in script.text
+    assert "event.coursepilot_context" in script.text
+    assert "coursepilot_context: state.coursepilotContext" in script.text
+    assert 'typeof body.coursepilot_context === "string"' in script.text
+    assert "state.coursepilotContext = body.coursepilot_context" in script.text
+    assert "let nextContext;" in script.text
     assert 'fetch("/auth/me"' in script.text
     assert "X-CSRF-Token" in script.text
     assert "elements.loginForm.reset()" in script.text

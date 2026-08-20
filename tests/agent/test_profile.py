@@ -114,6 +114,43 @@ async def test_no_user_keeps_profile_transient(tmp_path) -> None:
     assert not (tmp_path / "profiles.sqlite3").exists()
 
 
+async def test_confirmed_negative_background_is_preserved_and_labeled_as_background(
+    tmp_path,
+) -> None:
+    model = FakeStructuredModel(
+        {
+            "candidates": [
+                {
+                    "field_name": "background",
+                    "value": "没有Python基础",
+                    "status": "confirmed",
+                    "confidence": 1,
+                    "evidence_quote": "我没有Python基础",
+                    "course_id": None,
+                    "course_version": None,
+                    "unit_id": None,
+                }
+            ]
+        }
+    )
+    service = ProfileService(
+        SQLiteProfileRepository(tmp_path / "negative.sqlite3"), model=model
+    )
+
+    result = await service.observe(
+        user_id="negative-background",
+        text="我没有Python基础",
+        current=LearnerProfile(user_id="negative-background", persisted=True),
+    )
+
+    assert [fact.value for fact in result.profile.confirmed("background")] == [
+        "没有Python"
+    ]
+    rendered = service.render(result.profile)
+    assert "学习背景：没有Python" in rendered
+    assert "已有基础" not in rendered
+
+
 async def test_model_inference_requires_confirmation_and_expires(tmp_path) -> None:
     model = FakeStructuredModel(
         {

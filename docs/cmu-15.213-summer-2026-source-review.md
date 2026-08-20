@@ -2,7 +2,7 @@
 
 Review date: 2026-08-08
 
-Status: ready for StudyKit generation; generation has not started
+Status: canonical portable-v0.2 fast StudyKit build succeeded; all 24 source-supported units validated and passed the fast audit/review gate
 
 ## Course identity and scope
 
@@ -91,18 +91,12 @@ Visual sampling rendered the first, middle, and last page of every deck, plus al
 
 Detailed per-unit counts are recorded in `evaluations/cmu-15.213-summer-2026-parser-results.md`.
 
-## Pipeline boundary
+## Authoring and finalization
 
-The preparation boundary is complete: source acquisition, provenance manifest, chunk construction, schema validation, identity checks, and sampled visual QA have all run without a model call.
+The canonical portable-v0.2 fast build succeeded for all 24 source-supported units. It contains 1,441 page chunks, 24/24 validated units, 24/24 passed fast audit/review, and 1,020 selected/actual final visual-review pages according to the per-unit metrics. No provider-backed generator or network call was used.
 
-The next command would begin StudyKit generation and was intentionally **not** run:
+- Build index: `outputs/cmu-15.213-summer-2026/40bd4156f8432f731a6dce34d04cd3cdf7e198a7c754d1533131b7e7754938f6/STUDYKIT_INDEX.md`
+- Course result: `outputs/cmu-15.213-summer-2026/40bd4156f8432f731a6dce34d04cd3cdf7e198a7c754d1533131b7e7754938f6/result.json`
+- StudyKit evaluation: `evaluations/cmu-15.213-summer-2026-studykit-results.md`
 
-```bash
-.venv/bin/python scripts/generate_studykit.py \
-  --chunks data/sources/cmu-15.213-summer-2026/lecture-01/chunks.jsonl \
-  --manifest data/manifests/cmu-15.213-summer-2026.yaml \
-  --unit-id lecture-01 \
-  --output-dir outputs/cmu-15.213-summer-2026/lecture-01
-```
-
-`outputs/` is used because it is already ignored. A fresh output directory should be used for each first generation run.
+The build reused already-authorized, hash-matched checkpoints where available and preserved the independent audit history; it did not regenerate those units in place.

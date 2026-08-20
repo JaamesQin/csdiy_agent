@@ -1,0 +1,110 @@
+{
+  "schema_version": "studykit-reviewed-package-audit-v1",
+  "audit_id": "mit-6.s081-fall-2021-s081-1-audit-20260812",
+  "audited_at": "2026-08-12",
+  "auditor_id": "s081-1-audit-worker",
+  "course_id": "mit-6.s081-fall-2021",
+  "course_version": "fall-2021",
+  "scope": {
+    "units": ["lecture-01", "lecture-02", "lecture-03", "lecture-04", "lecture-05", "lecture-06"],
+    "reviewed_root": "data/reviewed/mit-6.s081-fall-2021/portable-v0.2.0",
+    "source_root": "data/sources/mit-6.s081-fall-2021",
+    "raw_manifest": "data/reviewed/mit-6.s081-fall-2021/portable-v0.2.0/manifest.yaml",
+    "read_only_targets": ["reviewed package", "StudyKit content", "registry", "root"]
+  },
+  "method": {
+    "skill": "skills/studykit-generator/SKILL.md",
+    "references": ["contract.md", "formats.md", "examples.md", "quality-modes.md", "parallelism.md"],
+    "checks": ["stored audit and validation evidence", "current validate_artifacts.py", "current validate_review.py", "JSON/YAML semantic equality", "source/chunk/manifest identity and hashes", "visible-page and formula-candidate accounting", "practice semantic contract"],
+    "network_used": false,
+    "provider_or_model_used": false,
+    "package_modified": false
+  },
+  "build_context": {
+    "reviewed_pipeline_version": "0.2.0",
+    "reviewed_build_id": "8905ecd85275372bb2684127ba30a27046650d6b94e3c4d8320c51387ca561db",
+    "reviewed_quality_mode": "standard",
+    "reviewed_page_selector_version": "review-pages-v1",
+    "delivery_policy": "draft",
+    "current_skill_version": "0.2.1",
+    "current_v0_2_1_build_present": false,
+    "fingerprint_result": "source hashes and reviewed build fingerprint are internally consistent; no v0.2.1 target fingerprint exists",
+    "version_mismatch": "all six final artifacts declare studykit_version 0.1 and belong to pipeline 0.2.0; migration target is current skill/schema 0.2.1",
+    "global_next_action": "Create a new isolated v0.2.1 build from the same manifest/raw inputs. Re-author or migrate through 01-evidence-plan, 02-learning-content, and 03-practice-flow; add practice_feedback_policy and missing glossary citations; run current artifact/review validation and an independent practice audit before accepting the new build. Do not edit v0.2.0 in place."
+  },
+  "units": [
+    {
+      "unit_id": "lecture-01",
+      "status": "blocked_for_v0_2_1_migration",
+      "source": {"title": "Introduction and examples", "pages": 18, "chunks": 18, "source_id": "mit-6.s081-f21-lecture-01-material", "sha256": "b75ff78c67c453d278c12e5908ee65cc7edfea74008d7ccd6c5a2cdb681f4073", "raw_manifest_match": true, "chunk_manifest_match": true},
+      "counts": {"final_citations": 66, "validation_citations": 66, "raw_chunks": 18, "validation_chunks": 18, "formula_candidates": 3, "final_formulas": 0, "selected_pages": 13, "actual_reviewed_pages": 13, "practices": 5, "warnings": 2, "low_text_pages": [10, 18], "hidden_warning_pages": []},
+      "final_validation_yaml": {"stored_validation": "succeeded", "current_v0_2_1_artifact_validation": "failed", "current_issues": [{"code": "schema", "message": "missing required property practice_feedback_policy"}], "review_validation": "succeeded", "json_yaml_semantically_equal": true},
+      "visible_formula_review_evidence": {"final_formula_pages": [], "source_formula_candidate_pages": [7, 10, 18], "actual_reviewed_covers_selected": true, "hidden_text_used": false, "finding": "No structured formula retained; source candidate/notation inventory is not carried into the reviewed package as a checkpoint or formula_unresolved record."},
+      "provenance": {"author": {"declared": "host_codex_agents", "provider_client_used": false, "model_api_calls": 0}, "auditor": {"independent_declared": true, "auditor_id_recorded": false, "evidence": "04-quality-audit summary and review-plan independent_audit=true"}},
+      "fingerprint_version_mismatch": ["pipeline 0.2.0 versus target 0.2.1", "final studykit_version 0.1", "01-03 authoring checkpoints absent from compact reviewed package"],
+      "deferred_practice_semantic_issues": [{"practice_id": "practice-04", "category": "generic_or_underspecified_transfer", "reason": "Learner is asked to invent a design-conflict question after selecting a tension; no concrete solvable setting is supplied, matching the contract's rejected generic-shell pattern.", "action": "Re-author with a concrete OS design scenario and observable comparison in the new v0.2.1 practice-flow; do not repair v0.2.0."}],
+      "next_action": "Rebuild lecture-01 in v0.2.1; add feedback policy, preserve source hash, explicitly document omission/unresolved handling for candidate pages 7/10/18, and replace practice-04 with a concrete transfer task."
+    },
+    {
+      "unit_id": "lecture-02",
+      "status": "blocked_for_v0_2_1_migration",
+      "source": {"title": "C and gdb", "pages": 111, "chunks": 111, "source_id": "mit-6.s081-f21-lecture-02-material", "sha256": "23a20d21e9ef23d594e5b7284dece81b44884def29cad0308451b744ad5e0d54", "raw_manifest_match": true, "chunk_manifest_match": true},
+      "counts": {"final_citations": 152, "validation_citations": 152, "raw_chunks": 111, "validation_chunks": 111, "formula_candidates": 43, "final_formulas": 0, "selected_pages": 38, "actual_reviewed_pages": 38, "practices": 5, "warnings": 12, "low_text_pages": [67], "hidden_warning_pages": []},
+      "final_validation_yaml": {"stored_validation": "succeeded", "current_v0_2_1_artifact_validation": "failed", "current_issues": [{"code": "schema", "message": "missing required property practice_feedback_policy"}], "review_validation": "succeeded", "json_yaml_semantically_equal": true},
+      "visible_formula_review_evidence": {"final_formula_pages": [], "source_formula_candidate_pages": "43 candidates, predominantly code/notation pages", "actual_reviewed_covers_selected": true, "hidden_text_used": false, "finding": "No structured formula retained; formula/notation candidate disposition is only asserted in audit prose and not recoverable from an EvidencePlan checkpoint."},
+      "provenance": {"author": {"declared": "host_codex_agents", "provider_client_used": false, "model_api_calls": 0}, "auditor": {"independent_declared": true, "auditor_id_recorded": false, "evidence": "04-quality-audit summary and review-plan independent_audit=true"}},
+      "fingerprint_version_mismatch": ["pipeline 0.2.0 versus target 0.2.1", "final studykit_version 0.1", "merged source contains Fall-2021 C plus Fall-2018 GDB material and requires provenance preservation", "01-03 authoring checkpoints absent"],
+      "deferred_practice_semantic_issues": [{"practice_id": "p1", "category": "underspecified_transfer", "reason": "Learner is asked to supply an entire short function and scenario before tracing storage lifetimes.", "action": "Provide a concrete function/object layout in v0.2.1, or explicitly label the task as bounded transfer with given values."}, {"practice_id": "p3", "category": "unanswerable_practice", "reason": "The helper function whose returned local-array address must be reviewed is not supplied.", "action": "Include a concrete code snippet and expected observable diagnosis in v0.2.1."}, {"practice_id": "p5", "category": "generic_or_underspecified_transfer", "reason": "Learner must construct an arbitrary C memory-error case; the contract requires a specified new setting.", "action": "Supply a bounded code case and falsifiable GDB evidence target in v0.2.1."}],
+      "next_action": "Rebuild lecture-02 in v0.2.1 while retaining the C/GDB vintage boundary and excluded homework pages; add feedback policy, checkpoint formula/notation disposition, and concretize p1/p3/p5."
+    },
+    {
+      "unit_id": "lecture-03",
+      "status": "blocked_for_v0_2_1_migration",
+      "source": {"title": "OS organization and system calls", "pages": 25, "chunks": 25, "source_id": "mit-6.s081-f21-lecture-03-material", "sha256": "b412846f3bfc64d730b158e7e8e60f70fddf9a4666ffd9810d51e3ce960549fc", "raw_manifest_match": true, "chunk_manifest_match": true},
+      "counts": {"final_citations": 111, "validation_citations": 111, "raw_chunks": 25, "validation_chunks": 25, "formula_candidates": 4, "final_formulas": 0, "selected_pages": 25, "actual_reviewed_pages": 25, "practices": 5, "warnings": 0, "low_text_pages": [], "hidden_warning_pages": []},
+      "final_validation_yaml": {"stored_validation": "succeeded", "current_v0_2_1_artifact_validation": "failed", "current_issues": [{"code": "schema", "message": "missing required property practice_feedback_policy"}, {"code": "claim_anchor_missing", "locations": ["glossary[0]", "glossary[1]", "glossary[2]", "glossary[3]", "glossary[4]"]}], "review_validation": "succeeded", "json_yaml_semantically_equal": true},
+      "visible_formula_review_evidence": {"final_formula_pages": [], "source_formula_candidate_pages": [8, 13, 18, 19], "actual_reviewed_covers_selected": true, "hidden_text_used": false, "finding": "Notation/code candidates were not retained as formulas; no checkpoint proves their disposition."},
+      "provenance": {"author": {"declared": "host_codex_agents", "provider_client_used": false, "model_api_calls": 0}, "auditor": {"independent_declared": true, "auditor_id_recorded": false, "evidence": "04-quality-audit summary and review-plan independent_audit=true"}},
+      "fingerprint_version_mismatch": ["pipeline 0.2.0 versus target 0.2.1", "final studykit_version 0.1", "01-03 authoring checkpoints absent"],
+      "deferred_practice_semantic_issues": [],
+      "next_action": "Rebuild lecture-03 in v0.2.1; add practice_feedback_policy and citations to all five glossary claims, then rerun current validation and independent audit."
+    },
+    {
+      "unit_id": "lecture-04",
+      "status": "blocked_for_v0_2_1_migration",
+      "source": {"title": "Page tables", "pages": 26, "chunks": 26, "source_id": "mit-6.s081-f21-lecture-04-material", "sha256": "34d933608f8c2bc99278d0cc9f45202358768a46ab9aa2e49936679388c60acd", "raw_manifest_match": true, "chunk_manifest_match": true},
+      "counts": {"final_citations": 102, "validation_citations": 102, "raw_chunks": 26, "validation_chunks": 26, "formula_candidates": 12, "final_formulas": 0, "selected_pages": 20, "actual_reviewed_pages": 20, "practices": 5, "warnings": 2, "low_text_pages": [22, 24], "hidden_warning_pages": []},
+      "final_validation_yaml": {"stored_validation": "succeeded", "current_v0_2_1_artifact_validation": "failed", "current_issues": [{"code": "schema", "message": "missing required property practice_feedback_policy"}], "review_validation": "succeeded", "json_yaml_semantically_equal": true},
+      "visible_formula_review_evidence": {"final_formula_pages": [], "source_formula_candidate_pages": "12 candidates including Sv39/address notation", "actual_reviewed_covers_selected": true, "hidden_text_used": false, "finding": "The audit says no structured formulas were created, but the reviewed package has no EvidencePlan/formula omission records for the notation candidates."},
+      "provenance": {"author": {"declared": "host_codex_agents", "provider_client_used": false, "model_api_calls": 0}, "auditor": {"independent_declared": true, "auditor_id_recorded": false, "evidence": "04-quality-audit summary and review-plan independent_audit=true"}},
+      "fingerprint_version_mismatch": ["pipeline 0.2.0 versus target 0.2.1", "final studykit_version 0.1", "01-03 authoring checkpoints absent"],
+      "deferred_practice_semantic_issues": [],
+      "next_action": "Rebuild lecture-04 in v0.2.1; preserve Sv39 notation provenance, record formula/notation disposition, add feedback policy, and rerun current checks."
+    },
+    {
+      "unit_id": "lecture-05",
+      "status": "blocked_for_v0_2_1_migration",
+      "source": {"title": "GDB, calling conventions and stack frames RISC-V", "pages": 44, "chunks": 44, "source_id": "mit-6.s081-f21-lecture-05-material", "sha256": "dc3979b214324869281498d68b456f36d31938dbdcf12841bde5e499c15364b6", "raw_manifest_match": true, "chunk_manifest_match": true},
+      "counts": {"final_citations": 82, "validation_citations": 82, "raw_chunks": 44, "validation_chunks": 44, "formula_candidates": 5, "final_formulas": 0, "selected_pages": 16, "actual_reviewed_pages": 16, "practices": 5, "warnings": 0, "low_text_pages": [], "hidden_warning_pages": []},
+      "final_validation_yaml": {"stored_validation": "succeeded", "current_v0_2_1_artifact_validation": "failed", "current_issues": [{"code": "schema", "message": "missing required property practice_feedback_policy"}], "review_validation": "succeeded", "json_yaml_semantically_equal": true},
+      "visible_formula_review_evidence": {"final_formula_pages": [], "source_formula_candidate_pages": [2, 3, 4, 5, 6], "actual_reviewed_covers_selected": true, "hidden_text_used": false, "finding": "Candidate pages include excluded Fall-2018 homework-solution material and code notation; disposition is asserted in prose but not represented in retained checkpoints."},
+      "provenance": {"author": {"declared": "host_codex_agents", "provider_client_used": false, "model_api_calls": 0}, "auditor": {"independent_declared": true, "auditor_id_recorded": false, "evidence": "04-quality-audit summary and review-plan independent_audit=true"}},
+      "fingerprint_version_mismatch": ["pipeline 0.2.0 versus target 0.2.1", "final studykit_version 0.1", "source title claims RISC-V calling conventions while audit limits evidence to an older GDB deck; limitation must survive rebuild", "01-03 authoring checkpoints absent"],
+      "deferred_practice_semantic_issues": [{"practice_id": "p5", "category": "generic_or_underspecified_transfer", "reason": "Learner must invent a complete unrelated debugging script/program; the task has no specified setting or observable target beyond a generic evidence-chain request.", "action": "Provide a bounded program, symptom, and expected breakpoint/watchpoint observation in v0.2.1."}],
+      "next_action": "Rebuild lecture-05 in v0.2.1 with the 2018 GDB provenance and RISC-V coverage limitation explicit; add feedback policy and concretize p5."
+    },
+    {
+      "unit_id": "lecture-06",
+      "status": "blocked_for_v0_2_1_migration",
+      "source": {"title": "Isolation and system call entry/exit", "pages": 27, "chunks": 27, "source_id": "mit-6.s081-f21-lecture-06-material", "sha256": "306cce8ed23b2b03a245005e99c079ea46b999f416e55265cb29ea73db4d7e38", "raw_manifest_match": true, "chunk_manifest_match": true},
+      "counts": {"final_citations": 113, "validation_citations": 113, "raw_chunks": 27, "validation_chunks": 27, "formula_candidates": 6, "final_formulas": 0, "selected_pages": 26, "actual_reviewed_pages": 26, "practices": 5, "warnings": 2, "low_text_pages": [10], "hidden_warning_pages": []},
+      "final_validation_yaml": {"stored_validation": "succeeded", "current_v0_2_1_artifact_validation": "failed", "current_issues": [{"code": "schema", "message": "missing required property practice_feedback_policy"}, {"code": "claim_anchor_missing", "locations": ["glossary[0]", "glossary[1]", "glossary[2]", "glossary[3]", "glossary[4]"]}], "review_validation": "succeeded", "json_yaml_semantically_equal": true},
+      "visible_formula_review_evidence": {"final_formula_pages": [], "source_formula_candidate_pages": [2, 5, 6, 13, 18, 19], "actual_reviewed_covers_selected": true, "hidden_text_used": false, "finding": "CSR/assembly notation candidates are not retained as structured formulas or page-specific omission records; no hidden evidence was used."},
+      "provenance": {"author": {"declared": "host_codex_agents", "provider_client_used": false, "model_api_calls": 0}, "auditor": {"independent_declared": true, "auditor_id_recorded": false, "evidence": "04-quality-audit summary and review-plan independent_audit=true"}},
+      "fingerprint_version_mismatch": ["pipeline 0.2.0 versus target 0.2.1", "final studykit_version 0.1", "01-03 authoring checkpoints absent"],
+      "deferred_practice_semantic_issues": [],
+      "next_action": "Rebuild lecture-06 in v0.2.1; add practice_feedback_policy and citations to all five glossary claims, preserve CSR/trampoline notation provenance, and rerun current validation plus independent practice audit."
+    }
+  ],
+  "aggregate": {"units": 6, "blocked_for_migration": 6, "stored_validation_succeeded": 6, "current_v0_2_1_artifact_validation_failed": 6, "json_yaml_semantically_equal": 6, "independent_audit_declared": 6, "auditor_identity_recorded": 0, "deferred_practice_issue_units": 3, "final_formula_count": 0, "hidden_evidence_findings": 0, "decision": "do_not_migrate_as-is"}
+}

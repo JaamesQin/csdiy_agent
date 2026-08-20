@@ -1,0 +1,200 @@
+{
+  "practice": [
+    {
+      "id": "E1",
+      "level": "入门",
+      "question": "用一张输入—输出图解释平移等变，并说明为什么逐像素分割需要输出跟随物体移动。",
+      "hint": "比较先平移再处理与先处理再平移。",
+      "deliverable": "一张图和不超过 120 字说明。",
+      "expected_evidence": [
+        "两条操作路径结果一致",
+        "输出位置随输入移动",
+        "未把等变写成输出恒定"
+      ],
+      "evaluation": {
+        "criteria": [
+          "定义准确",
+          "图示一致",
+          "引用支持"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 22
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 23
+          }
+        }
+      ]
+    },
+    {
+      "id": "E2",
+      "level": "基础",
+      "question": "对长度 8 的一维信号画出宽度 3 的局部层连接，再圈出哪些边需要共享权重才能成为卷积。",
+      "hint": "先画局部连接，再给复用的边标同一种颜色。",
+      "deliverable": "连接图和参数共享说明。",
+      "expected_evidence": [
+        "每个内部输出只连三个邻域输入",
+        "相对位置相同的边共享",
+        "指出边界需单独约定"
+      ],
+      "evaluation": {
+        "criteria": [
+          "局部性",
+          "共享关系",
+          "边界意识"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 27
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 28
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 32
+          }
+        }
+      ]
+    },
+    {
+      "id": "E3",
+      "level": "进阶",
+      "question": "为需要细边界且需要大范围上下文的分割任务，在步幅卷积、扩张卷积、编码器—解码器和 U-Net 中选择并组合结构。",
+      "hint": "先分别写清分辨率、感受野和细节传递，再组合。",
+      "deliverable": "架构草图、三项取舍表、200 字选择理由。",
+      "expected_evidence": [
+        "解释步幅的下采样与混叠风险",
+        "解释扩张的覆盖范围",
+        "U-Net 跳跃采用跨尺度拼接"
+      ],
+      "evaluation": {
+        "criteria": [
+          "取舍完整",
+          "结构与需求匹配",
+          "证据页准确"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 58
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 59
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 60
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 67
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 70
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 71
+          }
+        }
+      ]
+    },
+    {
+      "id": "E4",
+      "level": "综合",
+      "question": "一个模型需从连续二维坐标查询颜色，同时图案依赖绝对位置。比较普通卷积、加入位置输入、神经场三种方案，并把来源支持的结论与自己的设计推断分栏。",
+      "hint": "先问输入是固定网格还是任意连续坐标。",
+      "deliverable": "三方案比较表、推荐方案和“来源/推断”标记。",
+      "expected_evidence": [
+        "识别绝对位置需求",
+        "神经场以坐标为输入",
+        "清楚标记推断边界"
+      ],
+      "evaluation": {
+        "criteria": [
+          "比较针对任务",
+          "证据与推断分离",
+          "推荐自洽"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 76
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 77
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 78
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 79
+          }
+        }
+      ]
+    }
+  ],
+  "progression": [
+    "概念辨析",
+    "结构重建",
+    "架构设计",
+    "证据边界"
+  ],
+  "target_minutes": 180
+}

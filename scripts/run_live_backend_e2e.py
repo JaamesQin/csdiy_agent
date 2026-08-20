@@ -29,10 +29,12 @@ from app.agent.orchestrator import CoursePilotAgent
 from app.agent.planning import TaskPlanner
 from app.agent.router import IntentRouter
 from app.catalog.courses import ReviewedCourseCatalogStore
+from app.catalog.knowledge import ReviewedCourseKnowledgeStore
 from app.catalog.studykits import build_default_studykit_store
 from app.code_tutor.service import CodeTutorService
 from app.course_navigation.service import CourseNavigationService
 from app.generation.model import DeepSeekModel, ModelError
+from app.general_assistance.service import GeneralAssistanceService
 from app.learning.service import StudyKitLookupService
 from app.profile.repository import SQLiteProfileRepository
 from app.profile.service import ProfileService
@@ -145,6 +147,7 @@ async def run(suite: str, selected: set[str], repeat: int) -> dict[str, Any]:
     with tempfile.TemporaryDirectory(prefix="coursepilot-live-backend-") as directory:
         store = build_default_studykit_store()
         catalog = ReviewedCourseCatalogStore(store)
+        course_knowledge = ReviewedCourseKnowledgeStore(catalog)
         profiles = ProfileService(
             SQLiteProfileRepository(Path(directory) / "profiles.sqlite3"), model=model
         )
@@ -154,8 +157,13 @@ async def run(suite: str, selected: set[str], repeat: int) -> dict[str, Any]:
             router=IntentRouter(store, model=model),
             profiles=profiles,
             code_tutor=CodeTutorService(store, model=model),
-            course_navigation=CourseNavigationService(catalog),
+            course_navigation=CourseNavigationService(
+                catalog, model=model, knowledge=course_knowledge
+            ),
             studykit_learning=StudyKitLookupService(store, model=model, catalog=catalog),
+            general_assistance=GeneralAssistanceService(
+                model=model, course_knowledge=course_knowledge
+            ),
             planner=TaskPlanner(model=model, robust_input_enabled=True),
             context_signer=ContextTokenSigner(
                 hashlib.sha256(b"coursepilot-live-backend-e2e").digest()
@@ -215,7 +223,10 @@ async def run(suite: str, selected: set[str], repeat: int) -> dict[str, Any]:
                 "profile_course_multi_intent",
                 len(backgrounds) == 1
                 and "python" in backgrounds[0].lower()
-                and "课程推荐" in answer
+                and any(
+                    marker in answer
+                    for marker in ("现在开始", "长期目标", "未个性化排序")
+                )
                 and "Python、python" not in answer
                 and "independently_audited" not in answer
                 and events.completed_capabilities_since(event_before)
@@ -223,6 +234,86 @@ async def run(suite: str, selected: set[str], repeat: int) -> dict[str, Any]:
                 provider_calls=len(model.calls) - before,
                 background_count=len(backgrounds),
                 capabilities=events.completed_capabilities_since(event_before),
+            )
+
+        async def negative_background_course_path() -> dict[str, Any]:
+            user_id = "legacy:live-negative-background-course"
+            runner = ConversationRunner(agent, user_id)
+            before = len(model.calls)
+            event_before = len(events.events)
+            answer = await runner.turn(
+                "我想要学习系统方向，但是我没有 Python 基础，也没有编程基础。给我推荐一些课程。"
+            )
+            backgrounds = [
+                str(fact.value)
+                for fact in profiles.load(user_id).confirmed("background")
+            ]
+            completed = events.completed_capabilities_since(event_before)
+            navigation_output = next(
+                (
+                    call.get("structured_output", {})
+                    for call in reversed(model.calls[before:])
+                    if isinstance(call.get("structured_output"), dict)
+                    and "now_catalog_ids" in call["structured_output"]
+                ),
+                {},
+            )
+            now_ids = navigation_output.get("now_catalog_ids", [])
+            later_ids = navigation_output.get("later_catalog_ids", [])
+            index_by_id = {
+                item.catalog_id: item for item in course_knowledge.list_index()
+            }
+            now_has_foundation = any(
+                catalog_id in index_by_id
+                and index_by_id[catalog_id].major_direction == "programming_foundations"
+                for catalog_id in now_ids
+            )
+            system_directions = {
+                "systems",
+                "operating_systems",
+                "architecture",
+                "networks",
+                "distributed_systems",
+                "databases",
+                "compilers",
+                "parallel_computing",
+            }
+            later_has_system_goal = any(
+                catalog_id in index_by_id
+                and (
+                    index_by_id[catalog_id].major_direction in system_directions
+                    or bool(
+                        set(index_by_id[catalog_id].secondary_directions)
+                        & system_directions
+                    )
+                )
+                for catalog_id in later_ids
+            )
+            return _result(
+                "negative_background_course_path",
+                completed == ["profile_analysis", "course_navigation"]
+                and len(backgrounds) >= 1
+                and "## 现在开始" in answer
+                and "## 长期目标" in answer
+                and now_has_foundation
+                and later_has_system_goal
+                and "未记录精确先修要求" in answer
+                and "未个性化排序" not in answer,
+                provider_calls=len(model.calls) - before,
+                background_count=len(backgrounds),
+                capabilities=completed,
+                now_catalog_ids=now_ids,
+                later_catalog_ids=later_ids,
+                now_has_foundation=now_has_foundation,
+                later_has_system_goal=later_has_system_goal,
+                has_now_heading="## 现在开始" in answer,
+                has_later_heading="## 长期目标" in answer,
+                has_unknown_prerequisite_notice="未记录精确先修要求" in answer,
+                used_unpersonalized_fallback="未个性化排序" in answer,
+                navigation_output_keys=sorted(navigation_output),
+                navigation_mode=navigation_output.get("mode"),
+                navigation_ran_code=navigation_output.get("ran_code"),
+                navigation_overview_type=type(navigation_output.get("overview")).__name__,
             )
 
         async def chinese_unit_lookup() -> dict[str, Any]:
@@ -350,7 +441,10 @@ async def run(suite: str, selected: set[str], repeat: int) -> dict[str, Any]:
             return _result(
                 "profile_course_code_multi_intent",
                 completed == ["profile_analysis", "course_navigation", "code_tutoring"]
-                and "课程推荐" in answer
+                and any(
+                    marker in answer
+                    for marker in ("现在开始", "长期目标", "未个性化排序")
+                )
                 and "ran_code=false" in answer,
                 provider_calls=len(model.calls) - before,
                 capabilities=completed,
@@ -557,10 +651,27 @@ async def run(suite: str, selected: set[str], repeat: int) -> dict[str, Any]:
                 provider_calls=len(model.calls) - before,
             )
 
+        async def general_learning_fallback() -> dict[str, Any]:
+            runner = ConversationRunner(agent, "legacy:live-general-assistance")
+            before = len(model.calls)
+            event_before = len(events.events)
+            answer = await runner.turn("我最近同时学很多内容，有点乱，应该怎么调整？")
+            completed = events.completed_capabilities_since(event_before)
+            return _result(
+                "general_learning_fallback",
+                completed == ["general_assistance"]
+                and "通用学习回答当前暂时不可用" not in answer
+                and "ran_code=true" not in answer
+                and "### 依据" not in answer,
+                provider_calls=len(model.calls) - before,
+                capabilities=completed,
+            )
+
         checks: dict[str, Check] = {
             "code_inline_cpp": inline_cpp,
             "code_flattened_fence": flattened_fence,
             "profile_course_multi_intent": profile_course,
+            "negative_background_course_path": negative_background_course_path,
             "studykit_chinese_unit": chinese_unit_lookup,
             "material_grounded_answer": material_grounding,
             "practice_context_feedback": practice_continuity,
@@ -583,6 +694,7 @@ async def run(suite: str, selected: set[str], repeat: int) -> dict[str, Any]:
             "studykit_unscoped_output_bounded": unscoped_lookup_bounded,
             "operating_system_first_unit_continuity": operating_system_first,
             "feedback_missing_context_is_specific": feedback_missing_context,
+            "general_learning_fallback": general_learning_fallback,
         }
         smoke = {"code_inline_cpp", "profile_course_multi_intent", "studykit_chinese_unit"}
         names = list(checks) if suite == "full" else [name for name in checks if name in smoke]

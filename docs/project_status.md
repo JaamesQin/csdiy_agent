@@ -1,6 +1,6 @@
 # CoursePilot 全局进度
 
-更新时间：2026-08-13
+更新时间：2026-08-20
 
 状态口径：
 
@@ -16,23 +16,31 @@
 生成 Content 和 Practice，执行一次独立 Audit，并确定性输出
 StudyKit JSON/YAML/Markdown。
 
-本地账号、会话安全和可信 subject 学习画像已经落地，产品运行时也已加入意图路由、
+本地账号、会话安全和可信 subject 学习画像已经落地，产品运行时也已加入有界 TaskPlan、
 能力帮助、主动学习画像、全目录分级课程导航、golden StudyKit 查询/材料/概念/练习能力
 和多语言静态代码辅导。尚未完成的是用户资料接入、MaterialSet 权限、在线 SourceChunk
 检索、完整 LearnerState、清小搭生产部署和真实用户验收。
 
 离线成果现有独立 SQLite 归档层：2026-08-12 的整理保留 12 个最新 build、286 个
-StudyKit 和 12,008 个文本审计工件，并删除约 4.27 GiB 的重复 `outputs/` checkpoint/
+StudyKit；初始保留 12,008 个文本审计工件，CS186 身份修复后为 12,010 个，并删除约 4.27 GiB 的重复 `outputs/` checkpoint/
 图片缓存。2026-08-13 已把 `data/` 迁移为私有 Git submodule；Git LFS 管理
-`archive/studykits.sqlite3` 与 anchored JSONL chunks。归档状态是 `validated_draft`，
-在线运行时使用只读 archive adapter 和组合 Store；build/document 双 `approved` 后才优先
-读取 archive，否则回退到人工批准的 golden 数据。当前 286 条均为 `validated_draft`，
-所以实际在线范围仍为 Lecture 2/8。
+`archive/studykits.sqlite3` 与 anchored JSONL chunks。在线运行时使用只读 archive adapter
+和组合 Store；build/document 双 `approved` 后才读取 archive，否则回退到人工批准的 golden
+数据。2026-08-17 已批准 9 个 build、220 个 StudyKit：其中两个 build 依据仓库所有者的
+reviewed-legacy 结论保留豁免记录，CS186 则通过直接父快照的新指纹 build 修复
+`note-03`/`lecture-03` 身份漂移。其余 3 个 partial build、66 个文档继续保持
+`validated_draft`。组合 Store 当前提供 220 个在线 StudyKit。
 
 在线输入现先经过统一模型理解与有界 TaskPlan：支持自然语言内联代码、聊天平台压平围栏、中文讲次/
 页码、课程纠正、签名序号和多意图计划；确定性层只负责身份、证据和持久化校验。练习上下文已签名时，
 用户可以直接提交答案而无需重复 practice ID。真实 DeepSeek 后端 E2E 由
 `scripts/run_live_backend_e2e.py` 单独执行，离线 pytest 继续使用 fake model。
+
+当前目标无法落入专用能力或规划结构校验失败时，TaskPlan 使用 `general_assistance` 作为终端
+兜底。它读取最近最多 30 条/48,000 字符对话、confirmed 画像值、最小验签连续状态和全量安全
+课程索引；模型 prose 保持 general knowledge，所选课程 ID 经后端验证后成为独立 catalog metadata。
+个性化课程导航同时消费负向学习背景等全部 confirmed 约束，输出“现在开始/长期目标”；精确查课
+仍确定性执行。课程材料事实、代码执行和完整作业答案边界保持不变。
 
 ## 二、能力状态矩阵
 
@@ -47,18 +55,20 @@ StudyKit 和 12,008 个文本审计工件，并删除约 4.27 GiB 的重复 `out
 | Schema/引用/渲染 | 已完成 | 加入在线权限与检索边界检查 |
 | CourseManifest / Catalog | 已完成类型化只读 Catalog MVP | 正式 Schema、数据库和独立分类审核 |
 | MaterialManifest/MaterialSet | 待完成 | 存储、权限、过期、删除和混合授权 |
-| 私有检索数据归档 | 已完成精简快照 | 接入 permission-filtered 在线读取；当前仍为 `validated_draft` |
+| 私有检索数据归档 | 已完成精简快照；9 builds/220 documents approved | 其余 3/66 partial build 完成后再审批；继续接入 permission-filtered SourceChunk |
 | 检索 | 待完成 | 元数据过滤、关键词检索、可选向量检索 |
 | 本地账号与会话 | 已完成安全 MVP | 邮箱、找回/修改密码和账号删除不在首版 |
-| OpenAI 兼容 API | 双身份兼容且已接入八项 Agent 能力 | 扩展权限检索、私有材料与复盘 handler |
+| OpenAI 兼容 API | 双身份兼容且已接入九项 Agent 能力 | 扩展权限检索、私有材料与复盘 handler |
 | 主动学习画像 | 已完成账号/legacy 隔离的 SQLite MVP | 验证清小搭稳定身份并演进完整 LearnerState |
-| 能力帮助 | 已完成可发现能力目录与 `/help` | 新能力接入时同步状态与帮助内容 |
+| 能力帮助 | 已完成可发现能力目录与 `/help`；未上线能力禁止执行路由 | 新能力接入时同步状态与帮助内容 |
+| 通用学习问答 | 已完成专用能力之后的受约束兜底 | 继续进行真实后端质量与延迟评测 |
+| 画像感知课程导航 | 已接入 119 门安全索引、单次结构化排序和明确降级 | 继续扩充 registry 的官方先修数据 |
 | 代码辅导 | 已完成 Python AST + Tree-sitter 多语言静态 MVP | 接入 SourceChunk 检索；沙箱执行不属于当前范围 |
 | StudyKit 查询/概念/练习选择 | 已完成 approved archive + golden 回退 MVP | 人工批准更多课程和端到端评测 |
 | 材料答疑/练习反馈 | 已完成页码白名单与透明降级 MVP | SourceChunk 检索、权限过滤和生产模型评测 |
 | LearnerState/复盘 | 有账号隔离的画像事实基础 | 练习/代码证据更新、目标映射和复盘状态机 |
-| 清小搭接入 | 本地协议已验证 | 账号级文件、会话、超时和生产实测 |
-| 自动化测试 | 303 项通过 | MaterialSet 权限、检索和生产测试 |
+| 清小搭接入 | 本地协议、`sessionId` 与真实 DeepSeek 多轮已验证 | 账号级文件、超时和生产平台实测 |
+| 自动化测试 | 623 项通过，另有 27 场景真实 DeepSeek 后端 E2E 和 24 旅程新手探索 | MaterialSet 权限、检索和生产测试 |
 
 ## 三、已经完成的生成闭环
 
@@ -130,14 +140,15 @@ Prompt 固定为 `studykit-staged-v0.8-010`，当前 Pipeline 为
 2026-08-10 另完成一次 host-authored portable 全课程构建，覆盖官方可用的
 Lecture 01–21、23、24 共 23 讲。23/23 均通过 portable schema、引用锚和渲染验证，
 并经 Lecture 09、18、21 随机语义抽查。reviewed 重复包未纳入精简 submodule；正式
-archive 记录仍为 `validated_draft`，不接入在线查询，也不能直接混入采用另一 Schema
-的 `data/golden/`。
+archive 记录在 2026-08-17 经仓库所有者明确复核后，以记录 waived gates 的
+reviewed-legacy 方式批准上线，且不直接混入采用另一 Schema 的 `data/golden/`。
 
 同日从协作者离线快照恢复并复核 MIT 6.S081 Fall 2021 的完整 v0.2 构建。
 Lecture 01–24 共 24/24 讲重新通过 artifact、review 与输出一致性校验，随机抽查
 Lecture 07、15、17 的来源页、主张、练习和限制也通过。reviewed 重复包以及 raw、
-chunks、页图和完整作者化 build 继续留在精简远端之外；正式 archive 记录仍为
-`validated_draft`，不会因这些离线结果自动成为 online-ready。
+chunks、页图和完整作者化 build 继续留在精简远端之外；正式 archive 记录在
+2026-08-17 经仓库所有者明确复核后，以 reviewed-legacy 方式批准。未来 legacy 记录仍不会
+仅凭离线结果自动成为 online-ready。
 
 本轮完成的流程改进包括：
 
@@ -152,7 +163,7 @@ chunks、页图和完整作者化 build 继续留在精简远端之外；正式 
 - 标题优先使用 manifest/unit 的可信标题，内部 `EvidencePlan` 等标签不进入
   学习者文本；外部回归 8 讲均未发现内部标签泄漏。
 
-这些修复、账号安全链路及新增在线运行时已有 303 项自动化测试覆盖，并已通过 v21 新鲜外部全量回归；由于设计
+这些修复、账号安全链路及新增在线运行时已有 623 项自动化测试覆盖，并已通过 v21 新鲜外部全量回归；由于设计
 上不进行二次语义 Audit，`repairs_applied_unverified` 结果仍必须人工复核。
 
 仍需关注的语义问题：

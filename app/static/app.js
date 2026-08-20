@@ -6,6 +6,7 @@ const state = {
   user: null,
   csrfToken: "",
   messages: [],
+  coursepilotContext: null,
   controller: null,
   busy: false,
 };
@@ -206,6 +207,7 @@ async function readStream(response, output) {
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
+  let nextContext;
   while (true) {
     const { value, done } = await reader.read();
     buffer += decoder.decode(value || new Uint8Array(), { stream: !done });
@@ -214,8 +216,11 @@ async function readStream(response, output) {
     for (const block of blocks) {
       const event = parseSseBlock(block);
       if (!event) continue;
-      if (event === "[DONE]") return;
+      if (event === "[DONE]") return nextContext;
       if (event.error) throw new Error(event.error.message || "流式响应中断");
+      if (typeof event.coursepilot_context === "string") {
+        nextContext = event.coursepilot_context;
+      }
       const delta = event.choices?.[0]?.delta;
       if (typeof delta?.content === "string") {
         output.textContent += delta.content;
@@ -251,6 +256,7 @@ async function sendMessage(rawMessage) {
         model: "coursepilot-probe",
         messages: state.messages,
         stream,
+        coursepilot_context: state.coursepilotContext || undefined,
       }),
       signal: state.controller.signal,
     });
@@ -260,15 +266,22 @@ async function sendMessage(rawMessage) {
     }
     if (!response.ok) throw new Error(await errorMessage(response));
     if (stream) {
-      await readStream(response, output);
+      const nextContext = await readStream(response, output);
+      if (typeof nextContext === "string") {
+        state.coursepilotContext = nextContext;
+      }
     } else {
       const body = await response.json();
       output.textContent = body.choices?.[0]?.message?.content || "";
+      if (typeof body.coursepilot_context === "string") {
+        state.coursepilotContext = body.coursepilot_context;
+      }
     }
     if (!output.textContent) throw new Error("服务返回了空回复。");
     state.messages.push({ role: "assistant", content: output.textContent });
     elements.inputHint.textContent = "画像按账号隔离";
   } catch (error) {
+    state.coursepilotContext = null;
     if (error.name === "AbortError") {
       output.textContent ||= "生成已停止。";
     } else {
@@ -287,6 +300,7 @@ async function sendMessage(rawMessage) {
 function clearConversation(focus = true) {
   if (state.busy) state.controller?.abort();
   state.messages = [];
+  state.coursepilotContext = null;
   elements.conversation.replaceChildren();
   elements.intro.hidden = false;
   if (focus && state.user) elements.messageInput.focus();

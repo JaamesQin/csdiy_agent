@@ -1,0 +1,243 @@
+{
+  "target_minutes": 180,
+  "progression": [
+    "概念辨析",
+    "结构重建",
+    "权衡分析",
+    "架构设计",
+    "开放综合"
+  ],
+  "practice": [
+    {
+      "id": "P1",
+      "level": "概念",
+      "question": "给一个输入平移两格的例子，分别画出等变映射与不变分类读出的输出，并解释差异。",
+      "hint": "等变输出保留空间拓扑；不变读出只保留整体类别。",
+      "deliverable": "两组输入输出图与 100 字解释。",
+      "expected_evidence": [
+        "等变输出同向平移",
+        "不变读出保持类别",
+        "明确二者对应不同任务"
+      ],
+      "evaluation": {
+        "criteria": [
+          "概念准确",
+          "图示一致",
+          "引用充分"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 23
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 52
+          }
+        }
+      ]
+    },
+    {
+      "id": "P2",
+      "level": "结构",
+      "question": "为三通道输入、两个输出特征图画出局部卷积连接。说明哪些权重跨位置共享、哪些参数属于不同输出通道。",
+      "hint": "先画一个输出位置，再复制到相邻位置。",
+      "deliverable": "带颜色标记的连接图和参数说明。",
+      "expected_evidence": [
+        "输入通道被组合",
+        "输出滤波器彼此区分",
+        "相对空间位置权重共享"
+      ],
+      "evaluation": {
+        "criteria": [
+          "通道关系",
+          "共享关系",
+          "局部性"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 27
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 29
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 31
+          }
+        }
+      ]
+    },
+    {
+      "id": "P3",
+      "level": "分析",
+      "question": "在细边界分割任务中比较步幅 2、扩张卷积和普通卷积堆叠。列出感受野、输出分辨率、混叠风险和计算成本的相对变化。",
+      "hint": "不要把核采样稀疏与输出采样稀疏混为一谈。",
+      "deliverable": "四列比较表及推荐方案。",
+      "expected_evidence": [
+        "步幅会下采样",
+        "扩张保持输出位置网格",
+        "指出步幅示例的混叠风险"
+      ],
+      "evaluation": {
+        "criteria": [
+          "维度完整",
+          "推理对应证据",
+          "推荐自洽"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 58
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 59
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 60
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 62
+          }
+        }
+      ]
+    },
+    {
+      "id": "P4",
+      "level": "设计",
+      "question": "设计一个保留细小物体边界的图像到分割图网络。比较纯编码器—解码器、U-Net 和残差块组合，并明确每条跳跃路径是拼接还是相加。",
+      "hint": "用瓶颈路径表达上下文，用镜像跳跃传递高分辨率信息。",
+      "deliverable": "架构图、每个路径的张量作用和 200 字理由。",
+      "expected_evidence": [
+        "包含上下采样",
+        "U-Net 镜像拼接正确",
+        "残差加法位置明确"
+      ],
+      "evaluation": {
+        "criteria": [
+          "结构正确",
+          "任务匹配",
+          "融合算子清楚"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 67
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 68
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 70
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 71
+          }
+        }
+      ]
+    },
+    {
+      "id": "P5",
+      "level": "综合",
+      "question": "任务要求任意连续二维坐标处返回颜色，而且颜色取决于绝对位置。比较 MLP、带位置输入的卷积和神经场表述；把课堂支持与个人设计推断分别标注。",
+      "hint": "先判断是否存在固定输入网格，再判断是否需要绝对位置。",
+      "deliverable": "决策树、方案表和证据/推断标签。",
+      "expected_evidence": [
+        "连续坐标需求被识别",
+        "位置输入目的正确",
+        "未扩展课堂未给出的训练结论"
+      ],
+      "evaluation": {
+        "criteria": [
+          "决策清晰",
+          "证据边界",
+          "方案适配"
+        ]
+      },
+      "citations": [
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 76
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 77
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 78
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 79
+          }
+        },
+        {
+          "source_id": "mit-6.7960-f24-lecture-04-slides",
+          "anchor": {
+            "type": "page",
+            "value": 80
+          }
+        }
+      ]
+    }
+  ]
+}

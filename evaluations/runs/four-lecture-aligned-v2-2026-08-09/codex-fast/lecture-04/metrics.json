@@ -1,0 +1,52 @@
+{
+  "mode": "fast",
+  "started_at": "2026-08-09T13:51:28.718112152Z",
+  "completed_at": "2026-08-09T13:53:04.188671Z",
+  "total_duration_seconds": 95.470559,
+  "timing_authority": "coordinator dispatch/completion overrides this internal measurement for benchmark timing",
+  "checkpoints": [
+    {
+      "name": "authoring_started",
+      "at": "2026-08-09T13:51:28.718112152Z"
+    },
+    {
+      "name": "source_and_risk_review_completed",
+      "at": "2026-08-09T13:53:03.915071Z"
+    },
+    {
+      "name": "evidence_plan_written",
+      "at": "2026-08-09T13:53:03.915837Z"
+    },
+    {
+      "name": "learning_content_written",
+      "at": "2026-08-09T13:53:03.916726Z"
+    },
+    {
+      "name": "practice_flow_written",
+      "at": "2026-08-09T13:53:03.916932Z"
+    },
+    {
+      "name": "audit_written",
+      "at": "2026-08-09T13:53:03.917124Z"
+    },
+    {
+      "name": "candidate_assembled",
+      "at": "2026-08-09T13:53:03.918346Z"
+    },
+    {
+      "name": "review_plan_written",
+      "at": "2026-08-09T13:53:03.918483Z"
+    },
+    {
+      "name": "final_validation_completed",
+      "at": "2026-08-09T13:53:04.140512Z"
+    }
+  ],
+  "retries": 0,
+  "repairs": [],
+  "reviewed_page_count": 30,
+  "semantic_passes": 2,
+  "input_tokens": null,
+  "output_tokens": null,
+  "quality_mode": "fast"
+}

@@ -1,0 +1,13 @@
+{
+  "stage": "04-quality-audit.resolution",
+  "status": "repaired",
+  "repairs": [
+    {
+      "finding_id": "F1",
+      "artifact": "02-learning-content.json",
+      "action": "将 K12 解释改为位置代码附加（课件正文示例为拼接）到 token 表示。",
+      "repair_count_for_artifact": 1,
+      "verified": true
+    }
+  ]
+}

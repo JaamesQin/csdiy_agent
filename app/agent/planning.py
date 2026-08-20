@@ -14,6 +14,11 @@ from app.agent.contracts import (
     SemanticReference,
     TaskPlan,
 )
+from app.agent.capabilities import (
+    available_capabilities,
+    capability_by_id,
+    match_unavailable_capability_request,
+)
 from app.agent.model_support import normalized_usage
 from app.agent.understanding import extract_code, is_code_request, understand_user_texts
 from app.generation.model import ModelError, StructuredModel
@@ -52,6 +57,22 @@ class TaskPlanner:
             return TaskPlanOutcome(
                 plan=deterministic, usage=normalized_usage(), reason="management_rule"
             )
+        deterministic = self._practice_display_plan(latest)
+        if deterministic is not None:
+            return TaskPlanOutcome(
+                plan=deterministic,
+                usage=normalized_usage(),
+                reason="practice_display_rule",
+            )
+        unavailable = match_unavailable_capability_request(latest)
+        if unavailable is not None:
+            return TaskPlanOutcome(
+                plan=self._unavailable_capability_fallback_plan(
+                    latest, unavailable.capability_id
+                ),
+                usage=normalized_usage(),
+                reason="unavailable_capability_fallback",
+            )
         if self.model is None:
             deterministic = (
                 self._deterministic_plan(latest)
@@ -76,7 +97,9 @@ class TaskPlanner:
                 "messages": indexed_messages,
                 "continuity": continuity or {},
                 "confirmed_profile": profile_summary or {},
-                "capabilities": [item.value for item in CapabilityId],
+                "capabilities": [
+                    item.capability_id.value for item in available_capabilities()
+                ],
                 "output_contract": {
                     "understanding": {
                         "conversation_act": "new_request | follow_up | selection | correction | submit_answer | more_hint | profile_management | onboarding",
@@ -144,6 +167,10 @@ class TaskPlanner:
                         "一次完成自然语言理解与有界任务规划。理解指代、纠正、口语简称、拼写错误、"
                         "省略格式的代码、普通练习答案和继续提示。不要要求用户使用系统暗号或 Markdown。"
                         "只为用户当前明确请求的目标创建任务，最多 4 个；不得因相关词语扩张无关能力。"
+                        "现有专用能力能够处理时必须优先使用专用能力；只有当前目标无法归入任何专用"
+                        "能力时才创建 general_assistance，且不能把它与其他能力同时用于同一计划。"
+                        "只能创建输入 capabilities 中列出的已上线能力。用户请求学习复盘、"
+                        "生成状态等未上线能力时创建 general_assistance；不得输出未上线 capability ID。"
                         "每个明确目标都必须有且只有一个任务；如果 profile_operations 非空，计划中必须"
                         "包含 profile_analysis，不能因为同时存在课程或代码请求而丢弃画像更新。"
                         "用户要求概括本讲、核心内容或重点时设置 response_mode=unit_summary，且只创建"
@@ -188,10 +215,15 @@ class TaskPlanner:
             tasks = self._complete_semantic_tasks(plan.tasks, understanding)
             plan = plan.model_copy(
                 update={
-                    "tasks": self._deduplicate_tasks([
-                        task.model_copy(update={"required_context": []})
-                        for task in tasks
-                    ]),
+                    "tasks": self._prefer_specialized_tasks(
+                        self._normalize_unavailable_capabilities(
+                            self._deduplicate_tasks([
+                                task.model_copy(update={"required_context": []})
+                                for task in tasks
+                            ]),
+                            latest,
+                        )
+                    ),
                     "missing_context": [],
                     "clarifying_questions": [],
                 }
@@ -326,6 +358,66 @@ class TaskPlanner:
         ]
 
     @staticmethod
+    def _normalize_unavailable_capabilities(
+        tasks: list[PlannedTask], latest: str
+    ) -> list[PlannedTask]:
+        """Fail closed when a model emits a capability not available online."""
+
+        del latest
+        return [
+            task.model_copy(update={"capability_id": CapabilityId.GENERAL_ASSISTANCE})
+            if capability_by_id(task.capability_id).availability == "unavailable"
+            else task
+            for task in tasks
+        ]
+
+    @staticmethod
+    def _unavailable_capability_fallback_plan(
+        text: str, capability_id: CapabilityId
+    ) -> TaskPlan:
+        return TaskPlan(
+            user_goal=text[:2000] or "处理学习请求",
+            tasks=[
+                PlannedTask(
+                    task_id="general_assistance",
+                    capability_id=CapabilityId.GENERAL_ASSISTANCE,
+                    objective="用已上线能力和一般知识回应当前请求",
+                    parameters={
+                        "requested_unavailable_capability": capability_id.value
+                    },
+                    evidence_quote=text[:500],
+                )
+            ],
+        )
+
+    @staticmethod
+    def _prefer_specialized_tasks(tasks: list[PlannedTask]) -> list[PlannedTask]:
+        specialized = [
+            task
+            for task in tasks
+            if task.capability_id is not CapabilityId.GENERAL_ASSISTANCE
+        ]
+        if not specialized:
+            return tasks[:1]
+        removed = {
+            task.task_id
+            for task in tasks
+            if task.capability_id is CapabilityId.GENERAL_ASSISTANCE
+        }
+        return [
+            task.model_copy(
+                update={
+                    "depends_on": [
+                        dependency
+                        for dependency in task.depends_on
+                        if dependency not in removed
+                    ]
+                }
+            )
+            for task in specialized
+        ]
+
+    @staticmethod
     def _normalize_model_plan(candidate: object) -> object:
         """Repair representation-only model drift without changing semantics."""
 
@@ -427,10 +519,9 @@ class TaskPlanner:
             )
         else:
             task = PlannedTask(
-                task_id="understanding_unavailable",
-                capability_id=CapabilityId.GENERATION_STATUS,
-                objective="透明说明自然语言理解暂时不可用",
-                parameters={"understanding_unavailable": True},
+                task_id="general_assistance",
+                capability_id=CapabilityId.GENERAL_ASSISTANCE,
+                objective="使用受约束的一般知识回答当前学习请求",
                 evidence_quote=text[:500],
             )
         return TaskPlan(user_goal=text[:2000] or "处理请求", tasks=[task])
@@ -544,6 +635,61 @@ class TaskPlanner:
         )
 
     @staticmethod
+    def _practice_display_plan(text: str) -> TaskPlan | None:
+        practice_id = (
+            r"(?:ex(?:ercise)?|practice|p)"
+            r"(?:[\s._-]*[a-z]+)*[\s._-]*\d+"
+        )
+        has_display_verb = bool(
+            re.search(r"(?:显示|查看|打开|重看|重新显示|show|open)", text, re.I)
+        )
+        has_explicit_id = bool(
+            re.search(rf"(?<![a-z0-9]){practice_id}(?![a-z0-9])", text, re.I)
+        )
+        has_ordinal = bool(
+            re.search(
+                r"第\s*[零〇一二两三四五六七八九十百千\d]{1,8}\s*"
+                r"(?:道|个)?\s*(?:习题|练习|题)",
+                text,
+                re.I,
+            )
+        )
+        bare_id = bool(
+            re.fullmatch(
+                rf"\s*(?:practice\s*id\s*[:：]?\s*)?{practice_id}"
+                r"\s*[。.!！?？]?\s*",
+                text,
+                re.I,
+            )
+        )
+        asks_what = has_explicit_id and bool(
+            re.fullmatch(
+                rf"\s*(?:practice\s*id\s*[:：]?\s*)?{practice_id}\s*"
+                r"(?:的\s*)?(?:是\s*)?(?:什么|哪道题|什么题|题目|内容)(?:是什么)?"
+                r"\s*[。.!！?？]?\s*",
+                text,
+                re.I,
+            )
+        )
+        if not (
+            bare_id
+            or asks_what
+            or (has_display_verb and (has_explicit_id or has_ordinal))
+        ):
+            return None
+        return TaskPlan(
+            user_goal=text[:2000] or "显示指定练习",
+            tasks=[
+                PlannedTask(
+                    task_id="practice",
+                    capability_id=CapabilityId.PRACTICE_SELECTION,
+                    objective="显示当前讲次中用户明确指定的练习",
+                    evidence_quote=text[:500],
+                )
+            ],
+        )
+
+    @staticmethod
     def _management_plan(text: str) -> TaskPlan | None:
         lowered = text.casefold().strip()
         if lowered in {"/help", "help", "帮助", "功能"} or re.search(
@@ -565,7 +711,7 @@ class TaskPlanner:
                 tasks=[
                     PlannedTask(
                         task_id="authoring_block",
-                        capability_id=CapabilityId.GENERATION_STATUS,
+                        capability_id=CapabilityId.GENERAL_ASSISTANCE,
                         objective="说明在线聊天不能触发 StudyKit authoring",
                         parameters={"blocked_authoring": True},
                     )

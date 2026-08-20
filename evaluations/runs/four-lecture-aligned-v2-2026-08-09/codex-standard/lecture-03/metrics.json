@@ -1,0 +1,31 @@
+{
+  "quality_mode": "standard",
+  "started_at": "2026-08-09T13:54:07.961649837Z",
+  "completed_at": "2026-08-09T13:56:43.926010Z",
+  "total_duration_seconds": 155.96436095237732,
+  "parallel_units": "off",
+  "worker_count": 1,
+  "semantic_passes": 4,
+  "stage_duration_seconds": {
+    "01_evidence_plan": 155.7752161026001,
+    "02_learning_content": 5.602836608886719e-05,
+    "03_practice_flow": 1.5974044799804688e-05,
+    "04_independent_audit": 2.86102294921875e-06,
+    "05_assembly_render": 0.025928020477294922,
+    "validation": 0.16314196586608887
+  },
+  "checkpoints_utc": {
+    "01_evidence_plan_completed_at": "2026-08-09T13:56:43.736865Z",
+    "02_learning_content_completed_at": "2026-08-09T13:56:43.736921Z",
+    "03_practice_flow_completed_at": "2026-08-09T13:56:43.736937Z",
+    "04_independent_audit_completed_at": "2026-08-09T13:56:43.736940Z",
+    "05_assembly_render_completed_at": "2026-08-09T13:56:43.762868Z",
+    "validation_completed_at": "2026-08-09T13:56:43.926010Z"
+  },
+  "retries": [],
+  "repairs": [],
+  "reviewed_page_count": 35,
+  "input_tokens": null,
+  "output_tokens": null,
+  "token_count_note": "Host model token counts are not observable."
+}

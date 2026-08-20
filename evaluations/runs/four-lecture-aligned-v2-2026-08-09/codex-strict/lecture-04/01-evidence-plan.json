@@ -1,0 +1,578 @@
+{
+  "stage": "01-evidence-plan",
+  "mode": "strict",
+  "unit_id": "lecture-04",
+  "topics": [
+    {
+      "order": 1,
+      "topic": "结构先验与泛化",
+      "requirements": [
+        "解释受约束函数族与数据的关系",
+        "审慎区分逼近与优化"
+      ],
+      "evidence": [
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p004",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 4
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p005",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 5
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p006",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 6
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p008",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 8
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p009",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 9
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p010",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 10
+            }
+          }
+        }
+      ]
+    },
+    {
+      "order": 2,
+      "topic": "空间预测问题",
+      "requirements": [
+        "从图像分类过渡到逐像素标签",
+        "从共享滑窗得到等变处理"
+      ],
+      "evidence": [
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p014",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 14
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p017",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 17
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p018",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 18
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p019",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 19
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p020",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 20
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p021",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 21
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p022",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 22
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p023",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 23
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p024",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 24
+            }
+          }
+        }
+      ]
+    },
+    {
+      "order": 3,
+      "topic": "卷积层表示",
+      "requirements": [
+        "连接局部性、共享参数、多通道和可变尺寸"
+      ],
+      "evidence": [
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p025",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 25
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p027",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 27
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p028",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 28
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p029",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 29
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p031",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 31
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p032",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 32
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p034",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 34
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p036",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 36
+            }
+          }
+        }
+      ]
+    },
+    {
+      "order": 4,
+      "topic": "堆叠与尺度操作",
+      "requirements": [
+        "追踪通道及感受野",
+        "分析池化、步幅、扩张"
+      ],
+      "evidence": [
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p037",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 37
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p041",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 41
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p042",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 42
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p048",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 48
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p050",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 50
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p052",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 52
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p053",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 53
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p056",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 56
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p058",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 58
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p059",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 59
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p060",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 60
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p062",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 62
+            }
+          }
+        }
+      ]
+    },
+    {
+      "order": 5,
+      "topic": "架构组合",
+      "requirements": [
+        "比较分类、空间输出、U-Net 与 ResNet"
+      ],
+      "evidence": [
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p064",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 64
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p066",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 66
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p067",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 67
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p068",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 68
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p069",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 69
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p070",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 70
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p071",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 71
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p072",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 72
+            }
+          }
+        }
+      ]
+    },
+    {
+      "order": 6,
+      "topic": "时间、位置和连续场",
+      "requirements": [
+        "迁移网格思想到时间",
+        "处理绝对位置与连续坐标"
+      ],
+      "evidence": [
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p073",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 73
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p076",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 76
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p077",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 77
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p078",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 78
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p079",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 79
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p080",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 80
+            }
+          }
+        },
+        {
+          "chunk_id": "mit-6.7960-f24-lecture-04-slides-p082",
+          "citation": {
+            "source_id": "mit-6.7960-f24-lecture-04-slides",
+            "anchor": {
+              "type": "page",
+              "value": 82
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "vision_inventory": {
+    "needs_host_vision_pages": [],
+    "count": 0
+  },
+  "formula_policy": {
+    "retained_formula_pages": [],
+    "reason": "归档 PDF 为讲课转录，无法逐式视觉核验 slide chunks 中的数学排版。"
+  },
+  "excluded_claims": [
+    "不转写抽取文本中的复杂求和、索引、softmax 和残差公式。",
+    "不由低文本图页推断滤波器数值、张量形状或实验结果。",
+    "不扩展课堂仅点名的论文方法细节。"
+  ]
+}

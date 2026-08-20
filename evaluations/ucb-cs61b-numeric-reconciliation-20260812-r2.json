@@ -1,0 +1,166 @@
+{
+  "schema_version": "numeric-reconciliation-v1",
+  "audit_id": "ucb-cs61b-spring-2024-a748c428-20260812-r2",
+  "audited_at": "2026-08-12T00:00:00+08:00",
+  "course_id": "ucb-cs61b-spring-2024",
+  "build_id": "a748c428609e7a5bc9f0697a06ae0d7fbd56e2469aaaba8f5b034121f2479ab1",
+  "offline_only": true,
+  "provider_client_used": false,
+  "model_api_calls": 0,
+  "scope": {
+    "root": "outputs/ucb-cs61b-spring-2024/a748c428609e7a5bc9f0697a06ae0d7fbd56e2469aaaba8f5b034121f2479ab1",
+    "manifest": "outputs/ucb-cs61b-spring-2024/a748c428609e7a5bc9f0697a06ae0d7fbd56e2469aaaba8f5b034121f2479ab1/manifest.yaml",
+    "units": "outputs/ucb-cs61b-spring-2024/a748c428609e7a5bc9f0697a06ae0d7fbd56e2469aaaba8f5b034121f2479ab1/courses/ucb-cs61b-spring-2024/units",
+    "chunks": "data/sources/ucb-cs61b-spring-2024/<unit-id>/chunks.jsonl"
+  },
+  "method": {
+    "manifest_units": "manifest.yaml:sources[].unit_id",
+    "canonical_units": "exactly the manifest unit IDs; non-manifest directories are excluded from course totals and reported",
+    "chunk_count": "non-empty JSONL records in each canonical data/sources/.../chunks.jsonl, cross-checked against validation.json:chunk_count",
+    "citation_count": "recursive count of objects containing source_id and anchor in each final 05-studykit.json, cross-checked against validation.json:citation_count",
+    "review_count": "length of review-plan.json:actual_reviewed_pages; selected pages counted separately",
+    "audit_count": "independent-audit.json sidecars and review-plan.json:independent_audit were inspected separately; root audited arrays were not accepted as evidence",
+    "practice_scope": "existing practice semantic issues are deferred_by_scope and were not repaired or used to change numeric results"
+  },
+  "root_claims_stale_summary": {
+    "files": {
+      "run.json": {
+        "status": "succeeded",
+        "requested_units": 40,
+        "completed_units": 40,
+        "failed_units": 0,
+        "pending_units": 0
+      },
+      "result.json": {
+        "status": "succeeded",
+        "completed_units": 40,
+        "validated_units": 40,
+        "audited_units": 40,
+        "failed_units": 0,
+        "pending_units": 0
+      },
+      "batch-summary.json": {
+        "status": "succeeded",
+        "requested_units": 40,
+        "succeeded_units": 40,
+        "validated_units": 40,
+        "audited_units": 40,
+        "failed_units": 0,
+        "pending_units": 0
+      },
+      "course-summary.json": {
+        "status": "succeeded",
+        "completed_units": 40,
+        "failed_units": 0,
+        "pending_units": 0
+      },
+      "coordinator-handoff.json": {
+        "status": "succeeded",
+        "requested_units": 40,
+        "completed_units": 40,
+        "validated_units": 40,
+        "audited_units": 40,
+        "failed_units": 0,
+        "pending_units": 0
+      },
+      "STUDYKIT_INDEX.md": "Status succeeded; Completed 40/40; every row displays artifact validation succeeded and independent review succeeded."
+    },
+    "interpretation": "These root summaries are internally consistent with one another but are stale/overclaiming relative to the current unit-level audit evidence; they were not modified."
+  },
+  "deterministic_reconcile": {
+    "manifest": {
+      "path": "outputs/ucb-cs61b-spring-2024/a748c428609e7a5bc9f0697a06ae0d7fbd56e2469aaaba8f5b034121f2479ab1/manifest.yaml",
+      "manifest_version": "0.2",
+      "requested_unit_count": 40,
+      "requested_unit_ids_match_manifest_sources": true
+    },
+    "unit_directories": {
+      "manifest_units_present": 40,
+      "extra_directories": ["ucb-cs61b-spring-2024"],
+      "extra_directory_path": "outputs/ucb-cs61b-spring-2024/a748c428609e7a5bc9f0697a06ae0d7fbd56e2469aaaba8f5b034121f2479ab1/courses/ucb-cs61b-spring-2024/units/ucb-cs61b-spring-2024",
+      "extra_directory_included_in_totals": false
+    },
+    "checkpoint_files": {
+      "01-evidence-plan.json": 40,
+      "02-learning-content.json": 40,
+      "03-practice-flow.json": 40,
+      "04-quality-audit.json": 40,
+      "05-studykit.candidate.json": 40,
+      "05-studykit.json": 40,
+      "studykit.yaml": 40,
+      "studykit.md": 40,
+      "validation.json": 40,
+      "review-validation.json": 40,
+      "all_canonical_checkpoint_sets_complete": true
+    },
+    "validation": {
+      "units_with_status_succeeded": 40,
+      "units_with_non_succeeded_status": 0,
+      "total_chunks": 2860,
+      "total_validation_citations": 5898,
+      "validation_chunk_totals_match_chunks_jsonl": true,
+      "validation_recursive_citation_totals_match_final_json": true
+    },
+    "final_artifacts": {
+      "candidate_final_semantically_equal": {"equal": 40, "different": 0},
+      "final_yaml_semantically_equal": {"equal": 40, "different": 0},
+      "total_top_level_citations_arrays": 880,
+      "total_recursive_final_citations": 5898,
+      "total_practice_items": 283
+    },
+    "review": {
+      "total_selected_pages": 1314,
+      "total_actual_reviewed_pages": 1329,
+      "actual_minus_selected": 15,
+      "units_with_selected_actual_drift": 1,
+      "drift": {
+        "unit_id": "lecture-10",
+        "path": "outputs/ucb-cs61b-spring-2024/a748c428609e7a5bc9f0697a06ae0d7fbd56e2469aaaba8f5b034121f2479ab1/courses/ucb-cs61b-spring-2024/units/lecture-10/review-plan.json",
+        "selected_pages": 42,
+        "actual_reviewed_pages": 57,
+        "delta": 15
+      },
+      "review_validation_status_succeeded": 40,
+      "review_validation_status_non_succeeded": 0,
+      "review_validation_files": "<unit-dir>/review-validation.json"
+    },
+    "independent_audit": {
+      "root_claimed_audited_units": 40,
+      "review_plan_independent_audit_true": 21,
+      "review_plan_independent_audit_false": 19,
+      "review_plan_false_units": [
+        "lecture-03", "lecture-04", "lecture-08", "lecture-21", "lecture-23", "lecture-24", "lecture-25", "lecture-26", "lecture-27", "lecture-28", "lecture-29", "lecture-30", "lecture-31", "lecture-32", "lecture-33", "lecture-34", "lecture-36", "lecture-37", "lecture-39"
+      ],
+      "independent_audit_json_sidecars": 20,
+      "missing_independent_audit_json_sidecar_units": [
+        "lecture-04", "lecture-05", "lecture-07", "lecture-08", "lecture-21", "lecture-23", "lecture-24", "lecture-25", "lecture-26", "lecture-27", "lecture-28", "lecture-29", "lecture-30", "lecture-31", "lecture-32", "lecture-33", "lecture-34", "lecture-36", "lecture-37", "lecture-39"
+      ],
+      "sidecar_results": {"pass": 20, "non_pass": 0},
+      "conclusion": "The root audited_units=40 is false-complete under the available unit-level evidence. The strongest explicit review-plan declaration supports 21/40; the canonical independent-audit.json sidecar count supports only 20/40. lecture-05 has an auditor-bearing 04-quality-audit artifact but no independent-audit.json sidecar, so it is not silently promoted to the sidecar count."
+    }
+  },
+  "numeric_findings": [
+    {
+      "code": "STALE_ROOT_AUDIT_COUNT",
+      "severity": "blocker",
+      "message": "result.json, batch-summary.json, and coordinator-handoff.json each report audited_units=40, while review-plan independent_audit=true is present for 21 units and independent-audit.json exists for 20 units."
+    },
+    {
+      "code": "EXTRA_UNIT_DIRECTORY",
+      "severity": "warning",
+      "message": "The units namespace contains the non-manifest directory courses/ucb-cs61b-spring-2024/units/ucb-cs61b-spring-2024. It was excluded from all canonical totals."
+    },
+    {
+      "code": "REVIEW_PAGE_COUNT_DRIFT",
+      "severity": "warning",
+      "message": "lecture-10 review-plan.json records 42 selected pages but 57 actual reviewed pages, a +15 drift; the aggregate is 1314 selected versus 1329 actual."
+    }
+  ],
+  "practice_semantic_findings": {
+    "status": "deferred_by_scope",
+    "action_taken": "none",
+    "note": "Existing practice semantic issues were not repaired, re-authored, or used to alter the structural numeric reconciliation."
+  },
+  "result": "BLOCKED_FOR_NUMERIC_RECONCILIATION_RELEASE",
+  "next_action": "Refresh root summaries only in a later coordinator-owned merge after resolving the audit provenance/count discrepancy and recording the lecture-10 review-page drift; do not mark this build globally audited=40 meanwhile."
+}

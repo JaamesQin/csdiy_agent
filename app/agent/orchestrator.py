@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import sqlite3
 import re
+from dataclasses import dataclass
 
 from app.agent.context import TurnContext, build_turn_context
 from app.agent.understanding import (
@@ -23,13 +24,16 @@ from app.agent.contracts import (
     TaskStatus,
 )
 from app.agent.capabilities import (
+    capability_by_id,
     capability_for_intent,
     match_capability_help,
     render_capability_help,
 )
 from app.agent.executor import TaskExecutor, render_execution
-from app.agent.context_token import ContextTokenSigner
+from app.agent.context_token import ContextTokenSigner, ConversationState
 from app.agent.events import AgentEvent, AgentEventSink, NullAgentEventSink
+from app.agent.session_state import SessionStateStore
+from app.agent.turn_resolution import TurnResolver
 from app.agent.model_support import add_usage, normalized_usage
 from app.agent.planning import TaskPlanner
 from app.agent.router import IntentRouter
@@ -38,9 +42,19 @@ from app.code_tutor.service import CodeTutorService, render_tutor_result
 from app.code_tutor.contracts import CodeArtifact
 from app.course_navigation.service import CourseNavigationService
 from app.learning.service import StudyKitLookupService
+from app.general_assistance.service import GeneralAssistanceService
 from app.profile.contracts import FactStatus, LearnerProfile
 from app.profile.service import ProfileAction, ProfileService
 from app.protocol.schemas import ChatMessage
+
+
+@dataclass(slots=True)
+class _SessionBinding:
+    namespace: str
+    session_id: str
+    state: ConversationState | None
+    revision: int | None
+    available: bool = True
 
 
 class CoursePilotAgent:
@@ -53,8 +67,10 @@ class CoursePilotAgent:
         code_tutor: CodeTutorService,
         course_navigation: CourseNavigationService,
         studykit_learning: StudyKitLookupService,
+        general_assistance: GeneralAssistanceService | None = None,
         planner: TaskPlanner | None = None,
         context_signer: ContextTokenSigner | None = None,
+        session_state_store: SessionStateStore | None = None,
         event_sink: AgentEventSink | None = None,
     ) -> None:
         self.store = store
@@ -63,8 +79,11 @@ class CoursePilotAgent:
         self.code_tutor = code_tutor
         self.course_navigation = course_navigation
         self.studykit_learning = studykit_learning
+        self.general_assistance = general_assistance or GeneralAssistanceService()
         self.planner = planner
         self.context_signer = context_signer
+        self.session_state_store = session_state_store
+        self.turn_resolver = TurnResolver(store, course_navigation)
         self.event_sink = event_sink or NullAgentEventSink()
 
     async def handle(
@@ -73,6 +92,8 @@ class CoursePilotAgent:
         messages: list[ChatMessage],
         user_id: str | None,
         coursepilot_context: str | None = None,
+        session_id: str | None = None,
+        continuity_namespace: str | None = None,
     ) -> AgentReply:
         normalized_user = user_id.strip() if user_id and user_id.strip() else None
         user_texts = [message.content for message in messages if message.role == "user"]
@@ -87,16 +108,31 @@ class CoursePilotAgent:
             profile = self.profiles.transient_from_messages(user_texts[:-1])
 
         if self.planner is not None:
+            session_binding = self._load_session_binding(
+                session_id=session_id,
+                continuity_namespace=continuity_namespace,
+            )
+            preserved_context = (
+                coursepilot_context
+                if session_binding is None
+                and self.context_signer is not None
+                and coursepilot_context
+                and self.context_signer.verify(coursepilot_context) is not None
+                else None
+            )
             if re.fullmatch(
                 r"(?:你好|您好|hello|hi|嗨)[！!。\s]*",
                 user_texts[-1].casefold().strip(),
             ):
+                self._refresh_session_binding(session_binding)
                 return AgentReply(
                     answer=self._fallback_answer("greeting", None, profile),
                     usage=normalized_usage(),
+                    coursepilot_context=preserved_context,
                 )
             help_match = match_capability_help(user_texts[-1])
             if help_match.handled:
+                self._refresh_session_binding(session_binding)
                 return AgentReply(
                     answer=render_capability_help(
                         help_match.capability.capability_id
@@ -105,6 +141,7 @@ class CoursePilotAgent:
                         unknown_topic=help_match.unknown_topic,
                     ),
                     usage=normalized_usage(),
+                    coursepilot_context=preserved_context,
                 )
             return await self._handle_planned(
                 messages=messages,
@@ -113,6 +150,7 @@ class CoursePilotAgent:
                 profile=profile,
                 profile_error=profile_error,
                 supplied_context=coursepilot_context,
+                session_binding=session_binding,
             )
 
         profile_context = self._profile_course_context(profile)
@@ -146,6 +184,27 @@ class CoursePilotAgent:
                 answer = "画像存储当前不可用，因此这次修改没有保存。"
             return AgentReply(answer=answer, usage=normalized_usage(usage))
 
+        if decision.intent is Intent.GENERAL_ASSISTANCE:
+            verified_context = (
+                self.context_signer.verify(coursepilot_context)
+                if self.context_signer is not None and coursepilot_context
+                else None
+            )
+            result = await self.general_assistance.answer(
+                messages=messages,
+                confirmed_profile=self._confirmed_profile_summary(profile),
+                continuity=(
+                    verified_context.model_dump(mode="json")
+                    if verified_context is not None
+                    else None
+                ),
+                requested_unavailable_capability=decision.capability_id,
+            )
+            return AgentReply(
+                answer=result.answer,
+                usage=normalized_usage(add_usage(usage, result.usage)),
+            )
+
         observation = await self.profiles.observe(
             user_id=normalized_user,
             text=latest,
@@ -159,7 +218,11 @@ class CoursePilotAgent:
         if decision.intent is Intent.PROFILE_ANALYSIS:
             answer = self.profiles.render(profile)
         elif decision.intent is Intent.COURSE_NAVIGATION:
-            answer = self.course_navigation.navigate(text=latest, profile=profile)
+            navigation = await self.course_navigation.navigate_result(
+                text=latest, profile=profile
+            )
+            answer = navigation.answer
+            usage = add_usage(usage, navigation.usage or {})
         elif decision.intent is Intent.STUDYKIT_LOOKUP:
             result = await self.studykit_learning.lookup(
                 messages=messages,
@@ -247,33 +310,44 @@ class CoursePilotAgent:
         profile: LearnerProfile,
         profile_error: bool,
         supplied_context: str | None,
+        session_binding: _SessionBinding | None = None,
     ) -> AgentReply:
-        previous_context = (
+        verified_token = (
             self.context_signer.verify(supplied_context)
-            if self.context_signer is not None and supplied_context
+            if session_binding is None and self.context_signer is not None and supplied_context
             else None
+        )
+        previous_context = (
+            session_binding.state
+            if session_binding is not None and session_binding.available
+            else (verified_token.to_state() if verified_token is not None else None)
         )
         continuity = (
             previous_context.model_dump(
                 mode="json",
-                exclude={"issued_at", "expires_at", "plan_digest"},
+                exclude={"state_version", "issued_at", "expires_at", "plan_digest"},
             )
             if previous_context is not None
             else {}
         )
-        profile_summary: dict[str, object] = {}
-        for fact in profile.facts:
-            if fact.status is FactStatus.CONFIRMED:
-                profile_summary.setdefault(fact.field_name, [])
-                values = profile_summary[fact.field_name]
-                if isinstance(values, list):
-                    values.append(fact.value)
+        profile_summary = self._confirmed_profile_summary(profile)
         plan_outcome = await self.planner.plan(  # type: ignore[union-attr]
             messages,
             continuity=continuity,
             profile_summary=profile_summary,
         )
-        plan = plan_outcome.plan
+        plan = plan_outcome.plan.model_copy(
+            update={
+                "tasks": [
+                    task.model_copy(
+                        update={"capability_id": CapabilityId.GENERAL_ASSISTANCE}
+                    )
+                    if capability_by_id(task.capability_id).availability == "unavailable"
+                    else task
+                    for task in plan_outcome.plan.tasks
+                ]
+            }
+        )
         understanding = plan_outcome.understanding
         if (
             understanding is not None
@@ -286,6 +360,7 @@ class CoursePilotAgent:
                     task_count=0,
                 )
             )
+            self._refresh_session_binding(session_binding)
             return AgentReply(
                 answer=(
                     "第一次使用可以任选一种方式开始：\n\n"
@@ -295,115 +370,29 @@ class CoursePilotAgent:
                     "学习画像是可选的，不填写也可以直接提问。"
                 ),
                 usage=normalized_usage(plan_outcome.usage),
+                coursepilot_context=(
+                    supplied_context
+                    if session_binding is None and previous_context is not None
+                    else None
+                ),
             )
         user_texts = [message.content for message in messages if message.role == "user"]
         displayed_catalog_ids = list(
             previous_context.displayed_catalog_ids if previous_context else []
         )
         selected_catalog_id = previous_context.selected_catalog_id if previous_context else None
-        resolved_card = None
-        if (
-            understanding is not None
-            and understanding.course is not None
-            and understanding.course_mode != "recommendation"
-        ):
-            reference = understanding.course
-            referenced_id: str | None = None
-            if reference.ordinal is not None:
-                index = reference.ordinal - 1
-                if 0 <= index < len(displayed_catalog_ids):
-                    referenced_id = displayed_catalog_ids[index]
-            elif (
-                understanding.course_mode == "selection"
-                and displayed_catalog_ids
-                and not reference.candidate_id
-                and not reference.raw
-            ):
-                referenced_id = displayed_catalog_ids[0]
-            resolved_card = self.course_navigation.resolve_card(
-                referenced_id,
-                reference.candidate_id,
-                reference.raw,
-            )
-            if resolved_card is not None:
-                selected_catalog_id = resolved_card.catalog_id
-        if (
-            resolved_card is None
-            and selected_catalog_id
-            and understanding is not None
-            and understanding.unit is not None
-        ):
-            resolved_card = self.course_navigation.get_card(selected_catalog_id)
-
-        studykit_context: CourseContext | None = None
-        profile_course_context: CourseContext | None = None
-        if resolved_card is not None and resolved_card.manifest_course_id and resolved_card.course_version:
-            unit_id: str | None = None
-            if understanding is not None and understanding.unit is not None:
-                unit_ref = understanding.unit
-                unit_id = unit_ref.candidate_id
-                if unit_id is None and unit_ref.ordinal is not None:
-                    ready_units = self.store.list_ready(
-                        course_id=resolved_card.manifest_course_id,
-                        course_version=resolved_card.course_version,
-                    )
-                    index = unit_ref.ordinal - 1
-                    unit_id = (
-                        ready_units[index].unit_id
-                        if 0 <= index < len(ready_units)
-                        else f"lecture-{unit_ref.ordinal:02d}"
-                    )
-            studykit_context = CourseContext(
-                course_id=resolved_card.manifest_course_id,
-                course_version=resolved_card.course_version,
-                unit_id=unit_id,
-                title=resolved_card.title,
-            )
-            profile_course_context = self.store.resolve_context(
-                course_id=resolved_card.manifest_course_id,
-                course_version=resolved_card.course_version,
-                unit_id=unit_id,
-            )
-            if profile_course_context is None and unit_id is not None:
-                profile_course_context = self.store.resolve_context(
-                    course_id=resolved_card.manifest_course_id,
-                    course_version=resolved_card.course_version,
-                    unit_id=None,
-                )
-        if studykit_context is None and understanding is not None:
-            candidates = [
-                value
-                for value in (
-                    understanding.course.candidate_id if understanding.course else None,
-                    understanding.course.raw if understanding.course else None,
-                    understanding.unit.candidate_id if understanding.unit else None,
-                    understanding.unit.raw if understanding.unit else None,
-                )
-                if value
-            ]
-            if candidates:
-                studykit_context = self.store.match_context(candidates)
-        if studykit_context is None and previous_context is not None and previous_context.course:
-            inherited_unit = previous_context.course.unit_id
-            if understanding is not None and understanding.unit is not None:
-                inherited_unit = understanding.unit.candidate_id
-                if inherited_unit is None and understanding.unit.ordinal is not None:
-                    inherited_unit = f"lecture-{understanding.unit.ordinal:02d}"
-            studykit_context = self.store.resolve_context(
-                course_id=previous_context.course.course_id,
-                course_version=previous_context.course.course_version,
-                unit_id=inherited_unit,
-            )
-        if studykit_context is None:
-            studykit_context = self.store.match_context([user_texts[-1]]) or self._profile_course_context(
-                profile
-            )
-        if profile_course_context is None and studykit_context is not None:
-            profile_course_context = self.store.resolve_context(
-                course_id=studykit_context.course_id,
-                course_version=studykit_context.course_version,
-                unit_id=studykit_context.unit_id,
-            )
+        resolved_turn = self.turn_resolver.resolve(
+            latest=latest,
+            understanding=understanding,
+            previous_state=previous_context,
+            displayed_catalog_ids=displayed_catalog_ids,
+            selected_catalog_id=selected_catalog_id,
+            profile_course_context=self._profile_course_context(profile),
+        )
+        resolved_card = resolved_turn.course_card
+        selected_catalog_id = resolved_turn.selected_catalog_id
+        studykit_context = resolved_turn.studykit_context
+        profile_course_context = resolved_turn.profile_course_context
         if (
             resolved_card is None
             and understanding is not None
@@ -600,12 +589,13 @@ class CoursePilotAgent:
                         or understanding.course.raw
                         or latest
                     )
-                navigation = self.course_navigation.navigate_result(
+                navigation = await self.course_navigation.navigate_result(
                     text=navigation_text,
                     profile=current_profile,
                     candidate_id=resolved_card.catalog_id if resolved_card is not None else None,
                 )
                 answer = navigation.answer
+                usage = add_usage(usage, navigation.usage or {})
                 if navigation.catalog_ids:
                     displayed_catalog_ids[:] = navigation.catalog_ids[:5]
                     if len(navigation.catalog_ids) == 1:
@@ -761,11 +751,32 @@ class CoursePilotAgent:
                 if result.artifact is not None:
                     code_artifact_id = result.artifact.artifact_id
                     code_digest = result.artifact.content_sha256
-            elif capability is CapabilityId.GENERATION_STATUS:
-                answer = (
-                    "当前上下文不足以确定你指的是哪道题。请粘贴题面或 practice ID，"
-                    "并附上你的当前答案；我不会凭空猜测上一道题。"
+            elif capability is CapabilityId.GENERAL_ASSISTANCE:
+                requested_unavailable: CapabilityId | None = None
+                raw_unavailable = task.parameters.get(
+                    "requested_unavailable_capability"
                 )
+                if isinstance(raw_unavailable, str):
+                    try:
+                        candidate = CapabilityId(raw_unavailable)
+                    except ValueError:
+                        candidate = None
+                    if (
+                        candidate is not None
+                        and capability_by_id(candidate).availability == "unavailable"
+                    ):
+                        requested_unavailable = candidate
+                result = await self.general_assistance.answer(
+                    messages=messages,
+                    confirmed_profile=self._confirmed_profile_summary(current_profile),
+                    continuity=continuity,
+                    requested_unavailable_capability=requested_unavailable,
+                )
+                answer, usage = result.answer, add_usage(usage, result.usage)
+                if result.catalog_ids:
+                    displayed_catalog_ids[:] = result.catalog_ids[:5]
+                    if len(result.catalog_ids) == 1:
+                        selected_catalog_id = result.catalog_ids[0]
             else:
                 answer = render_capability_help(capability)
             return TaskExecutionResult(
@@ -815,32 +826,106 @@ class CoursePilotAgent:
             notices.append("画像存储当前不可用；本轮仍可继续，但画像没有持久保存。")
         if notices:
             answer = f"{answer}\n\n---\n" + "\n".join(notices)
+        next_state = ConversationState(
+            course=(
+                None
+                if studykit_context is None
+                else StudyKitCourseIdentity.from_context(studykit_context)
+            ),
+            active_practice_id=active_practice_id,
+            displayed_practice_ids=displayed_practice_ids,
+            hint_level=hint_level,
+            practice_presentation_kind=practice_presentation_kind,
+            practice_presentation_digest=practice_presentation_digest,
+            code_artifact_id=code_artifact_id,
+            code_digest=code_digest,
+            displayed_catalog_ids=displayed_catalog_ids,
+            selected_catalog_id=selected_catalog_id,
+            last_capability=last_capability,
+            last_concept=last_concept,
+        )
         next_context: str | None = None
-        if self.context_signer is not None:
-            next_context = self.context_signer.issue(
+        if session_binding is not None:
+            self._save_session_binding(session_binding, next_state)
+        elif self.context_signer is not None:
+            next_context = self.context_signer.issue_state(
                 plan=plan.model_dump(mode="json"),
-                course=(
-                    None
-                    if studykit_context is None
-                    else StudyKitCourseIdentity.from_context(studykit_context)
-                ),
-                active_practice_id=active_practice_id,
-                displayed_practice_ids=displayed_practice_ids,
-                hint_level=hint_level,
-                practice_presentation_kind=practice_presentation_kind,
-                practice_presentation_digest=practice_presentation_digest,
-                code_artifact_id=code_artifact_id,
-                code_digest=code_digest,
-                displayed_catalog_ids=displayed_catalog_ids,
-                selected_catalog_id=selected_catalog_id,
-                last_capability=last_capability,
-                last_concept=last_concept,
+                state=next_state,
             )
         return AgentReply(
             answer=answer,
             usage=normalized_usage(usage),
             coursepilot_context=next_context,
         )
+
+    def _load_session_binding(
+        self,
+        *,
+        session_id: str | None,
+        continuity_namespace: str | None,
+    ) -> _SessionBinding | None:
+        if session_id is None:
+            return None
+        binding = _SessionBinding(
+            namespace=continuity_namespace or "",
+            session_id=session_id,
+            state=None,
+            revision=None,
+            available=self.session_state_store is not None and bool(continuity_namespace),
+        )
+        if not binding.available:
+            return binding
+        try:
+            loaded = self.session_state_store.load(binding.namespace, binding.session_id)  # type: ignore[union-attr]
+        except (OSError, sqlite3.Error, RuntimeError, ValueError):
+            binding.available = False
+            self.event_sink.emit(AgentEvent(kind="continuity", reason="session_load_failed"))
+            return binding
+        if loaded is not None:
+            binding.state = loaded.state
+            binding.revision = loaded.revision
+        return binding
+
+    def _refresh_session_binding(self, binding: _SessionBinding | None) -> None:
+        if binding is not None and binding.state is not None:
+            self._save_session_binding(binding, binding.state)
+
+    def _save_session_binding(
+        self, binding: _SessionBinding, state: ConversationState
+    ) -> None:
+        if not binding.available or self.session_state_store is None:
+            return
+        try:
+            saved = self.session_state_store.save(
+                binding.namespace,
+                binding.session_id,
+                state,
+                expected_revision=binding.revision,
+            )
+        except (OSError, sqlite3.Error, RuntimeError, ValueError):
+            binding.available = False
+            self.event_sink.emit(AgentEvent(kind="continuity", reason="session_save_failed"))
+            return
+        if not saved:
+            binding.available = False
+            self.event_sink.emit(
+                AgentEvent(kind="continuity", reason="session_revision_conflict")
+            )
+            return
+        binding.state = state
+        binding.revision = 1 if binding.revision is None else binding.revision + 1
+
+    @staticmethod
+    def _confirmed_profile_summary(profile: LearnerProfile) -> dict[str, object]:
+        summary: dict[str, object] = {}
+        for fact in profile.facts:
+            if fact.status is not FactStatus.CONFIRMED:
+                continue
+            summary.setdefault(fact.field_name, [])
+            values = summary[fact.field_name]
+            if isinstance(values, list):
+                values.append(fact.value)
+        return summary
 
     def _profile_course_context(self, profile: LearnerProfile) -> CourseContext | None:
         course_fact = next(

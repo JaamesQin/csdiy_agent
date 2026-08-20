@@ -282,6 +282,75 @@ async def test_practice_selection_supports_debug_type() -> None:
     assert "gradient clipping" in result.answer
 
 
+async def test_practice_selection_matches_id_without_separators() -> None:
+    service = StudyKitLookupService(ReviewedFileStudyKitStore())
+
+    result = await service.practice_selection(
+        messages=_messages("显示 PRACTICEDEBUGGING01"),
+        course_context=CONTEXT,
+    )
+
+    assert "practice-debugging-01" in result.answer
+    assert "gradient clipping" in result.answer
+
+
+async def test_practice_selection_resolves_chinese_ordinal_after_studykit_index() -> None:
+    service = StudyKitLookupService(ReviewedFileStudyKitStore())
+    lookup = await service.lookup(
+        messages=_messages("查看 MIT 6.7960 第 2 讲的 StudyKit"),
+        course_context=CONTEXT,
+    )
+
+    result = await service.practice_selection(
+        messages=[
+            ChatMessage(role="user", content="查看 MIT 6.7960 第 2 讲的 StudyKit"),
+            ChatMessage(role="assistant", content=lookup.answer),
+            ChatMessage(role="user", content="显示第七道习题"),
+        ],
+        course_context=CONTEXT,
+    )
+
+    assert "practice-differentiable-programming-01" in result.answer
+    assert "已在当前对话中展示完毕" not in result.answer
+
+
+async def test_practice_selection_counts_only_actual_presentations_as_displayed() -> None:
+    service = StudyKitLookupService(ReviewedFileStudyKitStore())
+    lookup = await service.lookup(messages=_messages("查看 StudyKit"), course_context=CONTEXT)
+
+    result = await service.practice_selection(
+        messages=[
+            ChatMessage(role="assistant", content=lookup.answer),
+            ChatMessage(role="user", content="再给我一道练习"),
+        ],
+        course_context=CONTEXT,
+    )
+
+    assert "practice-concept-01" in result.answer
+
+
+async def test_practice_selection_reports_out_of_range_ordinal() -> None:
+    service = StudyKitLookupService(ReviewedFileStudyKitStore())
+
+    result = await service.practice_selection(
+        messages=_messages("显示第八道习题"),
+        course_context=CONTEXT,
+    )
+
+    assert result.answer == "本讲只有 7 道练习，无法显示第 8 道。"
+
+
+async def test_practice_selection_resolves_ex_alias_by_display_order() -> None:
+    service = StudyKitLookupService(ReviewedFileStudyKitStore())
+
+    result = await service.practice_selection(
+        messages=_messages("ex-7"),
+        course_context=CONTEXT,
+    )
+
+    assert "practice-differentiable-programming-01" in result.answer
+
+
 async def test_practice_selection_automatically_rewrites_once() -> None:
     model = FakeStructuredModel(
         {

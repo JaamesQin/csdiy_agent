@@ -1,0 +1,66 @@
+{
+  "audit_type": "current-build-audit",
+  "auditor_role": "UCB CS61B current-build audit worker",
+  "audited_at": "2026-08-12",
+  "build_id": "a748c428609e7a5bc9f0697a06ae0d7fbd56e2469aaaba8f5b034121f2479ab1",
+  "course_id": "ucb-cs61b-spring-2024",
+  "course_version": "spring-2024",
+  "scope": [
+    "lecture-14", "lecture-15", "lecture-16", "lecture-17", "lecture-18",
+    "lecture-19", "lecture-20", "lecture-21", "lecture-22", "lecture-23",
+    "lecture-24", "lecture-25", "lecture-26"
+  ],
+  "write_scope": {
+    "exclusive_report": "evaluations/ucb-cs61b-spring-2024-cs61b-2-audit-20260812.json",
+    "canonical_unit_artifacts_modified": false,
+    "manifest_registry_root_summaries_modified": false
+  },
+  "overall_result": "blocked_pending_independent_audit_reconciliation",
+  "method": {
+    "studykit_skill": "/home/jamesqin/.codex/skills/studykit-generator/SKILL.md",
+    "required_refs_read": ["references/contract.md", "references/formats.md", "references/examples.md"],
+    "comparisons": [
+      "recursive semantic equality of 05-studykit.candidate.json and 05-studykit.json",
+      "recursive semantic equality of 05-studykit.json and studykit.yaml",
+      "candidate/final validation and review-validation status, issue lists and numeric counts",
+      "citation source_id and page anchors against canonical chunks",
+      "run fingerprint source/chunk hashes and unit identity",
+      "independent-audit presence, timestamp, identity, result and administrative consistency"
+    ],
+    "semantic_issues_policy": "Existing practice/content semantic issues and fast-mode limitations are deferred; this report does not repair them or manufacture a pass."
+  },
+  "aggregate_checks": {
+    "candidate_final_semantic_equal": {"passed": 13, "total": 13},
+    "final_yaml_semantic_equal": {"passed": 13, "total": 13},
+    "validation_candidate_final_equal": {"passed": 13, "total": 13},
+    "validation_succeeded": {"passed": 13, "total": 13},
+    "review_validation_succeeded": {"passed": 13, "total": 13},
+    "source_sha256_matches_run_fingerprint": {"passed": 13, "total": 13},
+    "chunks_sha256_matches_run_fingerprint": {"passed": 13, "total": 13},
+    "chunk_count_and_contiguous_page_range": {"passed": 13, "total": 13},
+    "citation_page_anchors_within_source_range": {"passed": 13, "total": 13},
+    "citation_or_page_numeric_drift": {"found": false},
+    "root_merge_numeric_fix": {"needed": false, "exact_expected_actual": null, "next_action": null}
+  },
+  "units": {
+    "lecture-14": {"chunk_count": 70, "citation_count": 363, "page_range": [1, 70], "validation": "succeeded", "review_validation": "succeeded", "candidate_final_equal": true, "final_yaml_equal": true, "independent_audit": {"present": true, "result": "pass", "audited_at": "2026-08-10 22:43:09 +08:00", "identity_complete": false, "fresh": true, "deferred": ["quality audit still says independent_audit_missing; audit record reconciliation is pending"]}},
+    "lecture-15": {"chunk_count": 92, "citation_count": 326, "page_range": [1, 92], "validation": "succeeded", "review_validation": "succeeded", "candidate_final_equal": true, "final_yaml_equal": true, "independent_audit": {"present": true, "result": "pass", "audited_at": "2026-08-10T22:24:36+08:00", "identity_complete": false, "fresh": true, "deferred": ["quality audit still says independent_audit_missing; audit record reconciliation is pending"]}},
+    "lecture-16": {"chunk_count": 56, "citation_count": 250, "page_range": [1, 56], "validation": "succeeded", "review_validation": "succeeded", "candidate_final_equal": true, "final_yaml_equal": true, "independent_audit": {"present": true, "result": "pass", "audited_at": "2026-08-11T00:44:46+08:00", "identity_complete": false, "fresh": true, "deferred": ["metrics says independent audit remains pending/separate assignment"]}},
+    "lecture-17": {"chunk_count": 61, "citation_count": 146, "page_range": [1, 61], "validation": "succeeded", "review_validation": "succeeded", "candidate_final_equal": true, "final_yaml_equal": true, "independent_audit": {"present": true, "result": "pass", "audited_at": "2026-08-11T00:49:21+08:00", "identity_complete": false, "fresh": true, "deferred": ["existing non-blocking root runtime schema mismatch is preserved: legacy prerequisites object expected versus portable prerequisites array actual"]}},
+    "lecture-18": {"chunk_count": 78, "citation_count": 114, "page_range": [1, 78], "validation": "succeeded", "review_validation": "succeeded", "candidate_final_equal": true, "final_yaml_equal": true, "independent_audit": {"present": true, "result": "pass", "audited_at": "2026-08-11T00:45:49+08:00", "identity_complete": true, "fresh": true, "deferred": ["fast-mode audit boundary is retained"]}},
+    "lecture-19": {"chunk_count": 103, "citation_count": 136, "page_range": [1, 103], "validation": "succeeded", "review_validation": "succeeded", "candidate_final_equal": true, "final_yaml_equal": true, "independent_audit": {"present": true, "result": "pass", "audited_at": "2026-08-10T23:55:31+08:00", "identity_complete": false, "fresh": true, "deferred": ["unit verification references a different historical build_id; coordinator reconciliation is pending"]}},
+    "lecture-20": {"chunk_count": 63, "citation_count": 111, "page_range": [1, 63], "validation": "succeeded", "review_validation": "succeeded", "candidate_final_equal": true, "final_yaml_equal": true, "independent_audit": {"present": true, "result": "pass", "audited_at": "2026-08-10T23:08:49+08:00", "identity_complete": false, "fresh": true, "deferred": ["quality audit remains awaiting independent-audit reconciliation despite separate pass artifact"]}},
+    "lecture-21": {"chunk_count": 64, "citation_count": 94, "page_range": [1, 64], "validation": "succeeded", "review_validation": "succeeded", "candidate_final_equal": true, "final_yaml_equal": true, "independent_audit": {"present": false, "result": "missing", "identity_complete": false, "fresh": false, "deferred": ["independent audit required; no independent-audit.json exists"]}},
+    "lecture-22": {"chunk_count": 107, "citation_count": 108, "page_range": [1, 107], "validation": "succeeded", "review_validation": "succeeded", "candidate_final_equal": true, "final_yaml_equal": true, "independent_audit": {"present": true, "result": "pass", "audited_at": "2026-08-10T23:45:55+08:00", "identity_complete": false, "fresh": true, "deferred": ["audit omits course_version/build_id fields; coordinator reconciliation is pending"]}},
+    "lecture-23": {"chunk_count": 78, "citation_count": 90, "page_range": [1, 78], "validation": "succeeded", "review_validation": "succeeded", "candidate_final_equal": true, "final_yaml_equal": true, "independent_audit": {"present": false, "result": "missing", "identity_complete": false, "fresh": false, "deferred": ["fast-mode author audit is not an independent audit"]}},
+    "lecture-24": {"chunk_count": 120, "citation_count": 76, "page_range": [1, 120], "validation": "succeeded", "review_validation": "succeeded", "candidate_final_equal": true, "final_yaml_equal": true, "independent_audit": {"present": false, "result": "missing", "identity_complete": false, "fresh": false, "deferred": ["fast-mode author audit is not an independent audit"]}},
+    "lecture-25": {"chunk_count": 110, "citation_count": 126, "page_range": [1, 110], "validation": "succeeded", "review_validation": "succeeded", "candidate_final_equal": true, "final_yaml_equal": true, "independent_audit": {"present": false, "result": "missing", "identity_complete": false, "fresh": false, "deferred": ["fast-mode author audit is not an independent audit"]}},
+    "lecture-26": {"chunk_count": 64, "citation_count": 129, "page_range": [1, 64], "validation": "succeeded", "review_validation": "succeeded", "candidate_final_equal": true, "final_yaml_equal": true, "independent_audit": {"present": false, "result": "missing", "identity_complete": false, "fresh": false, "deferred": ["fast-mode author audit is not an independent audit", "existing source-side preflight report absence is preserved; no report fabricated"]}}
+  },
+  "deferred_findings": [
+    {"kind": "independent_audit", "units": ["lecture-21", "lecture-23", "lecture-24", "lecture-25", "lecture-26"], "next_action": "Assign a separate independent auditor, write identity-complete audit artifacts for this build, then reconcile quality audit metadata and rerun the validators."},
+    {"kind": "administrative_identity", "units": ["lecture-14", "lecture-15", "lecture-16", "lecture-17", "lecture-19", "lecture-20", "lecture-22"], "next_action": "Coordinator-only metadata reconciliation: add/verify course_version and build_id against the current build without changing canonical unit content."},
+    {"kind": "existing_semantic_or_fast_mode_issue", "units": ["lecture-17", "lecture-18", "lecture-23", "lecture-24", "lecture-25", "lecture-26"], "next_action": "Keep existing semantic/visual boundary notes deferred; perform a future independent semantic review. Do not mark these as newly passed in this audit."}
+  ],
+  "next_action": "Do not alter canonical artifacts. Complete independent-audit assignment and coordinator identity reconciliation for the five missing units and incomplete existing audit records; then rerun current-build audit."
+}
