@@ -139,6 +139,72 @@ def test_exact_resolution_supports_chunk_id_and_heading_with_identity_filter(tmp
     assert [chunk.chunk_id for chunk in resolved] == ["a-page", "a-heading"]
 
 
+def test_chunk_ids_are_unique_within_course_unit_not_globally(tmp_path) -> None:
+    path = tmp_path / "chunks.sqlite3"
+    initialize_source_chunk_index(
+        path,
+        [
+            _chunk("shared-id", "course a", page=4, course="course-a"),
+            _chunk("shared-id", "course b", page=4, course="course-b"),
+        ],
+    )
+
+    resolved = SQLiteSourceChunkStore(path).resolve_exact(
+        [SourceChunkReference(chunk_id="shared-id")],
+        AccessScope(),
+        StudyKitCourseIdentity(
+            course_id="course-b", course_version="v1", unit_id="lecture-01"
+        ),
+    )
+
+    assert [chunk.text for chunk in resolved] == ["course b"]
+
+
+def test_colliding_local_chunk_id_requires_exact_anchor(tmp_path) -> None:
+    path = tmp_path / "chunks.sqlite3"
+    initialize_source_chunk_index(
+        path,
+        [
+            _chunk(
+                "truncated-id",
+                "LRU evidence",
+                page=None,
+                anchor_type="heading",
+                anchor_value="## LRU",
+            ),
+            _chunk(
+                "truncated-id",
+                "MRU evidence",
+                page=None,
+                anchor_type="heading",
+                anchor_value="## MRU",
+            ),
+        ],
+    )
+    store = SQLiteSourceChunkStore(path)
+    identity = StudyKitCourseIdentity(
+        course_id="course-a", course_version="v1", unit_id="lecture-01"
+    )
+
+    assert store.resolve_exact(
+        [SourceChunkReference(chunk_id="truncated-id")], AccessScope(), identity
+    ) == []
+    resolved = store.resolve_exact(
+        [
+            SourceChunkReference(
+                chunk_id="truncated-id",
+                source_id="slides",
+                anchor_type="heading",
+                anchor_value="## MRU",
+            )
+        ],
+        AccessScope(),
+        identity,
+    )
+
+    assert [chunk.text for chunk in resolved] == ["MRU evidence"]
+
+
 def test_exact_resolution_rejects_mismatched_anchor_hash_and_review(tmp_path) -> None:
     import sqlite3
 

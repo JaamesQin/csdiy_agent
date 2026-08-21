@@ -472,7 +472,9 @@ async def test_feedback_uses_digest_bound_presented_question() -> None:
         presentation_kind=presentation.presentation_kind,
     )
 
-    assert "本题点评" in result.answer
+    assert "通用反馈（未按当前课程材料核验）" in result.answer
+    assert "不代表当前课程的标准答案或评分" in result.answer
+    assert "说明了反向传播先计算梯度" in result.answer
     assert len(model.calls) == 2
     assert "按顺序说明梯度计算" in model.calls[1]["user_prompt"]
 

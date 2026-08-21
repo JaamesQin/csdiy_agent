@@ -516,10 +516,16 @@ async def search_materials(
 
 默认过滤顺序：权限/`material_set_id` → 课程和讲次 → 文档类型 → 文本相关性 → 去重和上下文窗口。返回值必须包含 `chunk_id`、来源、页码、文本、相关性、scope 和索引版本。
 
-练习引用不走该相关性接口。`SourceChunkStore.resolve_exact` 优先按 `chunk_id`，否则按
-`source_id + anchor_type + anchor_value` 精确查询；public scope、course/version/unit、
-succeeded build、approved review 和 index eligibility 必须在同一 SQL 中过滤，随后复核内容
-SHA-256。任一引用失败都会丢弃整组课程证据。索引使用：
+练习引用不走该相关性接口。parser 生成的 `chunk_id` 是课程/unit/anchor 范围内的局部、截断
+标识，不是全局主键。`SourceChunkStore.resolve_exact` 会把引用中提供的 `chunk_id`、`source_id`、
+`anchor_type` 和 `anchor_value` 全部作为同一 SQL 的合取条件，并同时过滤 public scope、
+course/version/unit、succeeded build、approved review 和 index eligibility，随后复核内容 SHA-256。
+裸 `chunk_id` 若命中多条必须失败关闭；同一 ID 只有携带匹配的完整 `source_id + anchor` 才能
+消歧。任一引用失败都会丢弃整组课程证据。
+
+索引构建只接受带 `run.fingerprint_payload.units` 逐单元 source path/hash 的 approved build。
+`legacy_reviewed=true` 但缺少该指纹的 build 仍可作为 approved StudyKit 输入，却不得进入
+SourceChunk 索引；非 legacy approved build 缺少指纹时必须令构建失败。索引使用：
 
 ```bash
 .venv/bin/python scripts/build_source_chunk_index.py --replace

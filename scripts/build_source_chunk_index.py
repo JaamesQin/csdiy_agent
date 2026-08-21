@@ -23,6 +23,10 @@ DEFAULT_ARCHIVE = ROOT / "data" / "archive" / "studykits.sqlite3"
 DEFAULT_OUTPUT = ROOT / "data" / "indexes" / "source_chunks.sqlite3"
 
 
+class _MissingSourceFingerprintError(ValueError):
+    """An approved build predates hash-bound per-unit source metadata."""
+
+
 def _sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as stream:
@@ -36,7 +40,7 @@ def collect_approved_chunks(archive: Path, repository_root: Path) -> list[Source
 
     uri = f"{archive.resolve().as_uri()}?mode=ro&immutable=1"
     chunks: list[SourceChunk] = []
-    seen_ids: set[str] = set()
+    seen_ids: set[tuple[str, str, str, str, str, str, str]] = set()
     with sqlite3.connect(uri, uri=True) as connection:
         connection.row_factory = sqlite3.Row
         builds = connection.execute(
@@ -49,7 +53,15 @@ def collect_approved_chunks(archive: Path, repository_root: Path) -> list[Source
         ).fetchall()
         for build in builds:
             metadata = json.loads(build["metadata_json"])
-            source_records = _source_records(metadata)
+            try:
+                source_records = _source_records(metadata)
+            except _MissingSourceFingerprintError:
+                # Reviewed legacy builds remain valid StudyKit inputs, but they
+                # predate per-unit chunks_path/chunks_sha256 fingerprints and
+                # therefore cannot contribute trustworthy SourceChunks.
+                if metadata.get("legacy_reviewed") is True:
+                    continue
+                raise
             approved_units = {
                 str(row[0])
                 for row in connection.execute(
@@ -70,9 +82,20 @@ def collect_approved_chunks(archive: Path, repository_root: Path) -> list[Source
                     chunk = _approved_chunk(raw, build, unit_id, record)
                     if chunk is None:
                         continue
-                    if chunk.chunk_id in seen_ids:
-                        raise ValueError(f"duplicate approved chunk_id: {chunk.chunk_id}")
-                    seen_ids.add(chunk.chunk_id)
+                    identity = (
+                        chunk.course_id,
+                        chunk.course_version,
+                        chunk.unit_id,
+                        chunk.chunk_id,
+                        chunk.source_id,
+                        chunk.anchor_type or "",
+                        chunk.anchor_value or "",
+                    )
+                    if identity in seen_ids:
+                        raise ValueError(
+                            "duplicate approved chunk identity: " + "/".join(identity)
+                        )
+                    seen_ids.add(identity)
                     chunks.append(chunk)
     return chunks
 
@@ -107,7 +130,9 @@ def _source_records(metadata: Any) -> dict[str, dict[str, Any]]:
     fingerprint = run.get("fingerprint_payload") if isinstance(run, dict) else None
     units = fingerprint.get("units") if isinstance(fingerprint, dict) else None
     if not isinstance(units, list):
-        raise ValueError("approved build has no fingerprinted source units")
+        raise _MissingSourceFingerprintError(
+            "approved build has no fingerprinted source units"
+        )
     result: dict[str, dict[str, Any]] = {}
     for record in units:
         if not isinstance(record, dict) or not isinstance(record.get("unit_id"), str):

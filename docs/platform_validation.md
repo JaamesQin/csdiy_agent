@@ -489,8 +489,9 @@ SSE 富文本与主动停止、连续状态回传与清空、代码复制、远�
 
 - `SourceChunkStore.resolve_exact` 不使用 FTS/BM25；它在 SQL 中先过滤 public scope、
   course/version/unit、succeeded build、approved review 和 index eligibility，再按
-  `chunk_id` 或 `source_id + anchor` 精确解析并复核内容 SHA-256。伪造、跨课、歧义、
-  未审核和哈希漂移引用均不会进入模型。
+  `chunk_id` 与引用中全部已提供的 `source_id + anchor` 条件精确解析并复核内容 SHA-256。
+  parser 生成的 `chunk_id` 是局部/截断 ID；裸 ID 命中多条时失败关闭，只有匹配的完整
+  `source_id + anchor` 才能消歧。伪造、跨课、歧义、未审核和哈希漂移引用均不会进入模型。
 - 单题课程证据限定为 16 个引用、16,000 字符；任一引用无效会丢弃整个课程证据分区。
   随后同一次能力调用只接收题面、作答要求和当前答案，并以固定标题
   “通用反馈（未按当前课程材料核验）”标明未按课程材料验证。模型失败不触发第二次调用。
@@ -498,18 +499,16 @@ SSE 富文本与主动停止、连续状态回传与清空、代码复制、远�
   后者必须无引用；生成 validator 和 archive approval gate 使用同一确定性检查并分别报告
   grounded、general-only、unresolved、declaration mismatch。
 - `scripts/build_source_chunk_index.py` 只读取 build/document 双 approved 的归档记录，并复核
-  fingerprint 中的 `chunks_path/chunks_sha256` 后原子替换可重建索引。
+  fingerprint 中的 `chunks_path/chunks_sha256` 后原子替换可重建索引。`legacy_reviewed=true`
+  但没有 `run.fingerprint_payload.units` 逐单元 hash 指纹的 build 保留为 approved StudyKit
+  输入、但不进入 SourceChunk 索引；非 legacy approved build 缺失该指纹时构建失败关闭。
 
-本次新增的独立、无网络验证结果：SourceChunk/索引/Exercise 回归 `13 passed`，generator skill
-与 workflow policy `32 passed`，archive feedback release gate `3 passed`，page-only generator contract
-`1 passed`，skill quick validation
-和 Python compileall 通过。覆盖了截图对应 CS61C `lecture-02/p1` 的两个 heading chunk、页码证据、
-选择优先级、跨课程降级、引用/字符上限、声明冲突和 source hash drift。
+2026-08-21 在唯一工作仓库和真实私有数据上复核：PR 分支记录的 `data@f4b25bb` 是对基线主线
+`data@2d478d3` 的回退，会读取审批前 archive；将 gitlink 恢复为本地已有的 `2d478d3` 后，三个
+真实 archive 门禁回归为 `3 passed`，没有重新下载或清理私有数据。完整无网络命令
+`.venv/bin/pytest -q` 为 `670 passed in 173.89s`；其中包含 legacy 指纹存在但结构损坏时必须
+失败关闭的独立回归，只有确实缺少逐单元指纹的 reviewed legacy 才允许从索引中跳过。
 
-当前工作树中的私有 `data` submodule 预先存在用户删除的 golden、catalog 和 manifest 文件；
-依赖这些文件的旧全仓测试会以 `FileNotFoundError` 或 ready Store 为空失败。本次没有恢复或修改
-这些数据文件，相关失败不作为 Exercise 契约回归通过的证据。实际全量命令
-`.venv/bin/pytest -q --tb=no` 得到 `500 passed, 160 failed, 5 errors`；代表性抽查分别落在缺失的
-MIT golden fixture 和由此不可用的 `ReviewedFileStudyKitStore`。5 个 error 的 traceback 是受限沙箱
-拒绝 `socket.bind(("127.0.0.1", 0))`；获准在本机回环环境运行
-`tests/integration/test_local_http.py` 后为 `5 passed`。这些结果与上述 49 项独立回归分开记录。
+真实 `data/indexes/source_chunks.sqlite3` 的 `PRAGMA integrity_check` 为 `ok`，`source_chunks` 与
+FTS 各 5,845 行，保留 13 组同课程/unit 内局部 ID 碰撞。运行时抽查验证了普通精确引用命中、
+歧义裸 `chunk_id` 返回空，以及同一 ID 补齐匹配 `source_id + anchor` 后唯一命中。

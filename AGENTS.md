@@ -8,7 +8,9 @@
 - Public SourceChunk retrieval filters scope and identity before FTS5/BM25 ranking. Exact cited
   evidence resolution never uses FTS/BM25: it resolves `chunk_id` first or exact
   `source_id + anchor`, filters public scope, course/version/unit, succeeded build, approved review,
-  and index eligibility in SQL, then verifies the chunk content hash. Signed
+  and index eligibility in SQL, then verifies the chunk content hash. Parser-generated `chunk_id`
+  values are local/truncated identifiers, not global keys; every supplied source/anchor qualifier
+  remains conjunctive, and a bare ambiguous ID fails closed. Signed
   `coursepilot_context` and server-side `sessionId` state are continuity only, never authorization
   or answer storage. Gateway state is minimal, namespace-bound, HMAC-indexed, and expires after a
   30-day sliding TTL; missing or empty `sessionId` never reuses a prior conversation.
@@ -43,6 +45,10 @@
   data-dependent tests. The archive remains separate from the account/profile SQLite database.
   Imports retain an explicit review status; `validated_draft` records are not online-ready, and
   only `approved` build and document records may satisfy the online store.
+- SourceChunk indexing requires hash-bound per-unit source metadata. An explicitly
+  `legacy_reviewed` build without `run.fingerprint_payload.units` remains an approved StudyKit input
+  but is excluded from the SourceChunk index; a non-legacy approved build missing that fingerprint
+  fails the index build closed.
 - Human archive approval must run through `scripts/approve_studykit_archive.py`: require archive
   integrity, portable Schema, per-unit validation/review validation, exact requested/completed/
   validated/audited/document identity, and matching independent registry audit coverage. Explicit

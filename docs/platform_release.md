@@ -157,3 +157,10 @@ Practice feedback now resolves cited public SourceChunks exactly by chunk ID or 
 scope, course identity, approval, and hash checks. Portable v0.2.2 declares `course_grounded` versus
 `general_only`; invalid course evidence falls back to a prominently labeled general-knowledge review
 without changing the OpenAI-compatible HTTP/SSE contract or the one-call budget.
+
+SourceChunk publication additionally requires hash-bound per-unit source fingerprints. Approved
+`legacy_reviewed` builds that predate those fingerprints remain valid StudyKit inputs but are omitted
+from the index; missing fingerprints on non-legacy approved builds fail the build closed. Parser
+`chunk_id` values are local/truncated rather than global: exact resolution always includes the trusted
+course/version/unit identity, applies every supplied `source_id` and anchor qualifier, rejects a bare
+ambiguous ID, and accepts the ID only when a matching full source/anchor reference disambiguates it.

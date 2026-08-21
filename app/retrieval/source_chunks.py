@@ -205,17 +205,15 @@ class SQLiteSourceChunkStore:
                     if reference.chunk_id is not None:
                         clauses.append("chunk_id = ?")
                         parameters.append(reference.chunk_id)
-                    else:
-                        clauses.extend(
-                            ["source_id = ?", "anchor_type = ?", "anchor_value = ?"]
-                        )
-                        parameters.extend(
-                            [
-                                reference.source_id,
-                                reference.anchor_type,
-                                reference.anchor_value,
-                            ]
-                        )
+                    if reference.source_id is not None:
+                        clauses.append("source_id = ?")
+                        parameters.append(reference.source_id)
+                    if reference.anchor_type is not None:
+                        clauses.append("anchor_type = ?")
+                        parameters.append(reference.anchor_type)
+                    if reference.anchor_value is not None:
+                        clauses.append("anchor_value = ?")
+                        parameters.append(reference.anchor_value)
                     rows = connection.execute(
                         f"SELECT * FROM source_chunks WHERE {' AND '.join(clauses)} "
                         "ORDER BY chunk_id LIMIT 2",
@@ -356,7 +354,7 @@ def initialize_source_chunk_index(path: Path | str, chunks: list[SourceChunk]) -
         connection.executescript(
             """
             CREATE TABLE source_chunks (
-                chunk_id TEXT PRIMARY KEY,
+                chunk_id TEXT NOT NULL,
                 course_id TEXT NOT NULL,
                 course_version TEXT NOT NULL,
                 unit_id TEXT NOT NULL,
@@ -374,6 +372,11 @@ def initialize_source_chunk_index(path: Path | str, chunks: list[SourceChunk]) -
                 ,build_status TEXT NOT NULL CHECK (build_status = 'succeeded')
                 ,review_status TEXT NOT NULL CHECK (review_status = 'approved')
                 ,index_allowed INTEGER NOT NULL CHECK (index_allowed = 1)
+            );
+            CREATE UNIQUE INDEX source_chunks_exact_identity
+            ON source_chunks (
+                course_id, course_version, unit_id, chunk_id, source_id,
+                IFNULL(anchor_type, ''), IFNULL(anchor_value, '')
             );
             CREATE VIRTUAL TABLE source_chunks_fts USING fts5(
                 text, content='source_chunks', content_rowid='rowid', tokenize='unicode61'

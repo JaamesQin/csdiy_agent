@@ -112,3 +112,66 @@ def test_build_index_rejects_source_hash_drift(tmp_path) -> None:
 
     with pytest.raises(ValueError, match="chunks_sha256 mismatch"):
         build_index(database, tmp_path / "index.sqlite3", tmp_path)
+
+
+def test_build_index_skips_reviewed_legacy_without_source_fingerprint(tmp_path) -> None:
+    database, _ = _approved_archive(tmp_path)
+    archive = StudyKitArchive(database)
+    document_json = json.dumps({"unit_id": "legacy-01"}, separators=(",", ":"))
+    document_hash = hashlib.sha256(document_json.encode()).hexdigest()
+    with archive.connect() as connection:
+        connection.execute(
+            """
+            INSERT INTO studykit_builds
+            (build_id, course_id, course_version, build_status, review_status,
+             schema_id, quality_mode, delivery_policy, unit_count, content_sha256,
+             imported_at, source_label, metadata_json)
+            VALUES (?, 'legacy-course', 'v1', 'succeeded', 'approved',
+                    'portable-v0.1', 'standard', 'published', 1, ?, 'now', 'test', ?)
+            """,
+            ("b" * 64, document_hash, json.dumps({"legacy_reviewed": True})),
+        )
+        connection.execute(
+            """
+            INSERT INTO studykit_documents
+            (course_id, course_version, unit_id, build_id, title, document_status,
+             review_status, schema_id, document_sha256, document_json, learner_markdown)
+            VALUES ('legacy-course', 'v1', 'legacy-01', ?, 'Legacy', 'published',
+                    'approved', 'portable-v0.1', ?, ?, NULL)
+            """,
+            ("b" * 64, document_hash, document_json),
+        )
+
+    output = tmp_path / "index.sqlite3"
+
+    assert build_index(database, output, tmp_path) == 1
+
+
+def test_build_index_rejects_nonlegacy_build_without_source_fingerprint(tmp_path) -> None:
+    database, _ = _approved_archive(tmp_path)
+    with StudyKitArchive(database).connect() as connection:
+        connection.execute(
+            "UPDATE studykit_builds SET metadata_json = '{}' WHERE build_id = ?",
+            ("a" * 64,),
+        )
+
+    with pytest.raises(ValueError, match="no fingerprinted source units"):
+        build_index(database, tmp_path / "index.sqlite3", tmp_path)
+
+
+def test_build_index_rejects_reviewed_legacy_with_malformed_source_fingerprint(
+    tmp_path,
+) -> None:
+    database, _ = _approved_archive(tmp_path)
+    metadata = {
+        "legacy_reviewed": True,
+        "run": {"fingerprint_payload": {"units": [{}]}},
+    }
+    with StudyKitArchive(database).connect() as connection:
+        connection.execute(
+            "UPDATE studykit_builds SET metadata_json = ? WHERE build_id = ?",
+            (json.dumps(metadata), "a" * 64),
+        )
+
+    with pytest.raises(ValueError, match="invalid source unit record"):
+        build_index(database, tmp_path / "index.sqlite3", tmp_path)
