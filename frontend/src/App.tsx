@@ -101,15 +101,8 @@ const starterPrompts: StarterPrompt[] = [
   },
   {
     title: "代码辅导",
-    description: "支持 CSDIY 多语言，只做静态分析",
-    prompt: [
-      "请做静态代码辅导，说明诊断和验证步骤：",
-      "```python",
-      "def add(x, values=[]):",
-      "    values.append(x)",
-      "    return values",
-      "```",
-    ].join("\n"),
+    description: "生成示例、解释或诊断代码，始终不执行",
+    prompt: "用 C++ 写一个展示虚函数、override 和多态调用的最小完整示例，并说明预期输出。",
   },
 ];
 
@@ -861,7 +854,7 @@ export default function App() {
             <h1>从一次真实对话开始。</h1>
             <p>
               页面通过账号会话调用本机的 <code>/v1/chat/completions</code>；学习画像只属于当前账号，
-              并可体验课程导航、已审核 StudyKit 学习、多语言静态代码辅导，以及 Markdown、公式与代码高亮的 SSE 流式输出。
+              并可体验课程导航、已审核 StudyKit 学习、多语言静态代码教练，以及 Markdown、公式与代码高亮的 SSE 流式输出。
             </p>
             <div className="starter-grid">
               {starterPrompts.map((starter) => (

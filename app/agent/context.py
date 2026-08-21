@@ -4,9 +4,19 @@ from __future__ import annotations
 
 import re
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
-from app.agent.understanding import FENCE_BLOCK, OUTPUT_FENCE_LABELS, understand_user_texts
+from app.agent.contracts import CodeTutorMode, SemanticCodeRequest
+from app.agent.understanding import (
+    ExtractedCode,
+    FENCE_BLOCK,
+    OUTPUT_FENCE_LABELS,
+    build_code_tutor_request,
+    extract_code,
+    extract_referenced_assistant_code,
+    understand_user_texts,
+)
+from app.code_tutor.contracts import CodeTutorRequest
 from app.code_tutor.languages import normalize_language_label
 from app.protocol.schemas import ChatMessage
 
@@ -20,6 +30,12 @@ ERROR_LINE = re.compile(
     r")",
     re.IGNORECASE,
 )
+CODE_BODY_REQUIRED_MODES = {
+    CodeTutorMode.DIAGNOSE,
+    CodeTutorMode.REVIEW,
+    CodeTutorMode.REPAIR,
+    CodeTutorMode.REFACTOR,
+}
 
 
 class TurnContext(BaseModel):
@@ -29,13 +45,38 @@ class TurnContext(BaseModel):
     error_text: str | None = None
     language_inferred: bool = False
     code_source: str | None = None
+    code_request: CodeTutorRequest = Field(default_factory=CodeTutorRequest)
 
 
-def build_turn_context(messages: list[ChatMessage]) -> TurnContext:
+def build_turn_context(
+    messages: list[ChatMessage],
+    *,
+    semantic_request: SemanticCodeRequest | None = None,
+) -> TurnContext:
     user_messages = [message.content for message in messages if message.role == "user"]
     understanding = understand_user_texts(user_messages)
     latest = understanding.latest_user_text
-    extracted = understanding.code
+    extracted = extract_code([latest])
+    request = build_code_tutor_request(latest, extracted, semantic_request)
+    if not extracted.content:
+        extracted = extract_referenced_assistant_code(messages, latest)
+        request = build_code_tutor_request(latest, extracted, semantic_request)
+    if not extracted.content and understanding.code_requested:
+        if request.mode in CODE_BODY_REQUIRED_MODES or request.references_existing_code:
+            extracted = understanding.code
+            request = build_code_tutor_request(latest, extracted, semantic_request)
+        elif understanding.code.language is not None:
+            # Conceptual requests may reuse a reliably identified recent language,
+            # but never silently attach an unrelated historical code body.
+            request = build_code_tutor_request(
+                latest,
+                ExtractedCode(
+                    language=understanding.code.language,
+                    language_inferred=True,
+                    source="recent_language",
+                ),
+                semantic_request,
+            )
 
     error_text: str | None = None
     for text in reversed(user_messages):
@@ -69,4 +110,5 @@ def build_turn_context(messages: list[ChatMessage]) -> TurnContext:
         error_text=error_text,
         language_inferred=extracted.language_inferred,
         code_source=extracted.source,
+        code_request=request,
     )

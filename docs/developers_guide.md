@@ -423,11 +423,15 @@ async def tutor_code(
     code: str,
     error_text: str | None,
     question: str,
+    request: CodeTutorRequest,
 ) -> TutorResult:
     ...
 ```
 
-`TutorResult` 至少包含 `answer`、`citations`、`diagnostics`、`next_checks`、`ran_code` 和 `safety_notes`。`ran_code` 为 false 时不得用“运行结果表明”之类措辞。
+`CodeTutorRequest.mode` 为 `generate_example`、`explain`、`diagnose`、`review`、
+`repair`、`refactor` 或 `design_tests`，并携带经过语言目录规范化的目标语言。
+`TutorResult` 至少包含 `mode`、`answer`、有界 `code_blocks`、`citations`、`diagnostics`、
+`next_checks`、`ran_code` 和 `safety_notes`。`ran_code` 为 false 时不得用“运行结果表明”之类措辞。
 
 该接口已经在 `app/code_tutor/` 实现。`languages.py` 维护 CSDIY 语言规范名、围栏
 别名和解析策略；Python/Triton 使用 `ast.parse`，其余主流语言使用固定版本、安装时
@@ -435,10 +439,16 @@ async def tutor_code(
 F* 等无可靠 grammar 的课程 DSL 明确标记为模型静态建议。解析器最多返回 5 个
 `ERROR`/missing 结构位置，不能被描述成编译通过。
 
+生成、解释和按规格设计测试不要求用户先提交代码；诊断、审阅、修复和重构需要当前代码。
+模型返回的示例/修复/重构/测试块最多 3 个，语言必须属于 `languages.py`，并在可用时再次通过
+同一确定性解析器。语法结构失败或目标语言错配会丢弃生成 draft，且不增加第二次模型调用。
+最近助手示例只在本轮消息历史仍存在且用户明确指代时精确复用，代码正文不写入连续状态。
+
 `ran_code` 在当前版本恒为 `false`，在线路径不调用编译器、解释器或 GPU 工具链。
 模型只能返回上下文允许列表中的 citation token，再由代码映射到人工审核 StudyKit
 的真实 source/page。`expected_evidence`、evaluation rubric 和 authoring 字段在
-构造 Prompt 前被移除。作业完整解答请求在调用模型前由确定性规则拒绝。
+构造 Prompt 前被移除。作业完整解答请求在空代码处理之前、调用模型之前由确定性规则拒绝；
+普通“完整示例代码”不属于代写。
 
 ### 6.4 能力帮助
 

@@ -5,8 +5,10 @@ from pydantic import ValidationError
 
 from app.agent.contracts import (
     CapabilityId,
+    CodeTutorMode,
     ModelTurnUnderstanding,
     PlannedTask,
+    SemanticCodeRequest,
     TaskExecutionResult,
     TaskPlan,
     TaskStatus,
@@ -402,6 +404,124 @@ async def test_model_understanding_routes_inline_code_and_binds_artifact() -> No
     assert len(model.calls) == 1
     assert outcome.understanding is not None
     assert outcome.understanding.code_artifact is not None
+
+
+async def test_deterministic_planner_routes_generation_without_user_code() -> None:
+    outcome = await TaskPlanner(robust_input_enabled=True).plan(
+        [ChatMessage(role="user", content="给我一段完整的 cpp 示例代码")]
+    )
+
+    assert [task.capability_id for task in outcome.plan.tasks] == [
+        CapabilityId.CODE_TUTORING
+    ]
+    assert outcome.plan.missing_context == []
+
+
+async def test_semantic_code_request_recovers_omitted_specialized_task() -> None:
+    model = FakeStructuredModel(
+        {
+            "understanding": {
+                "conversation_act": "new_request",
+                "course": None,
+                "unit": None,
+                "practice": None,
+                "concept": None,
+                "course_mode": "none",
+                "response_mode": "default",
+                "answer_message_index": None,
+                "code_artifact": None,
+                "code_request": {
+                    "mode": "generate_example",
+                    "target_language": "cpp",
+                    "language_inferred": False,
+                },
+                "profile_operations": [],
+                "ambiguities": [],
+            },
+            "plan": {
+                "user_goal": "生成 C++ 示例",
+                "tasks": [
+                    {
+                        "task_id": "general",
+                        "capability_id": "general_assistance",
+                        "objective": "回答请求",
+                        "depends_on": [],
+                        "parameters": {},
+                        "required_context": [],
+                        "self_statement": False,
+                        "evidence_quote": "给我一段完整的 cpp 示例代码",
+                    }
+                ],
+                "course_mentions": [],
+                "missing_context": [],
+                "clarifying_questions": [],
+            },
+        }
+    )
+
+    outcome = await TaskPlanner(model, robust_input_enabled=True).plan(
+        [ChatMessage(role="user", content="给我一段完整的 cpp 示例代码")]
+    )
+
+    assert [task.capability_id for task in outcome.plan.tasks] == [
+        CapabilityId.CODE_TUTORING
+    ]
+    assert outcome.understanding is not None
+    assert outcome.understanding.code_request is not None
+
+
+def test_semantic_task_recovery_stays_within_task_plan_bound() -> None:
+    tasks = [
+        PlannedTask(
+            task_id=f"task-{index}",
+            capability_id=capability,
+            objective="处理请求",
+        )
+        for index, capability in enumerate(
+            [
+                CapabilityId.COURSE_NAVIGATION,
+                CapabilityId.MATERIAL_QUESTION,
+                CapabilityId.CONCEPT_EXPLANATION,
+                CapabilityId.GENERAL_ASSISTANCE,
+            ],
+            start=1,
+        )
+    ]
+    understanding = ModelTurnUnderstanding(
+        code_request=SemanticCodeRequest(
+            mode=CodeTutorMode.GENERATE_EXAMPLE,
+            target_language="cpp",
+        )
+    )
+
+    recovered = TaskPlanner._complete_semantic_tasks(
+        tasks,
+        understanding,
+        "给我一段完整的 cpp 示例代码",
+    )
+
+    assert len(recovered) == 4
+    assert any(
+        task.capability_id is CapabilityId.CODE_TUTORING for task in recovered
+    )
+
+
+def test_task_recovery_does_not_turn_practice_answer_code_into_code_tutoring() -> None:
+    practice = PlannedTask(
+        task_id="feedback",
+        capability_id=CapabilityId.PRACTICE_FEEDBACK,
+        objective="评价练习答案",
+    )
+
+    recovered = TaskPlanner._complete_semantic_tasks(
+        [practice],
+        None,
+        "我的答案是：```python\nprint('attempt')\n```",
+    )
+
+    assert [task.capability_id for task in recovered] == [
+        CapabilityId.PRACTICE_FEEDBACK
+    ]
 
 
 def test_model_plan_representation_repair_does_not_change_task_semantics() -> None:

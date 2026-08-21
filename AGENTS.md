@@ -12,7 +12,10 @@
 - Model semantic candidates may refine or explicitly replace a verified StudyKit identity, but omitted
   fields must not downgrade a signed current-unit context. Only an explicit unit-list request may
   intentionally move the same course from unit scope to course scope.
-- Code tutoring binds static diagnostics to ephemeral CodeArtifacts and always keeps `ran_code=false`.
+- Code tutoring supports bounded example generation, explanation, diagnosis, review, repair,
+  refactoring, and test design. It binds input diagnostics to ephemeral CodeArtifacts, validates
+  generated blocks with available static parsers, uses at most one capability-model call per request,
+  never persists generated code bodies, and always keeps `ran_code=false`.
 - Private MaterialSet authorization, cross-system identity, profile-management expansion, and reviewed
   vector artifacts remain deferred.
 
@@ -77,7 +80,8 @@
 ## Online privacy and tutoring safety
 
 - Explicit user statements may be confirmed. Model inferences remain expiring candidates until the user confirms them. Users must be able to inspect, correct, and delete profile data.
-- Code tutoring is static-only in the current runtime. Keep `ran_code=false`; never claim execution or test results.
+- Code tutoring is static-only in the current runtime. Generated examples may describe expected
+  behavior, but keep `ran_code=false` and never claim compilation, execution, or test results.
 - `app/code_tutor/languages.py` is the source of truth for supported language aliases and parser strategies. Never default an unlabelled fence to Python, invoke a compiler/interpreter, or add runtime grammar downloads.
 - `app/agent/capabilities.py` is the source of truth for learner-visible capability status and help. General help lists only available capabilities and must return before profile observation or persistence.
 - Unavailable capabilities are help/status metadata only and must never remain executable Router or

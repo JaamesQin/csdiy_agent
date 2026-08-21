@@ -136,10 +136,10 @@ UCB CS186 由直接父快照生成新指纹身份修复 build 并重新通过 ex
 - API Key 请求的可选顶层 `sessionId` 已接入 Schema v3 服务端连续状态。它仅在
   `account:`/`legacy:` 可信命名空间内生效，原始 ID 不入库，默认滑动保留 30 天；缺失或空值按新会话处理。
   状态只包含已验证课程/讲次、当前练习和最小指代信息，不保存 messages、代码、答案或 reasoning。
-- 代码辅导使用 Python AST 与自包含 Tree-sitter language pack；C/C++、CUDA、
-  ISPC、LaTeX、Java、Go、Rust、OCaml、Verilog、汇编等进入确定性结构解析，
-  课程专用 DSL 明确降级为模型静态建议。所有路径始终返回 `ran_code=false`，
-  作业代写请求由规则守卫阻断。
+- 代码辅导已扩展为多模式静态教练：可生成最小完整示例，也可解释、诊断、审阅、修复、
+  重构和设计测试。Python AST 与自包含 Tree-sitter language pack 同时检查用户输入和模型生成代码；
+  课程专用 DSL 明确降级为模型静态建议。所有路径始终返回 `ran_code=false`，预期行为不冒充
+  运行结果，作业代写请求在空代码分支之前由规则守卫阻断。
 - 在线课程上下文读取 220 份 approved archive StudyKit，并保留 Lecture 2/8 中 Schema
   合法且人工批准的黄金 StudyKit 回退；
   材料模型只能引用允许列表内的真实页码，学习者输出不含 `expected_evidence`、

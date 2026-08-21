@@ -26,6 +26,7 @@ def _messages(text: str) -> list[ChatMessage]:
         ("给我一道练习", Intent.PRACTICE_SELECTION),
         ("点评我的练习答案", Intent.PRACTICE_FEEDBACK),
         ("```python\nprint(1)\n``` 帮我调试", Intent.CODE_TUTORING),
+        ("给我一段完整的 cpp 示例代码", Intent.CODE_TUTORING),
         ("查看我的画像", Intent.PROFILE_ANALYSIS),
         ("帮我做学习复盘", Intent.GENERAL_ASSISTANCE),
         ("查看生成状态", Intent.GENERAL_ASSISTANCE),
@@ -103,6 +104,15 @@ async def test_code_request_with_actual_code_is_not_capability_help() -> None:
     )
 
     assert result.decision.intent is Intent.CODE_TUTORING
+
+
+async def test_generation_request_routes_without_user_code() -> None:
+    router = IntentRouter(ReviewedFileStudyKitStore())
+
+    result = await router.route(_messages("给我一段完整的 cpp 示例代码"))
+
+    assert result.decision.intent is Intent.CODE_TUTORING
+    assert result.decision.required_context == []
 
 
 async def test_low_confidence_model_route_becomes_clarification() -> None:

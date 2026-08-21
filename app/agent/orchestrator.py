@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from app.agent.context import TurnContext, build_turn_context
 from app.agent.understanding import (
     ExtractedCode,
+    build_code_tutor_request,
     language_assumption,
     validate_model_code,
 )
@@ -269,13 +270,14 @@ class CoursePilotAgent:
                 error_text=turn.error_text,
                 question=turn.user_text,
                 profile=profile,
+                request=turn.code_request,
             )
             answer = render_tutor_result(result)
             assumption = language_assumption(
                 ExtractedCode(
                     content=turn.code,
-                    language=turn.language,
-                    language_inferred=turn.language_inferred,
+                    language=turn.code_request.target_language or turn.language,
+                    language_inferred=turn.code_request.language_inferred,
                     source=turn.code_source,
                 )
             )
@@ -493,14 +495,22 @@ class CoursePilotAgent:
             messages,
             understanding.code_artifact if understanding is not None else None,
         )
+        deterministic_turn = build_turn_context(
+            messages,
+            semantic_request=(understanding.code_request if understanding else None),
+        )
         if not semantic_code.content:
-            current_turn = build_turn_context([messages[-1]])
             semantic_code = ExtractedCode(
-                content=current_turn.code,
-                language=current_turn.language,
-                language_inferred=current_turn.language_inferred,
-                source=current_turn.code_source,
+                content=deterministic_turn.code,
+                language=deterministic_turn.language,
+                language_inferred=deterministic_turn.language_inferred,
+                source=deterministic_turn.code_source,
             )
+        code_request = build_code_tutor_request(
+            latest,
+            semantic_code,
+            understanding.code_request if understanding is not None else None,
+        )
         profile_observed = False
 
         async def execute(task: PlannedTask) -> TaskExecutionResult:
@@ -714,8 +724,10 @@ class CoursePilotAgent:
                     user_text=latest,
                     code=semantic_code.content,
                     language=semantic_code.language,
+                    error_text=deterministic_turn.error_text,
                     language_inferred=semantic_code.language_inferred,
                     code_source=semantic_code.source,
+                    code_request=code_request,
                 )
                 previous_artifact = None
                 if code_artifact_id and code_digest:
@@ -734,14 +746,15 @@ class CoursePilotAgent:
                     error_text=turn.error_text,
                     question=turn.user_text,
                     profile=current_profile,
+                    request=turn.code_request,
                     previous_artifact=previous_artifact,
                 )
                 answer = render_tutor_result(result)
                 assumption = language_assumption(
                     ExtractedCode(
                         content=turn.code,
-                        language=turn.language,
-                        language_inferred=turn.language_inferred,
+                        language=turn.code_request.target_language or turn.language,
+                        language_inferred=turn.code_request.language_inferred,
                         source=turn.code_source,
                     )
                 )
