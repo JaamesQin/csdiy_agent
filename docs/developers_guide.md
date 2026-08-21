@@ -1,6 +1,6 @@
 # CoursePilot Developers Guide
 
-更新时间：2026-08-20
+更新时间：2026-08-21
 
 本文说明下一阶段如何在现有 StudyKit 生成内核之上开发用户画像、代码辅导、资料检索、意图路由、清小搭多轮 Agent，以及 generator skill。本文的核心约束是：
 
@@ -10,7 +10,7 @@
 
 当前生成内核已经完成以下工作：
 
-- `skills/studykit-generator` v0.2.1 已扩展隔离 build coordinator 协议；四讲对齐盲评选择 `standard` 为默认质量挡位，调用方仍可显式选择 `fast` 或 `strict`。
+- `skills/studykit-generator` v0.2.2 已扩展隔离 build coordinator 协议和练习反馈证据声明；四讲对齐盲评选择 `standard` 为默认质量挡位，调用方仍可显式选择 `fast` 或 `strict`。
 - `quality_mode` 与 `delivery_policy` 已分离；前者控制生成/视觉复核深度，后者控制 unresolved 是否允许交付。
 - 每个隔离 build coordinator 最多运行 4 个 unit worker，同一 unit 的 01→05 保持顺序；多个不重叠的 build coordinator 可在会话槽位预算内并行，每阶段 checkpoint，并记录 worker 与 coordinator 墙钟时间。
 - standard 的后续优化聚焦公式与证据表示：JSON round-trip 后的 LaTeX、逐页 `formula_unresolved`、索引约定，以及可见页面与隐藏叠加文本的明确边界。
@@ -56,16 +56,18 @@ reviewed 重复包或 regression 数据加入 submodule。详见
 [`private-data-submodule.md`](private-data-submodule.md)。
 
 2026-08-17 的人工发布批准使用 `scripts/approve_studykit_archive.py` 执行。工具同时检查
-archive hash 完整性、portable v0.2.1 Schema、逐 unit validation/review-validation、build 的
+archive hash 完整性、portable v0.2.1 兼容或 v0.2.2 Schema、逐 unit validation/review-validation、build 的
 requested/completed/validated/audited/document 精确身份集合，以及匹配 build ID 的独立 registry
-audit。reviewed-legacy 课程必须显式记录 owner approval 和 waived gates；身份修复必须创建绑定
+audit。v0.2.2 还要求每题 feedback mode 与精确 chunk/anchor 证据一致，报告分别统计 grounded、
+general-only、unresolved 和 declaration mismatch。reviewed-legacy 课程必须显式记录 owner approval 和 waived gates；身份修复必须创建绑定
 直接父快照、repair plan 与当前审计的新指纹 build。当前 9 个 build、220 个文档 approved；
 其余 3 个 partial build、66 个文档保持 validated_draft。
 
 当前在线 API 已从固定回显升级为 Agent 运行时：`app/api/chat_completions.py`
 仍只负责 OpenAI 协议，实际编排位于 `app/agent/`。运行时已经执行主动学习画像、
 有界 TaskPlan、能力帮助、通用学习问答兜底、CSDIY 课程导航、approved StudyKit 查询/材料/概念/练习、
-以及多语言静态代码辅导。SourceChunk 检索、私有材料和复盘仍未接入。
+以及多语言静态代码辅导。公共 SourceChunk FTS5、精确引用解析和练习反馈已经接入；
+部署环境仍需生成 approved 索引，私有材料和复盘尚未接入。
 慢速 generator 继续与 `/v1/chat/completions` 严格隔离。
 
 账号是当前唯一可信的本地用户身份。Cookie 会话解析为 `account:<uuid>`；旧的
@@ -73,7 +75,8 @@ API Key 客户端继续把 OpenAI `user` 映射到 `legacy:<user>`。请求体 `
 不能覆盖账号身份。完整认证、CSRF 和数据库迁移契约见
 [账号认证与画像隔离](account_authentication.md)。
 
-当前自动化测试基线为 `623 passed`，前端另有 18 项 Vitest 和 7 项 Chrome Playwright 流程。在线模型通过现有 `DeepSeekModel` 惰性加载；
+完整私有数据可用时的自动化历史基线为 `623 passed`；本次 Exercise 契约 49 项独立回归和
+获准 loopback HTTP/SSE 5 项通过，前端另有 18 项 Vitest 和 7 项 Chrome Playwright 流程。在线模型通过现有 `DeepSeekModel` 惰性加载；
 未配置 `DEEPSEEK_API_KEY` 时功能帮助、课程导航、StudyKit 查询、概念解释、
 练习选择、显式画像抽取、Python AST 和 Tree-sitter 多语言语法诊断仍可用；通用学习问答
 返回透明不可用说明，材料问答
@@ -81,7 +84,7 @@ API Key 客户端继续把 OpenAI `user` 映射到 `legacy:<user>`。请求体 `
 
 在线输入先经过一次模型驱动的统一理解与 TaskPlan：Markdown 围栏不是必需条件，聊天平台压平
 围栏、自然指代、纠正、多意图、代码候选和画像操作都由模型结合短期签名上下文理解。确定性层
-只校验代码字符回绑、Catalog/StudyKit 身份、页码证据、画像持久化和权限边界。
+只校验代码字符回绑、Catalog/StudyKit 身份、精确 SourceChunk 证据、画像持久化和权限边界。
 `COURSEPILOT_ROBUST_INPUT=false` 仅作为首个发布周期的临时 Planner 回退开关。
 
 `app/agent/capabilities.py` 是可用性的唯一事实源。未上线 capability ID 只能用于 `/help`
@@ -306,7 +309,7 @@ SSE/JSON 响应和错误契约；画像、路由、导航、StudyKit 学习和�
 
 ### P5：generator skill
 
-稳定的离线生成流程现已包装为模型可读的 `studykit-generator` v0.2.0 skill。Skill 是 authoring 规范和操作流程，由被调用的 Agent/模型直接阅读并撰写阶段产物；它不调用外部模型，也不应成为普通用户在线问答时的隐式同步工具。需要批量、无人值守生成时，另行使用 provider-specific CLI 或后台 Job。
+稳定的离线生成流程现已包装为模型可读的 `studykit-generator` v0.2.2 skill。Skill 是 authoring 规范和操作流程，由被调用的 Agent/模型直接阅读并撰写阶段产物；它不调用外部模型，也不应成为普通用户在线问答时的隐式同步工具。需要批量、无人值守生成时，另行使用 provider-specific CLI 或后台 Job。
 
 ## 5. 第一批能力：用户画像分析
 
@@ -408,7 +411,7 @@ user code / traceback / test output
 learner profile constraints
 ```
 
-`expected_evidence` 和完整评分 rubric 只供受控的练习评估器使用。辅导模式只给学习者必要的提示、检查点和验证方法。
+`expected_evidence` 和完整评分 rubric 只供离线 authoring/audit 使用，不得进入在线练习反馈或代码辅导模型。辅导模式只给学习者必要的提示、检查点和验证方法。
 
 ### 6.3 最小接口
 
@@ -490,7 +493,7 @@ CodeArtifact
 GenerationJob
 ```
 
-所有 `SourceChunk` 必须保留：`material_set_id`、`scope`、`owner_id`、`course_id`、`course_version`、`unit_id`、`source_id`、页码 anchor、`sha256`、parser version 和 parse warnings。公开模板资料与用户私有资料必须在查询层隔离，不能只靠 Prompt 约束。
+所有 `SourceChunk` 必须保留：`material_set_id`、`scope`、`owner_id`、`course_id`、`course_version`、`unit_id`、`source_id`、anchor type/value、heading（如有）、`sha256`、parser version 和 parse warnings。公开模板资料与用户私有资料必须在查询层隔离，不能只靠 Prompt 约束。
 
 ### 7.2 检索接口
 
@@ -512,6 +515,16 @@ async def search_materials(
 ```
 
 默认过滤顺序：权限/`material_set_id` → 课程和讲次 → 文档类型 → 文本相关性 → 去重和上下文窗口。返回值必须包含 `chunk_id`、来源、页码、文本、相关性、scope 和索引版本。
+
+练习引用不走该相关性接口。`SourceChunkStore.resolve_exact` 优先按 `chunk_id`，否则按
+`source_id + anchor_type + anchor_value` 精确查询；public scope、course/version/unit、
+succeeded build、approved review 和 index eligibility 必须在同一 SQL 中过滤，随后复核内容
+SHA-256。任一引用失败都会丢弃整组课程证据。索引使用：
+
+```bash
+.venv/bin/python scripts/build_source_chunk_index.py --replace
+export COURSEPILOT_SOURCE_CHUNK_INDEX_PATH=data/indexes/source_chunks.sqlite3
+```
 
 ### 7.3 StudyKit 如何进入检索
 
@@ -590,14 +603,17 @@ fallback_clarification
   无模型时返回最相关的已审核摘要；指定页无依据时必须说明 SourceChunk 尚不可用。
 - `concept_explanation` 只渲染带页码的 StudyKit 概念，不用通用知识补成课程事实。
 - `practice_selection` 从当前消息历史避免重复，首次不输出 hint、`expected_evidence`
-  或 evaluation；跨会话不保存选择记录。
-- `practice_feedback` 要求当前讲次的 practice ID 和当前答案，只输出正确点、一个关键
-  修正、下一层提示和白名单页码。模型不可用或输出非法时不做关键词粗评；答案、分数、
-  正确率和掌握度均不持久化。
+  或 evaluation；同类型候选优先选择证据可精确解析的 `course_grounded`，显式选择
+  `general_only` 时先显示警告；跨会话不保存选择记录。
+- `practice_feedback` 要求当前讲次的 practice ID 和当前答案。课程反馈最多使用 16 个
+  精确引用/16,000 字符，只允许模型返回已提供 citation IDs；证据无效时，同一次能力调用
+  改用题面和通用知识，并固定标记“未按当前课程材料核验”。模型不可用或输出非法时不做
+  关键词粗评，也不发起第二次模型调用；答案、分数、正确率和掌握度均不持久化。
 
 学习者输出禁止出现 `expected_evidence`、evaluation/rubric、audit controls 或本地路径。
-反馈模型可以在受控 Prompt 中使用内部 evaluation 做当次比较，但 renderer 必须验证输出
-结构、页码白名单和隐藏字段标记；任何违反契约的结果都降级为原题提示。
+反馈模型不得接收内部 `expected_evidence`、evaluation 或 rubric。renderer 必须验证
+provenance、citation ID 白名单和隐藏字段标记；任何违反契约的结果都降级为原题提示及
+已验证来源标签，或无证据时的通用反馈声明。
 
 ## 9. 清小搭 Agent 与多层对话
 
@@ -664,7 +680,7 @@ Skill 的目标是让被调用的 Agent 直接完成一个可追溯的“课程�
 
 Skill 与现有 `scripts/generate_studykit.py` 的边界必须保持清楚：后者是显式配置 DeepSeek 的批处理 CLI，可以由后台任务调用；前者不读取 API key、不创建 provider client、不发起网络请求，也不把失败转交给另一个模型。当前 Agent 就是实际的撰写者。
 
-当前仓库已提供可直接调用和打包安装的 `studykit-generator` v0.2.0。四讲独立生成、匿名盲评、Critical 人工复核、默认挡位决策和全仓库测试均已完成，可进入发布流程。
+当前仓库已提供可直接调用和打包安装的 `studykit-generator` v0.2.2。四讲独立生成、匿名盲评、Critical 人工复核、默认挡位决策和技能测试均已完成；新版本同时校验每题的 `feedback_mode`。
 
 ### 10.1 Skill 输入
 
@@ -719,6 +735,8 @@ delivery policy（draft/publish，默认 draft）
 - `resume` 只对完全相同的输入和版本指纹开放；版本变化必须新建 build。若上下文中没有旧阶段产物，不要伪造 resume。
 - Skill 允许宿主使用隔离子任务并行处理 unit；每个 build coordinator 独占一个 build root、ingestion、fingerprint 和批次汇总，多个 coordinator 之间不得共享可变 namespace；global coordinator 独占 registry 和全局汇总。provider 客户端与凭证仍不属于 skill。
 - Standard authoring 在装配前检查 LaTeX 单层转义、EvidencePlan 公式/索引覆盖、逐页 unresolved 记录和隐藏文本边界；这些检查不扩大为 strict 的全页复核。
+- 每道 practice 必须声明 `course_grounded`（至少一个精确可解析引用）或
+  `general_only`（引用为空）；声明冲突、隐藏证据或不可解析 anchor 阻止验证和发布。
 - Skill 不读取或输出 `reasoning_content`，不把内部评估字段暴露给学习者。
 - 交付前运行本地 Schema、引用、学习顺序和 Markdown 检查；出现未解决 blocker 时不输出成功 Markdown。
 

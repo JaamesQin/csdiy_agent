@@ -11,6 +11,8 @@ import re
 import sys
 from typing import Any, Iterable
 
+from feedback_contract import evaluate_feedback_contract
+
 
 ROOT = Path(__file__).resolve().parents[1]
 _PLACEHOLDER_RE = re.compile(
@@ -134,6 +136,8 @@ def main() -> int:
     for message in _schema_validate(studykit, ROOT / "assets/schemas/studykit.schema.json"):
         errors.append({"location": "studykit", "code": "schema", "message": message})
     errors.extend(_semantic_issues(studykit))
+    feedback_contract = evaluate_feedback_contract(studykit, chunks)
+    errors.extend(feedback_contract["issues"])
     if args.stage_dir and args.quality_mode:
         from workflow_policy import validate_stage_checkpoints
         errors.extend(validate_stage_checkpoints(args.stage_dir, args.quality_mode))
@@ -160,6 +164,15 @@ def main() -> int:
         "citation_count": sum(1 for _ in _iter_citations(studykit)),
         "studykit_fingerprint": _json_fingerprint(studykit),
         "chunks_sha256": _file_sha256(args.chunks),
+        "practice_feedback_contract": {
+            key: feedback_contract[key]
+            for key in (
+                "course_grounded",
+                "general_only",
+                "unresolved",
+                "declaration_mismatch",
+            )
+        },
         "issues": errors,
     }
     text = json.dumps(report, ensure_ascii=False, indent=2) + "\n"

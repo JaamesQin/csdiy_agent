@@ -154,7 +154,14 @@ def _prepare_build(
         raise ValueError(f"{build_root}: invalid build_id {build_id!r}")
     digests = [f"{unit['unit_id']}:{unit['document_sha256']}" for unit in sorted(units, key=lambda x: x["unit_id"])]
     content_sha256 = sha256_bytes("\n".join(digests).encode("utf-8"))
-    schema_id = "portable-v0.1-reviewed-legacy" if legacy_reviewed else "portable-v0.2.1"
+    if legacy_reviewed:
+        schema_id = "portable-v0.1-reviewed-legacy"
+    elif any(document.get("studykit_version") == "0.2.2" for document in documents):
+        if any(document.get("studykit_version") != "0.2.2" for document in documents):
+            raise ValueError(f"{build_root}: mixed portable StudyKit versions")
+        schema_id = "portable-v0.2.2"
+    else:
+        schema_id = "portable-v0.2.1"
     metadata = {
         "result": result,
         "run": run,

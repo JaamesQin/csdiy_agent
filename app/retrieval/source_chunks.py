@@ -39,6 +39,11 @@ class SourceChunk(BaseModel):
     unit_id: str
     source_id: str
     page: int | None = Field(default=None, ge=1)
+    anchor_type: (
+        Literal["page", "heading", "slide", "paragraph", "sheet", "image"] | None
+    ) = None
+    anchor_value: str | None = Field(default=None, min_length=1, max_length=1000)
+    heading: str | None = Field(default=None, max_length=1000)
     text: str = Field(min_length=1)
     sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
     scope: Literal["public"] = "public"
@@ -67,6 +72,33 @@ class SourceChunkStore(Protocol):
         limit: int = 8,
     ) -> list[SourceChunkHit]: ...
 
+    def resolve_exact(
+        self,
+        references: list["SourceChunkReference"],
+        access_scope: AccessScope,
+        course_context: StudyKitCourseIdentity,
+        limit: int = 16,
+    ) -> list[SourceChunk]: ...
+
+
+class SourceChunkReference(BaseModel):
+    """An author-supplied exact reference, never a search query."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    chunk_id: str | None = Field(default=None, min_length=1, max_length=300)
+    source_id: str | None = Field(default=None, min_length=1, max_length=300)
+    anchor_type: (
+        Literal["page", "heading", "slide", "paragraph", "sheet", "image"] | None
+    ) = None
+    anchor_value: str | None = Field(default=None, min_length=1, max_length=1000)
+
+    def model_post_init(self, __context: object) -> None:
+        if self.chunk_id is None and not (
+            self.source_id and self.anchor_type and self.anchor_value
+        ):
+            raise ValueError("an exact source reference needs chunk_id or source_id + anchor")
+
 
 class SQLiteSourceChunkStore:
     """Open an offline-built FTS5 index in immutable read-only mode."""
@@ -88,7 +120,12 @@ class SQLiteSourceChunkStore:
         limit = min(limit, 50)
         if not self.path.is_file():
             return []
-        clauses = ["c.scope = ?"]
+        clauses = [
+            "c.scope = ?",
+            "c.build_status = 'succeeded'",
+            "c.review_status = 'approved'",
+            "c.index_allowed = 1",
+        ]
         parameters: list[object] = [access_scope.scope]
         if course_context is not None:
             clauses.extend(["c.course_id = ?", "c.course_version = ?"])
@@ -129,6 +166,74 @@ class SQLiteSourceChunkStore:
             if chunk.verify_hash():
                 hits.append(SourceChunkHit(chunk=chunk, score=-rank))
         return hits
+
+    def resolve_exact(
+        self,
+        references: list[SourceChunkReference],
+        access_scope: AccessScope,
+        course_context: StudyKitCourseIdentity,
+        limit: int = 16,
+    ) -> list[SourceChunk]:
+        """Resolve cited chunks without FTS, after scope and identity filtering."""
+
+        if not self.path.is_file() or limit < 1 or course_context.unit_id is None:
+            return []
+        bounded = references[: min(limit, 16)]
+        if not bounded:
+            return []
+        uri = f"{self.path.resolve().as_uri()}?mode=ro&immutable=1"
+        resolved: list[SourceChunk] = []
+        try:
+            with sqlite3.connect(uri, uri=True) as connection:
+                connection.row_factory = sqlite3.Row
+                for reference in bounded:
+                    clauses = [
+                        "scope = ?",
+                        "course_id = ?",
+                        "course_version = ?",
+                        "unit_id = ?",
+                        "build_status = 'succeeded'",
+                        "review_status = 'approved'",
+                        "index_allowed = 1",
+                    ]
+                    parameters: list[object] = [
+                        access_scope.scope,
+                        course_context.course_id,
+                        course_context.course_version,
+                        course_context.unit_id,
+                    ]
+                    if reference.chunk_id is not None:
+                        clauses.append("chunk_id = ?")
+                        parameters.append(reference.chunk_id)
+                    else:
+                        clauses.extend(
+                            ["source_id = ?", "anchor_type = ?", "anchor_value = ?"]
+                        )
+                        parameters.extend(
+                            [
+                                reference.source_id,
+                                reference.anchor_type,
+                                reference.anchor_value,
+                            ]
+                        )
+                    rows = connection.execute(
+                        f"SELECT * FROM source_chunks WHERE {' AND '.join(clauses)} "
+                        "ORDER BY chunk_id LIMIT 2",
+                        parameters,
+                    ).fetchall()
+                    # An ambiguous anchor is no more trustworthy than a missing one.
+                    if len(rows) != 1:
+                        continue
+                    try:
+                        chunk = SourceChunk.model_validate(dict(rows[0]))
+                    except ValueError:
+                        continue
+                    if not chunk.verify_hash() or not _reference_matches(reference, chunk):
+                        continue
+                    resolved.append(chunk)
+        except sqlite3.Error:
+            return []
+        return resolved
 
 
 class SourceChunkRetriever:
@@ -239,7 +344,7 @@ class SourceChunkRetriever:
 
 
 def initialize_source_chunk_index(path: Path | str, chunks: list[SourceChunk]) -> None:
-    """Offline helper: atomically validate and build a fresh public FTS index."""
+    """Offline helper: validate and build a fresh public FTS index."""
 
     target = Path(path)
     if target.exists():
@@ -257,6 +362,11 @@ def initialize_source_chunk_index(path: Path | str, chunks: list[SourceChunk]) -
                 unit_id TEXT NOT NULL,
                 source_id TEXT NOT NULL,
                 page INTEGER,
+                anchor_type TEXT CHECK (
+                    anchor_type IN ('page', 'heading', 'slide', 'paragraph', 'sheet', 'image')
+                ),
+                anchor_value TEXT,
+                heading TEXT,
                 text TEXT NOT NULL,
                 sha256 TEXT NOT NULL,
                 scope TEXT NOT NULL CHECK (scope = 'public'),
@@ -272,12 +382,17 @@ def initialize_source_chunk_index(path: Path | str, chunks: list[SourceChunk]) -
         )
         for chunk in chunks:
             values = chunk.model_dump()
+            if values["anchor_type"] is None and chunk.page is not None:
+                values["anchor_type"] = "page"
+                values["anchor_value"] = str(chunk.page)
             connection.execute(
                 """INSERT INTO source_chunks
                 (chunk_id, course_id, course_version, unit_id, source_id, page,
+                 anchor_type, anchor_value, heading,
                  text, sha256, scope, build_id, build_status, review_status, index_allowed)
                 VALUES (:chunk_id, :course_id, :course_version, :unit_id, :source_id,
-                        :page, :text, :sha256, :scope, :build_id, :build_status,
+                        :page, :anchor_type, :anchor_value, :heading,
+                        :text, :sha256, :scope, :build_id, :build_status,
                         :review_status, :index_allowed)""",
                 values,
             )
@@ -288,3 +403,15 @@ def _fts_query(query: str) -> str:
     # Quoted tokens prevent user input from becoming FTS operators or column filters.
     tokens = [token for token in query.replace("\x00", " ").split() if token][:24]
     return " OR ".join(f'"{token.replace(chr(34), chr(34) * 2)}"' for token in tokens)
+
+
+def _reference_matches(reference: SourceChunkReference, chunk: SourceChunk) -> bool:
+    if reference.chunk_id is not None and reference.chunk_id != chunk.chunk_id:
+        return False
+    if reference.source_id is not None and reference.source_id != chunk.source_id:
+        return False
+    if reference.anchor_type is not None and reference.anchor_type != chunk.anchor_type:
+        return False
+    if reference.anchor_value is not None and reference.anchor_value != chunk.anchor_value:
+        return False
+    return True

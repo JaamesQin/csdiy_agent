@@ -100,6 +100,96 @@ def test_validator_accepts_generic_anchor(tmp_path: Path) -> None:
     assert result.returncode == 0, result.stdout + result.stderr
 
 
+def test_v022_feedback_modes_are_validated_and_reported(tmp_path: Path) -> None:
+    chunk = {
+        "chunk_id": "notes-a-intro",
+        "material_set_id": "set-1",
+        "scope": "public",
+        "owner_id": None,
+        "course_id": None,
+        "course_version": None,
+        "unit_id": "unit-1",
+        "source_id": "notes-a",
+        "anchor": {"type": "heading", "value": "Intro"},
+        "heading": "Intro",
+        "content": "Supported",
+        "content_type": "text",
+        "parser_version": "test",
+        "parse_warnings": [],
+    }
+    chunks = tmp_path / "chunks.jsonl"
+    chunks.write_text(json.dumps(chunk) + "\n", encoding="utf-8")
+
+    grounded = _minimal_kit()
+    grounded["studykit_version"] = "0.2.2"
+    grounded["practice"][0]["feedback_mode"] = "course_grounded"
+    grounded_path = tmp_path / "grounded.json"
+    grounded_path.write_text(json.dumps(grounded), encoding="utf-8")
+    accepted = _run(
+        str(SKILL / "scripts/validate_artifacts.py"),
+        "--chunks", str(chunks),
+        "--studykit", str(grounded_path),
+    )
+    report = json.loads(accepted.stdout)
+    assert accepted.returncode == 0, accepted.stdout + accepted.stderr
+    assert report["practice_feedback_contract"] == {
+        "course_grounded": 1,
+        "general_only": 0,
+        "unresolved": 0,
+        "declaration_mismatch": 0,
+    }
+
+    general = _minimal_kit()
+    general["studykit_version"] = "0.2.2"
+    general["practice"][0]["feedback_mode"] = "general_only"
+    general["practice"][0]["citations"] = []
+    general_path = tmp_path / "general.json"
+    general_path.write_text(json.dumps(general), encoding="utf-8")
+    accepted_general = _run(
+        str(SKILL / "scripts/validate_artifacts.py"),
+        "--chunks", str(chunks),
+        "--studykit", str(general_path),
+    )
+    assert accepted_general.returncode == 0, accepted_general.stdout
+    assert json.loads(accepted_general.stdout)["practice_feedback_contract"]["general_only"] == 1
+
+
+def test_v022_rejects_feedback_declaration_mismatch(tmp_path: Path) -> None:
+    chunk = {
+        "chunk_id": "notes-a-intro",
+        "material_set_id": "set-1",
+        "scope": "public",
+        "owner_id": None,
+        "course_id": None,
+        "course_version": None,
+        "unit_id": "unit-1",
+        "source_id": "notes-a",
+        "anchor": {"type": "heading", "value": "Intro"},
+        "heading": "Intro",
+        "content": "Supported",
+        "content_type": "text",
+        "parser_version": "test",
+        "parse_warnings": [],
+    }
+    chunks = tmp_path / "chunks.jsonl"
+    chunks.write_text(json.dumps(chunk) + "\n", encoding="utf-8")
+    kit = _minimal_kit()
+    kit["studykit_version"] = "0.2.2"
+    kit["practice"][0]["feedback_mode"] = "general_only"
+    path = tmp_path / "mismatch.json"
+    path.write_text(json.dumps(kit), encoding="utf-8")
+
+    result = _run(
+        str(SKILL / "scripts/validate_artifacts.py"),
+        "--chunks", str(chunks),
+        "--studykit", str(path),
+    )
+
+    assert result.returncode == 1
+    codes = {issue["code"] for issue in json.loads(result.stdout)["issues"]}
+    assert "general_only_has_citations" in codes
+
+
 def test_validator_rejects_missing_anchor(tmp_path: Path) -> None:
     chunks = tmp_path / "chunks.jsonl"
     chunks.write_text("")

@@ -13,10 +13,12 @@ Learner-visible claims use four provenance kinds: `course_material`, `catalog_me
 material claim partition. A separately generated general explanation may remain, but is labeled
 “通用知识（不代表当前课程材料）” and cannot establish course, version, unit, page, or quotation facts.
 
-The public SourceChunk interface applies scope, course, unit, and page predicates in the FTS5 query
-before BM25 ranking. Offline indexes accept only hash-valid, public, index-allowed chunks bound to
-approved/succeeded metadata. The runtime does not traverse arbitrary local source files. Vector
-retrieval is not advertised or enabled.
+The public SourceChunk search interface applies scope, course, unit, and page predicates in the FTS5
+query before BM25 ranking. Exact cited evidence never uses FTS/BM25: `chunk_id` or
+`source_id + anchor` is resolved only after public scope, course/version/unit, succeeded build,
+approved review, and index eligibility are filtered in SQL, then the content hash is verified.
+Offline indexes are rebuilt from archive-approved, fingerprinted chunks. The runtime does not traverse
+arbitrary local source files. Vector retrieval is not advertised or enabled.
 
 `coursepilot_context` is an optional, HMAC-authenticated, short-lived compatibility extension. A
 non-stream response returns it at the top level; an SSE response includes it only on the single stop
@@ -53,6 +55,13 @@ intent projection but not the complete evaluation/rubric. Invalid output falls b
 original. Context-token v2 binds the active presentation kind and digest without storing the question
 or answer; v1 tokens remain accepted. `grounded_variant` remains disabled until an approved public
 SourceChunk index is actually available.
+
+Practice feedback is independent from presentation rewriting and still has one capability-model call.
+It receives at most 16 exact chunks/16,000 characters and may return only supplied citation IDs. If
+any cited course evidence is missing, unauthorized, ambiguous, unapproved, or hash-invalid, the whole
+course partition is omitted and the same call becomes a prominently labeled general-knowledge review.
+No `expected_evidence`, evaluation, or rubric is sent to the feedback model; answers and scores remain
+non-persistent, and model failure uses a deterministic hint/source fallback without a second call.
 
 The final opt-in `deepseek-v4-flash` acceptance passed 7/7 checks with 4,310 reported tokens. Every
 concrete model-backed capability reported one call per request; all three practice-presentation samples

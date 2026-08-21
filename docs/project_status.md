@@ -1,6 +1,6 @@
 # CoursePilot 全局进度
 
-更新时间：2026-08-20
+更新时间：2026-08-21
 
 状态口径：
 
@@ -18,8 +18,8 @@ StudyKit JSON/YAML/Markdown。
 
 本地账号、会话安全和可信 subject 学习画像已经落地，产品运行时也已加入有界 TaskPlan、
 能力帮助、主动学习画像、全目录分级课程导航、golden StudyKit 查询/材料/概念/练习能力
-和多语言静态代码辅导。公共 SourceChunk 的 permission-first FTS5 接口与材料问答 adapter
-已经实现，但当前没有 approved 在线索引；尚未完成的是用户资料接入、MaterialSet 权限、
+和多语言静态代码辅导。公共 SourceChunk 的 permission-first FTS5、精确引用解析、练习证据
+反馈适配和 approved 索引构建已经实现，但当前没有部署 approved 在线索引；尚未完成的是用户资料接入、MaterialSet 权限、
 私有/向量检索、完整 LearnerState、清小搭生产部署和真实用户验收。
 
 同源 Web 客户端已加入安全学习者渲染：助手 Markdown、表格、代码高亮和原生 MathML
@@ -51,17 +51,17 @@ reviewed-legacy 结论保留豁免记录，CS186 则通过直接父快照的新�
 
 | 能力 | 当前状态 | 发布前缺口 |
 | --- | --- | --- |
-| StudyKit 标准 | 已完成 | 根据端到端使用情况做兼容性演进 |
+| StudyKit 标准 | portable v0.2.2 练习反馈模式已完成，v0.2.1/legacy 兼容读取 | 根据端到端使用情况做兼容性演进 |
 | SourceChunk/PDF 解析 | 已完成基础能力 | HTML、Markdown、纯文本和用户文件统一入口 |
 | 分阶段 StudyKitGenerator | 已完成 | v0.11-019 已完成 v21 新鲜全量模型回归；仍需人工语义复核 |
 | Evidence controls | 已完成 | 扩大非 CS 和来源冲突评测 |
 | DeepSeek 调用可靠性 | 已完成基础机制 | 生产速率、超时和成本监控 |
 | 单次 Audit 回修 | 已完成 | 已加入字段所有权归一化、去重、ID 身份保护和依赖传播 |
-| Schema/引用/渲染 | 已完成 | 加入在线权限与检索边界检查 |
+| Schema/引用/渲染 | 已完成 v0.2.2 feedback mode、精确引用与发布门禁 | 扩展私有 MaterialSet 授权 |
 | CourseManifest / Catalog | 已完成类型化只读 Catalog MVP | 正式 Schema、数据库和独立分类审核 |
 | MaterialManifest/MaterialSet | 待完成 | 存储、权限、过期、删除和混合授权 |
 | 私有检索数据归档 | 已完成精简快照；9 builds/220 documents approved | 其余 3/66 partial build 完成后再审批；继续接入 permission-filtered SourceChunk |
-| 检索 | 公共 permission-first FTS5 基础和运行时接线已完成 | 发布 approved 索引；实现私有 MaterialSet 权限和可选向量检索 |
+| 检索 | 公共 permission-first FTS5、精确 page/heading/chunk 解析和 approved 索引构建已完成 | 部署 approved 索引；实现私有 MaterialSet 权限和可选向量检索 |
 | 本地账号与会话 | 已完成安全 MVP | 邮箱、找回/修改密码和账号删除不在首版 |
 | Web 学习界面 | 已完成 Vite/React/TypeScript 安全富文本 MVP | 生产可观测性与更多真实设备验收 |
 | OpenAI 兼容 API | 双身份兼容且已接入九项 Agent 能力 | 扩展权限检索、私有材料与复盘 handler |
@@ -70,11 +70,11 @@ reviewed-legacy 结论保留豁免记录，CS186 则通过直接父快照的新�
 | 通用学习问答 | 已完成专用能力之后的受约束兜底 | 继续进行真实后端质量与延迟评测 |
 | 画像感知课程导航 | 已接入 119 门安全索引、单次结构化排序和明确降级 | 继续扩充 registry 的官方先修数据 |
 | 代码辅导 | 已完成示例生成、解释、诊断、审阅、修复、重构、测试设计及生成代码静态校验 | 接入 SourceChunk 检索；沙箱执行不属于当前范围 |
-| StudyKit 查询/概念/练习选择 | 已完成 approved archive + golden 回退 MVP | 人工批准更多课程和端到端评测 |
-| 材料答疑/练习反馈 | 材料答疑已接公共 FTS5 adapter；无 approved 索引时按页码白名单透明降级 | 发布公共索引；扩展私有权限、练习反馈检索和生产模型评测 |
+| StudyKit 查询/概念/练习选择 | 已完成 approved archive + golden 回退，并默认优先有可解析证据的练习 | 人工批准更多课程和端到端评测 |
+| 材料答疑/练习反馈 | 支持经权限、身份、审核和哈希校验的 page/heading/chunk 证据；无有效证据时带固定声明降级为通用反馈 | 部署公共索引；扩展私有权限和生产模型评测 |
 | LearnerState/复盘 | 有账号隔离的画像事实基础 | 练习/代码证据更新、目标映射和复盘状态机 |
 | 清小搭接入 | 本地协议、`sessionId` 与真实 DeepSeek 多轮已验证 | 账号级文件、超时和生产平台实测 |
-| 自动化测试 | 623 项 Python、18 项前端单元、7 项 Chrome E2E 通过；另有 27 场景真实 DeepSeek 后端 E2E 和 24 旅程新手探索 | MaterialSet 权限、检索和生产测试 |
+| 自动化测试 | 完整数据可用时历史基线为 623 项 Python；Exercise 新契约 49 项独立回归和 loopback HTTP/SSE 5 项通过；另有 18 项前端单元、7 项 Chrome E2E、27 场景真实 DeepSeek 后端 E2E 和 24 旅程新手探索 | 恢复私有 data fixture 后重跑全仓基线；补 MaterialSet 权限、检索和生产测试 |
 
 ## 三、已经完成的生成闭环
 
@@ -185,9 +185,9 @@ chunks、页图和完整作者化 build 继续留在精简远端之外；正式 
 
 1. 为 archive 文档完成独立人工批准流程，并冻结 MaterialSet、完整 LearnerState 和
    TaskPlan 的最小接口；复用可信 `account:<uuid>` 身份。
-2. 为现有公共 FTS5 检索发布 approved SourceChunk 索引并完成质量验收。
+2. 使用现有离线构建脚本发布 approved SourceChunk 索引并完成质量验收。
 3. 完成私有用户资料的统一解析、存储、授权与删除，把现有 course/version/unit 范围扩展到 owner/session/material_set。
-4. 在材料答疑的既有 SourceChunk 路径上继续接入练习反馈、私有材料、复盘和后台生成状态。
+4. 在既有 SourceChunk 路径上继续接入私有材料、复盘和后台生成状态，并评测课程/通用反馈质量。
 5. 修复 Lecture 2 离线 profile 对齐问题，核对 Lecture 8 LayerNorm 表述，
    并完成 v21 产物的人工语义复核。
 6. 实现基于用户确认证据的最小学习状态与复盘。

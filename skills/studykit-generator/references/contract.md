@@ -91,10 +91,16 @@ and has relevant citations. The independent auditor must repeat this review
 for every practice item. A generic exercise shell is a recoverable authoring
 failure, not a warning that can be carried into a final StudyKit.
 
+Portable v0.2.2 also requires an online feedback declaration. A
+`course_grounded` practice must have citations that resolve exactly against the
+unit chunks and must not exceed 16 exact references; a `general_only` practice must have no citations and is reported
+as a lower-priority, explicitly labeled fallback. Missing or contradictory
+declarations block validation and publication.
+
 ## Resume rules
 
 Reuse only artifacts whose build fingerprint, schema version, pipeline version, prompt version, and upstream artifact hashes match. Resume at the first absent or failed stage. When any version or input differs, create a new build instead of editing the old run in place.
 
 ## Release interpretation
 
-The v0.2.0 benchmark selected `standard` and remains the quality baseline for pipeline v0.2.1. Missing peripheral unresolved markers, LaTeX escaping defects, or omitted notation metadata should be repaired when detected, but benchmark point deductions alone do not invalidate an otherwise schema-valid build. Existing hard gates remain authoritative: fabricated or unverified formulas, missing citation anchors, hidden-text evidence, semantic divergence across final formats, failed or stale validation reports, and publish-policy unresolved blockers prevent successful delivery.
+The v0.2.0 benchmark selected `standard` and remains the quality baseline for pipeline v0.2.2. Missing peripheral unresolved markers, LaTeX escaping defects, or omitted notation metadata should be repaired when detected, but benchmark point deductions alone do not invalidate an otherwise schema-valid build. Existing hard gates remain authoritative: fabricated or unverified formulas, missing citation anchors, hidden-text evidence, semantic divergence across final formats, failed or stale validation reports, and publish-policy unresolved blockers prevent successful delivery.

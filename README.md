@@ -55,11 +55,11 @@ CoursePilot 是一个面向中文计算机科学自学者的循证学习 Agent�
 - 意图路由与帮助：规则优先、结构化模型兜底；`/help` 或“你有哪些功能”只列已上线能力。未上线能力仅保留帮助/状态说明，不得成为可执行路由；自然语言请求统一转入带明确能力边界的通用回答。
 - 通用学习问答：专用能力无法覆盖当前学习请求时，使用一般知识直接回答；除最近最多 30 条/48,000 字符对话、已确认画像值和最小验签连续状态外，始终获得 119 门课程的安全极简索引，并按需获得最多 12 门学习者可见详情。模型 prose 与后端验证的课程 metadata 分区保存，不冒充课程材料、不运行代码、不提供可提交的完整作业答案。
 - 课程导航：按课程名、学校、课程号或已确认学习方向检索 CSDIY registry；个性化推荐每阶段最多 3 门，列表最多 5 门，并明确区分目录、离线和在线状态。模型失败时只展示明确标注的未个性化方向候选。
-- StudyKit 学习：查询学习包、按页码白名单回答材料问题、分层解释概念、选择不重复练习，并只对携带 practice ID 的当前答案给反馈。
+- StudyKit 学习：查询学习包、基于权限与身份校验后的页码/heading/chunk 证据回答材料问题、分层解释概念、优先选择有课程证据的练习，并只对携带 practice ID 的当前答案给反馈；无有效课程证据时明确降级为通用反馈。
 - 代码辅导：支持按语言和约束生成最小完整示例，也可解释、诊断、审阅、修复、重构代码并设计测试；Python/Triton 使用 Python AST，其余主流语言使用离线 Tree-sitter 对输入或生成代码做结构检查。所有输出保持 `ran_code=false`，预期行为不冒充运行结果，也不代写可提交作业。
 - 已审核 StudyKit 读取：统一 `StudyKitStore` 使用 220 份 approved archive StudyKit 优先、Lecture 2/8 golden 回退；不输出 `expected_evidence`、evaluation、rubric、本地路径或审计字段。
-- 离线 StudyKit 生成：生成包含目标、前置知识、提纲、术语、练习、引用和限制说明的中文学习包。
-- 检索基础：公共 SourceChunk 的 FTS5 范围过滤和运行时接线已完成；仍需发布 approved 索引，并继续实现 MaterialSet 权限、私有/向量检索和学习复盘。
+- 离线 StudyKit 生成：portable v0.2.2 为每道练习声明 `course_grounded` 或 `general_only`；生成验证和 archive 发布门禁会阻止声明冲突或无法在线解析的课程证据。
+- 检索基础：公共 SourceChunk 的 permission-first FTS5、精确引用解析、approved 归档索引构建和运行时接线已完成；仍需在部署环境发布索引，并继续实现 MaterialSet 权限、私有/向量检索和学习复盘。
 
 ## 技术路线
 
@@ -90,7 +90,7 @@ Agent 编排：意图路由、主动画像、课程导航、StudyKit 学习、�
 
 ## 当前阶段
 
-截至 2026-08-20，项目处于“离线 StudyKit 生成与私有检索数据归档完成、220 份归档 StudyKit 经门禁或明确 legacy 人工批准上线、在线 Agent 与安全富文本学习界面已接入，公共 SourceChunk 检索基础已接线但等待 approved 索引与清小搭生产验证”阶段：
+截至 2026-08-21，项目处于“离线 StudyKit 生成与私有检索数据归档完成、220 份归档 StudyKit 经门禁或明确 legacy 人工批准上线、在线 Agent 与安全富文本学习界面已接入，公共 SourceChunk 精确证据合同和索引构建链路已完成但等待部署 approved 索引与清小搭生产验证”阶段：
 
 | 项目 | 状态 |
 | --- | --- |
@@ -99,11 +99,11 @@ Agent 编排：意图路由、主动画像、课程导航、StudyKit 学习、�
 | 清小搭接入协议调研 | 已完成 |
 | 自研后端架构与仓库结构 | 已完成最小实现 |
 | OpenAI 兼容 API 实现 | 已完成 |
-| Bearer、Cookie 会话、`sessionId`、JSON、SSE 和错误契约测试 | 已完成；完整 Python 回归通过 |
+| Bearer、Cookie 会话、`sessionId`、JSON、SSE 和错误契约测试 | 已完成；完整 Python 历史基线通过，当前 checkout 的数据依赖回归受私有 submodule 删除项阻塞 |
 | 本地账号、会话、CSRF 与画像隔离 | 已完成安全 MVP |
 | TaskPlan、能力帮助、通用学习兜底、主动画像和多语言静态代码辅导 | 已完成首版 |
 | CSDIY 课程导航 | 已完成全目录分级检索；目录分类仍按 registry 审核状态展示 |
-| StudyKit 查询、材料/概念、练习选择/反馈 | 已完成 approved archive + golden 回退首版；公共 SourceChunk adapter 无索引/命中时严格降级 |
+| StudyKit 查询、材料/概念、练习选择/反馈 | 已完成 approved archive + golden 回退；练习支持 page/heading/chunk 精确证据，证据不可用时使用带固定声明的通用反馈 |
 | 本地聊天测试界面 | 已接入账号登录、功能总览、画像、课程、StudyKit、练习和代码辅导入口；助手 Markdown/表格/代码/MathML 安全渲染通过 Chrome 验证 |
 | 云端部署方式 | 已确认，等待生产版本部署 |
 | 首个模板课程与核心讲次冻结 | 已完成：MIT 6.7960，Lecture 2 和 8 为核心 Demo |
@@ -114,9 +114,9 @@ Agent 编排：意图路由、主动画像、课程导航、StudyKit 学习、�
 | SourceChunk Schema 与 PDF 页级解析 | 已完成；Lecture 2、8 的 chunks 已在本地生成并通过校验，未随公开仓库上传 |
 | 黄金 StudyKit 在线读取 | 已完成：Lecture 2、8，只读人工批准版本；统一 `StudyKitStore` 接口 |
 | 私有检索数据归档 | 已完成精简快照：12 builds、286 documents；9 builds/220 documents 为 `approved`，其余 3/66 保持 `validated_draft` |
-| 数据库 StudyKitStore | 已完成只读接入：build/document 双 `approved` 门禁，portable v0.1/v0.2.1 兼容，golden 回退 |
+| 数据库 StudyKitStore | 已完成只读接入：build/document 双 `approved` 门禁，portable v0.1/v0.2.1/v0.2.2 兼容，golden 回退 |
 | 六课 practice repair | 161/161 validated、161/161 audited、6/6 build succeeded；五课仍需关闭课程级视觉复核 |
-| 线上 SourceChunk 检索与 RAG | 公共 permission-first FTS5 接口和运行时 adapter 已完成；当前无 approved 索引，私有/向量检索未上线 |
+| 线上 SourceChunk 检索与 RAG | 公共 permission-first FTS5、精确引用解析和 approved 索引构建脚本已完成；当前部署无 approved 索引，私有/向量检索未上线 |
 | 清小搭接入探测与试聊 | 本地契约与真实 DeepSeek 多轮已验证；平台账号侧待实测 |
 | 端到端 Demo、评测和用户试用 | 尚未开始 |
 
@@ -124,7 +124,7 @@ Agent 编排：意图路由、主动画像、课程导航、StudyKit 学习、�
 
 1. 完成仍被门禁阻断的 CMU 15.213、MIT 6.031 和 UCB CS61B partial builds，并继续保持双 `approved` 在线门禁；
 2. 为现有公共 FTS5 运行时发布 approved SourceChunk 索引并完成检索质量验收；
-3. 冻结 MaterialSet/权限接口，将现有 course/version/unit 过滤扩展到 owner/session/material_set，再接入私有材料、练习反馈检索和学习复盘；
+3. 冻结 MaterialSet/权限接口，将现有 course/version/unit 过滤扩展到 owner/session/material_set，再接入私有材料和学习复盘；
 4. 验证清小搭稳定用户身份、消息历史、文件输入、状态和日志能力；
 5. 将通过测试的后端部署到生产环境并完成端到端评测。
 
@@ -139,6 +139,12 @@ git -C data lfs pull
 
 StudyKit 检索归档位于 `data/archive/studykits.sqlite3`。完整边界见
 [私有数据 submodule 说明](docs/private-data-submodule.md)。
+
+归档批准后，离线构建公共证据索引（只接受 build/document 均 approved 且 chunks 哈希匹配的数据）：
+
+```bash
+.venv/bin/python scripts/build_source_chunk_index.py --replace
+```
 
 ```bash
 python3 -m venv .venv
@@ -188,6 +194,7 @@ curl http://127.0.0.1:8000/v1/chat/completions \
 | `COURSEPILOT_ALLOWED_ORIGINS` | 当前请求 Origin | 可选，逗号分隔的网页登录 Origin allowlist |
 | `COURSEPILOT_TEST_MODE` | `false` | 仅测试使用 |
 | `COURSEPILOT_ROBUST_INPUT` | `true` | 启用自然语言、内联代码、压平围栏及中文讲次/页码解析；首个发布周期可设为 `false` 回退旧 Planner 路径 |
+| `COURSEPILOT_SOURCE_CHUNK_INDEX_PATH` | `data/indexes/source_chunks.sqlite3` | 离线生成的 approved 公共 SourceChunk 索引；不存在时课程证据反馈会安全降级为通用反馈 |
 | `DEEPSEEK_API_KEY` | 无 | 可选；启用在线统一理解、通用学习问答、画像/材料问答/练习反馈/语义辅导，并用于离线生成 |
 
 生产环境必须使用 HTTPS、持久化受限权限的数据库卷，并在反向代理层增加全局登录/注册限流。应用内限流只覆盖单进程实例。
@@ -209,7 +216,15 @@ Cookie 认证的 `POST /v1/chat/completions` 同样要求 `X-CSRF-Token`。API K
 .venv/bin/pytest -q
 ```
 
-当前 Python 基线为 `623 passed`。覆盖密码和令牌非明文存储、v1→v2→v3 迁移、账号与 `sessionId` 命名空间隔离、30 天滑动过期、CAS 并发保护、状态库故障降级、未上线能力路由失败关闭、JSON/SSE 契约、课程目录与 archive 门禁、全课程安全知识投影、画像感知课程排序、统一自然语言理解、浏览器签名与网关服务端连续状态、可信讲次继承、练习指代、通用学习兜底、静态代码诊断、生成管线和本地 HTTP/SSE。
+最近一次完整数据可用时的 Python 历史基线为 `623 passed`。覆盖密码和令牌非明文存储、v1→v2→v3 迁移、账号与 `sessionId` 命名空间隔离、30 天滑动过期、CAS 并发保护、状态库故障降级、未上线能力路由失败关闭、JSON/SSE 契约、课程目录与 archive 门禁、全课程安全知识投影、画像感知课程排序、统一自然语言理解、浏览器签名与网关服务端连续状态、可信讲次继承、练习指代、通用学习兜底、静态代码诊断、生成管线和本地 HTTP/SSE。
+
+Exercise v0.2.2 新增的独立回归覆盖精确 chunk/heading/page 解析、权限/身份/审核/哈希失败关闭、
+CS61C `lecture-02/p1`、通用反馈声明、选择优先级、证据上限、generator skill 和 archive 发布门禁。
+完整回归前必须先恢复私有 data submodule；缺少 tracked golden/catalog/manifest 会让旧数据依赖测试失败。
+2026-08-21 在保留这些删除项的工作树上完成本次实现后运行全量测试得到 `500 passed, 160 failed, 5 errors`；
+160 个失败的代表性 traceback 指向缺失的 golden/registry/manifest 或因此为空的 ready Store；
+5 个 error 来自受限沙箱禁止绑定 loopback socket，获准在本机回环环境重跑对应 HTTP/SSE 套件后为 `5 passed`。
+这些环境/数据结果不能替代本次契约的独立回归判据。
 
 前端门禁另包含 18 项 Vitest 单元测试和 7 项使用本机 Chrome 的 Playwright 流程：
 
@@ -283,7 +298,7 @@ npm run test:e2e
 
 ## 开发状态说明
 
-仓库已经包含账号注册/登录与安全会话、OpenAI 兼容服务、有界 TaskPlan 与通用学习兜底、可信 subject 学习画像、CSDIY 课程导航、只读 approved archive + golden StudyKit 查询/材料/概念/练习能力、多语言静态代码辅导，以及完整的分阶段生成内核。公共 SourceChunk 的 permission-first FTS5 接口与材料问答 adapter 已实现，但当前 checkout 未部署 approved 索引；未收录私有资料、向量检索、跨会话练习状态和学习复盘仍属于后续阶段。
+仓库已经包含账号注册/登录与安全会话、OpenAI 兼容服务、有界 TaskPlan 与通用学习兜底、可信 subject 学习画像、CSDIY 课程导航、只读 approved archive + golden StudyKit 查询/材料/概念/练习能力、多语言静态代码辅导，以及完整的分阶段生成内核。公共 SourceChunk 的 permission-first FTS5、精确引用解析、v0.2.2 练习反馈契约和 approved 索引构建已实现，但当前 checkout 未部署该索引；未收录私有资料、向量检索、跨会话练习状态和学习复盘仍属于后续阶段。
 # Online Agent P0–P2
 
 The online runtime's current planning, provenance, public retrieval, continuity-token, course-advice,

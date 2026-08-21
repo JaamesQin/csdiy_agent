@@ -1,11 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://coursepilot.local/skills/studykit-generator/studykit-v0.1.json",
+  "$id": "https://coursepilot.local/skills/studykit-generator/studykit-v0.2.2.json",
   "title": "Portable StudyKit",
   "type": "object",
   "required": ["studykit_version", "status", "course_id", "course_version", "unit_id", "title", "language", "scope", "learning_objectives", "prerequisites", "outline", "core_concepts", "glossary", "learning_sequence", "practice", "practice_feedback_policy", "citations", "review", "limitations"],
   "properties": {
-    "studykit_version": {"const": "0.1"},
+    "studykit_version": {"enum": ["0.1", "0.2.2"]},
     "status": {"enum": ["draft", "reviewed", "published"]},
     "course_id": {"type": ["string", "null"]}, "course_version": {"type": ["string", "null"]},
     "unit_id": {"type": "string", "minLength": 1}, "title": {"type": "string", "minLength": 1},
@@ -23,12 +23,13 @@
     "core_concepts": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["id", "term", "claim_type", "explanation", "citations"], "properties": {"id": {"type": "string"}, "term": {"type": "string"}, "claim_type": {"enum": ["source_summary", "source", "explanation", "inference"]}, "explanation": {"type": "string"}, "citations": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/citation"}}, "formula": {"$ref": "#/$defs/formula"}}, "additionalProperties": true}},
     "glossary": {"type": "array"}, "common_misconceptions": {"type": "array"},
     "learning_sequence": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["step", "activity", "duration_minutes"], "properties": {"step": {"type": "integer", "minimum": 1}, "activity": {"type": "string"}, "duration_minutes": {"type": "integer", "minimum": 1}, "citations": {"type": "array", "items": {"$ref": "#/$defs/citation"}}}, "additionalProperties": true}},
-    "practice": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["id", "level", "question", "hint", "deliverable", "expected_evidence", "evaluation", "citations"], "properties": {"id": {"type": "string"}, "level": {"type": "string"}, "question": {"type": "string"}, "hint": {"type": "string"}, "deliverable": {"type": "string"}, "expected_evidence": {"type": "array", "minItems": 1}, "evaluation": {"type": "object"}, "citations": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/citation"}}}, "additionalProperties": true}},
+    "practice": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["id", "level", "question", "hint", "deliverable", "expected_evidence", "evaluation", "citations"], "properties": {"id": {"type": "string"}, "level": {"type": "string"}, "question": {"type": "string"}, "hint": {"type": "string"}, "deliverable": {"type": "string"}, "expected_evidence": {"type": "array", "minItems": 1}, "evaluation": {"type": "object"}, "feedback_mode": {"enum": ["course_grounded", "general_only"]}, "citations": {"type": "array", "items": {"$ref": "#/$defs/citation"}}}, "allOf": [{"if": {"properties": {"feedback_mode": {"const": "course_grounded"}}, "required": ["feedback_mode"]}, "then": {"properties": {"citations": {"minItems": 1, "maxItems": 16}}}}, {"if": {"properties": {"feedback_mode": {"const": "general_only"}}, "required": ["feedback_mode"]}, "then": {"properties": {"citations": {"maxItems": 0}}}}], "additionalProperties": true}},
     "practice_feedback_policy": {"type": "object", "required": ["scope", "persistence", "aggregate_accuracy", "aggregate_mastery"], "properties": {"scope": {"const": "current_answer_only"}, "persistence": {"const": "none"}, "aggregate_accuracy": {"const": "disabled"}, "aggregate_mastery": {"const": "disabled"}}, "additionalProperties": true},
     "citations": {"type": "array", "minItems": 1, "items": {"allOf": [{"$ref": "#/$defs/citation"}, {"type": "object", "required": ["citation_id", "supports"], "properties": {"citation_id": {"type": "string"}, "supports": {"type": "string"}}}]}},
     "review": {"type": "object", "required": ["generator_review_status", "audit_findings"], "properties": {"generator_review_status": {"type": "string"}, "audit_findings": {"type": "array"}}, "additionalProperties": true},
     "limitations": {"type": "array", "items": {"type": "string"}}
   },
+  "allOf": [{"if": {"properties": {"studykit_version": {"const": "0.2.2"}}, "required": ["studykit_version"]}, "then": {"properties": {"practice": {"items": {"required": ["feedback_mode"]}}}}}],
   "additionalProperties": true,
   "$defs": {
     "anchor": {"type": "object", "required": ["type", "value"], "properties": {"type": {"enum": ["page", "heading", "slide", "paragraph", "sheet", "image"]}, "value": {"oneOf": [{"type": "integer", "minimum": 1}, {"type": "string", "minLength": 1}]}, "bbox": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "number"}}}, "additionalProperties": false},

@@ -1,6 +1,6 @@
 # 平台发布记录
 
-> 更新日期：2026-08-20
+> 更新日期：2026-08-21
 >
 > 发布状态：多用户本地候选版本已验证，生产发布待执行
 
@@ -18,13 +18,13 @@
 - 119 个课程目标的失败关闭 Catalog 校验、安全学习决策投影、确定性精确导航、画像感知的单次模型排序和三类状态展示；
 - 220 份 approved archive StudyKit 与 Lecture 2/8 golden 安全回退已接入查询、材料/概念、练习选择和当前答案反馈；
 - 带登录、功能总览、画像、课程、StudyKit、练习和代码辅导入口的同源聊天界面；助手回复支持经清洗的 Markdown、表格、代码高亮和 MathML，用户/错误保持纯文本；
-- 公共 permission-first FTS5 接口和材料问答运行时 adapter 已接线；当前没有 approved SourceChunk 索引，私有/向量检索尚未上线；
+- 公共 permission-first FTS5、精确练习引用解析、材料/练习反馈 adapter 和 approved 索引构建已接线；当前没有部署 approved SourceChunk 索引，私有/向量检索尚未上线；
 - selective practice repair 仅作为离线 fingerprinted build；保留 direct-parent snapshot，
   rich audit 绑定当前 build+repair plan，并要求逐题 practice ID exact coverage；
 - 独立 StudyKit SQLite 归档已实现；严格门禁、明确 reviewed-legacy 人工批准和 CS186 新指纹身份修复后，当前 9 builds/220 documents 为 `approved`，另外 3/66 partial 记录保持 `validated_draft`。
-- 在线 Store 已接入只读 archive adapter：build/document 双 `approved`、portable v0.1/v0.2.1 兼容、approved archive 优先和 golden 回退；组合 Store 当前有 220 个 ready StudyKit。
+- 在线 Store 已接入只读 archive adapter：build/document 双 `approved`、portable v0.1/v0.2.1/v0.2.2 兼容、approved archive 优先和 golden 回退；组合 Store 当前有 220 个 ready StudyKit。
 - `data/` 是需要单独授权的私有 submodule；部署/测试主仓库前必须初始化 submodule 与 Git LFS。
-- 623 项 Python 自动化测试、18 项前端单元测试和 7 项 Chrome Playwright 流程通过；包含独立 Uvicorn/loopback HTTP、全课程知识投影、画像感知排序、未上线能力路由失败关闭、浏览器签名与清小搭 `sessionId` 连续状态、命名空间隔离、过期/CAS/故障降级、可信讲次继承、练习指代和通用学习兜底契约。
+- 完整私有数据可用时的历史 Python 基线为 623 项；本次 Exercise 契约 49 项独立回归及获准 loopback HTTP/SSE 5 项通过。另有 18 项前端单元测试和 7 项 Chrome Playwright 流程通过。
 
 ## 本地启动
 
@@ -53,11 +53,13 @@ uvicorn app.main:app --host 127.0.0.1 --port 8000
 | `COURSEPILOT_ALLOWED_ORIGINS` | 生产必须 | 逗号分隔的完整 Origin，例如 `https://coursepilot.example.com` |
 | `COURSEPILOT_TEST_MODE` | 否 | 生产保持 `false` |
 | `COURSEPILOT_ROBUST_INPUT` | 否 | 默认 `true`；首个发布周期可临时设为 `false` 回退旧 Planner 路径 |
+| `COURSEPILOT_SOURCE_CHUNK_INDEX_PATH` | 否 | 默认 `data/indexes/source_chunks.sqlite3`；必须指向由 approved archive 离线构建的只读索引 |
 | `DEEPSEEK_API_KEY` | 否 | 启用统一理解、画像感知课程排序、通用学习问答、画像候选、材料问答、练习反馈和语义代码建议；未设置时透明降级 |
 | `DEEPSEEK_BASE_URL` / `DEEPSEEK_MODEL` | 否 | 复用离线生成器的模型适配配置 |
 
 禁止记录或提交 API Key、密码、Cookie、CSRF token、Argon2 hash 和数据库内容。
-账号数据库与 `data/archive/studykits.sqlite3` 必须使用不同文件、权限和备份策略。账号库仍在
+账号数据库、`data/archive/studykits.sqlite3` 与可重建的 `data/indexes/source_chunks.sqlite3`
+必须使用不同文件、权限和备份策略。账号库仍在
 ignored `storage/`；StudyKit 归档在私有 submodule 中由 Git LFS 管理，不能因其可克隆就视为
 online-ready 或绕过 document review status。
 
@@ -99,7 +101,7 @@ credential: <COURSEPILOT_API_KEY>
 ## 当前限制
 
 - 当前执行功能帮助、画像、课程导航、StudyKit 查询、材料/概念、练习选择/反馈、代码辅导和通用学习问答；学习复盘和生成状态仍降级；
-- Catalog 仍读取 tracked registry/Manifest，StudyKit 使用 approved archive 优先与 golden 回退；公共 SourceChunk FTS5 adapter 已接线但当前没有 approved 索引，数据库 MaterialSet、私有/向量检索尚未上线；
+- Catalog 仍读取 tracked registry/Manifest，StudyKit 使用 approved archive 优先与 golden 回退；公共 SourceChunk FTS5、精确练习引用解析和索引构建已接线，但当前部署没有 approved 索引，数据库 MaterialSet、私有/向量检索尚未上线；
 - 课程上下文覆盖 220 份 approved archive StudyKit，并保留 Lecture 2/8 人工批准的黄金 StudyKit 回退；
 - 代码辅导支持示例生成、解释、诊断、审阅、修复、重构和测试设计；输入与生成代码只做 AST/Tree-sitter 静态检查，始终 `ran_code=false`，课程专用 DSL 可能只获得模型静态建议；
 - API Key 请求的 `user` 是客户端提供的逻辑标识，只进入 legacy 命名空间，不是生产授权凭据；
@@ -116,7 +118,7 @@ credential: <COURSEPILOT_API_KEY>
 - 流式代理不稳定：保留非流式 JSON；
 - 文件输入不可用：使用公开链接、文本粘贴或预上传样板资料；
 - 长期状态不可用：输出可复制状态卡；
-- DeepSeek 不可用：通用学习问答透明降级；课程精确查询/列表仍可用，个性化推荐明确标注为未结合画像排序；保留功能帮助、StudyKit 查询、概念解释、练习选择、显式画像识别和确定性静态诊断；代码生成/改写透明说明模型不可用，不伪造示例；材料问答返回已审核摘要，练习反馈不判分；
+- DeepSeek 不可用：通用学习问答透明降级；课程精确查询/列表仍可用，个性化推荐明确标注为未结合画像排序；保留功能帮助、StudyKit 查询、概念解释、练习选择、显式画像识别和确定性静态诊断；代码生成/改写透明说明模型不可用，不伪造示例；材料问答返回已审核摘要，练习反馈只返回原题提示和已验证来源标签；
 - 画像数据库不可用：继续本轮临时画像和代码辅导，并提示未保存；
 - 云端候选版本异常：回退到最近一个完整测试通过的提交。
 
@@ -133,8 +135,10 @@ credential: <COURSEPILOT_API_KEY>
 - [ ] 助手 Markdown、表格、代码和 MathML 正常；用户 HTML 保持文本，远程图片/脚本/危险链接不能加载或执行；
 - [ ] 课程导航将目录/authoring/在线 StudyKit 状态分开，且不输出未审核 candidate offering；
 - [ ] 220 份 approved archive 与 Lecture 2/8 golden 回退的查询、材料/概念、练习和反馈正常，未知页码不产生猜测；
-- [ ] 无 DeepSeek 时练习反馈透明降级，不输出隐藏 rubric、分数或掌握度；
-- [ ] 数据库版本为 2，备份和恢复演练通过；
+- [ ] 运行 `.venv/bin/python scripts/build_source_chunk_index.py --replace`，索引只包含 build/document 双 approved 且 chunks 哈希匹配的数据；
+- [ ] heading-only、page-only 练习产生带可信来源标签的课程反馈；跨课程、伪造、未审核或哈希漂移引用全部进入通用反馈；
+- [ ] 无证据时显示“通用反馈（未按当前课程材料核验）”固定声明；无 DeepSeek 时不输出隐藏 rubric、分数或掌握度，也不追加第二次模型调用；
+- [ ] 账号/会话数据库版本为 3，备份和恢复演练通过；
 - [ ] 反向代理限流、日志脱敏和 HTTPS 验证通过；
 - [ ] 清小搭协议探测和真实试聊通过。
 # Online Agent P0–P2 release note
@@ -148,3 +152,8 @@ approved original on any model or validation failure. Context v2 adds only prese
 continuity and accepts v1 tokens. TaskPlan is counted separately; every concrete online capability is
 limited to one model call, with no second online semantic reviewer. Set
 `COURSEPILOT_PRACTICE_REWRITE_ENABLED=false` for an immediate presentation rollback.
+
+Practice feedback now resolves cited public SourceChunks exactly by chunk ID or source/anchor after
+scope, course identity, approval, and hash checks. Portable v0.2.2 declares `course_grounded` versus
+`general_only`; invalid course evidence falls back to a prominently labeled general-knowledge review
+without changing the OpenAI-compatible HTTP/SSE contract or the one-call budget.

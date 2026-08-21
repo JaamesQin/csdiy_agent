@@ -1,6 +1,6 @@
 # CoursePilot 项目状态
 
-更新时间：2026-08-20
+更新时间：2026-08-21
 
 这份文档是新开发者的快速入口。更完整的状态矩阵见
 [docs/project_status.md](docs/project_status.md)，生成管线说明见
@@ -11,8 +11,8 @@
 CoursePilot 已完成可运行、可恢复、可审计的 StudyKit 分阶段生成内核，
 并已落地本地账号注册/登录、Cookie 会话和可信 subject 画像隔离，同时将意图路由、
 能力帮助、主动学习画像、CSDIY 课程导航、StudyKit 查询/材料/概念/练习能力和
-多语言静态代码辅导接入 OpenAI 兼容对话 API；公共 SourceChunk 的 permission-first FTS5
-接口和材料问答 adapter 已接线，但当前没有 approved 在线索引，私有资料权限、向量检索和
+多语言静态代码辅导接入 OpenAI 兼容对话 API；公共 SourceChunk 的 permission-first FTS5、
+精确 `chunk_id`/anchor 引用解析和 approved 索引构建已接线，但当前没有部署 approved 在线索引，私有资料权限、向量检索和
 学习复盘仍未接成完整闭环。
 
 本地学习界面现使用 Vite/React/TypeScript 构建：助手输出支持安全 Markdown、表格、代码高亮和
@@ -46,11 +46,15 @@ UCB CS186 由直接父快照生成新指纹身份修复 build 并重新通过 ex
 
 ### StudyKit 标准与黄金样例
 
-- 已冻结学科无关的 StudyKit v0.1 标准、SourceChunk Schema 和学习者渲染规则。
+- 已冻结原有 StudyKit v0.1 兼容标准，并新增 portable v0.2.2 练习反馈模式、SourceChunk 精确引用和学习者渲染规则。
 - Lecture 2 和 Lecture 8 的人工审核 StudyKit 继续作为质量评测样例；
   黄金样例不得反向写入通用 Prompt。
 - 学习者版本隐藏 `expected_evidence`、评价规则和内部控制字段。
 - 单题反馈只评价当前回答，不保存累计正确率或推断长期掌握度。
+- 单题课程反馈只使用经过 public scope、course/version/unit、approved build/review 和内容哈希
+  校验的 page/heading/chunk 证据；证据分区无效时改用带固定声明的通用反馈，不伪装课程核验。
+- portable StudyKit v0.2.2 为练习声明 `course_grounded` 或 `general_only`；生成与发布阶段
+  阻止声明冲突和不可解析课程证据，旧 v0.2.1/legacy 继续兼容读取且不原地迁移。
 
 ### 分阶段自动生成器
 
@@ -76,6 +80,9 @@ UCB CS186 由直接父快照生成新指纹身份修复 build 并重新通过 ex
   其中五课尚未关闭 course-level visual review，所以 catalog 仍不能标记全局 complete。
 - 最终 StudyKit 由代码确定性组装，并校验 Schema、引用、顺序、唯一 ID、
   Markdown 可渲染性和内部字段泄漏。
+- approved SourceChunk 索引可由 `scripts/build_source_chunk_index.py` 从归档指纹中的
+  `chunks_path/chunks_sha256` 重建；运行时精确解析不经过 FTS/BM25，最多向单题反馈提供
+  16 个引用、16,000 字符。
 
 ### 模型调用可靠性
 
@@ -142,12 +149,13 @@ UCB CS186 由直接父快照生成新指纹身份修复 build 并重新通过 ex
   运行结果，作业代写请求在空代码分支之前由规则守卫阻断。
 - 在线课程上下文读取 220 份 approved archive StudyKit，并保留 Lecture 2/8 中 Schema
   合法且人工批准的黄金 StudyKit 回退；
-  材料模型只能引用允许列表内的真实页码，学习者输出不含 `expected_evidence`、
+  材料与练习模型只能引用允许列表内经校验的 page/heading/chunk，学习者输出不含 `expected_evidence`、
   evaluation、rubric、审计字段或本地路径。
 - `CourseCatalogStore` 校验 119 个 CSDIY 课程目标、唯一身份、导航 provenance 和受控
   Manifest；安全课程知识投影把全量身份/方向/入门与后续价值提供给在线决策，同时排除路径、哈希、候选探测和审计诊断。课程导航精确查询保持确定性，个性化排序读取全部 confirmed 画像并分为“现在开始/长期目标”。
 - `StudyKitLookupService` 已实现查询、材料问答、概念解释、练习选择和当前答案反馈；
-  未配置模型时材料问答返回已审核摘要，练习反馈不做粗略判分。练习答案和历史均不持久化。
+  课程证据无效时用固定声明切换为通用反馈，未配置模型时只返回提示和已验证来源标签，
+  不做粗略判分。练习答案和历史均不持久化。
 - 未配置 `DEEPSEEK_API_KEY`、模型失败或画像数据库不可用时均透明降级；个性化课程排序失败时明确标注为未结合画像的方向候选；通用问答不会进行
   第二次生成尝试，其他确定性能力仍能启动和响应。
 
@@ -160,13 +168,20 @@ UCB CS186 由直接父快照生成新指纹身份修复 build 并重新通过 ex
 
 ### 测试状态
 
-- 当前自动化测试：`623 passed`（Python 完整回归）；另有 18 项前端单元测试和 7 项 Chrome Playwright 流程。覆盖全课程知识投影、画像感知排序、能力可用性问句短路、未上线能力失败关闭与通用边界回答、浏览器签名与清小搭 `sessionId` 服务端连续状态、可信讲次继承与显式换课/换讲、练习 ID/位置别名、状态库故障降级、通用学习兜底和 loopback HTTP/SSE 回归。
+- 最近一次完整数据可用时的自动化历史基线为 `623 passed`（Python 完整回归）；另有 18 项前端单元测试和 7 项 Chrome Playwright 流程。覆盖全课程知识投影、画像感知排序、能力可用性问句短路、未上线能力失败关闭与通用边界回答、浏览器签名与清小搭 `sessionId` 服务端连续状态、可信讲次继承与显式换课/换讲、练习 ID/位置别名、状态库故障降级、通用学习兜底和 loopback HTTP/SSE 回归。
 - 测试覆盖阶段 Schema、Evidence controls、确定性 chunk 并集、引用、
   Markdown LaTeX、模型响应重试、恢复、单次 Audit 回修、非 CS 合成单元、
   CLI、质量 profile、数据库迁移、密码/会话安全、CSRF、限流、账号隔离、
   API Key 兼容、意图路由、画像生命周期、SQLite 并发、课程目录失败关闭、
   StudyKit 安全投影、材料/概念引用白名单、练习反馈降级、代码静态分析、
   学术诚信以及真实 HTTP/SSE。
+- Exercise v0.2.2 新增独立回归覆盖精确 chunk/heading/page、跨课程/审核/哈希失败关闭、
+  CS61C `lecture-02/p1`、证据上限、选择优先级、skill validator 和 archive release gate；
+  当前私有 data 子模块中的用户删除项必须恢复后才能重跑旧数据依赖全仓基线。
+- 2026-08-21 保留上述删除项运行 `.venv/bin/pytest -q --tb=no` 得到
+  `500 passed, 160 failed, 5 errors`；抽查的生成、Schema 与 Exercise 旧测试均因 golden 文件不存在或
+  ready Store 为空失败，5 个 integration error 则由沙箱禁止 loopback bind 引起；对应 HTTP/SSE
+  套件在获准的本机回环环境重跑为 `5 passed`。本次改动的 49 项独立回归全部通过，未恢复或改写用户删除的数据。
 - 最新一次有记录的 Lecture 1–8 外部并发回归（concurrency=8）结果为 `8/8`：
   8 讲均生成 JSON/YAML/Markdown，均通过确定性验证，未解决 blocker 为 0。
   详细机器摘要属于未纳入精简 submodule 的历史本地 regression 数据。
@@ -219,10 +234,10 @@ npm run test:e2e
 1. 为 archive 文档完成独立人工批准，冻结 MaterialManifest、MaterialSet 和完整
    LearnerState 的最小接口；TaskPlan 与账号/画像事实基础已经实现。
 2. 完成公共课程与用户私有资料的统一解析、存储、授权过滤、过期和删除。
-3. 为已接线的公共 FTS5 检索发布 approved SourceChunk 索引并完成质量验收，再将
+3. 使用已实现的离线构建脚本发布 approved SourceChunk 索引并完成质量验收，再将
    当前 course/version/unit 范围扩展到 owner/session/material_set；按需要增加经审核的向量检索。
-4. 让材料答疑在公共索引可用时使用已实现的 SourceChunk 路径，并继续把练习反馈、
-   私有材料、学习复盘和后台生成状态接入同一权限边界。
+4. 在已接入材料答疑和练习反馈的 SourceChunk 路径上继续扩展私有材料、学习复盘和
+   后台生成状态，并完成生产模型质量评测。
 5. 修复 Lecture 2 的离线 profile 对齐问题，核对 Lecture 8 的 LayerNorm 表述，
    并为 `repairs_applied_unverified` 结果安排人工语义复核。
 6. 实现最小学习闭环，记录用户确认的学习证据，并输出概念、实现、
@@ -242,8 +257,8 @@ MaterialSet/权限接口，最后再关闭平台端到端和用户验收。
 - 清小搭文件输入、稳定会话标识和文件保留能力仍需账号级实测。
 - 本地网页登录已使用服务端验证的账号身份；API Key 请求的 `user` 仍只是逻辑标识，
   不是授权凭据，在清小搭稳定身份完成实测前只适用于受信网关。
-- 在线代码辅导当前不执行代码；公共 SourceChunk 检索基础只接入材料问答，且当前没有
-  approved 索引，因此实际课程引用仍来自 approved archive 或两份人工批准的黄金 StudyKit。
+- 在线代码辅导当前不执行代码；公共 SourceChunk 已接入材料问答和练习反馈，但当前没有部署
+  approved 索引，因此相关能力会按既定来源或带标签通用反馈安全降级。
 - v21 已完成新鲜模型全量回归并达到 8/8，但修复后未进行二次语义 Audit；
   外部模型结果仍需人工复核后才适合作为最终教材。
 

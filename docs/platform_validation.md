@@ -1,6 +1,6 @@
 # 清小搭平台与本地协议验证记录
 
-> 更新日期：2026-08-20
+> 更新日期：2026-08-21
 > 当前结论：本地协议验证通过，清小搭生产平台验证待执行
 
 ## 1. 验证范围
@@ -235,8 +235,8 @@ Python/Triton AST、解析器失败降级和未标语言边界。
   有证据的确定性降级；
 - 概念解释只使用带页码的已审核概念；练习首次不泄漏 hint/rubric，并在当前 messages
   中避免重复；
-- 练习反馈要求 practice ID 和当前答案，只允许白名单页码，不保存答案、不累计分数或
-  掌握度；模型不可用或返回非法页码时不做关键词粗评；
+- 练习反馈要求 practice ID 和当前答案；本节当时只验证页码白名单，现已由第 20 节扩展为
+  精确 page/heading/chunk 白名单。不保存答案、不累计分数或掌握度；模型不可用或返回非法引用时不做关键词粗评；
 - 六项能力的真实 `/v1/chat/completions` 非流式 envelope 和课程概念 SSE
   role/content/单 stop/`[DONE]` 顺序保持兼容。
 
@@ -484,3 +484,32 @@ SSE 富文本与主动停止、连续状态回传与清空、代码复制、远�
 - 普通最小完整示例允许生成；课程作业完整解答在空代码分支之前拒绝。所有预期输出均标注“未运行”，
   每条路径继续返回 `ran_code=false`。
 - 最近助手示例只有在消息历史仍携带原代码且用户明确指代时才被精确提取；服务端连续状态不保存正文。
+
+## 20. 2026-08-21 Exercise 精确证据与通用反馈降级
+
+- `SourceChunkStore.resolve_exact` 不使用 FTS/BM25；它在 SQL 中先过滤 public scope、
+  course/version/unit、succeeded build、approved review 和 index eligibility，再按
+  `chunk_id` 或 `source_id + anchor` 精确解析并复核内容 SHA-256。伪造、跨课、歧义、
+  未审核和哈希漂移引用均不会进入模型。
+- 单题课程证据限定为 16 个引用、16,000 字符；任一引用无效会丢弃整个课程证据分区。
+  随后同一次能力调用只接收题面、作答要求和当前答案，并以固定标题
+  “通用反馈（未按当前课程材料核验）”标明未按课程材料验证。模型失败不触发第二次调用。
+- portable v0.2.2 要求每题声明 `course_grounded` 或 `general_only`。前者必须全部精确解析，
+  后者必须无引用；生成 validator 和 archive approval gate 使用同一确定性检查并分别报告
+  grounded、general-only、unresolved、declaration mismatch。
+- `scripts/build_source_chunk_index.py` 只读取 build/document 双 approved 的归档记录，并复核
+  fingerprint 中的 `chunks_path/chunks_sha256` 后原子替换可重建索引。
+
+本次新增的独立、无网络验证结果：SourceChunk/索引/Exercise 回归 `13 passed`，generator skill
+与 workflow policy `32 passed`，archive feedback release gate `3 passed`，page-only generator contract
+`1 passed`，skill quick validation
+和 Python compileall 通过。覆盖了截图对应 CS61C `lecture-02/p1` 的两个 heading chunk、页码证据、
+选择优先级、跨课程降级、引用/字符上限、声明冲突和 source hash drift。
+
+当前工作树中的私有 `data` submodule 预先存在用户删除的 golden、catalog 和 manifest 文件；
+依赖这些文件的旧全仓测试会以 `FileNotFoundError` 或 ready Store 为空失败。本次没有恢复或修改
+这些数据文件，相关失败不作为 Exercise 契约回归通过的证据。实际全量命令
+`.venv/bin/pytest -q --tb=no` 得到 `500 passed, 160 failed, 5 errors`；代表性抽查分别落在缺失的
+MIT golden fixture 和由此不可用的 `ReviewedFileStudyKitStore`。5 个 error 的 traceback 是受限沙箱
+拒绝 `socket.bind(("127.0.0.1", 0))`；获准在本机回环环境运行
+`tests/integration/test_local_http.py` 后为 `5 passed`。这些结果与上述 49 项独立回归分开记录。

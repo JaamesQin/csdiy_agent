@@ -34,9 +34,9 @@ def test_release_versions_are_consistent() -> None:
 
     manifest = yaml.safe_load((SKILL / "assets/templates/manifest.yaml").read_text(encoding="utf-8"))
     skill_text = (SKILL / "SKILL.md").read_text(encoding="utf-8")
-    assert policy.PIPELINE_VERSION == "0.2.1"
+    assert policy.PIPELINE_VERSION == "0.2.2"
     assert manifest["pipeline_version"] == policy.PIPELINE_VERSION
-    assert 'version: "0.2.1"' in skill_text
+    assert 'version: "0.2.2"' in skill_text
 
 
 def test_review_page_sets_and_deterministic_sampling() -> None:

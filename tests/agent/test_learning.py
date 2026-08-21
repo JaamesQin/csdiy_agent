@@ -445,10 +445,11 @@ async def test_feedback_uses_digest_bound_presented_question() -> None:
             "retained_requirement_ids": [],
         },
         {
+            "provenance": "general_knowledge",
             "correct_points": ["说明了反向传播先计算梯度。"],
             "correction": "补充参数更新发生在梯度计算之后。",
             "next_hint": "按损失、梯度、参数的顺序检查。",
-            "source_pages": [8, 44],
+            "citation_ids": [],
         },
     )
     service = StudyKitLookupService(ReviewedFileStudyKitStore(), model=model)
@@ -503,20 +504,20 @@ async def test_practice_feedback_transparently_degrades_without_model() -> None:
         course_context=CONTEXT,
     )
 
-    assert "不会对这次答案做不可靠判分" in result.answer
+    assert "通用反馈（未按当前课程材料核验）" in result.answer
     assert "原题提示" in result.answer
-    assert "第 8、44 页" in result.answer
     assert "expected_evidence" not in result.answer
     assert "评分标准" not in result.answer
 
 
-async def test_practice_feedback_model_is_page_bounded_and_non_aggregating() -> None:
+async def test_practice_feedback_without_index_is_labeled_general_and_non_aggregating() -> None:
     model = FakeStructuredModel(
         {
+            "provenance": "general_knowledge",
             "correct_points": ["区分了计算梯度与更新参数。"],
             "correction": "还需要说明两个阶段的先后关系。",
             "next_hint": "按前向、反向、更新的顺序补充。",
-            "source_pages": [8, 44],
+            "citation_ids": [],
         }
     )
     service = StudyKitLookupService(ReviewedFileStudyKitStore(), model=model)
@@ -530,6 +531,7 @@ async def test_practice_feedback_model_is_page_bounded_and_non_aggregating() -> 
 
     assert "这次回答中正确的部分" in result.answer
     assert "最重要的修正" in result.answer
+    assert "未按当前课程材料核验" in result.answer
     assert "不统计分数或整体掌握度" in result.answer
     assert result.usage["total_tokens"] == 15
     prompt = model.calls[0]["user_prompt"]
@@ -541,10 +543,11 @@ async def test_practice_feedback_model_is_page_bounded_and_non_aggregating() -> 
         ReviewedFileStudyKitStore(),
         model=FakeStructuredModel(
             {
+                "provenance": "course_material",
                 "correct_points": ["看起来正确。"],
                 "correction": None,
                 "next_hint": "继续。",
-                "source_pages": [999],
+                "citation_ids": ["forged"],
             }
         ),
     )
@@ -554,8 +557,8 @@ async def test_practice_feedback_model_is_page_bounded_and_non_aggregating() -> 
         ),
         course_context=CONTEXT,
     )
-    assert "反馈暂时降级" in fallback.answer
-    assert "999" not in fallback.answer
+    assert "通用反馈（未按当前课程材料核验）" in fallback.answer
+    assert "forged" not in fallback.answer
 
 
 async def test_practice_feedback_requires_id_and_current_answer() -> None:

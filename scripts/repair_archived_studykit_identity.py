@@ -98,8 +98,13 @@ def prepare_repair(
         ).fetchone()
         if parent is None:
             raise ValueError(f"unknown parent build {parent_build_id}")
-        if parent["build_status"] != "succeeded" or parent["schema_id"] != "portable-v0.2.1":
-            raise ValueError("identity repair requires a succeeded portable-v0.2.1 parent")
+        if parent["build_status"] != "succeeded" or parent["schema_id"] not in {
+            "portable-v0.2.1",
+            "portable-v0.2.2",
+        }:
+            raise ValueError(
+                "identity repair requires a succeeded portable-v0.2.1/v0.2.2 parent"
+            )
         parent_documents = connection.execute(
             "SELECT * FROM studykit_documents WHERE build_id = ? ORDER BY unit_id",
             (parent_build_id,),

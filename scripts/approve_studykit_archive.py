@@ -23,15 +23,20 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
+SKILL_SCRIPTS = ROOT / "skills" / "studykit-generator" / "scripts"
+if str(SKILL_SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(SKILL_SCRIPTS))
 
 from app.catalog.archive import StudyKitArchive
 from app.retrieval.schema_validation import validate_instance
+from feedback_contract import evaluate_feedback_contract
 
 
 DEFAULT_ARCHIVE = ROOT / "data" / "archive" / "studykits.sqlite3"
 DEFAULT_REGISTRY_AUDIT = ROOT / "evaluations" / "csdiy-catalog-registry-audit.json"
 PORTABLE_SCHEMA = ROOT / "skills" / "studykit-generator" / "assets" / "schemas" / "studykit.schema.json"
 PASS_STATUSES = frozenset({"passed", "succeeded", "valid"})
+CURRENT_PORTABLE_SCHEMAS = frozenset({"portable-v0.2.1", "portable-v0.2.2"})
 
 
 def _sha256_file(path: Path) -> str:
@@ -106,6 +111,38 @@ def _unit_set(value: Any) -> set[str] | None:
     return set(value)
 
 
+def _unit_chunks(metadata: dict[str, Any], unit_id: str) -> list[dict[str, Any]]:
+    run = metadata.get("run")
+    fingerprint = run.get("fingerprint_payload") if isinstance(run, dict) else None
+    units = fingerprint.get("units") if isinstance(fingerprint, dict) else None
+    if not isinstance(units, list):
+        raise ValueError("build metadata has no fingerprinted source units")
+    matches = [
+        item for item in units
+        if isinstance(item, dict) and item.get("unit_id") == unit_id
+    ]
+    if len(matches) != 1:
+        raise ValueError(f"metadata has no unique source record for {unit_id}")
+    record = matches[0]
+    relative = record.get("chunks_path")
+    expected_hash = record.get("chunks_sha256")
+    if not isinstance(relative, str) or not isinstance(expected_hash, str):
+        raise ValueError(f"metadata source record is incomplete for {unit_id}")
+    path = (ROOT / relative).resolve()
+    if not path.is_relative_to(ROOT.resolve()) or not path.is_file():
+        raise ValueError(f"source chunks unavailable for {unit_id}")
+    if _sha256_file(path) != expected_hash:
+        raise ValueError(f"source chunks hash mismatch for {unit_id}")
+    chunks = [
+        json.loads(line)
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    if any(not isinstance(item, dict) for item in chunks):
+        raise ValueError(f"source chunks are invalid for {unit_id}")
+    return chunks
+
+
 def evaluate_archive(
     database: Path,
     registry_audit: Path,
@@ -129,6 +166,7 @@ def evaluate_archive(
             build_id = str(build["build_id"])
             course_id = str(build["course_id"])
             reasons: list[str] = []
+            warnings: list[str] = []
             documents = connection.execute(
                 """
                 SELECT unit_id, schema_id, document_json, review_status
@@ -143,7 +181,7 @@ def evaluate_archive(
                 reasons.append("archive_integrity_failed")
             if build["build_status"] != "succeeded":
                 reasons.append(f"build_status_{build['build_status']}")
-            if build["schema_id"] != "portable-v0.2.1":
+            if build["schema_id"] not in CURRENT_PORTABLE_SCHEMAS:
                 reasons.append("current_portable_schema_required")
             if len(documents) != int(build["unit_count"]):
                 reasons.append("document_count_mismatch")
@@ -172,8 +210,15 @@ def evaluate_archive(
                 elif units != document_units:
                     reasons.append(f"{field}_document_identity_mismatch")
 
+            feedback_counts = {
+                "course_grounded": 0,
+                "general_only": 0,
+                "unresolved": 0,
+                "declaration_mismatch": 0,
+            }
             for row in documents:
                 unit_id = str(row["unit_id"])
+                document: dict[str, Any] | None = None
                 try:
                     document = _json_object(
                         row["document_json"], label=f"{course_id}/{unit_id}"
@@ -181,6 +226,28 @@ def evaluate_archive(
                     validate_instance(document, PORTABLE_SCHEMA)
                 except Exception:
                     reasons.append(f"{unit_id}:schema_failed")
+                if build["schema_id"] == "portable-v0.2.2" and document is not None:
+                    try:
+                        feedback = evaluate_feedback_contract(
+                            document,
+                            _unit_chunks(metadata, unit_id),
+                            require_explicit=True,
+                        )
+                    except (OSError, ValueError, json.JSONDecodeError):
+                        reasons.append(f"{unit_id}:practice_feedback_evidence_unavailable")
+                    else:
+                        for key in feedback_counts:
+                            feedback_counts[key] += int(feedback[key])
+                        if feedback["general_only"]:
+                            warnings.append(
+                                f"{unit_id}:general_only_practices={feedback['general_only']}"
+                            )
+                        if feedback["declaration_mismatch"]:
+                            reasons.append(
+                                f"{unit_id}:practice_feedback_declaration_mismatch"
+                            )
+                        if feedback["unresolved"]:
+                            reasons.append(f"{unit_id}:practice_feedback_evidence_unresolved")
                 root = f"courses/{course_id}/units/{unit_id}"
                 validation = _artifact_json(
                     connection,
@@ -254,6 +321,8 @@ def evaluate_archive(
                     "approved_document_count": sum(
                         row["review_status"] == "approved" for row in documents
                     ),
+                    "practice_feedback_contract": feedback_counts,
+                    "warnings": warnings,
                     "reasons": blocking_reasons,
                     "waived_reasons": waived_reasons,
                 }
@@ -273,6 +342,17 @@ def evaluate_archive(
         "eligible_document_count": sum(item["unit_count"] for item in eligible),
         "excluded_build_count": len(excluded),
         "excluded_document_count": sum(item["unit_count"] for item in excluded),
+        "practice_feedback_contract": {
+            key: sum(
+                item["practice_feedback_contract"][key] for item in build_results
+            )
+            for key in (
+                "course_grounded",
+                "general_only",
+                "unresolved",
+                "declaration_mismatch",
+            )
+        },
         "builds": build_results,
     }
 
@@ -371,9 +451,11 @@ def main() -> int:
         "approved_at": datetime.now(UTC).isoformat(),
         "approved_by": args.approved_by,
         "approval_scope": (
-            "Only complete portable-v0.2.1 builds with exact requested/completed/"
+            "Only complete portable-v0.2.1 compatibility or portable-v0.2.2 builds "
+            "with exact requested/completed/"
             "validated/audited/document identity, passing unit validators, passing "
-            "independent registry audit coverage, and zero archive integrity issues. "
+            "independent registry audit coverage, zero archive integrity issues, and "
+            "for v0.2.2 an exact online practice-feedback evidence contract. "
             "Explicit owner-approved reviewed-legacy courses retain their recorded "
             "legacy validation contract and waived-gate list."
         ),

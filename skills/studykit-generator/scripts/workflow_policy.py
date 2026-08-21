@@ -13,7 +13,7 @@ from typing import Any, Iterable
 QUALITY_MODES = ("fast", "standard", "strict")
 DELIVERY_POLICIES = ("draft", "publish")
 PAGE_SELECTOR_VERSION = "review-pages-v1"
-PIPELINE_VERSION = "0.2.1"
+PIPELINE_VERSION = "0.2.2"
 MAX_UNIT_WORKERS_PER_COORDINATOR = 4
 BUILTIN_DECISION = Path(__file__).resolve().parents[1] / "references/default-mode-decision.json"
 STAGE_ORDER = (

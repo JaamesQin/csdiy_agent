@@ -79,6 +79,8 @@ StudyKit 必须通过 `schemas/studykit.schema.json`，并包含：
 - `limitations`。
 
 StudyKit 的 `course_id` 和 `course_version` 在用户未知资料模式可以为 `null`，但必须明确身份未知和来源范围。
+新生成的 portable 文档使用 `studykit_version: 0.2.2`；已审核 v0.2.1/legacy 文档只做兼容读取，
+不得原地补字段后冒充新构建。
 
 ## 5. 内容设计标准
 
@@ -123,7 +125,8 @@ StudyKit 的 `course_id` 和 `course_version` 在用户未知资料模式可以�
 - `deliverable`；
 - `expected_evidence`；
 - `evaluation.full_credit` 和 `evaluation.partial_credit`；
-- `source_pages`。
+- `feedback_mode`；
+- 页级生成器使用真实 `source_pages`，portable 生成器使用可精确解析的 `citations`。
 
 `expected_evidence` 和 `evaluation` 是内部审核字段，不得出现在默认学习者渲染版。
 
@@ -133,6 +136,15 @@ StudyKit 的 `course_id` 和 `course_version` 在用户未知资料模式可以�
 如果是迁移题，题干必须同时给出新的完整情境、操作/推理步骤和可核验结果。
 每道题都必须能回溯到 `EvidencePlan` 的 requirement/concept/opportunity，且
 `hint`、`expected_evidence`、`evaluation` 与题干检查同一项学习成果。
+
+`feedback_mode` 只有两种：
+
+- `course_grounded`：至少一个引用，且每个引用可按 `chunk_id` 或
+  `source_id + anchor` 精确解析到同 course/version/unit 的可见公共 SourceChunk；
+- `general_only`：引用必须为空，可以发布但学习者必须看到未按课程材料核验的警告。
+
+同等题型和请求下应优先提供 `course_grounded`。声明冲突、隐藏文本证据或不可解析引用阻止
+生成验证和 archive 发布；不能通过删除来源校验把题目伪装成可核验课程练习。
 
 ### 6.2 题型要求
 
@@ -151,14 +163,17 @@ StudyKit 的 `course_id` 和 `course_version` 在用户未知资料模式可以�
 
 - 来源事实、题干和答案依据一致；
 - 术语、顺序、单位、表示和其他课程控制得到遵守；
-- `source_pages` 支持题目所声称的概念；
+- `source_pages` 或精确 citation anchors 支持题目所声称的概念；
 - 教学迁移不得写成来源原文事实。
 
 ## 7. 引用和证据标准
 
-- v0.1 默认使用 PDF 一基页码锚点；不使用时间戳。
+- 页级 v0.1 文档使用 PDF 一基页码锚点；portable v0.2.2 同时支持 page、heading、slide、
+  paragraph、sheet 和 image，不使用时间戳。
 - 每个核心概念至少有一个引用。
-- 每道 practice 的 `source_pages` 必须与默认 StudyKit 来源相符并能解析到实际 SourceChunk。
+- `course_grounded` practice 的全部引用必须与 StudyKit 身份相符并能精确解析到实际 SourceChunk，
+  且每题最多 16 个引用；
+  `general_only` 不得携带引用。
 - 全局 `citations.pages` 的每一页都必须存在且不是空页。
 - 引用只能证明对应范围内的主张；代码 API 迁移题可以引用相关概念页，但必须标为教学迁移或说明不是讲义原题。
 - 引用检查通过不等于公式已经视觉正确；核心 Demo 仍需视觉页码和公式审核。
@@ -174,7 +189,12 @@ aggregate_accuracy: disabled
 aggregate_mastery: disabled
 ```
 
-反馈可以指出本次回答正确的部分、最重要的错误/遗漏、简短修正方向和相关页码。反馈不得保存累计答题记录、总正确率、总分、通过题数或跨题掌握度推断。
+课程反馈可以指出本次回答正确的部分、最重要的错误/遗漏、简短修正方向，并只引用经过
+scope、身份、approved 状态和内容哈希校验的 page/heading/chunk ID。任一课程引用失效时，
+整个课程证据分区不得进入模型；可以改用题面和通用知识反馈，但必须显示
+“通用反馈（未按当前课程材料核验）”和“不代表当前课程的标准答案或评分”声明。
+反馈不得接收或输出内部 `expected_evidence`、evaluation/rubric，不得保存累计答题记录、
+总正确率、总分、通过题数或跨题掌握度推断；每次请求最多一次能力模型调用。
 
 ## 9. 学习者渲染标准
 

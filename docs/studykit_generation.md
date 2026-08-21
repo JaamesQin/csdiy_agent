@@ -30,6 +30,12 @@ Prompt 仍要求生成 5–8 道练习，以控制默认工作量；Schema/valid
 
 生成器以 CS 课程为主要使用场景：资料支持时可以采用代码阅读、调试、实现、算法追踪、系统行为或形式化推理。但这些是条件性能力，不是所有课程的固定模板；非 CS 资料不得产生编程前置、API、代码题或计算机系统设定。
 
+在线反馈契约自 portable v0.2.2 起进入生成指纹。页级核心生成器会在确定性组装时将已有
+真实 `source_pages` 转换为 `source_id + page` citations 并标记为 `course_grounded`；`studykit-generator` skill 则要求作者
+显式选择 `course_grounded`（全部 chunk/anchor 引用精确可解析）或 `general_only`（引用为空）。
+validator 会报告 grounded/general-only/unresolved/declaration mismatch，后两类阻止发布。
+旧 v0.2.1/legacy 产物可读取但不能通过 resume 伪升级，任何修复都必须创建新指纹 child build。
+
 Prompt 版本为 `studykit-staged-v0.5-007`，流水线版本为 `studykit-pipeline-v0.6-010`。System Prompt、初始阶段 Prompt 和 repair Prompt 的真正末尾都要求思考结束后必须在 `message.content` 写入非空、完整的 JSON object，并给出该阶段必须使用的首个顶层键。Audit 只接收模型生成的学习者语义内容；manifest 提供的 URL、路径、哈希和代码生成的 review/feedback metadata 由确定性管线校验。跨阶段缺陷必须拆成独立 issue；一次 Audit 后按 Evidence→Content→Practice 各最多修复一次，不执行第二次 Audit。stage-internal limitation 不要求复制到最终学习者材料。旧输出目录中的 Markdown 可继续查看，但旧 `run.json` 和阶段 JSON 不能通过 `--resume` 或 `--from-stage` 复用，必须使用新目录开始生成。
 
 ## 运行
