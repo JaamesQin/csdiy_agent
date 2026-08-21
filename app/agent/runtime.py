@@ -5,7 +5,6 @@ from __future__ import annotations
 import hashlib
 import os
 from functools import lru_cache
-from pathlib import Path
 
 from fastapi import Depends
 
@@ -29,6 +28,7 @@ from app.config import (
     CONVERSATION_TTL_DAYS,
     PRACTICE_REWRITE_ENABLED,
     ROBUST_INPUT_ENABLED,
+    SOURCE_CHUNK_INDEX_PATH,
 )
 
 
@@ -56,12 +56,7 @@ def _build_coursepilot_agent(profiles: ProfileService) -> CoursePilotAgent:
             store,
             model=model,
             catalog=catalog,
-            source_chunks=SQLiteSourceChunkStore(
-                Path(__file__).resolve().parents[2]
-                / "data"
-                / "archive"
-                / "source_chunks.sqlite3"
-            ),
+            source_chunks=SQLiteSourceChunkStore(SOURCE_CHUNK_INDEX_PATH),
             practice_rewrite_enabled=PRACTICE_REWRITE_ENABLED,
         ),
         general_assistance=GeneralAssistanceService(

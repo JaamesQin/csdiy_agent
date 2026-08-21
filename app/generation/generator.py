@@ -1750,7 +1750,7 @@ class StudyKitGenerator:
         )
         limitations = limitations[:10]
         candidate = {
-            "studykit_version": "0.1",
+            "studykit_version": "0.2.2",
             "status": "draft",
             "course_id": request.course_id,
             "course_version": request.course_version,
@@ -1781,7 +1781,10 @@ class StudyKitGenerator:
             "glossary": content["glossary"],
             "common_misconceptions": content["common_misconceptions"],
             "learning_sequence": practice["learning_sequence"],
-            "practice": practice["practice"],
+            "practice": [
+                _practice_with_feedback_contract(item, request.included_sources)
+                for item in practice["practice"]
+            ],
             "practice_feedback_policy": _feedback_policy(),
             "citations": _assemble_citations(plan, evidence),
             "review": {
@@ -3192,6 +3195,30 @@ def _feedback_policy() -> dict[str, Any]:
         "feedback_should_not": [
             "保存或展示累计答题记录。",
             "统计总正确率或推断整体掌握度。",
+        ],
+    }
+
+
+def _practice_with_feedback_contract(
+    practice: dict[str, Any], included_sources: tuple[dict[str, Any], ...]
+) -> dict[str, Any]:
+    """Attach exact online page references to the current page-only generator output."""
+
+    source_id = str(included_sources[0].get("source_id") or "")
+    pages = [
+        page
+        for page in practice.get("source_pages", [])
+        if isinstance(page, int) and page > 0
+    ]
+    return {
+        **practice,
+        "feedback_mode": "course_grounded",
+        "citations": [
+            {
+                "source_id": source_id,
+                "anchor": {"type": "page", "value": page},
+            }
+            for page in pages
         ],
     }
 

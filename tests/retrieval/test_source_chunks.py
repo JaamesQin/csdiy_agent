@@ -8,6 +8,7 @@ from app.agent.contracts import StudyKitCourseIdentity
 from app.retrieval.source_chunks import (
     AccessScope,
     SourceChunk,
+    SourceChunkReference,
     SourceChunkRetriever,
     SQLiteSourceChunkStore,
     initialize_source_chunk_index,
@@ -15,7 +16,15 @@ from app.retrieval.source_chunks import (
 from tests.agent.helpers import FakeStructuredModel
 
 
-def _chunk(chunk_id: str, text: str, *, page: int, course: str = "course-a") -> SourceChunk:
+def _chunk(
+    chunk_id: str,
+    text: str,
+    *,
+    page: int | None,
+    course: str = "course-a",
+    anchor_type: str | None = None,
+    anchor_value: str | None = None,
+) -> SourceChunk:
     return SourceChunk(
         chunk_id=chunk_id,
         course_id=course,
@@ -23,6 +32,9 @@ def _chunk(chunk_id: str, text: str, *, page: int, course: str = "course-a") -> 
         unit_id="lecture-01",
         source_id="slides",
         page=page,
+        anchor_type=anchor_type,
+        anchor_value=anchor_value,
+        heading=anchor_value if anchor_type == "heading" else None,
         text=text,
         sha256=hashlib.sha256(text.encode()).hexdigest(),
         build_id="approved-build",
@@ -87,3 +99,178 @@ async def test_retriever_rewrites_and_reranks_only_filtered_candidates(tmp_path)
 
     assert [hit.chunk.chunk_id for hit in hits] == ["a-2", "a-1"]
     assert "b-1" not in model.calls[1]["user_prompt"]
+
+
+def test_exact_resolution_supports_chunk_id_and_heading_with_identity_filter(tmp_path) -> None:
+    path = tmp_path / "chunks.sqlite3"
+    initialize_source_chunk_index(
+        path,
+        [
+            _chunk("a-page", "page evidence", page=4),
+            _chunk(
+                "a-heading",
+                "heading evidence",
+                page=None,
+                anchor_type="heading",
+                anchor_value="## Evidence",
+            ),
+            _chunk("b-page", "other course", page=4, course="course-b"),
+        ],
+    )
+    store = SQLiteSourceChunkStore(path)
+    identity = StudyKitCourseIdentity(
+        course_id="course-a", course_version="v1", unit_id="lecture-01"
+    )
+
+    resolved = store.resolve_exact(
+        [
+            SourceChunkReference(chunk_id="a-page"),
+            SourceChunkReference(
+                source_id="slides",
+                anchor_type="heading",
+                anchor_value="## Evidence",
+            ),
+            SourceChunkReference(chunk_id="b-page"),
+        ],
+        AccessScope(),
+        identity,
+    )
+
+    assert [chunk.chunk_id for chunk in resolved] == ["a-page", "a-heading"]
+
+
+def test_chunk_ids_are_unique_within_course_unit_not_globally(tmp_path) -> None:
+    path = tmp_path / "chunks.sqlite3"
+    initialize_source_chunk_index(
+        path,
+        [
+            _chunk("shared-id", "course a", page=4, course="course-a"),
+            _chunk("shared-id", "course b", page=4, course="course-b"),
+        ],
+    )
+
+    resolved = SQLiteSourceChunkStore(path).resolve_exact(
+        [SourceChunkReference(chunk_id="shared-id")],
+        AccessScope(),
+        StudyKitCourseIdentity(
+            course_id="course-b", course_version="v1", unit_id="lecture-01"
+        ),
+    )
+
+    assert [chunk.text for chunk in resolved] == ["course b"]
+
+
+def test_colliding_local_chunk_id_requires_exact_anchor(tmp_path) -> None:
+    path = tmp_path / "chunks.sqlite3"
+    initialize_source_chunk_index(
+        path,
+        [
+            _chunk(
+                "truncated-id",
+                "LRU evidence",
+                page=None,
+                anchor_type="heading",
+                anchor_value="## LRU",
+            ),
+            _chunk(
+                "truncated-id",
+                "MRU evidence",
+                page=None,
+                anchor_type="heading",
+                anchor_value="## MRU",
+            ),
+        ],
+    )
+    store = SQLiteSourceChunkStore(path)
+    identity = StudyKitCourseIdentity(
+        course_id="course-a", course_version="v1", unit_id="lecture-01"
+    )
+
+    assert store.resolve_exact(
+        [SourceChunkReference(chunk_id="truncated-id")], AccessScope(), identity
+    ) == []
+    resolved = store.resolve_exact(
+        [
+            SourceChunkReference(
+                chunk_id="truncated-id",
+                source_id="slides",
+                anchor_type="heading",
+                anchor_value="## MRU",
+            )
+        ],
+        AccessScope(),
+        identity,
+    )
+
+    assert [chunk.text for chunk in resolved] == ["MRU evidence"]
+
+
+def test_exact_resolution_rejects_mismatched_anchor_hash_and_review(tmp_path) -> None:
+    import sqlite3
+
+    path = tmp_path / "chunks.sqlite3"
+    initialize_source_chunk_index(path, [_chunk("a-1", "trusted", page=4)])
+    identity = StudyKitCourseIdentity(
+        course_id="course-a", course_version="v1", unit_id="lecture-01"
+    )
+    store = SQLiteSourceChunkStore(path)
+
+    mismatch = store.resolve_exact(
+        [
+            SourceChunkReference(
+                chunk_id="a-1",
+                source_id="slides",
+                anchor_type="page",
+                anchor_value="5",
+            )
+        ],
+        AccessScope(),
+        identity,
+    )
+    assert mismatch == []
+
+    with sqlite3.connect(path) as connection:
+        connection.execute("UPDATE source_chunks SET text='tampered' WHERE chunk_id='a-1'")
+    assert store.resolve_exact(
+        [SourceChunkReference(chunk_id="a-1")], AccessScope(), identity
+    ) == []
+
+    with sqlite3.connect(path) as connection:
+        connection.execute("PRAGMA ignore_check_constraints = ON")
+        connection.execute(
+            "UPDATE source_chunks SET review_status='approved', scope='private' "
+            "WHERE chunk_id='a-1'"
+        )
+    assert store.resolve_exact(
+        [SourceChunkReference(chunk_id="a-1")], AccessScope(), identity
+    ) == []
+
+    with sqlite3.connect(path) as connection:
+        connection.execute("PRAGMA ignore_check_constraints = ON")
+        connection.execute(
+            "UPDATE source_chunks SET scope='public', build_status='failed' "
+            "WHERE chunk_id='a-1'"
+        )
+    assert store.resolve_exact(
+        [SourceChunkReference(chunk_id="a-1")], AccessScope(), identity
+    ) == []
+
+    with sqlite3.connect(path) as connection:
+        connection.execute("PRAGMA ignore_check_constraints = ON")
+        connection.execute(
+            "UPDATE source_chunks SET build_status='succeeded', index_allowed=0 "
+            "WHERE chunk_id='a-1'"
+        )
+    assert store.resolve_exact(
+        [SourceChunkReference(chunk_id="a-1")], AccessScope(), identity
+    ) == []
+
+    with sqlite3.connect(path) as connection:
+        connection.execute("PRAGMA ignore_check_constraints = ON")
+        connection.execute(
+            "UPDATE source_chunks SET text='trusted', review_status='validated_draft' "
+            "WHERE chunk_id='a-1'"
+        )
+    assert store.resolve_exact(
+        [SourceChunkReference(chunk_id="a-1")], AccessScope(), identity
+    ) == []

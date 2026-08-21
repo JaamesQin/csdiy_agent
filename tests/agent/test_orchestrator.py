@@ -297,7 +297,8 @@ async def test_agent_practice_feedback_wins_over_code_fence(tmp_path) -> None:
 
     reply = await agent.handle(messages=messages, user_id=None)
 
-    assert "本题反馈暂时降级" in reply.answer
+    assert "通用反馈（未按当前课程材料核验）" in reply.answer
+    assert "不代表当前课程的标准答案或评分" in reply.answer
     assert "ran_code=false" not in reply.answer
 
 

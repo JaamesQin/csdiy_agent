@@ -27,6 +27,8 @@ from app.protocol.schemas import ChatMessage
 from app.retrieval.practice import render_practice_prompt
 from app.retrieval.source_chunks import (
     AccessScope,
+    SourceChunk,
+    SourceChunkReference,
     SourceChunkRetriever,
     SourceChunkStore,
 )
@@ -62,6 +64,12 @@ _QUERY_STOPWORDS = {
     "请问",
     "说了",
 }
+_MAX_PRACTICE_REFERENCES = 16
+_MAX_PRACTICE_EVIDENCE_CHARS = 16_000
+_GENERAL_FEEDBACK_TITLE = "### 通用反馈（未按当前课程材料核验）"
+_GENERAL_FEEDBACK_NOTICE = (
+    "以下评价仅基于题面和通用知识，不代表当前课程的标准答案或评分。"
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -419,8 +427,17 @@ class StudyKitLookupService:
                         f"本讲没有尚未展示的“{requested}”练习。可以指定已有 practice ID 重新查看。"
                     )
                 return self._reply("本讲练习已在当前对话中展示完毕；请指定 practice ID 重新查看。")
-            selected = candidates[0]
+            selected = sorted(
+                candidates,
+                key=lambda item: (
+                    self._effective_feedback_mode(item, course_context, document)
+                    != "course_grounded",
+                ),
+            )[0]
         practice_id = str(selected["id"])
+        feedback_mode = self._effective_feedback_mode(
+            selected, course_context, document
+        )
         original = render_practice_prompt(document, practice_id, include_hint=False)
         usage = normalized_usage()
         rendered = original
@@ -444,7 +461,13 @@ class StudyKitLookupService:
                     "\n\n题目精确化暂时不可用，以下保留已审核原题，不改变考查目标。"
                 )
         answer = (
-            f"{rendered}{fallback_notice}\n\n"
+            f"{rendered}{fallback_notice}"
+            + (
+                "\n\n> 本题当前没有可核查的课程材料证据；作答后将提供明确标注的通用反馈。"
+                if feedback_mode == "general_only"
+                else ""
+            )
+            + "\n\n"
             "作答后直接发送你的当前答案即可；如果客户端没有回传对话上下文，也可以附上 "
             f"`practice ID: {practice_id}`。"
             "反馈只针对这一次回答，不累计得分或掌握度。"
@@ -488,12 +511,8 @@ class StudyKitLookupService:
             return self._reply(
                 "我不能提供完整标准答案或可直接提交的作业答案。你可以贴出当前尝试，"
                 "我会指出一个关键遗漏，"
-                "并给出下一层提示和相关讲义页码。"
+                "并给出下一层提示和相关依据。"
             )
-        source_pages = sorted(_pages_for_item(problem))
-        if not source_pages:
-            return self._reply("这道练习没有可核查的来源页码，因此暂不进行语义反馈。")
-
         usage = normalized_usage()
         presented_question = self._recover_presented_practice(
             messages, practice_id, presentation_digest
@@ -503,13 +522,28 @@ class StudyKitLookupService:
                 "无法从当前消息历史恢复并校验你实际看到的变式题目。请重新附上完整题面和"
                 f" `practice ID: {practice_id}`，我不会根据原始题目猜测。"
             )
+        evidence = self._resolve_practice_evidence(
+            problem, course_context, document
+        )
+        grounded = bool(evidence)
+        prompt_evidence = _bounded_practice_evidence(evidence)
+        allowed_citation_ids = {
+            str(item["citation_id"]) for item in prompt_evidence
+        }
         if self.model is not None:
             try:
                 response = await self.model.generate_json(
                     system_prompt=(
                         "你是 CoursePilot 练习反馈器。只评价 current_answer，不累计分数或掌握度。"
                         "指出已经正确的点、一个最重要的错误或遗漏、下一层提示；不要给完整标准答案。"
-                        "source_pages 只能选 allowed_source_pages。只输出 JSON object。"
+                        + (
+                            "课程材料结论只能使用 evidence；provenance 必须是 course_material，"
+                            "citation_ids 只能选择 allowed_citation_ids 且不能为空。"
+                            if grounded
+                            else "当前没有可核查的课程证据；只能按题面和通用知识评价，"
+                            "provenance 必须是 general_knowledge，citation_ids 必须为空。"
+                        )
+                        + "只输出 JSON object。"
                     ),
                     user_prompt=json.dumps(
                         {
@@ -517,15 +551,26 @@ class StudyKitLookupService:
                                 "id": practice_id,
                                 "question": presented_question or problem.get("question"),
                                 "deliverable": problem.get("deliverable"),
-                                "original_hint": problem.get("hint"),
                             },
                             "current_answer": answer_text[:6000],
-                            "allowed_source_pages": source_pages,
+                            **(
+                                {
+                                    "evidence": prompt_evidence,
+                                    "allowed_citation_ids": sorted(allowed_citation_ids),
+                                }
+                                if grounded
+                                else {}
+                            ),
                             "output_contract": {
+                                "provenance": (
+                                    "course_material" if grounded else "general_knowledge"
+                                ),
                                 "correct_points": ["at most four points from this answer"],
                                 "correction": "one important error or omission, or null",
                                 "next_hint": "a hint, not the full answer",
-                                "source_pages": ["allowed integer pages only"],
+                                "citation_ids": (
+                                    ["one or more allowed IDs"] if grounded else []
+                                ),
                             },
                         },
                         ensure_ascii=False,
@@ -536,21 +581,68 @@ class StudyKitLookupService:
                 )
                 usage = normalized_usage(response.usage)
                 draft = PracticeFeedbackDraft.model_validate(_unwrap(response.output))
-                if (
-                    not draft.correct_points
-                    and not draft.correction
-                    or any(page not in source_pages for page in draft.source_pages)
+                if not _valid_practice_feedback_draft(
+                    draft,
+                    grounded=grounded,
+                    allowed_citation_ids=allowed_citation_ids,
                 ):
                     raise ValueError("practice feedback violated its contract")
-                rendered = self._render_feedback(draft)
+                rendered = self._render_feedback(draft, evidence)
                 if _HIDDEN_OUTPUT.search(rendered):
                     raise ValueError("practice feedback exposed hidden controls")
                 return LearningReply(answer=rendered, usage=usage)
             except (ModelError, ValidationError, ValueError):
                 pass
         return LearningReply(
-            answer=self._render_feedback_fallback(problem, source_pages),
+            answer=self._render_feedback_fallback(problem, evidence),
             usage=usage,
+        )
+
+    def _resolve_practice_evidence(
+        self,
+        problem: dict[str, Any],
+        course_context: CourseContext | None,
+        document: dict[str, Any],
+    ) -> list[SourceChunk]:
+        if problem.get("feedback_mode") == "general_only":
+            return []
+        references = _source_references(
+            problem,
+            default_source_id=_single_included_source_id(document),
+        )
+        if (
+            not references
+            or len(references) > _MAX_PRACTICE_REFERENCES
+            or self.source_chunks is None
+            or course_context is None
+            or course_context.unit_id is None
+        ):
+            return []
+        resolver = getattr(self.source_chunks, "resolve_exact", None)
+        if not callable(resolver):
+            return []
+        resolved = resolver(
+            references,
+            AccessScope(),
+            StudyKitCourseIdentity.from_context(course_context),
+            _MAX_PRACTICE_REFERENCES,
+        )
+        # Course evidence is one provenance partition. A missing, ambiguous,
+        # unauthorized, or hash-invalid citation drops the whole partition.
+        if len(resolved) != len(references):
+            return []
+        return resolved
+
+    def _effective_feedback_mode(
+        self,
+        problem: dict[str, Any],
+        course_context: CourseContext | None,
+        document: dict[str, Any],
+    ) -> str:
+        return (
+            "course_grounded"
+            if self._resolve_practice_evidence(problem, course_context, document)
+            else "general_only"
         )
 
     async def _rewrite_practice(
@@ -1118,8 +1210,14 @@ class StudyKitLookupService:
         return re.sub(r"\s+", " ", cleaned).strip()
 
     @staticmethod
-    def _render_feedback(draft: PracticeFeedbackDraft) -> str:
-        lines = ["### 本题点评"]
+    def _render_feedback(
+        draft: PracticeFeedbackDraft,
+        evidence: list[SourceChunk],
+    ) -> str:
+        grounded = draft.provenance == "course_material"
+        lines = ["### 本题点评" if grounded else _GENERAL_FEEDBACK_TITLE]
+        if not grounded:
+            lines.extend(["", _GENERAL_FEEDBACK_NOTICE])
         if draft.correct_points:
             lines.extend(["", "**这次回答中正确的部分**"])
             lines.extend(f"- {item}" for item in draft.correct_points)
@@ -1129,8 +1227,15 @@ class StudyKitLookupService:
             [
                 "",
                 f"**下一层提示**：{draft.next_hint}",
-                "",
-                f"**讲义依据**：第 {_format_pages(tuple(sorted(set(draft.source_pages))))} 页",
+            ]
+        )
+        if grounded:
+            allowed = {chunk.chunk_id: chunk for chunk in evidence}
+            cited = [allowed[item] for item in dict.fromkeys(draft.citation_ids)]
+            lines.extend(["", "**课程材料依据**"])
+            lines.extend(f"- {_source_chunk_label(chunk)}" for chunk in cited)
+        lines.extend(
+            [
                 "",
                 "本反馈只针对当前答案，不保存答题记录，也不统计分数或整体掌握度。",
             ]
@@ -1138,20 +1243,37 @@ class StudyKitLookupService:
         return "\n".join(lines)
 
     @staticmethod
-    def _render_feedback_fallback(problem: dict[str, Any], source_pages: list[int]) -> str:
-        return "\n".join(
-            [
+    def _render_feedback_fallback(
+        problem: dict[str, Any], evidence: list[SourceChunk]
+    ) -> str:
+        if evidence:
+            lines = [
                 "### 本题反馈暂时降级",
                 "",
                 "当前未配置或未成功调用语义反馈模型，因此我不会对这次答案做不可靠判分。",
                 "",
                 f"**原题提示**：{problem.get('hint')}",
-                f"**相关讲义页码**：第 {_format_pages(tuple(source_pages))} 页",
+                "**已核查课程材料**：",
+                *[f"- {_source_chunk_label(chunk)}" for chunk in evidence],
+            ]
+        else:
+            lines = [
+                _GENERAL_FEEDBACK_TITLE,
+                "",
+                _GENERAL_FEEDBACK_NOTICE,
+                "",
+                "当前未配置或未成功调用语义反馈模型，因此暂时只能返回原题提示。",
+                "",
+                f"**原题提示**：{problem.get('hint')}",
+            ]
+        lines.extend(
+            [
                 f"**请补充**：{problem.get('deliverable')}",
                 "",
                 "补充后请继续携带同一个 practice ID；反馈仍只针对当前回答。",
             ]
         )
+        return "\n".join(lines)
 
     @staticmethod
     def _reply(answer: str) -> LearningReply:
@@ -1276,6 +1398,137 @@ def _normalized_citations(item: dict[str, Any]) -> list[dict[str, Any]]:
             seen.add(identity)
             result.append(citation)
     return result
+
+
+def _source_references(
+    item: dict[str, Any], *, default_source_id: str | None = None
+) -> list[SourceChunkReference]:
+    references: list[SourceChunkReference] = []
+    for field in ("citations", "page_citations", "source_anchors", "anchors"):
+        values = item.get(field, [])
+        if not isinstance(values, list):
+            continue
+        for value in values:
+            if not isinstance(value, dict):
+                continue
+            chunk_id = value.get("chunk_id")
+            source_id = value.get("source_id")
+            if not source_id and not chunk_id:
+                source_id = default_source_id
+            anchor_type: str | None = None
+            anchor_value: str | None = None
+            anchor = value.get("anchor")
+            if isinstance(anchor, dict):
+                raw_type = anchor.get("type")
+                raw_value = anchor.get("value")
+                if isinstance(raw_type, str) and isinstance(raw_value, (str, int)):
+                    anchor_type = raw_type
+                    anchor_value = str(raw_value)
+            if anchor_type is None and isinstance(value.get("page"), int):
+                anchor_type = "page"
+                anchor_value = str(value["page"])
+            try:
+                reference = SourceChunkReference(
+                    chunk_id=chunk_id if isinstance(chunk_id, str) and chunk_id else None,
+                    source_id=source_id if isinstance(source_id, str) and source_id else None,
+                    anchor_type=anchor_type,
+                    anchor_value=anchor_value,
+                )
+            except ValidationError:
+                continue
+            references.append(reference)
+    source_pages = item.get("source_pages")
+    if default_source_id is not None and isinstance(source_pages, list):
+        for page in source_pages:
+            if not isinstance(page, int) or page < 1:
+                continue
+            references.append(
+                SourceChunkReference(
+                    source_id=default_source_id,
+                    anchor_type="page",
+                    anchor_value=str(page),
+                )
+            )
+    seen: set[tuple[str | None, str | None, str | None, str | None]] = set()
+    result: list[SourceChunkReference] = []
+    for reference in references:
+        identity = (
+            reference.chunk_id,
+            reference.source_id,
+            reference.anchor_type,
+            reference.anchor_value,
+        )
+        if identity not in seen:
+            seen.add(identity)
+            result.append(reference)
+    return result
+
+
+def _single_included_source_id(document: dict[str, Any]) -> str | None:
+    scope = document.get("scope")
+    sources = scope.get("included_sources") if isinstance(scope, dict) else None
+    if not isinstance(sources, list):
+        return None
+    source_ids = {
+        str(source["source_id"])
+        for source in sources
+        if isinstance(source, dict) and source.get("source_id")
+    }
+    return next(iter(source_ids)) if len(source_ids) == 1 else None
+
+
+def _bounded_practice_evidence(chunks: list[SourceChunk]) -> list[dict[str, Any]]:
+    result: list[dict[str, Any]] = []
+    remaining = _MAX_PRACTICE_EVIDENCE_CHARS
+    for chunk in chunks[:_MAX_PRACTICE_REFERENCES]:
+        if remaining <= 0:
+            break
+        excerpt = chunk.text[:remaining]
+        if not excerpt:
+            continue
+        result.append(
+            {
+                "citation_id": chunk.chunk_id,
+                "source_id": chunk.source_id,
+                "anchor": {
+                    "type": chunk.anchor_type,
+                    "value": chunk.anchor_value,
+                },
+                "heading": chunk.heading,
+                "text": excerpt,
+            }
+        )
+        remaining -= len(excerpt)
+    return result
+
+
+def _valid_practice_feedback_draft(
+    draft: PracticeFeedbackDraft,
+    *,
+    grounded: bool,
+    allowed_citation_ids: set[str],
+) -> bool:
+    if not draft.correct_points and not draft.correction:
+        return False
+    if grounded:
+        return (
+            draft.provenance == "course_material"
+            and bool(draft.citation_ids)
+            and all(item in allowed_citation_ids for item in draft.citation_ids)
+        )
+    return draft.provenance == "general_knowledge" and not draft.citation_ids
+
+
+def _source_chunk_label(chunk: SourceChunk) -> str:
+    if chunk.anchor_type == "page" and chunk.page is not None:
+        return f"`{chunk.source_id}`，第 {chunk.page} 页"
+    if chunk.anchor_type == "heading":
+        return f"`{chunk.source_id}`，标题“{chunk.heading or chunk.anchor_value}”"
+    if chunk.anchor_type and chunk.anchor_value:
+        return f"`{chunk.source_id}`，{chunk.anchor_type} `{chunk.anchor_value}`"
+    if chunk.page is not None:
+        return f"`{chunk.source_id}`，第 {chunk.page} 页"
+    return f"`{chunk.source_id}`，chunk `{chunk.chunk_id}`"
 
 
 def _pages_for_item(item: dict[str, Any]) -> set[int]:

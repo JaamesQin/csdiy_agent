@@ -1444,13 +1444,28 @@ async def test_warning_repair_failure_rolls_back_without_blocking(
         ]
     )
 
+    request = generation_request()
     result = await StudyKitGenerator(model).generate(
-        generation_request(), source_chunks(), output_dir=tmp_path
+        request, source_chunks(), output_dir=tmp_path
     )
 
     assert result.succeeded
     assert result.studykit is not None
-    assert result.studykit["practice"] == practice_flow()["practice"]
+    expected_practice = [
+        {
+            **item,
+            "feedback_mode": "course_grounded",
+            "citations": [
+                {
+                    "source_id": request.included_sources[0]["source_id"],
+                    "anchor": {"type": "page", "value": page},
+                }
+                for page in item["source_pages"]
+            ],
+        }
+        for item in practice_flow()["practice"]
+    ]
+    assert result.studykit["practice"] == expected_practice
     assert (
         result.studykit["review"]["generator_review_status"]
         == "audit_warnings_unresolved"

@@ -17,7 +17,7 @@ from tests.helpers import parse_sse
         (
             "点评 MIT 6.7960 第 2 讲的 practice-concept-01。"
             "我的答案是反向传播计算梯度，梯度下降更新参数。",
-            "不会对这次答案做不可靠判分",
+            "通用反馈（未按当前课程材料核验）",
         ),
     ],
 )

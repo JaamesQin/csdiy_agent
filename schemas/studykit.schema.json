@@ -24,7 +24,7 @@
     "limitations"
   ],
   "properties": {
-    "studykit_version": {"type": "string", "minLength": 1},
+    "studykit_version": {"enum": ["0.1", "0.2.2"]},
     "status": {"enum": ["draft", "reviewed", "published"]},
     "course_id": {"type": ["string", "null"]},
     "course_version": {"type": ["string", "null"]},
@@ -197,6 +197,7 @@
             "minItems": 1,
             "items": {"type": "integer", "minimum": 1}
           },
+          "feedback_mode": {"const": "course_grounded"},
           "requirement_ids": {
             "type": "array",
             "items": {"type": "string", "minLength": 1},
@@ -243,6 +244,19 @@
     },
     "limitations": {"type": "array", "items": {"type": "string"}}
   },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"studykit_version": {"const": "0.2.2"}},
+        "required": ["studykit_version"]
+      },
+      "then": {
+        "properties": {
+          "practice": {"items": {"required": ["feedback_mode"]}}
+        }
+      }
+    }
+  ],
   "$defs": {
     "pageCitation": {
       "type": "object",

@@ -1,5 +1,5 @@
 manifest_version: "0.1"
-pipeline_version: "0.2.1"
+pipeline_version: "0.2.2"
 quality_mode: ""
 page_selector_version: review-pages-v1
 delivery_policy: draft

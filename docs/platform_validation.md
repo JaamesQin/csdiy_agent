@@ -1,6 +1,6 @@
 # 清小搭平台与本地协议验证记录
 
-> 更新日期：2026-08-20
+> 更新日期：2026-08-21
 > 当前结论：本地协议验证通过，清小搭生产平台验证待执行
 
 ## 1. 验证范围
@@ -235,8 +235,8 @@ Python/Triton AST、解析器失败降级和未标语言边界。
   有证据的确定性降级；
 - 概念解释只使用带页码的已审核概念；练习首次不泄漏 hint/rubric，并在当前 messages
   中避免重复；
-- 练习反馈要求 practice ID 和当前答案，只允许白名单页码，不保存答案、不累计分数或
-  掌握度；模型不可用或返回非法页码时不做关键词粗评；
+- 练习反馈要求 practice ID 和当前答案；本节当时只验证页码白名单，现已由第 20 节扩展为
+  精确 page/heading/chunk 白名单。不保存答案、不累计分数或掌握度；模型不可用或返回非法引用时不做关键词粗评；
 - 六项能力的真实 `/v1/chat/completions` 非流式 envelope 和课程概念 SSE
   role/content/单 stop/`[DONE]` 顺序保持兼容。
 
@@ -484,3 +484,31 @@ SSE 富文本与主动停止、连续状态回传与清空、代码复制、远�
 - 普通最小完整示例允许生成；课程作业完整解答在空代码分支之前拒绝。所有预期输出均标注“未运行”，
   每条路径继续返回 `ran_code=false`。
 - 最近助手示例只有在消息历史仍携带原代码且用户明确指代时才被精确提取；服务端连续状态不保存正文。
+
+## 20. 2026-08-21 Exercise 精确证据与通用反馈降级
+
+- `SourceChunkStore.resolve_exact` 不使用 FTS/BM25；它在 SQL 中先过滤 public scope、
+  course/version/unit、succeeded build、approved review 和 index eligibility，再按
+  `chunk_id` 与引用中全部已提供的 `source_id + anchor` 条件精确解析并复核内容 SHA-256。
+  parser 生成的 `chunk_id` 是局部/截断 ID；裸 ID 命中多条时失败关闭，只有匹配的完整
+  `source_id + anchor` 才能消歧。伪造、跨课、歧义、未审核和哈希漂移引用均不会进入模型。
+- 单题课程证据限定为 16 个引用、16,000 字符；任一引用无效会丢弃整个课程证据分区。
+  随后同一次能力调用只接收题面、作答要求和当前答案，并以固定标题
+  “通用反馈（未按当前课程材料核验）”标明未按课程材料验证。模型失败不触发第二次调用。
+- portable v0.2.2 要求每题声明 `course_grounded` 或 `general_only`。前者必须全部精确解析，
+  后者必须无引用；生成 validator 和 archive approval gate 使用同一确定性检查并分别报告
+  grounded、general-only、unresolved、declaration mismatch。
+- `scripts/build_source_chunk_index.py` 只读取 build/document 双 approved 的归档记录，并复核
+  fingerprint 中的 `chunks_path/chunks_sha256` 后原子替换可重建索引。`legacy_reviewed=true`
+  但没有 `run.fingerprint_payload.units` 逐单元 hash 指纹的 build 保留为 approved StudyKit
+  输入、但不进入 SourceChunk 索引；非 legacy approved build 缺失该指纹时构建失败关闭。
+
+2026-08-21 在唯一工作仓库和真实私有数据上复核：PR 分支记录的 `data@f4b25bb` 是对基线主线
+`data@2d478d3` 的回退，会读取审批前 archive；将 gitlink 恢复为本地已有的 `2d478d3` 后，三个
+真实 archive 门禁回归为 `3 passed`，没有重新下载或清理私有数据。完整无网络命令
+`.venv/bin/pytest -q` 为 `670 passed in 173.89s`；其中包含 legacy 指纹存在但结构损坏时必须
+失败关闭的独立回归，只有确实缺少逐单元指纹的 reviewed legacy 才允许从索引中跳过。
+
+真实 `data/indexes/source_chunks.sqlite3` 的 `PRAGMA integrity_check` 为 `ok`，`source_chunks` 与
+FTS 各 5,845 行，保留 13 组同课程/unit 内局部 ID 碰撞。运行时抽查验证了普通精确引用命中、
+歧义裸 `chunk_id` 返回空，以及同一 ID 补齐匹配 `source_id + anchor` 后唯一命中。

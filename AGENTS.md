@@ -5,7 +5,12 @@
 - Default online routing uses a bounded acyclic TaskPlan and preserves independent task success.
 - Learner claims keep course material, catalog metadata, static analysis, and labeled general
   knowledge provenance separate; invalid course evidence drops the whole course-material partition.
-- Public SourceChunk retrieval filters scope and identity before FTS5/BM25 ranking. Signed
+- Public SourceChunk retrieval filters scope and identity before FTS5/BM25 ranking. Exact cited
+  evidence resolution never uses FTS/BM25: it resolves `chunk_id` first or exact
+  `source_id + anchor`, filters public scope, course/version/unit, succeeded build, approved review,
+  and index eligibility in SQL, then verifies the chunk content hash. Parser-generated `chunk_id`
+  values are local/truncated identifiers, not global keys; every supplied source/anchor qualifier
+  remains conjunctive, and a bare ambiguous ID fails closed. Signed
   `coursepilot_context` and server-side `sessionId` state are continuity only, never authorization
   or answer storage. Gateway state is minimal, namespace-bound, HMAC-indexed, and expires after a
   30-day sliding TTL; missing or empty `sessionId` never reuses a prior conversation.
@@ -40,12 +45,22 @@
   data-dependent tests. The archive remains separate from the account/profile SQLite database.
   Imports retain an explicit review status; `validated_draft` records are not online-ready, and
   only `approved` build and document records may satisfy the online store.
+- SourceChunk indexing requires hash-bound per-unit source metadata. An explicitly
+  `legacy_reviewed` build without `run.fingerprint_payload.units` remains an approved StudyKit input
+  but is excluded from the SourceChunk index; a non-legacy approved build missing that fingerprint
+  fails the index build closed.
 - Human archive approval must run through `scripts/approve_studykit_archive.py`: require archive
   integrity, portable Schema, per-unit validation/review validation, exact requested/completed/
   validated/audited/document identity, and matching independent registry audit coverage. Explicit
   reviewed-legacy owner approvals must retain their waived-gate audit trail. Identity repairs must
   create a fingerprinted child bound to the direct parent, repair plan, and current exact-set audit.
   The 2026-08-17 approval released 9 builds/220 documents; 3 partial builds/66 documents remain draft.
+- Portable StudyKit v0.2.2 requires every practice to declare `feedback_mode`. `course_grounded`
+  requires at least one exact-resolvable visible citation; `general_only` requires an empty citation
+  set and is publishable only with an explicit learner warning. Declaration mismatch or unresolved
+  grounded evidence blocks validation/publication. Older approved v0.2.1/legacy artifacts remain
+  readable and infer their runtime mode without in-place mutation; single-source legacy
+  `source_pages` are converted to exact `source_id + page` references before resolution.
 
 ## Identity and persistence
 
@@ -94,8 +109,16 @@
 - Within trusted current-unit continuity, Chinese practice ordinals, bare `ex-N` display aliases, and short natural questions such as “ex7 是什么” route deterministically to the reviewed practice order. A StudyKit practice index is not evidence that those practices were presented.
 - Do not expose `expected_evidence`, evaluation rubrics, evidence controls, audit diagnostics, or hidden reasoning to learners.
 - Refuse complete submit-ready coursework solutions while still offering diagnosis, tests, and layered hints.
-- Material answers and concept explanations may use only ready StudyKit fields with allowed page citations until permission-filtered SourceChunk retrieval exists. An arbitrary page request without evidence must fail transparently.
-- Practice selection and feedback are stateless. Do not persist answers, scores, aggregate accuracy, or mastery; model failure must degrade to the original hint and allowed pages, not keyword grading.
+- Material answers and concept explanations may use only ready StudyKit fields or permission-first,
+  identity-filtered public SourceChunks. An arbitrary page request without evidence must fail transparently.
+- Practice selection prefers exact-resolvable `course_grounded` items over otherwise matching
+  `general_only` items. Practice feedback may use at most 16 exact references/16,000 evidence
+  characters. If the whole course-evidence partition is valid, feedback must cite only supplied IDs;
+  otherwise it must use one general-knowledge model call and display
+  `通用反馈（未按当前课程材料核验）` plus the fixed non-course-verification notice.
+- Practice selection and feedback are stateless. Do not persist answers, scores, aggregate accuracy,
+  or mastery; do not expose hidden evaluation fields. Model failure must not trigger a second model
+  call and must degrade to the original hint plus verified source labels when available.
 - TaskPlan model calls are counted separately; each concrete online capability may call the model at most once per request. Do not add online generator→reviewer chains. Practice presentation may use one controlled structured rewrite and must fall back to the approved original on validation failure.
 
 ## Compatibility and tests

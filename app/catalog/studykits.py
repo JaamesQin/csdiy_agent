@@ -25,6 +25,7 @@ from app.retrieval.schema_validation import validate_yaml
 _SUPPORTED_ARCHIVE_SCHEMAS = {
     "portable-v0.1-reviewed-legacy",
     "portable-v0.2.1",
+    "portable-v0.2.2",
 }
 _ARCHIVE_TABLE_COLUMNS = {
     "studykit_builds": {

@@ -2,7 +2,7 @@
 name: studykit-generator
 description: Build cited, reviewable StudyKits from raw course materials, including PDFs, scanned pages and images, Office files, web pages, Markdown, text, tables, structured data, and source code. Use when a user asks to ingest one or many course resources, identify courses and units, turn lectures or chapters into Chinese self-study packages, recover an interrupted authoring run, or validate and render existing StudyKit artifacts. Do not use for ordinary course Q&A, instant chat answers, unsupported access bypass, or submitting students' assessed work.
 metadata:
-  version: "0.2.1"
+  version: "0.2.2"
   triggers:
     - "把这些课程资料整理成带引用的学习包"
     - "从讲义、网页或扫描 PDF 生成整课 StudyKit"
@@ -16,7 +16,7 @@ Create offline, auditable learning artifacts from authorized source material. Ac
 ## Start safely
 
 1. Confirm that the user may process every input. Do not bypass login, paywalls, DRM, robots controls, encryption, or network restrictions.
-2. Require at least one material or public URL and an output directory. Default to `zh-CN`, 180 target minutes per unit, `draft` delivery policy, and private scope. The bundled completed v0.2.0 offline non-inferiority decision selects `standard`; an explicit `quality_mode` overrides it. That benchmark remains the quality baseline for pipeline v0.2.1.
+2. Require at least one material or public URL and an output directory. Default to `zh-CN`, 180 target minutes per unit, `draft` delivery policy, and private scope. The bundled completed v0.2.0 offline non-inferiority decision selects `standard`; an explicit `quality_mode` overrides it. That benchmark remains the quality baseline for pipeline v0.2.2.
 3. Run `python scripts/check_environment.py`. Treat MinerU, Tesseract, LibreOffice, and PyMuPDF as optional enhancements, never prerequisites.
 4. Read [references/contract.md](references/contract.md). Read [references/formats.md](references/formats.md) when inputs include PDF, images, URLs, Office, legacy, or media formats. Read [references/examples.md](references/examples.md) for invocation examples.
 
@@ -81,6 +81,14 @@ case when it tests a stated limitation; do not append generic “discuss a
 limitation” prose. Every material assertion in the setting, expected result,
 or evaluation must have a relevant source anchor. A citation that only points
 to the unit title or a nearby unrelated page is not sufficient.
+
+Declare `feedback_mode` on every practice. Use `course_grounded` only when at
+least one citation resolves exactly by `chunk_id` or `source_id + anchor` to a
+visible public chunk for the same course, version, and unit; keep the exact
+citation set at 16 items or fewer. Use `general_only`
+only when citations are empty; it may be published with an explicit warning,
+but prefer grounded practices whenever suitable evidence exists. Never keep
+citations on a `general_only` item merely to make it appear grounded.
 
 Reject generic shells such as “围绕 X 设计一个例子” when X is not followed by
 a complete learner-solvable setting. The independent auditor must inspect every

@@ -256,7 +256,9 @@ async def test_six_learning_capabilities_accept_archive_portable_documents(
     assert "第 3 页" in material.answer
     assert "**定义**" in concept.answer and "第 3 页" in concept.answer
     assert "P-01" in practice.answer and "expected_evidence" not in practice.answer
-    assert "本题反馈暂时降级" in feedback.answer and "第 3 页" in feedback.answer
+    assert "通用反馈（未按当前课程材料核验）" in feedback.answer
+    assert "不代表当前课程的标准答案或评分" in feedback.answer
+    assert "第 3 页" not in feedback.answer
     assert "expected_evidence" not in feedback.answer and "full_credit" not in feedback.answer
 
 

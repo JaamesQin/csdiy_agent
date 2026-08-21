@@ -13,12 +13,12 @@ from typing import Any
 import yaml
 
 
-PIPELINE_VERSION = "portable-studykit-pipeline-v0.2.1"
+PIPELINE_VERSION = "portable-studykit-pipeline-v0.2.2"
 # Bump the portable-build fingerprint whenever the authoring contract changes.
 # The content-grounded practice contract, objective-to-practice alignment,
 # provenance completeness, and mandatory per-practice audit are intentionally
 # not resumable from earlier host-authored builds.
-PROMPT_VERSION = "host-authored-studykit-v0.2-content-grounded-practice-v2"
+PROMPT_VERSION = "host-authored-studykit-v0.2.2-feedback-contract-v1"
 PAGE_SELECTOR_VERSION = "review-pages-v1"
 
 
